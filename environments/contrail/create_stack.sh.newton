@@ -1,0 +1,13 @@
+openstack overcloud deploy --templates tripleo-heat-templates.newton/ \
+  --roles-file tripleo-heat-templates.newton/environments/contrail/roles_data.yaml \
+  -e tripleo-heat-templates.newton/environments/puppet-pacemaker.yaml \
+  -e tripleo-heat-templates.newton/environments/contrail/contrail-services.yaml \
+  -e tripleo-heat-templates.newton/environments/contrail/network-isolation.yaml \
+  -e tripleo-heat-templates.newton/environments/contrail/contrail-net.yaml \
+  -e tripleo-heat-templates.newton/environments/contrail/ips-from-pool-all.yaml \
+  -e tripleo-heat-templates.newton/environments/network-management.yaml \
+  -e environment-rhel-registration.yaml \
+  -e tripleo-heat-templates.newton/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml \
+  --libvirt-type qemu
+
+#  -e tripleo-heat-templates.newton/environments/contrail/service_net_map.j2.yaml \

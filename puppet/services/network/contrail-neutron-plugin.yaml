@@ -1,0 +1,45 @@
+heat_template_version: 2016-10-14
+
+description: >
+  OpenStack Neutron Opencontrail plugin
+
+parameters:
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ContrailExtensions:
+    description: List of OpenContrail extensions to be enabled
+    type: comma_delimited_list
+    default: ''
+
+resources:
+  ContrailBase:
+    type: ./contrail-base.yaml
+    properties:
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      EndpointMap: {get_param: EndpointMap}
+
+outputs:
+  role_data:
+    description: Role data for the Neutron Opencontrail plugin
+    value:
+      service_name: contrail_neutron_plugin
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - neutron::api_extensions_path: /usr/lib/python2.7/site-packages/neutron_plugin_contrail/extensions
+            contrail::vrouter::contrail_extensions: {get_param: ContrailExtensions}
+      step_config: |
+        include tripleo::network::contrail::neutron_plugin

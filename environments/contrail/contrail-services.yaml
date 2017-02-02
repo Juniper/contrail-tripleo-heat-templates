@@ -1,0 +1,54 @@
+# A Heat environment file which can be used to enable OpenContrail
+# # extensions, configured via puppet
+resource_registry:
+  OS::TripleO::Services::NeutronDhcpAgent: OS::Heat::None
+  OS::TripleO::Services::NeutronL3Agent: OS::Heat::None
+  OS::TripleO::Services::NeutronMetadataAgent: OS::Heat::None
+  OS::TripleO::Services::NeutronOvsAgent: OS::Heat::None
+  OS::TripleO::Services::ComputeNeutronOvsAgent: OS::Heat::None
+  OS::TripleO::NodeUserData: install_vrouter_kmod.yaml
+  OS::TripleO::Services::ContrailHeat: ../../puppet/services/network/contrail-heat.yaml
+  OS::TripleO::Services::ContrailAnalytics: ../../puppet/services/network/contrail-analytics.yaml
+  OS::TripleO::Services::ContrailAnalyticsDatabase: ../../puppet/services/network/contrail-analytics-database.yaml
+  OS::TripleO::Services::ContrailConfig: ../../puppet/services/network/contrail-config.yaml
+  OS::TripleO::Services::ContrailControl: ../../puppet/services/network/contrail-control.yaml
+  OS::TripleO::Services::ContrailDatabase: ../../puppet/services/network/contrail-database.yaml
+  OS::TripleO::Services::ContrailWebUI: ../../puppet/services/network/contrail-webui.yaml
+  OS::TripleO::Services::ContrailTsn: ../../puppet/services/network/contrail-tsn.yaml
+  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../puppet/services/network/contrail-vrouter.yaml
+  OS::TripleO::Services::NeutronCorePlugin: ../../puppet/services/network/contrail-neutron-plugin.yaml
+parameter_defaults:
+  ServiceNetMap:
+    ContrailAnalyticsNetwork: internal_api
+    ContrailAnalyticsDatabaseNetwork: internal_api
+    ContrailConfigNetwork: internal_api
+    ContrailControlNetwork: internal_api
+    ContrailDatabaseNetwork: internal_api
+    ContrailWebuiNetwork: internal_api
+    ContrailTsnNetwork: internal_api
+    ContrailVrouterNetwork: internal_api
+  ContrailRepo: http://192.0.2.1/contrail-3.2.0.0-19
+  EnablePackageInstall: true
+  ContrailConfigIfmapUserName: api-server
+  ContrailConfigIfmapUserPassword: api-server
+  OvercloudControlFlavor: control
+  OvercloudContrailControllerFlavor: contrail-controller
+  OvercloudContrailAnalyticsFlavor: contrail-analytics
+  OvercloudContrailAnalyticsDatabaseFlavor: contrail-analytics-database
+  OvercloudContrailTsnFlavor: contrail-tsn
+  OvercloudComputeFlavor: compute
+  ControllerCount: 3
+  ContrailControllerCount: 3
+  ContrailAnalyticsCount: 3
+  ContrailAnalyticsDatabaseCount: 3
+  ContrailTsnCount: 1
+  ComputeCount: 3
+  DnsServers: ["8.8.8.8","8.8.4.4"]
+  NtpServer: 10.0.0.1
+  NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
+  NeutronServicePlugins: ''
+  NeutronTunnelTypes: ''
+  NeutronMetadataProxySharedSecret: secret
+  ContrailControlRNDCSecret: sHE1SM8nsySdgsoRxwARtA==
+  NovaLibvirtCpuMode: custom
+  NovaLibvirtCpuModel: Nehalem
