@@ -34,14 +34,6 @@ parameters:
     default: '255.255.255.0'
     description: vRouter netmask
     type: string
-  NovaLibvirtCpuModel:
-    default: ''
-    description: libvirt cpu model
-    type: string
-  NovaLibvirtCpuMode:
-    default: ''
-    description: libvirt cpu mode
-    type: string
 
 resources:
   ContrailBase:
@@ -64,8 +56,6 @@ outputs:
             contrail::vrouter::gateway: {get_param: VrouterGateway}
             contrail::vrouter::netmask: {get_param: VrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
-            contrail::vrouter::cpu_model: {get_param: NovaLibvirtCpuModel}
-            contrail::vrouter::cpu_mode: {get_param: NovaLibvirtCpuMode}
             tripleo.neutron_compute_plugin_opencontrail.firewall_rules:
               '111 neutron_compute_plugin_opencontrail proxy':
                 dport: 8097

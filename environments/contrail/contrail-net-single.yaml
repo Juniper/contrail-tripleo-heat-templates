@@ -1,0 +1,18 @@
+resource_registry:
+  OS::TripleO::Compute::Net::SoftwareConfig: contrail-nic-config-compute-single.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: contrail-nic-config-single.yaml
+  OS::TripleO::ContrailController::Net::SoftwareConfig: contrail-nic-config-single.yaml
+  OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: contrail-nic-config-single.yaml
+  OS::TripleO::ContrailAnalyticsDatabase::Net::SoftwareConfig: contrail-nic-config-single.yaml
+  OS::TripleO::ContrailTsn::Net::SoftwareConfig: contrail-nic-config-compute-single.yaml
+
+parameter_defaults:
+  ControlPlaneSubnetCidr: '24'
+  ControlPlaneDefaultRoute: 192.0.2.254
+  EC2MetadataIp: 192.0.2.1  # Generally the IP of the Undercloud
+  DnsServers: ["8.8.8.8","8.8.4.4"]
+  VrouterPhysicalInterface: eth0
+  VrouterGateway: 192.0.2.1
+  VrouterNetmask: 255.255.255.0
+  ControlVirtualInterface: eth0
+  PublicVirtualInterface: vlan10
