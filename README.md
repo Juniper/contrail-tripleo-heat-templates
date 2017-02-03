@@ -9,17 +9,27 @@ export ROOTPASSWORD=UNDERCLOUD_ROOT_PWD
 export STACKPASSWORD=UNDERCLOUD_STACK_PWD
 ```
 
-## create stack user
+## create and become stack user
 ```
-sudo useradd stack
-sudo passwd stack  # specify a password
+useradd -G libvirt stack
+passwd stack  # specify a password
 echo "stack ALL=(root) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/stack
-sudo chmod 0440 /etc/sudoers.d/stack
+chmod 0440 /etc/sudoers.d/stack
+su - stack
+```
+## create ssh key
+```
+ssh-keygen -t dsa
 ```
 
 ## install basic packages
 ```
-yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
+sudo yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
+```
+## adjust permissions
+```
+sudo chgrp -R libvirt /var/lib/libvirt/images
+sudo chmod g+w /var/lib/libvirt/images
 ```
 
 ## get rhel 7.3 kvm image
@@ -28,7 +38,7 @@ download: KVM Guest Image
 
 ## prepare networking
 ```
-ovs-vsctl add-br brbm
+sudo ovs-vsctl add-br brbm
 cat << EOF > brbm.xml
 <network>
   <name>brbm</name>
@@ -165,8 +175,8 @@ openstack baremetal import --json ~/instackenv.json
 ### define nodes with CLI 
 ```
 ssh_address=IP_OF_KVM_HOST
-ssh_user=USER_ALLOWED_TO_START_VMS
-ssh_key=SSH_KEY_OF_SSH_USER
+ssh_user=stack
+ssh_key=SSH_KEY_OF_SSH_USER (/home/stack/.ssh/id_dsa on kvm host)
 num=0
 for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
 do
