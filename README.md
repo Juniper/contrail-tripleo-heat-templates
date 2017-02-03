@@ -1,11 +1,11 @@
 ## Undercloud preparation (on the KVM host)
 
 # set password & subscription information
-USER=aranjan.redhat
-PASSWORD=H3Ub9pth3x
-POOLID=8a85f98154747c980154787ef75a30af
-ROOTPASSWORD=contrail123
-STACKPASSWORD=stack
+USER=
+PASSWORD=
+POOLID=
+ROOTPASSWORD=
+STACKPASSWORD=
 
 # install basic packages
 ```
