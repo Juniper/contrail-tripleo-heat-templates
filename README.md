@@ -14,7 +14,7 @@ export STACKPASSWORD=UNDERCLOUD_STACK_PWD
 yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
 ```
 
-## get rhel7.3 kvm image
+## get rhel 7.3 kvm image
 goto: https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.3/x86_64/product-software    
 download: KVM Guest Image    
 
@@ -32,6 +32,19 @@ EOF
 virsh net-define brbm.xml
 virsh net-start brbm
 virsh net-autostart brbm
+```
+
+## define ironic nodes
+```
+num=0
+for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
+do
+  num=$(expr $num + 1)
+  qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
+  virsh define /dev/stdin <<EOF
+$(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num   --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
+EOF
+done
 ```
 
 ## prepare undercloud VM
@@ -126,21 +139,45 @@ openstack overcloud image upload --image-path /home/stack/images/
 cd ~
 ```
 
-## define nodes in instackenv.json    
+## Ironic Node definiton
+
+## Option 1
+### define nodes in instackenv.json (option 1)   
 (https://access.redhat.com/documentation/en/red-hat-openstack-platform/10/paged/director-installation-and-usage/chapter-5-configuring-basic-overcloud-requirements-with-the-cli-tools)
 ```
 vi ~/instackenv.json
 ```
 
-## import nodes
+### import nodes
 ```
 openstack baremetal import --json ~/instackenv.json
+```
+
+## Option 2
+### define nodes with CLI 
+```
+ssh_address=IP_OF_KVM_HOST
+ssh_user=USER_ALLOWED_TO_START_VMS
+ssh_key=SSH_KEY_OF_SSH_USER
+num=0
+for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
+do
+  num=$(expr $num + 1)
+  ironic node-create -d pxe_ssh -p cpus=4 -p memory_mb=16348 -p local_gb=40 -p cpu_arch=x86_64 -i ssh_username=${ssh_user} -i ssh_virt_type=virsh -i ssh_address=${ssh_address} -i ssh_key_contents=${ssh_key} -n ${i}-${num} -p capabilities=profile:${i} 
+  ironic port-create -a "de:ad:be:ef:ba:0${num}" -n `openstack baremetal node show ${i}-${num} -c uuid -f value`
+done
+```
+
+## configure boot mode
+```
 openstack baremetal configure boot
 ```
 
 ## node introspection
+```
 for node in $(openstack baremetal node list -c UUID -f value) ; do openstack baremetal node manage $node ; done
 openstack overcloud node introspect --all-manageable --provide
+```
 
 ## node profiling
 ```
