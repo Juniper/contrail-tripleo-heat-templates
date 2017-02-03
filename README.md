@@ -6,13 +6,13 @@ export USER=YOUR_RHEL_SUBS_USER
 export PASSWORD=YOUR_RHEL_SUBS_PWD
 export POOLID=YOUR_RHEL_POOL_ID
 export ROOTPASSWORD=UNDERCLOUD_ROOT_PWD
-export STACKPASSWORD=UNDERCLOUD_STACK_PWD
+export STACKPASSWORD=STACK_USER_PWD
 ```
 
 ## create and become stack user
 ```
 useradd -G libvirt stack
-passwd stack  # specify a password
+echo $STACKPASSWORD |passwd stack --stdin
 echo "stack ALL=(root) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/stack
 chmod 0440 /etc/sudoers.d/stack
 su - stack
