@@ -208,11 +208,9 @@ done
 
 ## get puppet modules
 ```
-git clone https://github.com/Juniper/contrail-tripleo-puppet -b stable/newton ~/contrail-tripleo-puppet
-git clone https://github.com/Juniper/puppet-contrail -b stable/newton ~/puppet-contrail
-mkdir -p ~/usr/share/openstack-puppet/modules/tripleo
-cp -r ~/contrail-tripleo-puppet/manifests ~/contrail-tripleo-puppet/lib ~/usr/share/openstack-puppet/modules/tripleo/
-cp -r ~/puppet-contrail ~/usr/share/openstack-puppet/modules/contrail
+mkdir -p ~/usr/share/openstack-puppet/modules
+git clone https://github.com/Juniper/contrail-tripleo-puppet -b stable/newton ~/usr/share/openstack-puppet/modules/tripleo
+git clone https://github.com/Juniper/puppet-contrail -b stable/newton ~/usr/share/openstack-puppet/modules/contrail
 tar czvf puppet-modules.tgz usr/
 ```
 
