@@ -11,7 +11,7 @@ export STACKPASSWORD=UNDERCLOUD_STACK_PWD
 
 ## install basic packages
 ```
-yum install -y libguestfs.x86_64 libguestfs-tools.noarch openvswitch virt-install virt-viewer
+yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
 ```
 
 ## get rhel7.3 kvm image
