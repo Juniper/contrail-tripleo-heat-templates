@@ -1,0 +1,119 @@
+heat_template_version: 2016-10-14
+
+description: >
+  Base parameters for all Contrail Services.
+
+parameters:
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  AAAMode:
+    description: AAAmode can be no-auth, cloud-admin or rbac
+    type: string
+    default: 'rbac'
+  AAAModeAnalytics:
+    description: AAAmode for analytics can be no-auth, cloud-admin or rbac
+    type: string
+    default: 'no-auth'
+  AdminPassword:
+    description: Keystone admin user password
+    type: string
+    hidden: true
+  AdminTenantName:
+    description: Keystone admin tenant name
+    type: string
+    default: 'admin'
+  AdminToken:
+    description: Keystone admin token
+    type: string
+    hidden: true
+  AdminUser:
+    description: Keystone admin user name
+    type: string
+    default: 'admin'
+  AuthPortSSL:
+    default: 13357
+    description: Keystone SSL port
+    type: number
+  AuthPortPublic:
+    default: 5000
+    description: Keystone Public port
+    type: number
+  AuthPortSSLPublic:
+    default: 13000
+    description: Keystone Public SSL port
+    type: number
+  AuthProtocol:
+    default: 'http'
+    description: Keystone authentication protocol
+    type: string
+  ContrailAuth:
+    default: 'keystone'
+    description: Keystone authentication method
+    type: string
+  ContrailConfigPort:
+    default: 8082
+    description: Contrail Config Api  port
+    type: number
+  ContrailDiscoveryPort:
+    default: 5998
+    description: Contrail Config Api  port
+    type: number
+  ContrailInsecure:
+    default: false
+    description: Keystone insecure mode
+    type: boolean
+  ContrailMemcachedServer:
+    default: '127.0.0.1:12111'
+    description: Memcached server
+    type: string
+  RabbitPassword:
+    description: The password for RabbitMQ
+    type: string
+    hidden: true
+  RabbitUserName:
+    default: guest
+    description: The username for RabbitMQ
+    type: string
+  RabbitClientPort:
+    default: 5672
+    description: Set rabbit subscriber port, change this if using SSL
+    type: number
+
+outputs:
+  role_data:
+    description: Shared role data for the Contrail services.
+    value:
+      service_name: contrail_base
+      config_settings:
+        contrail::aaa_mode: {get_param: AAAMode}
+        contrail::analytics_aaa_mode: {get_param: AAAModeAnalytics}
+        contrail::admin_password: {get_param: AdminPassword}
+        contrail::admin_tenant_name: {get_param: AdminTenantName}
+        contrail::admin_token: {get_param: AdminToken}
+        contrail::admin_user: {get_param: AdminUser}
+        contrail::auth: {get_param: ContrailAuth}
+        contrail::auth_host: {get_param: [EndpointMap, KeystonePublic, host] }
+        contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
+        contrail::auth_port_ssl: {get_param: AuthPortSSL }
+        contrail::auth_port_public: {get_param: AuthPortPublic }
+        contrail::auth_port_ssl_public: {get_param: AuthPortSSLPublic }
+        contrail::auth_protocol: {get_param: AuthProtocol }
+        contrail::api_port: {get_param: ContrailConfigPort }
+        contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
+        contrail::insecure: {get_param: ContrailInsecure}
+        contrail::memcached_server: {get_param: ContrailMemcachedServer}
+        contrail::rabbit_password: {get_param: RabbitPassword}
+        contrail::rabbit_user: {get_param: RabbitUserName}
+        contrail::rabbit_port: {get_param: RabbitClientPort}
