@@ -110,7 +110,10 @@ resources:
                   next_hop: {get_param: EC2MetadataIp}
                 -
                   default: true
+<<<<<<< HEAD
                   next_hop: {get_param: ControlPlaneDefaultRoute}
+=======
+>>>>>>> e9dcc6c58dd3b53f143ba816e88d409fffdd6960
 
 outputs:
   OS::stack_id:
