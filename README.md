@@ -9,6 +9,14 @@ export ROOTPASSWORD=UNDERCLOUD_ROOT_PWD
 export STACKPASSWORD=UNDERCLOUD_STACK_PWD
 ```
 
+## create stack user
+```
+sudo useradd stack
+sudo passwd stack  # specify a password
+echo "stack ALL=(root) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/stack
+sudo chmod 0440 /etc/sudoers.d/stack
+```
+
 ## install basic packages
 ```
 yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
