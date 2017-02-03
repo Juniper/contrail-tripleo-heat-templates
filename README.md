@@ -2,11 +2,11 @@
 
 ## set password & subscription information
 ```
-export USER=    
-export PASSWORD=    
-export POOLID=    
-export ROOTPASSWORD=    
-export STACKPASSWORD=    
+export USER=YOUR_RHEL_SUBS_USER    
+export PASSWORD=YOUR_RHEL_SUBS_PWD
+export POOLID=YOUR_RHEL_POOL_ID
+export ROOTPASSWORD=UNDERCLOUD_ROOT_PWD
+export STACKPASSWORD=UNDERCLOUD_STACK_PWD
 ```
 
 ## install basic packages
