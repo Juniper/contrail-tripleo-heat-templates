@@ -177,11 +177,18 @@ cp -r contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-t
 vi ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ```
 
-## overcloud networking (if multi nic will be used only)
+## overcloud networking
+### multi-nic
 ```
 vi ~/tripleo-heat-templates/environments/contrail/contrail-net.yaml
 vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config-compute.yaml
 vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config.yaml
+```
+### single-nic
+```
+vi ~/tripleo-heat-templates/environments/contrail/contrail-net-single.yaml
+vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config-compute-single.yaml
+vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config-single.yaml
 ```
 
 ## static ip assignment
