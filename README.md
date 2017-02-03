@@ -201,6 +201,7 @@ openstack overcloud node introspect --all-manageable --provide
 ```
 for i in contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn; do
   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
+  openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="${i}" ${i}
 done
 ```
 
