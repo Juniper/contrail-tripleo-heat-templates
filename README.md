@@ -1,11 +1,13 @@
 # Undercloud preparation (on the KVM host)
 
 ## set password & subscription information
-USER=    
-PASSWORD=    
-POOLID=    
-ROOTPASSWORD=    
-STACKPASSWORD=    
+```
+export USER=    
+export PASSWORD=    
+export POOLID=    
+export ROOTPASSWORD=    
+export STACKPASSWORD=    
+```
 
 ## install basic packages
 ```
