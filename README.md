@@ -284,7 +284,7 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   -e tripleo-heat-templates/environments/contrail/network-isolation.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-net.yaml \
   -e tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml \
-  -e tripleo-heat-templates/environments/network-management.yaml \ 
+  -e tripleo-heat-templates/environments/network-management.yaml \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml \
   --libvirt-type qemu
