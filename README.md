@@ -256,7 +256,11 @@ vi ~/tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml
 ```
 vi ~/tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml
 ```
-
+## set overcloud nameserver
+```
+neutron subnet-show
+neutron subnet-update <SUBNET-UUID> --dns-namserver NAMESERVER_IP
+```
 
 # start overcloud installation
 
