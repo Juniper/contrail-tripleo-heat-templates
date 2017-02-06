@@ -186,8 +186,8 @@ sudo mkdir /var/www/html/contrail
 
 ## get contrail
 ```
-curl -o ~/contrail-install-packages_3.2.0.0-20-newton.tgz http://10.84.5.120/github-build/R3.2/LATEST/redhat70/newton/contrail-install-packages_3.2.1.0-20-newton.tgz
-sudo tar zxvf ~/contrail-install-packages_3.2.0.0-20-newton.tgz -C /var/www/html/contrail/
+curl -o ~/contrail-install-packages_3.2.0.0-21-newton.tgz http://10.84.5.120/github-build/R3.2/LATEST/redhat70/newton/contrail-install-packages_3.2.1.0-21-newton.tgz
+sudo tar zxvf ~/contrail-install-packages_3.2.0.0-21-newton.tgz -C /var/www/html/contrail/
 ```
 
 ## configure undercloud
