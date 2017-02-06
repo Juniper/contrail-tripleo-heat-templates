@@ -53,9 +53,9 @@ cat << EOF > brbm.xml
   <virtualport type='openvswitch'/>
 </network>
 EOF
-virsh net-define brbm.xml
-virsh net-start brbm
-virsh net-autostart brbm
+sudo virsh net-define brbm.xml
+sudo virsh net-start brbm
+sudo virsh net-autostart brbm
 ```
 ## for multi-nic add the following networks:
 ```
@@ -77,12 +77,12 @@ cat << EOF > br-mgmt.xml
   <virtualport type='openvswitch'/>
 </network>
 EOF
-virsh net-define br-int-api.xml
-virsh net-start br-int-api
-virsh net-autostart br-int-api
-virsh net-define br-mgmt.xml
-virsh net-start br-mgmt
-virsh net-autostart br-mgmt
+sudo virsh net-define br-int-api.xml
+sudo virsh net-start br-int-api
+sudo virsh net-autostart br-int-api
+sudo virsh net-define br-mgmt.xml
+sudo virsh net-start br-mgmt
+sudo virsh net-autostart br-mgmt
 
 ```
 
@@ -93,7 +93,7 @@ for i in compute control contrail-controller contrail-analytics contrail-databas
 do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
-  virsh define /dev/stdin <<EOF
+  sudo virsh define /dev/stdin <<EOF
 $(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num   --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
 EOF
 done
@@ -105,7 +105,7 @@ for i in compute control contrail-controller contrail-analytics contrail-databas
 do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
-  virsh define /dev/stdin <<EOF
+  sudo virsh define /dev/stdin <<EOF
 $(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num --network network=br-int-api,model=virtio,mac=de:ad:be:ef:bb:0$num --network network=br-mgmt,model=virtio,mac=de:ad:be:ef:bc:0$num --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
 EOF
 done
@@ -136,7 +136,7 @@ cp undercloud.qcow2 /var/lib/libvirt/images/undercloud.qcow2
 
 ## install undercloud VM (single nic)
 ```
-virt-install --name undercloud \
+sudo virt-install --name undercloud \
   --disk /var/lib/libvirt/images/undercloud.qcow2 \
   --vcpus=4 \
   --ram=16348 \
@@ -152,7 +152,7 @@ virt-install --name undercloud \
 
 ## install undercloud VM (multi nic)
 ```
-virt-install --name undercloud \
+sudo virt-install --name undercloud \
   --disk /var/lib/libvirt/images/undercloud.qcow2 \
   --vcpus=4 \
   --ram=16348 \
@@ -169,7 +169,7 @@ virt-install --name undercloud \
 
 ## get undercloud ip
 ```
-echo `virsh net-dhcp-leases default |grep undercloud |tail -1 |awk '{print $5}' | awk -F"/" '{print $1}'` > undercloudip
+echo `sudo virsh net-dhcp-leases default |grep undercloud |tail -1 |awk '{print $5}' | awk -F"/" '{print $1}'` > undercloudip
 ```
 
 ## ssh into undercloud
