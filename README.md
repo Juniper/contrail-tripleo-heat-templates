@@ -14,7 +14,7 @@ export STACKPASSWORD=STACK_USER_PWD
 yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
 ```
 
-## start virsh
+## start libvirtd
 ```
 systemctl start libvirtd
 ```
