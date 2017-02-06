@@ -129,7 +129,7 @@ virt-customize  -a undercloud.qcow2 \
   --install python-tripleoclient \
   --run-command 'sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config' \
   --run-command 'systemctl enable sshd' \
-  --run-command 'yum remove -y cloud-init'
+  --run-command 'yum remove -y cloud-init' \
   --selinux-relabel
 cp undercloud.qcow2 /var/lib/libvirt/images/undercloud.qcow2
 ```
