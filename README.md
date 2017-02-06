@@ -14,9 +14,10 @@ export STACKPASSWORD=<STACK_USER_PWD> # choose a stack user password
 yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
 ```
 
-## start libvirtd
+## start libvirtd & ovs
 ```
 systemctl start libvirtd
+systemctl start openvswitch
 ```
 
 ## create and become stack user
