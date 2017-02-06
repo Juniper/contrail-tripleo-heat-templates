@@ -9,6 +9,16 @@ export ROOTPASSWORD=UNDERCLOUD_ROOT_PWD
 export STACKPASSWORD=STACK_USER_PWD
 ```
 
+## install basic packages
+```
+yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
+```
+
+## start virsh
+```
+systemctl start libvirtd
+```
+
 ## create and become stack user
 ```
 useradd -G libvirt stack
@@ -22,14 +32,10 @@ su - stack
 ssh-keygen -t dsa
 ```
 
-## install basic packages
-```
-sudo yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
-```
 ## adjust permissions
 ```
 sudo chgrp -R libvirt /var/lib/libvirt/images
-sudo chmod g+w /var/lib/libvirt/images
+sudo chmod g+rw /var/lib/libvirt/images
 ```
 
 ## get rhel 7.3 kvm image
@@ -51,8 +57,36 @@ virsh net-define brbm.xml
 virsh net-start brbm
 virsh net-autostart brbm
 ```
+## for multi-nic add the following networks:
+```
+sudo ovs-vsctl add-br br-int-api
+sudo ovs-vsctl add-br br-mgmt
+cat << EOF > br-int-api.xml
+<network>
+  <name>br-int-api</name>
+  <forward mode='bridge'/>
+  <bridge name='br-int-api'/>
+  <virtualport type='openvswitch'/>
+</network>
+EOF
+cat << EOF > br-mgmt.xml
+<network>
+  <name>br-mgmt</name>
+  <forward mode='bridge'/>
+  <bridge name='br-mgmt'/>
+  <virtualport type='openvswitch'/>
+</network>
+EOF
+virsh net-define br-int-api.xml
+virsh net-start br-int-api
+virsh net-autostart br-int-api
+virsh net-define br-mgmt.xml
+virsh net-start br-mgmt
+virsh net-autostart br-mgmt
 
-## define ironic nodes
+```
+
+## define ironic nodes (single nic)
 ```
 num=0
 for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
@@ -61,6 +95,18 @@ do
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
   virsh define /dev/stdin <<EOF
 $(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num   --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
+EOF
+done
+```
+## define ironic nodes (multi nic)
+```
+num=0
+for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
+do
+  num=$(expr $num + 1)
+  qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
+  virsh define /dev/stdin <<EOF
+$(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num --network network=br-int-api,model=virtio,mac=de:ad:be:ef:bb:0$num --network network=br-mgmt,model=virtio,mac=de:ad:be:ef:bc:0$num --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
 EOF
 done
 ```
@@ -88,7 +134,7 @@ virt-customize  -a undercloud.qcow2 \
 cp undercloud.qcow2 /var/lib/libvirt/images/undercloud.qcow2
 ```
 
-## install undercloud VM
+## install undercloud VM (single nic)
 ```
 virt-install --name undercloud \
   --disk /var/lib/libvirt/images/undercloud.qcow2 \
@@ -96,6 +142,23 @@ virt-install --name undercloud \
   --ram=16348 \
   --network network=default,model=virtio \
   --network network=brbm,model=virtio \
+  --virt-type kvm \
+  --import \
+  --os-variant rhel7 \
+  --graphics vnc \
+  --serial pty \
+  --console pty,target_type=virtio
+```
+
+## install undercloud VM (multi nic)
+```
+virt-install --name undercloud \
+  --disk /var/lib/libvirt/images/undercloud.qcow2 \
+  --vcpus=4 \
+  --ram=16348 \
+  --network network=default,model=virtio \
+  --network network=brbm,model=virtio \
+  --network network=br-int-api,model=virtio \
   --virt-type kvm \
   --import \
   --os-variant rhel7 \
@@ -256,7 +319,11 @@ vi ~/tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml
 ```
 vi ~/tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml
 ```
-
+## set overcloud nameserver
+```
+neutron subnet-show
+neutron subnet-update <SUBNET-UUID> --dns-namserver NAMESERVER_IP
+```
 
 # start overcloud installation
 
@@ -280,7 +347,7 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   -e tripleo-heat-templates/environments/contrail/network-isolation.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-net.yaml \
   -e tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml \
-  -e tripleo-heat-templates/environments/network-management.yaml \ 
+  -e tripleo-heat-templates/environments/network-management.yaml \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml \
   --libvirt-type qemu
