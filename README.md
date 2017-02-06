@@ -134,7 +134,7 @@ virt-customize  -a undercloud.qcow2 \
 cp undercloud.qcow2 /var/lib/libvirt/images/undercloud.qcow2
 ```
 
-## install undercloud VM
+## install undercloud VM (single nic)
 ```
 virt-install --name undercloud \
   --disk /var/lib/libvirt/images/undercloud.qcow2 \
@@ -142,6 +142,23 @@ virt-install --name undercloud \
   --ram=16348 \
   --network network=default,model=virtio \
   --network network=brbm,model=virtio \
+  --virt-type kvm \
+  --import \
+  --os-variant rhel7 \
+  --graphics vnc \
+  --serial pty \
+  --console pty,target_type=virtio
+```
+
+## install undercloud VM (multi nic)
+```
+virt-install --name undercloud \
+  --disk /var/lib/libvirt/images/undercloud.qcow2 \
+  --vcpus=4 \
+  --ram=16348 \
+  --network network=default,model=virtio \
+  --network network=brbm,model=virtio \
+  --network network=br-int-api,model=virtio \
   --virt-type kvm \
   --import \
   --os-variant rhel7 \
