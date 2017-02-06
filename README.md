@@ -51,8 +51,36 @@ virsh net-define brbm.xml
 virsh net-start brbm
 virsh net-autostart brbm
 ```
+## for multi-nic add the following networks:
+```
+sudo ovs-vsctl add-br br-int-api
+sudo ovs-vsctl add-br br-mgmt
+cat << EOF > br-int-api.xml
+<network>
+  <name>br-int-api</name>
+  <forward mode='bridge'/>
+  <bridge name='br-int-api'/>
+  <virtualport type='openvswitch'/>
+</network>
+EOF
+cat << EOF > br-mgmt.xml
+<network>
+  <name>br-mgmt</name>
+  <forward mode='bridge'/>
+  <bridge name='br-mgmt'/>
+  <virtualport type='openvswitch'/>
+</network>
+EOF
+virsh net-define br-int-api.xml
+virsh net-start br-int-api
+virsh net-autostart br-int-api
+virsh net-define br-mgmt.xml
+virsh net-start br-mgmt
+virsh net-autostart br-mgmt
 
-## define ironic nodes
+```
+
+## define ironic nodes (single nic)
 ```
 num=0
 for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
@@ -61,6 +89,18 @@ do
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
   virsh define /dev/stdin <<EOF
 $(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num   --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
+EOF
+done
+```
+## define ironic nodes (multi nic)
+```
+num=0
+for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
+do
+  num=$(expr $num + 1)
+  qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
+  virsh define /dev/stdin <<EOF
+$(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num --network network=br-int-api,model=virtio,mac=de:ad:be:ef:bb:0$num --network network=br-mgmt,model=virtio,mac=de:ad:be:ef:bc:0$num --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
 EOF
 done
 ```
