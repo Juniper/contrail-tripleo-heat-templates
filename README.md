@@ -5,8 +5,8 @@
 export USER=YOUR_RHEL_SUBS_USER    
 export PASSWORD=YOUR_RHEL_SUBS_PWD
 export POOLID=YOUR_RHEL_POOL_ID
-export ROOTPASSWORD=UNDERCLOUD_ROOT_PWD
-export STACKPASSWORD=STACK_USER_PWD
+export ROOTPASSWORD=UNDERCLOUD_ROOT_PWD # choose a root user password
+export STACKPASSWORD=STACK_USER_PWD # choose a stack user password
 ```
 
 ## install basic packages
