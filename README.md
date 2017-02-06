@@ -11,7 +11,12 @@ export STACKPASSWORD=STACK_USER_PWD
 
 ## install basic packages
 ```
-sudo yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
+yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
+```
+
+## start virsh
+```
+systemctl start libvirtd
 ```
 
 ## create and become stack user
@@ -30,7 +35,7 @@ ssh-keygen -t dsa
 ## adjust permissions
 ```
 sudo chgrp -R libvirt /var/lib/libvirt/images
-sudo chmod g+w /var/lib/libvirt/images
+sudo chmod g+rw /var/lib/libvirt/images
 ```
 
 ## get rhel 7.3 kvm image
