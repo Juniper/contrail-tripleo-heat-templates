@@ -94,7 +94,7 @@ do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
   sudo virsh define /dev/stdin <<EOF
-$(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num   --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
+$(sudo virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num   --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
 EOF
 done
 ```
@@ -106,7 +106,7 @@ do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
   sudo virsh define /dev/stdin <<EOF
-$(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num --network network=br-int-api,model=virtio,mac=de:ad:be:ef:bb:0$num --network network=br-mgmt,model=virtio,mac=de:ad:be:ef:bc:0$num --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
+$(sudo virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num --network network=br-int-api,model=virtio,mac=de:ad:be:ef:bb:0$num --network network=br-mgmt,model=virtio,mac=de:ad:be:ef:bc:0$num --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
 EOF
 done
 ```
