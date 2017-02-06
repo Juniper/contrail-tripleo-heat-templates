@@ -7,7 +7,8 @@ export PASSWORD=YOUR_RHEL_SUBS_PWD
 export POOLID=YOUR_RHEL_POOL_ID
 export ROOTPASSWORD=UNDERCLOUD_ROOT_PWD
 export STACKPASSWORD=STACK_USER_PWD
-``
+```
+
 ## install basic packages
 ```
 sudo yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
