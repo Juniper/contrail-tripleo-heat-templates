@@ -148,6 +148,7 @@ sudo virt-install --name undercloud \
   --os-variant rhel7 \
   --graphics vnc \
   --serial pty \
+  --noautoconsole \
   --console pty,target_type=virtio
 ```
 
@@ -165,6 +166,7 @@ sudo virt-install --name undercloud \
   --os-variant rhel7 \
   --graphics vnc \
   --serial pty \
+  --noautoconsole \
   --console pty,target_type=virtio
 ```
 
