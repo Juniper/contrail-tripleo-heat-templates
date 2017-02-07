@@ -132,7 +132,7 @@ virt-customize  -a undercloud.qcow2 \
   --run-command 'systemctl enable sshd' \
   --run-command 'yum remove -y cloud-init' \
   --selinux-relabel
-cp undercloud.qcow2 /var/lib/libvirt/images/undercloud.qcow2
+sudo cp undercloud.qcow2 /var/lib/libvirt/images/undercloud.qcow2
 ```
 
 ## install undercloud VM (single nic)
