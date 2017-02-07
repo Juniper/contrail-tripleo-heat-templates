@@ -170,14 +170,14 @@ sudo virt-install --name undercloud \
   --console pty,target_type=virtio
 ```
 
-## get undercloud ip
+## get undercloud ip (depending on the number of attempts their might be multiple leases)
 ```
-echo `sudo virsh net-dhcp-leases default |grep undercloud |tail -1 |awk '{print $5}' | awk -F"/" '{print $1}'` > undercloudip
+sudo virsh net-dhcp-leases default |grep undercloud
 ```
 
 ## ssh into undercloud
 ```
-ssh stack@`cat undercloudip`
+ssh stack@<UNDERCLOUD_IP>
 ```
 
 # Undercloud configuration
