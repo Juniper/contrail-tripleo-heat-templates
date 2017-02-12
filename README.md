@@ -182,17 +182,6 @@ ssh stack@<UNDERCLOUD_IP>
 
 # Undercloud configuration
 
-## create contrail repo
-```
-sudo mkdir /var/www/html/contrail
-```
-
-## get contrail
-```
-curl -o ~/contrail-install-packages_3.2.0.0-21-newton.tgz http://10.84.5.120/github-build/R3.2/LATEST/redhat70/newton/contrail-install-packages_3.2.1.0-21-newton.tgz
-sudo tar zxvf ~/contrail-install-packages_3.2.0.0-21-newton.tgz -C /var/www/html/contrail/
-```
-
 ## configure undercloud
 ```
 cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf
@@ -221,6 +210,17 @@ cd ~/images
 for i in /usr/share/rhosp-director-images/overcloud-full-latest-10.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-10.0.tar; do tar -xvf $i; done
 openstack overcloud image upload --image-path /home/stack/images/
 cd ~
+```
+
+## create contrail repo
+```
+sudo mkdir /var/www/html/contrail
+```
+
+## get contrail
+```
+curl -o ~/contrail-install-packages_3.2.0.0-21-newton.tgz http://10.84.5.120/github-build/R3.2/LATEST/redhat70/newton/contrail-install-packages_3.2.1.0-21-newton.tgz
+sudo tar zxvf ~/contrail-install-packages_3.2.0.0-21-newton.tgz -C /var/www/html/contrail/
 ```
 
 ## Ironic Node definiton
