@@ -20,8 +20,8 @@ parameters:
     type: json
   ContrailExtensions:
     description: List of OpenContrail extensions to be enabled
-    type: comma_delimited_list
-    default: ''
+    type: string
+    default: 'ipam:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_ipam.NeutronPluginContrailIpam,policy:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_policy.NeutronPluginContrailPolicy,route-table:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_vpc.NeutronPluginContrailVpc,contrail:None'
 
 resources:
   ContrailBase:
