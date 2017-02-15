@@ -22,6 +22,10 @@ parameters:
     description: List of OpenContrail extensions to be enabled
     type: comma_delimited_list
     default: 'ipam:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_ipam.NeutronPluginContrailIpam,policy:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_policy.NeutronPluginContrailPolicy,route-table:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_vpc.NeutronPluginContrailVpc,contrail:None'
+  ContrailServicePlugins:
+    description: List of Contrail service plugins to be enabled
+    type: comma_delimited_list
+    default: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
 
 resources:
   ContrailBase:
@@ -41,5 +45,6 @@ outputs:
           - get_attr: [ContrailBase, role_data, config_settings]
           - neutron::api_extensions_path: /usr/lib/python2.7/site-packages/neutron_plugin_contrail/extensions
             contrail::vrouter::contrail_extensions: {get_param: ContrailExtensions}
+            neutron::service_plugins: {get_param: ContrailServicePlugins}
       step_config: |
         include tripleo::network::contrail::neutron_plugin
