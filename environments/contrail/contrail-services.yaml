@@ -46,7 +46,7 @@ parameter_defaults:
   DnsServers: ["8.8.8.8","8.8.4.4"]
   NtpServer: 10.0.0.1
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
-  NeutronServicePlugins: ''
+  NeutronServicePlugins: '' # lbaasv2 must be disable until bug https://bugs.launchpad.net/juniperopenstack/+bug/1665181 is solved
   NeutronTunnelTypes: ''
   NeutronMetadataProxySharedSecret: secret
   ContrailControlRNDCSecret: sHE1SM8nsySdgsoRxwARtA==
