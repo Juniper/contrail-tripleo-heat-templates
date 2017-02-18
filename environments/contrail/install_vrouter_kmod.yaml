@@ -44,6 +44,19 @@ resources:
             if [[ `hostname |awk -F"-" '{print $2}'` == "contrailcontroller" || `hostname |awk -F"-" '{print $2}'` == "contrailanalytics" || `hostname |awk -F"-" '{print $2}'` == "contrailanalyticsdatabase" ]]; then
               sed -i '/\[main\]/a \ \ \ \ \parser = future' /etc/puppet/puppet.conf
             fi
+            if [[ `hostname |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
+              yum install -y contrail-vrouter-utils
+              curl -o /tmp/contrail_dpdk.tgz ${contrail_repo}/contrail_dpdk.tgz
+              cd / && tar zxvf contrail_dpdk.tgz
+              mkdir -p /lib/modules/`uname -r`/extras/net/dpdk
+              cp /etc/contrail/igb_uio.ko /lib/modules/`uname -r`/extras/net/dpdk
+              cp /etc/contrail/rte_kni.ko /lib/modules/`uname -r`/extras/net/dpdk
+              depmod -a
+              yum localinstall /etc/contrail/liburcu2-0.8.4-2.1.2.x86_64.rpm 
+              source /etc/contrail/vrouter-functions.sh
+              vrouter_dpdk_if_bind &>> /var/log/vrouter_dpdk.log
+              vrouter_dpdk_start &>> /var/log/vrouter_dpdk.log
+            fi
             if [[ `hostname |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then 
               yum install -y contrail-vrouter-utils
               function pkt_setup () {
