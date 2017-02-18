@@ -15,6 +15,7 @@ resource_registry:
   OS::TripleO::Services::ContrailDatabase: ../../puppet/services/network/contrail-database.yaml
   OS::TripleO::Services::ContrailWebUI: ../../puppet/services/network/contrail-webui.yaml
   OS::TripleO::Services::ContrailTsn: ../../puppet/services/network/contrail-tsn.yaml
+  OS::TripleO::Services::ContrailDpdk: ../../puppet/services/network/contrail-dpdk.yaml
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../puppet/services/network/contrail-vrouter.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../puppet/services/network/contrail-neutron-plugin.yaml
 parameter_defaults:
@@ -26,6 +27,7 @@ parameter_defaults:
     ContrailDatabaseNetwork: internal_api
     ContrailWebuiNetwork: internal_api
     ContrailTsnNetwork: internal_api
+    ContrailDpdkNetwork: internal_api
     ContrailVrouterNetwork: internal_api
   ContrailRepo: http://192.0.2.1/contrail
   EnablePackageInstall: true
@@ -36,12 +38,14 @@ parameter_defaults:
   OvercloudContrailAnalyticsFlavor: contrail-analytics
   OvercloudContrailAnalyticsDatabaseFlavor: contrail-analytics-database
   OvercloudContrailTsnFlavor: contrail-tsn
+  OvercloudContrailDpdkFlavor: contrail-dpdk
   OvercloudComputeFlavor: compute
   ControllerCount: 1
   ContrailControllerCount: 1
   ContrailAnalyticsCount: 1
   ContrailAnalyticsDatabaseCount: 1
   ContrailTsnCount: 1
+  ContrailDpdkCount: 1
   ComputeCount: 1
   DnsServers: ["8.8.8.8","8.8.4.4"]
   NtpServer: 10.0.0.1

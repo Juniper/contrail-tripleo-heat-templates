@@ -18,6 +18,7 @@ resource_registry:
   OS::TripleO::ContrailAnalytics::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
   OS::TripleO::ContrailAnalyticsDatabase::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
   OS::TripleO::ContrailTsn::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
+  OS::TripleO::ContrailDpdk::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
 
   #OS::TripleO::CephStorage::Ports::ExternalPort: ../../network/ports/noop.yaml
   #OS::TripleO::CephStorage::Ports::InternalApiPort: ../../network/ports/noop.yaml
@@ -80,6 +81,11 @@ parameter_defaults:
     - 10.0.0.70
     - 10.0.0.71
     - 10.0.0.72
+  ContrailDpdkIPs:
+    internal_api:
+    - 10.0.0.80
+    - 10.0.0.81
+    - 10.0.0.82
   #CephStorageIPs:
     # Each ceph node will get an IP from the lists below, first node, first IP
     #storage:
