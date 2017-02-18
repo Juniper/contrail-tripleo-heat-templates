@@ -44,7 +44,7 @@ resources:
             if [[ `hostname |awk -F"-" '{print $2}'` == "contrailcontroller" || `hostname |awk -F"-" '{print $2}'` == "contrailanalytics" || `hostname |awk -F"-" '{print $2}'` == "contrailanalyticsdatabase" ]]; then
               sed -i '/\[main\]/a \ \ \ \ \parser = future' /etc/puppet/puppet.conf
             fi
-            if [[ `hostname |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" || `hostname |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then 
+            if [[ `hostname |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then 
               yum install -y contrail-vrouter-utils
               function pkt_setup () {
                   for f in /sys/class/net/$1/queues/rx-*
