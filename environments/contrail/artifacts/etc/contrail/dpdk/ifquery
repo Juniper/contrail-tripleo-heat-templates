@@ -1,0 +1,61 @@
+###############################################
+#
+#  ifquery: Mimic ubuntu's ifquery command
+#
+##############################################
+
+#!/bin/sh
+
+function print_usage()
+{
+    echo "Usage: ifquery --list | --state <IFACE> | IFACE"
+    exit 1
+}
+
+if [ $# -eq 1 ];
+then
+    if [ "$1" = "--list" ];
+    then
+        list=1
+    else
+        dev="$1"
+    fi
+elif [ $# -eq 2 ];
+then
+    if [ "$1" = "--state" ];
+    then
+        state=1
+        dev=$2
+    else
+        print_usage
+    fi
+else
+    print_usage
+fi
+
+if [ ! -z $list ];
+then
+    grep --no-filename "DEVICE=" /etc/sysconfig/network-scripts/ifcfg-* | cut -c8- | tr -d '"' | sort | uniq
+elif [ ! -z $state ];
+then
+    ifconfig $dev > /dev/null 2>&1
+    if [ $? -eq 0 ];
+    then
+        echo "$dev=$dev"
+    else
+        exit 1
+    fi 
+else
+    if [ ! -e /etc/sysconfig/network-scripts/ifcfg-$dev ];
+    then
+        echo "Invalid option $dev"
+        exit 1
+    fi
+    grep -e "^MASTER" -e "^SLAVE" /etc/sysconfig/network-scripts/ifcfg-$dev > /dev/null
+    if [ $? -eq 0 ];
+    then
+        cat /etc/sysconfig/network-scripts/ifcfg-$dev | sed 's/\<MASTER=/bond-master: /g'
+    else
+        cat /etc/sysconfig/network-scripts/ifcfg-$dev
+    fi 
+fi
