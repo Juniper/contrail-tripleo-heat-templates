@@ -2,11 +2,11 @@
 
 ## set password & subscription information
 ```
-export USER=YOUR_RHEL_SUBS_USER    
-export PASSWORD=YOUR_RHEL_SUBS_PWD
-export POOLID=YOUR_RHEL_POOL_ID
-export ROOTPASSWORD=UNDERCLOUD_ROOT_PWD
-export STACKPASSWORD=STACK_USER_PWD
+export USER=<YOUR_RHEL_SUBS_USER> 
+export PASSWORD=<YOUR_RHEL_SUBS_PWD>
+export POOLID=<YOUR_RHEL_POOL_ID>
+export ROOTPASSWORD=<UNDERCLOUD_ROOT_PWD> # choose a root user password
+export STACKPASSWORD=<STACK_USER_PWD> # choose a stack user password
 ```
 
 ## install basic packages
@@ -14,9 +14,10 @@ export STACKPASSWORD=STACK_USER_PWD
 yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
 ```
 
-## start virsh
+## start libvirtd & ovs
 ```
 systemctl start libvirtd
+systemctl start openvswitch
 ```
 
 ## create and become stack user
@@ -53,9 +54,9 @@ cat << EOF > brbm.xml
   <virtualport type='openvswitch'/>
 </network>
 EOF
-virsh net-define brbm.xml
-virsh net-start brbm
-virsh net-autostart brbm
+sudo virsh net-define brbm.xml
+sudo virsh net-start brbm
+sudo virsh net-autostart brbm
 ```
 ## for multi-nic add the following networks:
 ```
@@ -77,12 +78,12 @@ cat << EOF > br-mgmt.xml
   <virtualport type='openvswitch'/>
 </network>
 EOF
-virsh net-define br-int-api.xml
-virsh net-start br-int-api
-virsh net-autostart br-int-api
-virsh net-define br-mgmt.xml
-virsh net-start br-mgmt
-virsh net-autostart br-mgmt
+sudo virsh net-define br-int-api.xml
+sudo virsh net-start br-int-api
+sudo virsh net-autostart br-int-api
+sudo virsh net-define br-mgmt.xml
+sudo virsh net-start br-mgmt
+sudo virsh net-autostart br-mgmt
 
 ```
 
@@ -93,8 +94,8 @@ for i in compute control contrail-controller contrail-analytics contrail-databas
 do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
-  virsh define /dev/stdin <<EOF
-$(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num   --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
+  sudo virsh define /dev/stdin <<EOF
+$(sudo virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num   --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
 EOF
 done
 ```
@@ -105,8 +106,8 @@ for i in compute control contrail-controller contrail-analytics contrail-databas
 do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
-  virsh define /dev/stdin <<EOF
-$(virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num --network network=br-int-api,model=virtio,mac=de:ad:be:ef:bb:0$num --network network=br-mgmt,model=virtio,mac=de:ad:be:ef:bc:0$num --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
+  sudo virsh define /dev/stdin <<EOF
+$(sudo virt-install --name ${i}_$num   --disk /var/lib/libvirt/images/${i}_${num}.qcow2   --vcpus=4   --ram=16348   --network network=brbm,model=virtio,mac=de:ad:be:ef:ba:0$num --network network=br-int-api,model=virtio,mac=de:ad:be:ef:bb:0$num --network network=br-mgmt,model=virtio,mac=de:ad:be:ef:bc:0$num --virt-type kvm   --import   --os-variant rhel7   --serial pty   --console pty,target_type=virtio --print-xml)
 EOF
 done
 ```
@@ -129,14 +130,14 @@ virt-customize  -a undercloud.qcow2 \
   --install python-tripleoclient \
   --run-command 'sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config' \
   --run-command 'systemctl enable sshd' \
-  --run-command 'yum remove -y cloud-init'
+  --run-command 'yum remove -y cloud-init' \
   --selinux-relabel
-cp undercloud.qcow2 /var/lib/libvirt/images/undercloud.qcow2
+sudo cp undercloud.qcow2 /var/lib/libvirt/images/undercloud.qcow2
 ```
 
 ## install undercloud VM (single nic)
 ```
-virt-install --name undercloud \
+sudo virt-install --name undercloud \
   --disk /var/lib/libvirt/images/undercloud.qcow2 \
   --vcpus=4 \
   --ram=16348 \
@@ -147,12 +148,13 @@ virt-install --name undercloud \
   --os-variant rhel7 \
   --graphics vnc \
   --serial pty \
+  --noautoconsole \
   --console pty,target_type=virtio
 ```
 
 ## install undercloud VM (multi nic)
 ```
-virt-install --name undercloud \
+sudo virt-install --name undercloud \
   --disk /var/lib/libvirt/images/undercloud.qcow2 \
   --vcpus=4 \
   --ram=16348 \
@@ -164,31 +166,21 @@ virt-install --name undercloud \
   --os-variant rhel7 \
   --graphics vnc \
   --serial pty \
+  --noautoconsole \
   --console pty,target_type=virtio
 ```
 
-## get undercloud ip
+## get undercloud ip (depending on the number of attempts their might be multiple leases)
 ```
-echo `virsh net-dhcp-leases default |grep undercloud |tail -1 |awk '{print $5}' | awk -F"/" '{print $1}'` > undercloudip
+sudo virsh net-dhcp-leases default |grep undercloud
 ```
 
 ## ssh into undercloud
 ```
-ssh stack@`cat undercloudip`
+ssh stack@<UNDERCLOUD_IP>
 ```
 
 # Undercloud configuration
-
-## create contrail repo
-```
-sudo mkdir /var/www/html/contrail
-```
-
-## get contrail
-```
-curl -o ~/contrail-install-packages_3.2.0.0-20-newton.tgz http://10.84.5.120/github-build/R3.2/LATEST/redhat70/newton/contrail-install-packages_3.2.1.0-20-newton.tgz
-sudo tar zxvf ~/contrail-install-packages_3.2.0.0-20-newton.tgz -C /var/www/html/contrail/
-```
 
 ## configure undercloud
 ```
@@ -218,6 +210,17 @@ cd ~/images
 for i in /usr/share/rhosp-director-images/overcloud-full-latest-10.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-10.0.tar; do tar -xvf $i; done
 openstack overcloud image upload --image-path /home/stack/images/
 cd ~
+```
+
+## create contrail repo
+```
+sudo mkdir /var/www/html/contrail
+```
+
+## get contrail
+```
+curl -o ~/contrail-install-packages_3.2.0.0-21-newton.tgz http://10.84.5.120/github-build/R3.2/LATEST/redhat70/newton/contrail-install-packages_3.2.1.0-21-newton.tgz
+sudo tar zxvf ~/contrail-install-packages_3.2.0.0-21-newton.tgz -C /var/www/html/contrail/
 ```
 
 ## Ironic Node definiton
