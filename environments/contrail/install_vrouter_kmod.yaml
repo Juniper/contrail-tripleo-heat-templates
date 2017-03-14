@@ -12,6 +12,10 @@ parameters:
     default: 'eth0'
     description: vRouter physical interface
     type: string
+  VlanParentInterface:
+    default: ''
+    description: Parent interface of vlan interface
+    type: string
 
 description: >
   This is an example showing how you can do firstboot configuration
@@ -86,6 +90,10 @@ resources:
               cd /tmp
               rpm2cpio /tmp/contrail-vrouter*.rpm | cpio -idmv
               cp `find /tmp/lib/modules -name vrouter.ko |tail -1` /tmp
+              if [ $vlan_parent ]; then
+                  vlanId=`echo $phy_int | awk -F"vlan" '{print $2}'`
+                  ip link add name $phy_int link $vlan_parent type vlan id $vlanId
+              fi
               insert_vrouter
               if [[ `ifconfig $phy_int |grep "inet "` ]]; then
                 def_gw=''
@@ -103,6 +111,7 @@ resources:
             fi
           params:
             $phy_int: {get_param: VrouterPhysicalInterface}
+            $vlan_parent: {get_param: VlanParentInterface}
             $contrail_repo: {get_param: ContrailRepo}
 
 outputs:
