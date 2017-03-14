@@ -24,3 +24,4 @@ parameter_defaults:
   VrouterNetmask: 255.255.255.0
   ControlVirtualInterface: eth0
   PublicVirtualInterface: vlan10
+# VlanParentInterface: eth1 # If VrouterPhysicalInterface is a vlan interface using vlanX notation
