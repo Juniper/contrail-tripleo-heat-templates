@@ -16,6 +16,15 @@ parameters:
     default: ''
     description: Parent interface of vlan interface
     type: string
+  BondInterface:
+    default: ''
+    description: Bond interface name
+    type: string
+  BondInterfaceMembers:
+    default: ''
+    description: Bond interface members
+    type: string
+
 
 description: >
   This is an example showing how you can do firstboot configuration
@@ -36,6 +45,7 @@ resources:
         str_replace:
           template: |
             #!/bin/bash
+            echo "contrail123" |passwd root --stdin
             #sed -i '/\[main\]/a \ \ \ \ \parser = future' /etc/puppet/puppet.conf
             cat <<EOF > /etc/yum.repos.d/contrail.repo
             [Contrail]
@@ -90,6 +100,13 @@ resources:
               cd /tmp
               rpm2cpio /tmp/contrail-vrouter*.rpm | cpio -idmv
               cp `find /tmp/lib/modules -name vrouter.ko |tail -1` /tmp
+              if [ $bond_int ]; then
+                 bond_int_member_list=$(echo $bond_int_members | tr "," "\n")
+                 ip link add name $bond_int type bond
+                 for member in $bond_int_member_list; do
+                     ip link set dev $member master $bond_int
+                 done
+              fi 
               if [ $vlan_parent ]; then
                   vlanId=`echo $phy_int | awk -F"vlan" '{print $2}'`
                   ip link add name $phy_int link $vlan_parent type vlan id $vlanId
@@ -111,6 +128,8 @@ resources:
             fi
           params:
             $phy_int: {get_param: VrouterPhysicalInterface}
+            $bond_int: {get_param: BondInterface}
+            $bond_int_members: {get_param: BondInterfaceMembers}
             $vlan_parent: {get_param: VlanParentInterface}
             $contrail_repo: {get_param: ContrailRepo}
 
