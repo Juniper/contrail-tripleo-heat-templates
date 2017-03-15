@@ -42,7 +42,15 @@ N/A
 ## 3.3 User workflow impact
 Follow the Director installation manual on    
 https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/10/html/director_installation_and_usage/    
-up to chapter 5.5. (CUSTOMIZING THE OVERCLOUD)    
+up to chapter 5.5. (CUSTOMIZING THE OVERCLOUD) and continue with:
+
+### node profiling
+```
+for i in contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn; do
+  openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
+  openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="${i}" ${i}
+done
+```
 
 ### get puppet modules
 ```
