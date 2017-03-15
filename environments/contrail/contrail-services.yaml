@@ -41,7 +41,7 @@ parameter_defaults:
   ContrailControllerCount: 1
   ContrailAnalyticsCount: 1
   ContrailAnalyticsDatabaseCount: 1
-  ContrailTsnCount: 1
+  ContrailTsnCount: 0
   ComputeCount: 1
   DnsServers: ["8.8.8.8","8.8.4.4"]
   NtpServer: 10.0.0.1

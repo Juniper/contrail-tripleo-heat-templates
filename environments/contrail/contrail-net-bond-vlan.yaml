@@ -1,9 +1,9 @@
 resource_registry:
-  OS::TripleO::Compute::Net::SoftwareConfig: contrail-nic-config-compute.yaml
-  OS::TripleO::Controller::Net::SoftwareConfig: contrail-nic-config.yaml
-  OS::TripleO::ContrailController::Net::SoftwareConfig: contrail-nic-config.yaml
-  OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: contrail-nic-config.yaml
-  OS::TripleO::ContrailAnalyticsDatabase::Net::SoftwareConfig: contrail-nic-config.yaml
+  OS::TripleO::Compute::Net::SoftwareConfig: contrail-nic-config-compute-bond-vlan.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: contrail-nic-config-vlan.yaml
+  OS::TripleO::ContrailController::Net::SoftwareConfig: contrail-nic-config-vlan.yaml
+  OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: contrail-nic-config-vlan.yaml
+  OS::TripleO::ContrailAnalyticsDatabase::Net::SoftwareConfig: contrail-nic-config-vlan.yaml
   OS::TripleO::ContrailTsn::Net::SoftwareConfig: contrail-nic-config-compute.yaml
 
 parameter_defaults:
@@ -19,9 +19,12 @@ parameter_defaults:
   ExternalAllocationPools: [{'start': '10.2.0.10', 'end': '10.2.0.200'}]
   EC2MetadataIp: 192.0.2.1  # Generally the IP of the Undercloud
   DnsServers: ["8.8.8.8","8.8.4.4"]
-  VrouterPhysicalInterface: eth1
+  VrouterPhysicalInterface: vlan100
   VrouterGateway: 10.0.0.1
   VrouterNetmask: 255.255.255.0
   ControlVirtualInterface: eth0
   PublicVirtualInterface: vlan10
-# VlanParentInterface: eth1 # If VrouterPhysicalInterface is a vlan interface using vlanX notation
+  VlanParentInterface: bond0
+  BondInterface: bond0
+  BondInterfaceMembers: 'eth1,eth2'
+  InternalApiNetworkVlanID: 100
