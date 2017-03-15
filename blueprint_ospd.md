@@ -1,5 +1,5 @@
 
-#1. Introduction
+# Introduction    
 RedHat OpenStack Platform (OSP) provides an installer called Director (OSPD).    
 OSPD is based on the OpenStack project TripleO (OOO - OpenStack on OpenStack).   
 TripleO has the concept of undercloud and overcloud. The undercloud is an    
@@ -7,16 +7,16 @@ OpenStack installation which manages the deployment and lifecycle of the overclo
 The overcloud is the actual OpenStack installation hosting the user workloads.    
 This document explains how Contrail installation is integrated into Director.    
 
-2. Problem statement
+2. Problem statement    
 OSPD uses a combination of heat templates and puppet modules in order to deploy    
 the overcloud. In order to integrate the Contrail deployment, Contrail based    
 heat templates and puppet modules must be created.    
 
-3. Proposed solution
+3. Proposed solution    
 For integrating Contrail three new roles are defined:    
-1. Contrail Controller    
-2. Contrail Analytics    
-3. Contrail Analytics Database    
+## Contrail Controller    
+## Contrail Analytics    
+## Contrail Analytics Database    
 
 Each role owns several services:    
 - Contrail Controller:    
