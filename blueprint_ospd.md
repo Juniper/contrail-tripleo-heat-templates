@@ -1,5 +1,5 @@
 
-# Introduction    
+# 1.Introduction    
 RedHat OpenStack Platform (OSP) provides an installer called Director (OSPD).    
 OSPD is based on the OpenStack project TripleO (OOO - OpenStack on OpenStack).   
 TripleO has the concept of undercloud and overcloud. The undercloud is an    
