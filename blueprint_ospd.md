@@ -44,11 +44,11 @@ Follow the Director installation manual on
 https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/10/html/director_installation_and_usage/    
 up to chapter 5.5. (CUSTOMIZING THE OVERCLOUD) and continue with:
 
-### node profiling
+### create flavors
 ```
 for i in contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn; do
   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
-  openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="${i}" ${i}
+  openstack flavor set --property "capabilities:boot_option"="local" ${i}
 done
 ```
 
@@ -112,8 +112,7 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
-  -e tripleo-heat-templates/environments/contrail/contrail-net-single.yaml \
-  --libvirt-type qemu
+  -e tripleo-heat-templates/environments/contrail/contrail-net-single.yaml
 ```
 
 #### multi-nic
@@ -127,8 +126,7 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   -e tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml \
   -e tripleo-heat-templates/environments/network-management.yaml \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
-  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml \
-  --libvirt-type qemu
+  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml
 ```
 
 #### multi-nic with bond and vlan
@@ -142,8 +140,7 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   -e tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml \
   -e tripleo-heat-templates/environments/network-management.yaml \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
-  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml \
-  --libvirt-type qemu
+  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml
 ```
 
 
@@ -178,8 +175,8 @@ N/A
 ## 9.2 Dev tests    
 ## 9.3 System tests    
 
-#10. Documentation Impact
+# 10. Documentation Impact    
 
-#11. References
+# 11. References    
 https://access.redhat.com/documentation/en/red-hat-openstack-platform/    
-https://docs.openstack.org/developer/tripleo-docs/index.html
+https://docs.openstack.org/developer/tripleo-docs/index.html    
