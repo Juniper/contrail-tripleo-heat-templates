@@ -7,16 +7,16 @@ OpenStack installation which manages the deployment and lifecycle of the overclo
 The overcloud is the actual OpenStack installation hosting the user workloads.    
 This document explains how Contrail installation is integrated into Director.    
 
-# Problem statement    
+# 2. Problem statement    
 OSPD uses a combination of heat templates and puppet modules in order to deploy    
 the overcloud. In order to integrate the Contrail deployment, Contrail based    
 heat templates and puppet modules must be created.    
 
-# Proposed solution    
+# 3. Proposed solution    
 For integrating Contrail three new roles are defined:    
-### Contrail Controller    
-### Contrail Analytics    
-### Contrail Analytics Database    
+#### Contrail Controller    
+#### Contrail Analytics    
+#### Contrail Analytics Database    
 
 Each role owns several services:    
 - Contrail Controller:    
@@ -33,13 +33,13 @@ Each role owns several services:
 -- Contrail Analytics Database    
 -- Kafka
 
-## Alternatives considered
+## 3.1 Alternatives considered
 N/A    
 
-## API schema changes
+## 3.2 API schema changes
 N/A    
 
-## User workflow impact
+## 3.3 User workflow impact
 Follow the Director installation manual on    
 https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/10/html/director_installation_and_usage/    
 up to chapter 5.5. (CUSTOMIZING THE OVERCLOUD)    
@@ -90,14 +90,14 @@ vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config-compute-si
 vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config-single.yaml
 ```
 
-### static ip assignment
+#### static ip assignment
 ```
 vi ~/tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml
 ```
 
-## Overcloud installation
+### Overcloud installation
 
-## single-nic
+#### single-nic
 ```
 openstack overcloud deploy --templates tripleo-heat-templates/ \
   --roles-file tripleo-heat-templates/environments/contrail/roles_data.yaml \
@@ -108,7 +108,7 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   --libvirt-type qemu
 ```
 
-### multi-nic
+#### multi-nic
 ```
 openstack overcloud deploy --templates tripleo-heat-templates/ \
   --roles-file tripleo-heat-templates/environments/contrail/roles_data.yaml \
@@ -123,7 +123,7 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   --libvirt-type qemu
 ```
 
-### multi-nic with bond and vlan
+#### multi-nic with bond and vlan
 ```
 openstack overcloud deploy --templates tripleo-heat-templates/ \
   --roles-file tripleo-heat-templates/environments/contrail/roles_data.yaml \
@@ -139,38 +139,36 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
 ```
 
 
-##3.4 UI changes
+## 3.4 UI changes    
 N/A    
 
-##3.5 Notification impact
+## 3.5 Notification impact    
 N/A    
 
-
-#4. Implementation
-##4.1 Work items
-####Describe changes needed for different components such as Controller, Analytics, Agent, UI. 
-####Add subsections as needed.
-
-#5. Performance and scaling impact
-##5.1 API and control plane
+# 4. Implementation    
+## 4.1 Work items    
 N/A    
 
-##5.2 Forwarding performance
+# 5. Performance and scaling impact    
+## 5.1 API and control plane    
 N/A    
 
-#6. Upgrade
+## 5.2 Forwarding performance    
 N/A    
 
-#7. Deprecations
+# 6. Upgrade    
 N/A    
 
-#8. Dependencies
-####Describe dependent features or components.
+# 7. Deprecations    
+N/A    
 
-#9. Testing
-##9.1 Unit tests
-##9.2 Dev tests
-##9.3 System tests
+# 8. Dependencies    
+N/A    
+
+# 9. Testing    
+## 9.1 Unit tests    
+## 9.2 Dev tests    
+## 9.3 System tests    
 
 #10. Documentation Impact
 
