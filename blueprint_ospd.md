@@ -7,39 +7,39 @@ OpenStack installation which manages the deployment and lifecycle of the overclo
 The overcloud is the actual OpenStack installation hosting the user workloads.    
 This document explains how Contrail installation is integrated into Director.    
 
-2. Problem statement    
+# Problem statement    
 OSPD uses a combination of heat templates and puppet modules in order to deploy    
 the overcloud. In order to integrate the Contrail deployment, Contrail based    
 heat templates and puppet modules must be created.    
 
-3. Proposed solution    
+# Proposed solution    
 For integrating Contrail three new roles are defined:    
-## Contrail Controller    
-## Contrail Analytics    
-## Contrail Analytics Database    
+### Contrail Controller    
+### Contrail Analytics    
+### Contrail Analytics Database    
 
 Each role owns several services:    
 - Contrail Controller:    
--- Contrail API
--- Contrail Control
--- Contrail Configuration Database
--- Contrail WebUI
--- Zookeeper
+-- Contrail API    
+-- Contrail Control    
+-- Contrail Configuration Database    
+-- Contrail WebUI    
+-- Zookeeper    
 
-- Contrail Analytics:
--- Contrail Analytics
+- Contrail Analytics:    
+-- Contrail Analytics    
 
-- Contrail Analytics Database:
--- Contrail Analytics Database
+- Contrail Analytics Database:    
+-- Contrail Analytics Database    
 -- Kafka
 
-##3.1 Alternatives considered
+## Alternatives considered
 N/A    
 
-##3.2 API schema changes
+## API schema changes
 N/A    
 
-##3.3 User workflow impact
+## User workflow impact
 Follow the Director installation manual on    
 https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/10/html/director_installation_and_usage/    
 up to chapter 5.5. (CUSTOMIZING THE OVERCLOUD)    
