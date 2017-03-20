@@ -54,9 +54,12 @@ done
 
 ### get puppet modules
 ```
-mkdir -p ~/usr/share/openstack-puppet/modules
-git clone https://github.com/Juniper/contrail-tripleo-puppet -b stable/newton ~/usr/share/openstack-puppet/modules/tripleo
-git clone https://github.com/Juniper/puppet-contrail -b stable/newton ~/usr/share/openstack-puppet/modules/contrail
+cd /var/www/html/contrail
+yum localinstall contrail-tripleo-puppet-<version>.el7.noarch.rpm puppet-contrail-<version>.el7.noarch.rpm
+mkdir -p ~/usr/share/openstack-puppet/modules/contrail
+cp -R /usr/share/openstack-puppet/modules/contrail/* /usr/share/openstack-puppet/modules/contrail/
+mkdir -p ~/usr/share/openstack-puppet/modules/tripleo
+cp -R /usr/share/contrail-tripleo-puppet/* ~/usr/share/openstack-puppet/modules/tripleo
 tar czvf puppet-modules.tgz usr/
 ```
 
@@ -68,9 +71,10 @@ upload-swift-artifacts -f puppet-modules.tgz
 ### get tripleo-heat-templates
 ```
 cp -r /usr/share/openstack-tripleo-heat-templates/ ~/tripleo-heat-templates
-git clone https://github.com/Juniper/contrail-tripleo-heat-templates -b stable/newton
-cp -r contrail-tripleo-heat-templates/environments/contrail ~/tripleo-heat-templates/environments
-cp -r contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
+cd /var/www/html/contrail
+yum localinstall contrail-tripleo-heat-templates-<version>.el7.noarch.rpm
+cp -r /usr/share/contrail-tripleo-heat-templates/environments/contrail ~/tripleo-heat-templates/environments
+cp -r /usr/share/contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
 ```
 
 ### contrail services (repo url etc.)
