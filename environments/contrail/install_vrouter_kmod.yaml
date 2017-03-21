@@ -57,8 +57,15 @@ resources:
             EOF
             if [[ `hostname |awk -F"-" '{print $2}'` == "contrailcontroller" || `hostname |awk -F"-" '{print $2}'` == "contrailanalytics" || `hostname |awk -F"-" '{print $2}'` == "contrailanalyticsdatabase" ]]; then
               sed -i '/\[main\]/a \ \ \ \ \parser = future' /etc/puppet/puppet.conf
+              yum install -y contrail-tripleo-puppet puppet-contrail
+              rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
+            fi
+            if [[ `hostname |awk -F"-" '{print $2}'` == "contrailanalytics" ]]; then
+              yum remove -y python-redis
             fi
             if [[ `hostname |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then 
+              yum install -y contrail-tripleo-puppet puppet-contrail
+              rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
               yum install -y contrail-vrouter-utils
               function pkt_setup () {
                   for f in /sys/class/net/$1/queues/rx-*
