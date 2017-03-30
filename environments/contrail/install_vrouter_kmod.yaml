@@ -1,4 +1,4 @@
-heat_template_version: 2014-10-16
+heat_template_version: newton
 
 # NOTE: You don't need to pass the parameter explicitly from the
 # parent template, it can be specified via the parameter_defaults
@@ -24,7 +24,10 @@ parameters:
     default: ''
     description: Bond interface members
     type: string
-
+  HostnameMap:
+    default: {}
+    description: Mapping of custom hostnames
+    type: json
 
 description: >
   This is an example showing how you can do firstboot configuration
@@ -46,7 +49,6 @@ resources:
           template: |
             #!/bin/bash
             echo "contrail123" |passwd root --stdin
-            #sed -i '/\[main\]/a \ \ \ \ \parser = future' /etc/puppet/puppet.conf
             cat <<EOF > /etc/yum.repos.d/contrail.repo
             [Contrail]
             name=Contrail Repo
@@ -54,11 +56,29 @@ resources:
             enabled=1
             gpgcheck=0
             protect=1
+            metadata_expire=30
             EOF
-            if [[ `hostname |awk -F"-" '{print $2}'` == "contrailcontroller" || `hostname |awk -F"-" '{print $2}'` == "contrailanalytics" || `hostname |awk -F"-" '{print $2}'` == "contrailanalyticsdatabase" ]]; then
+            yum install -y contrail-tripleo-puppet puppet-contrail
+            rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
+            echo $hostname_map > /tmp/hostnamemap
+            hname_list=(`cat /tmp/hostnamemap |tr -d ' '|tr -d '{'| tr -d '}' |tr ',' ' '`)
+            for rolename in "${hname_list[@]}"
+            do
+              if [[ `echo $rolename|awk -F":" '{print $2}'` == `hostname -s` ]];then
+                role=`echo $rolename|awk -F":" '{print $1}'`  
+              fi
+            done
+            if [[ -z $role ]]; then
+                role=`hostname`
+            fi
+            echo $role > /tmp/rolename
+            if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailcontroller" || `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" || `echo $role |awk -F"-" '{print $2}'` == "contrailanalyticsdatabase" ]]; then
               sed -i '/\[main\]/a \ \ \ \ \parser = future' /etc/puppet/puppet.conf
             fi
-            if [[ `hostname |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then 
+            if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" ]]; then
+              yum remove -y python-redis
+            fi
+            if [[ `echo $role |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then 
               yum install -y contrail-vrouter-utils
               function pkt_setup () {
                   for f in /sys/class/net/$1/queues/rx-*
@@ -132,6 +152,10 @@ resources:
             $bond_int_members: {get_param: BondInterfaceMembers}
             $vlan_parent: {get_param: VlanParentInterface}
             $contrail_repo: {get_param: ContrailRepo}
+            $hostname_map: {get_param: HostnameMap}
+            #  list_join:
+            #  - ','
+            #  - - {get_param: [ContrailRoleMap,'overcloud-novacompute']}
 
 outputs:
   # This means get_resource from the parent template will get the userdata, see:
