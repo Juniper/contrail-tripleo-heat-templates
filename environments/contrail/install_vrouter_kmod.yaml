@@ -81,6 +81,10 @@ resources:
             if [[ `echo $role |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
               curl -o /contrail-tripleo-puppet.tgz $contrail_repo/contrail-tripleo-puppet.tgz
               cd / && tar zxvf /contrail-tripleo-puppet.tgz
+              echo "vm.nr_hugepages = 6448" >> /etc/sysctl.conf
+              echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
+              echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
+              /sbin/sysctl --system
               yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
               depmod -a
               weak-modules --add-kernel
