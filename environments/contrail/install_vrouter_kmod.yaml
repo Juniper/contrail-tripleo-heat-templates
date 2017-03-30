@@ -79,6 +79,8 @@ resources:
               yum remove -y python-redis
             fi
             if [[ `echo $role |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
+              curl -o /contrail-tripleo-puppet.tgz $contrail_repo/contrail-tripleo-puppet.tgz
+              cd / && tar zxvf /contrail-tripleo-puppet.tgz
               yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
               depmod -a
               weak-modules --add-kernel
@@ -105,11 +107,9 @@ resources:
               LOG=/var/log/contrail.log
               CONFIG=/etc/contrail/contrail-vrouter-agent.conf
               prog=/usr/bin/contrail-vrouter-agent
-              #kmod=vrouter
               pname=contrail-vrouter-agent
               LIBDIR=/usr/lib64
               DEVICE=vhost0
-              #dev=bond0
               dev=$phy_int
               vgw_subnet_ip=__VGW_SUBNET_IP__
               vgw_intf=__VGW_INTF_LIST__
