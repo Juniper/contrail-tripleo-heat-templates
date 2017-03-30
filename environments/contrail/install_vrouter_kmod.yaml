@@ -48,7 +48,6 @@ resources:
         str_replace:
           template: |
             #!/bin/bash
-            echo "contrail123" |passwd root --stdin
             cat <<EOF > /etc/yum.repos.d/contrail.repo
             [Contrail]
             name=Contrail Repo
