@@ -78,19 +78,26 @@ resources:
             if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" ]]; then
               yum remove -y python-redis
             fi
-            if [[ `echo $role |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
-              curl -o /contrail-tripleo-puppet.tgz $contrail_repo/contrail-tripleo-puppet.tgz
-              cd / && tar zxvf /contrail-tripleo-puppet.tgz
-              echo "vm.nr_hugepages = 6448" >> /etc/sysctl.conf
+            echo a >> /tmp/debug.log
+            if [[ `cat /tmp/rolename |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
+              echo b >> /tmp/debug.log
+              echo "vm.nr_hugepages = 64480" >> /etc/sysctl.conf
               echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
               echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
+              echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
+              echo "net.ipv4.tcp_keepalive_probes = 5" >> /etc/sysctl.conf
+              echo "net.ipv4.tcp_keepalive_intvl = 1" >> /etc/sysctl.conf
               /sbin/sysctl --system
-              yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
-              depmod -a
-              weak-modules --add-kernel
+              curl -o /contrail-tripleo-puppet.tgz $contrail_repo/contrail-tripleo-puppet.tgz
+              cd / && tar zxvf /contrail-tripleo-puppet.tgz
               modprobe uio
-              modprobe rte_kni
-              modprobe igb_uio
+              yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
+              mkdir -p /lib/module/`uname -r`/weak-updates
+              cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/module/`uname -r`/weak-updates
+              cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/module/`uname -r`/weak-updates
+              depmod -a
+              insmod /lib/module/`uname -r`/weak-updates/rte_kni.ko
+              insmod /lib/module/`uname -r`/weak-updates/igb_uio.ko
               pci_address=`ethtool -i $phy_int |grep bus-info| awk '{print $2}' |tr -d ' '`
               if [ $vlan_parent ]; then
                  pci_address=`ethtool -i $vlan_parent |grep bus-info| awk '{print $2}' |tr -d ' '`
@@ -108,28 +115,30 @@ resources:
                   ip link add name $phy_int link $vlan_parent type vlan id $vlanId
               fi
               cat <<EOF > /etc/contrail/agent_param
-              LOG=/var/log/contrail.log
-              CONFIG=/etc/contrail/contrail-vrouter-agent.conf
-              prog=/usr/bin/contrail-vrouter-agent
-              pname=contrail-vrouter-agent
-              LIBDIR=/usr/lib64
-              DEVICE=vhost0
-              dev=$phy_int
-              vgw_subnet_ip=__VGW_SUBNET_IP__
-              vgw_intf=__VGW_INTF_LIST__
-              LOGFILE=--log-file=/var/log/contrail/vrouter.log
-              EOF
+            LOG=/var/log/contrail.log
+            CONFIG=/etc/contrail/contrail-vrouter-agent.conf
+            prog=/usr/bin/contrail-vrouter-agent
+            #kmod=vrouter
+            pname=contrail-vrouter-agent
+            LIBDIR=/usr/lib64
+            DEVICE=vhost0
+            #dev=bond0
+            dev=$phy_int
+            vgw_subnet_ip=__VGW_SUBNET_IP__
+            vgw_intf=__VGW_INTF_LIST__
+            LOGFILE=--log-file=/var/log/contrail/vrouter.log
+            EOF
               mac=`ip link sh dev $phy_int | grep link/ether|awk '{print $2}' | tr -d ' '`
               cat <<EOF > /etc/contrail/contrail-vrouter-agent.conf
-              [DEFAULT]
-              platform=dpdk
-              physical_interface_address=$pci_address
-              physical_interface_mac=$mac
-              physical_uio_driver=uio_pci_generic
-              [VIRTUAL-HOST-INTERFACE]
-              physical_interface=$phy_int
-              name=vhost0
-              EOF
+            [DEFAULT]
+            platform=dpdk
+            physical_interface_address=$pci_address
+            physical_interface_mac=$mac
+            physical_uio_driver=uio_pci_generic
+            [VIRTUAL-HOST-INTERFACE]
+            physical_interface=$phy_int
+            name=vhost0
+            EOF
               /opt/contrail/bin/vnagent_ExecStartPre.sh
               if [[ `ifconfig $phy_int |grep "inet "` ]]; then
                 def_gw=''
