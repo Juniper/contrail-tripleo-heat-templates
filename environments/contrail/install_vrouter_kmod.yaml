@@ -78,7 +78,6 @@ resources:
             if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" ]]; then
               yum remove -y python-redis
             fi
-<<<<<<< HEAD
             echo a >> /tmp/debug.log
             if [[ `cat /tmp/rolename |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
               echo b >> /tmp/debug.log
@@ -92,18 +91,13 @@ resources:
               curl -o /contrail-tripleo-puppet.tgz $contrail_repo/contrail-tripleo-puppet.tgz
               cd / && tar zxvf /contrail-tripleo-puppet.tgz
               modprobe uio
-=======
-            if [[ `echo $role |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
-              curl -o /contrail-tripleo-puppet.tgz $contrail_repo/contrail-tripleo-puppet.tgz
-              cd / && tar zxvf /contrail-tripleo-puppet.tgz
->>>>>>> f94279a5843a1874b5b5ef3b424c35150998c9e8
               yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
               mkdir -p /lib/modules/`uname -r`/weak-updates
               cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates
               cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates
               depmod -a
-              insmod /lib/module/`uname -r`/weak-updates/rte_kni.ko
-              insmod /lib/module/`uname -r`/weak-updates/igb_uio.ko
+              insmod /lib/modules/`uname -r`/weak-updates/rte_kni.ko
+              insmod /lib/modules/`uname -r`/weak-updates/igb_uio.ko
               pci_address=`ethtool -i $phy_int |grep bus-info| awk '{print $2}' |tr -d ' '`
               if [ $vlan_parent ]; then
                  pci_address=`ethtool -i $vlan_parent |grep bus-info| awk '{print $2}' |tr -d ' '`
@@ -117,11 +111,12 @@ resources:
                  pci_address=0000:00:00.0
               fi
               if [ $vlan_parent ]; then
+                  echo $vlan_parent >> /tmp/vlan_parent
                   vlanId=`echo $phy_int | awk -F"vlan" '{print $2}'`
-                  ip link add name $phy_int link $vlan_parent type vlan id $vlanId
+                  ip link add name $phy_int link $vlan_parent type vlan id $vlanId >> /tmp/debug
+                  echo "ip link add name $phy_int link $vlan_parent type vlan id $vlanId" >> /tmp/debug
               fi
               cat <<EOF > /etc/contrail/agent_param
-<<<<<<< HEAD
             LOG=/var/log/contrail.log
             CONFIG=/etc/contrail/contrail-vrouter-agent.conf
             prog=/usr/bin/contrail-vrouter-agent
@@ -135,21 +130,6 @@ resources:
             vgw_intf=__VGW_INTF_LIST__
             LOGFILE=--log-file=/var/log/contrail/vrouter.log
             EOF
-=======
-              LOG=/var/log/contrail.log
-              CONFIG=/etc/contrail/contrail-vrouter-agent.conf
-              prog=/usr/bin/contrail-vrouter-agent
-              #kmod=vrouter
-              pname=contrail-vrouter-agent
-              LIBDIR=/usr/lib64
-              DEVICE=vhost0
-              #dev=bond0
-              dev=$phy_int
-              vgw_subnet_ip=__VGW_SUBNET_IP__
-              vgw_intf=__VGW_INTF_LIST__
-              LOGFILE=--log-file=/var/log/contrail/vrouter.log
-              EOF
->>>>>>> f94279a5843a1874b5b5ef3b424c35150998c9e8
               mac=`ip link sh dev $phy_int | grep link/ether|awk '{print $2}' | tr -d ' '`
               cat <<EOF > /etc/contrail/contrail-vrouter-agent.conf
             [DEFAULT]
