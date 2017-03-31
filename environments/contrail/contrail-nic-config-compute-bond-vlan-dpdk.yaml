@@ -94,7 +94,7 @@ resources:
           network_config:
             -
               type: interface
-              name: nic1
+              name: eth0
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
               addresses:
@@ -142,7 +142,7 @@ resources:
               members:
                 -
                   type: interface
-                  name: nic4
+                  name: eth1
                   # force the MAC address of the bridge to this interface
                   #                   primary: true              
                   #                   
