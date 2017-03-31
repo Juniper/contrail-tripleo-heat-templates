@@ -92,9 +92,9 @@ resources:
               cd / && tar zxvf /contrail-tripleo-puppet.tgz
               modprobe uio
               yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
-              mkdir -p /lib/module/`uname -r`/weak-updates
-              cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/module/`uname -r`/weak-updates
-              cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/module/`uname -r`/weak-updates
+              mkdir -p /lib/modules/`uname -r`/weak-updates
+              cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates
+              cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates
               depmod -a
               insmod /lib/module/`uname -r`/weak-updates/rte_kni.ko
               insmod /lib/module/`uname -r`/weak-updates/igb_uio.ko
