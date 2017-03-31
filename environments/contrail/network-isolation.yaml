@@ -87,3 +87,10 @@ resource_registry:
   OS::TripleO::ContrailTsn::Ports::StorageMgmtPort: ../../network/ports/storage_mgmt.yaml
   OS::TripleO::ContrailTsn::Ports::TenantPort: ../../network/ports/tenant.yaml
   OS::TripleO::ContrailTsn::Ports::ManagementPort: ../../network/ports/management.yaml
+
+  OS::TripleO::ContrailDpdk::Ports::ExternalPort: ../../network/ports/external.yaml
+  OS::TripleO::ContrailDpdk::Ports::InternalApiPort: ../../network/ports/internal_api.yaml
+  OS::TripleO::ContrailDpdk::Ports::StoragePort: ../../network/ports/storage.yaml
+  OS::TripleO::ContrailDpdk::Ports::StorageMgmtPort: ../../network/ports/storage_mgmt.yaml
+  OS::TripleO::ContrailDpdk::Ports::TenantPort: ../../network/ports/tenant.yaml
+  OS::TripleO::ContrailDpdk::Ports::ManagementPort: ../../network/ports/management.yaml

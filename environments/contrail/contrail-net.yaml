@@ -1,5 +1,6 @@
 resource_registry:
   OS::TripleO::Compute::Net::SoftwareConfig: contrail-nic-config-compute.yaml
+  OS::TripleO::ContrailDpdk::Net::SoftwareConfig: contrail-nic-config-compute.yaml
   OS::TripleO::Controller::Net::SoftwareConfig: contrail-nic-config.yaml
   OS::TripleO::ContrailController::Net::SoftwareConfig: contrail-nic-config.yaml
   OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: contrail-nic-config.yaml
