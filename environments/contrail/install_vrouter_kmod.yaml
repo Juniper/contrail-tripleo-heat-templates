@@ -79,7 +79,7 @@ resources:
               yum remove -y python-redis
             fi
             if [[ `cat /tmp/rolename |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
-              echo "vm.nr_hugepages = 64480" >> /etc/sysctl.conf
+              echo "vm.nr_hugepages = 1024" >> /etc/sysctl.conf
               echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
               echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
               echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
