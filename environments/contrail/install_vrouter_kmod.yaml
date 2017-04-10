@@ -78,9 +78,7 @@ resources:
             if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" ]]; then
               yum remove -y python-redis
             fi
-            echo a >> /tmp/debug.log
             if [[ `cat /tmp/rolename |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
-              echo b >> /tmp/debug.log
               echo "vm.nr_hugepages = 64480" >> /etc/sysctl.conf
               echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
               echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
@@ -120,11 +118,9 @@ resources:
             LOG=/var/log/contrail.log
             CONFIG=/etc/contrail/contrail-vrouter-agent.conf
             prog=/usr/bin/contrail-vrouter-agent
-            #kmod=vrouter
             pname=contrail-vrouter-agent
             LIBDIR=/usr/lib64
             DEVICE=vhost0
-            #dev=bond0
             dev=$phy_int
             vgw_subnet_ip=__VGW_SUBNET_IP__
             vgw_intf=__VGW_INTF_LIST__
@@ -142,6 +138,14 @@ resources:
             name=vhost0
             EOF
               /opt/contrail/bin/vnagent_ExecStartPre.sh
+              vrouter_dpdk_cmd=`cat /etc/contrail/supervisord_vrouter_files/contrail-vrouter-dpdk.ini |grep command |awk -F'command=' '{print $2}'`
+              echo $vrouter_dpdk_cmd >> /tmp/debug.log
+              $vrouter_dpdk_cmd &
+              #vif --add 0 --mac $mac --vrf 0 --vhost-phys --type physical --pmd --id 0
+              #vif --add vhost0 --mac $mac --vrf 0 --type vhost --xconnect 0 --pmd --id 1
+              source /opt/contrail/bin/vrouter-functions.sh
+              vrouter_dpdk_start &
+              ip link set vhost0 address $mac
               if [[ `ifconfig $phy_int |grep "inet "` ]]; then
                 def_gw=''
                 if [[ `ip route show |grep default|grep $phy_int` ]]; then
