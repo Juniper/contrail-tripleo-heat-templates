@@ -137,6 +137,8 @@ resources:
             physical_interface=$phy_int
             name=vhost0
             EOF
+              echo $pci_address > /etc/contrail/dpdk_pci
+              echo $mac > /etc/contrail/dpdk_mac
               /opt/contrail/bin/vnagent_ExecStartPre.sh
               vrouter_dpdk_cmd=`cat /etc/contrail/supervisord_vrouter_files/contrail-vrouter-dpdk.ini |grep command |awk -F'command=' '{print $2}'`
               echo $vrouter_dpdk_cmd >> /tmp/debug.log
@@ -145,6 +147,9 @@ resources:
               #vif --add vhost0 --mac $mac --vrf 0 --type vhost --xconnect 0 --pmd --id 1
               source /opt/contrail/bin/vrouter-functions.sh
               vrouter_dpdk_start &
+              sleep 20
+              os-net-config -c /etc/os-net-config/config.json
+              sleep 10
               ip link set vhost0 address $mac
               if [[ `ifconfig $phy_int |grep "inet "` ]]; then
                 def_gw=''
@@ -159,6 +164,7 @@ resources:
                   ip route add default via $def_gw
                 fi
               fi
+              ip link set vhost0 address $mac
             fi
             if [[ `echo $role |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then 
               yum install -y contrail-vrouter-utils

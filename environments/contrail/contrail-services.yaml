@@ -39,7 +39,7 @@ parameter_defaults:
   OvercloudContrailAnalyticsDatabaseFlavor: contrail-analytics-database
   OvercloudContrailTsnFlavor: contrail-tsn
   OvercloudComputeFlavor: compute
-  OvercloudContrailDpdkFlavor: compute
+  OvercloudContrailDpdkFlavor: compute-dpdk
   ControllerCount: 1
   ContrailControllerCount: 1
   ContrailAnalyticsCount: 1

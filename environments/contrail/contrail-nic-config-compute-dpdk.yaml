@@ -110,12 +110,9 @@ resources:
                   next_hop: {get_param: EC2MetadataIp}
             -
               type: interface
-              name: ens7
-              use_dhcp: false
-            -
-              type: interface
               name: vhost0
               use_dhcp: false
+              mac: 52:54:00:26:6f:54
               addresses:
                 -
                   ip_netmask: {get_param: InternalApiIpSubnet}
