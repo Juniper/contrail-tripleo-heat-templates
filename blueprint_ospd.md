@@ -52,27 +52,6 @@ for i in contrail-controller contrail-analytics contrail-database contrail-analy
 done
 ```
 
-### get puppet modules
-```
-mkdir -p ~/usr/share/openstack-puppet/modules
-git clone https://github.com/Juniper/contrail-tripleo-puppet -b stable/newton ~/usr/share/openstack-puppet/modules/tripleo
-git clone https://github.com/Juniper/puppet-contrail -b stable/newton ~/usr/share/openstack-puppet/modules/contrail
-tar czvf puppet-modules.tgz usr/
-```
-
-### upload puppet modules to swift
-```
-upload-swift-artifacts -f puppet-modules.tgz
-```
-
-### get tripleo-heat-templates
-```
-cp -r /usr/share/openstack-tripleo-heat-templates/ ~/tripleo-heat-templates
-git clone https://github.com/Juniper/contrail-tripleo-heat-templates -b stable/newton
-cp -r contrail-tripleo-heat-templates/environments/contrail ~/tripleo-heat-templates/environments
-cp -r contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
-```
-
 ### contrail services (repo url etc.)
 ```
 vi ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml
