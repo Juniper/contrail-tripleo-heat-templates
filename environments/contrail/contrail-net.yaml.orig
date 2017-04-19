@@ -9,13 +9,9 @@ resource_registry:
 parameter_defaults:
   ControlPlaneSubnetCidr: '24'
   ControlPlaneDefaultRoute: 192.0.2.254
-  InternalApiNetCidr: 10.3.0.0/24
-  InternalApiAllocationPools: [{'start': '10.3.0.10', 'end': '10.3.0.200'}]
-  InternalApiDefaultRoute: 10.3.0.1
-  TenantNetCidr: 10.0.0.0/24
-  TenantAllocationPools: [{'start': '10.0.0.10', 'end': '10.0.0.200'}]
-  TenantDefaultRoute: 10.0.0.1
-  TenantVirtualIP: 10.0.0.10
+  InternalApiNetCidr: 10.0.0.0/24
+  InternalApiAllocationPools: [{'start': '10.0.0.10', 'end': '10.0.0.200'}]
+  InternalApiDefaultRoute: 10.0.0.1
   ManagementNetCidr: 10.1.0.0/24
   ManagementAllocationPools: [{'start': '10.1.0.10', 'end': '10.1.0.200'}]
   ManagementInterfaceDefaultRoute: 10.1.0.1
@@ -28,3 +24,4 @@ parameter_defaults:
   VrouterNetmask: 255.255.255.0
   ControlVirtualInterface: eth0
   PublicVirtualInterface: vlan10
+# VlanParentInterface: eth1 # If VrouterPhysicalInterface is a vlan interface using vlanX notation

@@ -17,9 +17,11 @@ resource_registry:
   OS::TripleO::Network::Ports::StorageVipPort: ../../network/ports/storage.yaml
   OS::TripleO::Network::Ports::StorageMgmtVipPort: ../../network/ports/storage_mgmt.yaml
   OS::TripleO::Network::Ports::RedisVipPort: ../../network/ports/vip.yaml
+  OS::TripleO::Network::Ports::TenantVipPort: ../../network/ports/tenant.yaml
 
   # Port assignments for service virtual IPs for the controller role
   OS::TripleO::Controller::Ports::RedisVipPort: ../../network/ports/vip.yaml
+  OS::TripleO::Controller::Ports::TenantVipPort: ../../network/ports/tenant.yaml
   # Port assignments for the controller role
   OS::TripleO::Controller::Ports::ExternalPort: ../../network/ports/external.yaml
   OS::TripleO::Controller::Ports::InternalApiPort: ../../network/ports/internal_api.yaml
