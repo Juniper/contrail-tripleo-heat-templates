@@ -219,9 +219,11 @@ sudo mkdir /var/www/html/contrail
 
 ## get contrail
 ```
-curl -o ~/contrail-install-packages_3.2.0.0-21-newton.tgz http://10.84.5.120/github-build/R3.2/LATEST/redhat70/newton/contrail-install-packages_3.2.1.0-21-newton.tgz
-sudo tar zxvf ~/contrail-install-packages_3.2.0.0-21-newton.tgz -C /var/www/html/contrail/
+curl -o ~/contrail-install-packages_3.2.2.0-31-newton.tgz \    
+http://10.84.5.120/github-build/R3.2/31/redhat70/newton/contrail-install-packages_3.2.2.0-31-newton.tgz
+sudo tar zxvf ~/contrail-install-packages_3.2.2.0-31-newton.tgz -C /var/www/html/contrail/
 ```
+## get contrail dpdk rpms and add them to the repo
 
 ## Ironic Node definiton
 
@@ -276,8 +278,8 @@ done
 ## get puppet modules
 ```
 mkdir -p ~/usr/share/openstack-puppet/modules
-git clone https://github.com/Juniper/contrail-tripleo-puppet -b stable/newton ~/usr/share/openstack-puppet/modules/tripleo
-git clone https://github.com/Juniper/puppet-contrail -b stable/newton ~/usr/share/openstack-puppet/modules/contrail
+git clone https://github.com/Juniper/contrail-tripleo-puppet -b dpdk2 ~/usr/share/openstack-puppet/modules/tripleo
+git clone https://github.com/Juniper/puppet-contrail -b dpdk2 ~/usr/share/openstack-puppet/modules/contrail
 tar czvf puppet-modules.tgz usr/
 ```
 
@@ -289,7 +291,7 @@ upload-swift-artifacts -f puppet-modules.tgz
 ## get tripleo-heat-templates
 ```
 cp -r /usr/share/openstack-tripleo-heat-templates/ ~/tripleo-heat-templates
-git clone https://github.com/Juniper/contrail-tripleo-heat-templates -b stable/newton
+git clone https://github.com/Juniper/contrail-tripleo-heat-templates -b dpdk2
 cp -r contrail-tripleo-heat-templates/environments/contrail ~/tripleo-heat-templates/environments
 cp -r contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
 ```
@@ -302,15 +304,9 @@ vi ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ## overcloud networking
 ### multi-nic
 ```
-vi ~/tripleo-heat-templates/environments/contrail/contrail-net.yaml
-vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config-compute.yaml
+vi ~/tripleo-heat-templates/environments/contrail/contrail-net-dpdk.yaml
+vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config-compute-bond-vlan-dpdk.yaml
 vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config.yaml
-```
-### single-nic
-```
-vi ~/tripleo-heat-templates/environments/contrail/contrail-net-single.yaml
-vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config-compute-single.yaml
-vi ~/tripleo-heat-templates/environments/contrail/contrail-nic-config-single.yaml
 ```
 
 ## static ip assignment
@@ -330,17 +326,6 @@ neutron subnet-update <SUBNET-UUID> --dns-namserver NAMESERVER_IP
 
 # start overcloud installation
 
-## single-nic
-```
-openstack overcloud deploy --templates tripleo-heat-templates/ \
-  --roles-file tripleo-heat-templates/environments/contrail/roles_data.yaml \
-  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
-  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml \
-  -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
-  -e tripleo-heat-templates/environments/contrail/contrail-net-single.yaml \
-  --libvirt-type qemu
-```
-
 ## multi-nic
 ```
 openstack overcloud deploy --templates tripleo-heat-templates/ \
@@ -348,10 +333,9 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   -e tripleo-heat-templates/environments/puppet-pacemaker.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
   -e tripleo-heat-templates/environments/contrail/network-isolation.yaml \
-  -e tripleo-heat-templates/environments/contrail/contrail-net.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-net-dpdk.yaml \
   -e tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml \
   -e tripleo-heat-templates/environments/network-management.yaml \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
-  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml \
-  --libvirt-type qemu
+  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml
 ```
