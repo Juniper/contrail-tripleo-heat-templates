@@ -15,20 +15,21 @@ resource_registry:
   OS::TripleO::Services::ContrailDatabase: ../../puppet/services/network/contrail-database.yaml
   OS::TripleO::Services::ContrailWebUI: ../../puppet/services/network/contrail-webui.yaml
   OS::TripleO::Services::ContrailTsn: ../../puppet/services/network/contrail-tsn.yaml
+  OS::TripleO::Services::ContrailDpdk: ../../puppet/services/network/contrail-dpdk.yaml
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../puppet/services/network/contrail-vrouter.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../puppet/services/network/contrail-neutron-plugin.yaml
 parameter_defaults:
   ServiceNetMap:
-     ContrailAnalyticsNetwork: tenant
-     ContrailAnalyticsDatabaseNetwork: tenant
-     ContrailConfigNetwork: tenant
-     ContrailControlNetwork: tenant
-     ContrailDatabaseNetwork: tenant
-     ContrailWebuiNetwork: tenant
-     ContrailTsnNetwork: tenant
-     ContrailVrouterNetwork: tenant
-     ContrailDpdkNetwork: tenant
-  ContrailRepo: http://192.0.2.1/contrail-3.2.0.0-19
+    ContrailAnalyticsNetwork: storage_mgmt
+    ContrailAnalyticsDatabaseNetwork: storage_mgmt
+    ContrailConfigNetwork: storage_mgmt
+    ContrailControlNetwork: storage_mgmt
+    ContrailDatabaseNetwork: storage_mgmt
+    ContrailWebuiNetwork: storage_mgmt
+    ContrailTsnNetwork: storage_mgmt
+    ContrailVrouterNetwork: storage_mgmt
+    ContrailDpdkNetwork: storage_mgmt
+  ContrailRepo: http://192.0.2.1/contrail
   EnablePackageInstall: true
   ContrailConfigIfmapUserName: api-server
   ContrailConfigIfmapUserPassword: api-server
@@ -38,18 +39,21 @@ parameter_defaults:
   OvercloudContrailAnalyticsDatabaseFlavor: contrail-analytics-database
   OvercloudContrailTsnFlavor: contrail-tsn
   OvercloudComputeFlavor: compute
+  OvercloudContrailDpdkFlavor: compute-dpdk
   ControllerCount: 3
-  ContrailControllerCount: 3
-  ContrailAnalyticsCount: 3
-  ContrailAnalyticsDatabaseCount: 3
-  ContrailTsnCount: 1
-  ComputeCount: 3
+  ContrailControllerCount: 1
+  ContrailAnalyticsCount: 1
+  ContrailAnalyticsDatabaseCount: 1
+  ContrailTsnCount: 0
+  ComputeCount: 1
+  ContrailDpdkCount: 0
   DnsServers: ["8.8.8.8","8.8.4.4"]
   NtpServer: 10.0.0.1
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
-  NeutronServicePlugins: ''
+  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
   NeutronTunnelTypes: ''
   NeutronMetadataProxySharedSecret: secret
   ContrailControlRNDCSecret: sHE1SM8nsySdgsoRxwARtA==
-  NovaLibvirtCpuMode: custom
-  NovaLibvirtCpuModel: Nehalem
+  NovaComputeExtraConfig:
+    # Required for Centos 7.3 and Qemu 2.6.0
+    nova::compute::libvirt::libvirt_cpu_mode: 'none'

@@ -41,6 +41,10 @@ parameters:
     default: 8081
     description: Contrail Analytics Api  port
     type: number
+  ContrailAnalyticsVIP:
+    default: ''
+    description: Contrail Analytics Api Virtual IP address
+    type: string
 
 resources:
   ContrailBase:
@@ -67,5 +71,6 @@ outputs:
             contrail::analytics::redis_server_port: {get_param: ContrailAnalyticsRedis}
             contrail::analytics::rest_api_ip: {get_param: [ServiceNetMap, ContrailAnalyticsNetwork]}
             contrail::analytics::rest_api_port: {get_param: ContrailAnalyticsApi}
+            contrail_analytics_vip: {get_param: ContrailAnalyticsVIP}
       step_config: |
         include ::tripleo::network::contrail::analytics

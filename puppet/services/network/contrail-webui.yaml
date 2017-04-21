@@ -29,6 +29,10 @@ parameters:
     default: 8143
     description: Contrail Webui https port
     type: number
+  ContrailWebuiVIP:
+    default: ''
+    description: Contrail Webui Virtual IP address
+    type: string
 
 resources:
   ContrailBase:
@@ -49,5 +53,6 @@ outputs:
           - contrail::webui::http_port: {get_param: ContrailWebuiHttp }
             contrail::webui::https_port: {get_param: ContrailWebuiHttps }
             contrail::webui::redis_ip: '127.0.0.1'
+            contrail_webui_vip: {get_param: ContrailWebuiVIP}
       step_config: |
         include ::tripleo::network::contrail::webui

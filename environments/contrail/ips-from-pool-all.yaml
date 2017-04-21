@@ -45,14 +45,14 @@ parameter_defaults:
     - ip_address: 10.2.0.10
   InternalApiVirtualFixedIPs:
     - ip_address: 10.3.0.10
-  TenantVirtualFixedIPs:
+  StorageMgmtVirtualFixedIPs:
     - ip_address: 10.0.0.10
   ControllerIPs:
     internal_api:
     - 10.3.0.20
     - 10.3.0.21
     - 10.3.0.22
-    tenant:
+    storage_mgmt:
     - 10.0.0.20
     - 10.0.0.21
     - 10.0.0.22
@@ -66,7 +66,7 @@ parameter_defaults:
     - 10.3.0.34
     - 10.3.0.35
     - 10.3.0.36
-    tenant:
+    storage_mgmt:
     - 10.0.0.30
     - 10.0.0.31
     - 10.0.0.32
@@ -79,7 +79,7 @@ parameter_defaults:
     - 10.3.0.40
     - 10.3.0.41
     - 10.3.0.42
-    tenant:
+    storage_mgmt:
     - 10.0.0.40
     - 10.0.0.41
     - 10.0.0.42
@@ -88,7 +88,7 @@ parameter_defaults:
     - 10.3.0.50
     - 10.3.0.51
     - 10.3.0.52
-    tenant:
+    storage_mgmt:
     - 10.0.0.50
     - 10.0.0.51
     - 10.0.0.52
@@ -97,7 +97,7 @@ parameter_defaults:
     - 10.3.0.60
     - 10.3.0.61
     - 10.3.0.62
-    tenant:
+    storage_mgmt:
     - 10.0.0.60
     - 10.0.0.61
     - 10.0.0.62
@@ -106,10 +106,19 @@ parameter_defaults:
     - 10.3.0.70
     - 10.3.0.71
     - 10.3.0.72
-    tenant:
+    storage_mgmt:
     - 10.0.0.70
     - 10.0.0.71
     - 10.0.0.72
+  ContrailDpdkIPs:
+    internal_api:
+    - 10.3.0.80
+    - 10.3.0.81
+    - 10.3.0.82
+    storage_mgmt:
+    - 10.0.0.80
+    - 10.0.0.81
+    - 10.0.0.82
   #CephStorageIPs:
     # Each ceph node will get an IP from the lists below, first node, first IP
     #storage:
