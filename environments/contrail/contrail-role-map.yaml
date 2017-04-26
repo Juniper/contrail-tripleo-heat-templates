@@ -1,0 +1,5 @@
+parameter_defaults:
+  ContrailRoleMap:
+    overcloud-novacompute:
+      blabla-0
+      blabla-1

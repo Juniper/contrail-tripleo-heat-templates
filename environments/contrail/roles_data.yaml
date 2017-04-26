@@ -220,3 +220,22 @@
     - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::FluentdClient
     - OS::TripleO::Services::VipHosts
+
+- name: ContrailDpdk
+  ServicesDefault:
+    - OS::TripleO::Services::CACerts
+    - OS::TripleO::Services::CephClient
+    - OS::TripleO::Services::CephExternal
+    - OS::TripleO::Services::Timezone
+    - OS::TripleO::Services::Ntp
+    - OS::TripleO::Services::Snmp
+    - OS::TripleO::Services::NovaCompute
+    - OS::TripleO::Services::NovaLibvirt
+    - OS::TripleO::Services::Kernel
+    - OS::TripleO::Services::ContrailDpdk
+    - OS::TripleO::Services::ComputeCeilometerAgent
+    - OS::TripleO::Services::TripleoPackages
+    - OS::TripleO::Services::TripleoFirewall
+    - OS::TripleO::Services::SensuClient
+    - OS::TripleO::Services::FluentdClient
+    - OS::TripleO::Services::VipHosts
