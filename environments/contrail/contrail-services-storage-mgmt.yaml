@@ -20,15 +20,15 @@ resource_registry:
   OS::TripleO::Services::NeutronCorePlugin: ../../puppet/services/network/contrail-neutron-plugin.yaml
 parameter_defaults:
   ServiceNetMap:
-    ContrailAnalyticsNetwork: internal_api
-    ContrailAnalyticsDatabaseNetwork: internal_api
-    ContrailConfigNetwork: internal_api
-    ContrailControlNetwork: internal_api
-    ContrailDatabaseNetwork: internal_api
-    ContrailWebuiNetwork: internal_api
-    ContrailTsnNetwork: internal_api
-    ContrailVrouterNetwork: internal_api
-    ContrailDpdkNetwork: internal_api
+    ContrailAnalyticsNetwork: storage_mgmt
+    ContrailAnalyticsDatabaseNetwork: storage_mgmt
+    ContrailConfigNetwork: storage_mgmt
+    ContrailControlNetwork: storage_mgmt
+    ContrailDatabaseNetwork: storage_mgmt
+    ContrailWebuiNetwork: storage_mgmt
+    ContrailTsnNetwork: storage_mgmt
+    ContrailVrouterNetwork: storage_mgmt
+    ContrailDpdkNetwork: storage_mgmt
   ContrailControlManageNamed: true
   ContrailRepo: http://192.0.2.1/contrail
   EnablePackageInstall: true
@@ -46,7 +46,7 @@ parameter_defaults:
   ContrailAnalyticsCount: 3
   ContrailAnalyticsDatabaseCount: 3
   ContrailTsnCount: 0
-  ComputeCount: 1
+  ComputeCount: 2
   ContrailDpdkCount: 0
   DnsServers: ["10.87.64.101"]
   NtpServer: 10.0.0.1
