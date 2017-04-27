@@ -33,6 +33,10 @@ parameters:
     description: named config file mgmt
     type: string
     default: true
+  ContrailControlNodeIps:
+    description: List of Contrail Node IPs
+    type: comma_delimited_list
+    default: ''
 
 resources:
   ContrailBase:
@@ -54,5 +58,9 @@ outputs:
             contrail::control::host_ip: {get_param: [ServiceNetMap, ContrailControlNetwork]}
             contrail::control::rndc_secret: {get_param: ContrailControlRNDCSecret}
             contrail::control::manage_named: {get_param: ContrailControlManageNamed}
+            contrail::control::node_ips:
+              list_join:
+              - ','
+              - {get_param: ContrailControlNodeIps}
       step_config: |
         include ::tripleo::network::contrail::control
