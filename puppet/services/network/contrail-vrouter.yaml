@@ -34,6 +34,10 @@ parameters:
     default: '255.255.255.0'
     description: vRouter netmask
     type: string
+  VrouterControlNodeIps:
+    description: List of Contrail Node IPs
+    type: comma_delimited_list
+    default: ''
 
 resources:
   ContrailBase:
@@ -56,6 +60,7 @@ outputs:
             contrail::vrouter::gateway: {get_param: VrouterGateway}
             contrail::vrouter::netmask: {get_param: VrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
+            contrail::vrouter::control_node_ips: {get_param: VrouterControlNodeIps}
             tripleo.contrail_vrouter.firewall_rules:
               '111 contrail_vrouter_8085':
                 dport: 8085
