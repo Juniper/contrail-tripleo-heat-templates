@@ -7,7 +7,7 @@ heat_template_version: newton
 parameters:
   ContrailRepo:
     type: string
-    default: http://192.0.2.1/contrail
+    default: ''
   VrouterPhysicalInterface:
     default: 'eth0'
     description: vRouter physical interface
@@ -49,7 +49,8 @@ resources:
           template: |
             #!/bin/bash
             echo "127.0.0.1    `hostname`" >> /etc/hosts
-            cat <<EOF > /etc/yum.repos.d/contrail.repo
+            if [[ $contrail_repo ]]; then
+              cat <<EOF > /etc/yum.repos.d/contrail.repo
             [Contrail]
             name=Contrail Repo
             baseurl=$contrail_repo
@@ -58,10 +59,11 @@ resources:
             protect=1
             metadata_expire=30
             EOF
-            yum install -y contrail-tripleo-puppet puppet-contrail
-            rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
-            #curl -o /contrail-tripleo-puppet.tgz $contrail_repo/contrail-tripleo-puppet.tgz
-            #cd / && tar zxvf /contrail-tripleo-puppet.tgz
+              yum install -y contrail-tripleo-puppet puppet-contrail
+              rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
+              #curl -o /contrail-tripleo-puppet.tgz $contrail_repo/contrail-tripleo-puppet.tgz
+              #cd / && tar zxvf /contrail-tripleo-puppet.tgz
+            fi
             echo $hostname_map > /tmp/hostnamemap
             hname_list=(`cat /tmp/hostnamemap |tr -d ' '|tr -d '{'| tr -d '}' |tr ',' ' '`)
             for rolename in "${hname_list[@]}"
@@ -88,16 +90,16 @@ resources:
               echo "net.ipv4.tcp_keepalive_probes = 5" >> /etc/sysctl.conf
               echo "net.ipv4.tcp_keepalive_intvl = 1" >> /etc/sysctl.conf
               /sbin/sysctl --system
-              curl -o /contrail-tripleo-puppet.tgz $contrail_repo/contrail-tripleo-puppet.tgz
-              cd / && tar zxvf /contrail-tripleo-puppet.tgz
               modprobe uio
-              yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
-              mkdir -p /lib/modules/`uname -r`/weak-updates
-              cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates
-              cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates
-              depmod -a
-              insmod /lib/modules/`uname -r`/weak-updates/rte_kni.ko
-              insmod /lib/modules/`uname -r`/weak-updates/igb_uio.ko
+              if [[ $contrail_repo ]]; then
+                yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
+                mkdir -p /lib/modules/`uname -r`/weak-updates
+                cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates
+                cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates
+                depmod -a
+                insmod /lib/modules/`uname -r`/weak-updates/rte_kni.ko
+                insmod /lib/modules/`uname -r`/weak-updates/igb_uio.ko
+              fi
               pci_address=`ethtool -i $phy_int |grep bus-info| awk '{print $2}' |tr -d ' '`
               if [ $vlan_parent ]; then
                  pci_address=`ethtool -i $vlan_parent |grep bus-info| awk '{print $2}' |tr -d ' '`
@@ -169,7 +171,9 @@ resources:
               ip link set vhost0 address $mac
             fi
             if [[ `echo $role |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then 
-              yum install -y contrail-vrouter-utils
+              if [[ $contrail_repo ]]; then
+                yum install -y contrail-vrouter-utils
+              fi
               function pkt_setup () {
                   for f in /sys/class/net/$1/queues/rx-*
                   do
@@ -189,7 +193,6 @@ resources:
                   ifconfig $1 up
               }
               function insert_vrouter() {
-                  insmod /tmp/vrouter.ko
                   if [ -f /sys/class/net/pkt1/queues/rx-0/rps_cpus ]; then
                       pkt_setup pkt1
                   fi
@@ -206,10 +209,13 @@ resources:
                   ip link set vhost0 up
                   return 0
               }
-              yumdownloader contrail-vrouter --destdir /tmp
-              cd /tmp
-              rpm2cpio /tmp/contrail-vrouter*.rpm | cpio -idmv
-              cp `find /tmp/lib/modules -name vrouter.ko |tail -1` /tmp
+              if [[ $contrail_repo ]]; then
+                yumdownloader contrail-vrouter --destdir /tmp
+                cd /tmp
+                rpm2cpio /tmp/contrail-vrouter*.rpm | cpio -idmv
+                cp `find /tmp/lib/modules -name vrouter.ko |tail -1` /tmp
+                insmod /tmp/vrouter.ko
+              fi
               if [ ${bond_int} ]; then
                  bond_int_member_list=$(echo ${bond_int_members} | tr "," "\n")
                  ip link add name ${bond_int} type bond
