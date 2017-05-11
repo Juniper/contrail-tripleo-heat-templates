@@ -220,6 +220,8 @@ resources:
                 rpm2cpio /tmp/contrail-vrouter*.rpm | cpio -idmv
                 cp `find /tmp/lib/modules -name vrouter.ko |tail -1` /tmp
                 insmod /tmp/vrouter.ko
+              else
+                modprobe vrouter
               fi
               if [[ ${bond_int} ]]; then
                  bond_int_member_list=$(echo ${bond_int_members} | tr "," "\n")
