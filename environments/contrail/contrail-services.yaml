@@ -29,6 +29,7 @@ parameter_defaults:
     ContrailTsnNetwork: internal_api
     ContrailVrouterNetwork: internal_api
     ContrailDpdkNetwork: internal_api
+#   KeystoneAdminApiNetwork: internal_api
   ContrailControlManageNamed: true
   ContrailRepo: http://192.0.2.1/contrail
   EnablePackageInstall: true

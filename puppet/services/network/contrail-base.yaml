@@ -62,10 +62,18 @@ parameters:
     default: 'keystone'
     description: Keystone authentication method
     type: string
+  ContrailAnalyticsVIP:
+    default: ''
+    description: Contrail Analytics Api Virtual IP address
+    type: string
   ContrailConfigPort:
     default: 8082
     description: Contrail Config Api  port
     type: number
+  ContrailConfigVIP:
+    default: ''
+    description: Contrail Config Virtual IP address
+    type: string
   ContrailDiscoveryPort:
     default: 5998
     description: Contrail Config Api  port
@@ -81,6 +89,10 @@ parameters:
   ContrailVIP:
     default: ''
     description: Contrail VIP
+    type: string
+  ContrailWebuiVIP:
+    default: ''
+    description: Contrail Webui Virtual IP address
     type: string
   RabbitPassword:
     description: The password for RabbitMQ
@@ -108,7 +120,7 @@ outputs:
         contrail::admin_token: {get_param: AdminToken}
         contrail::admin_user: {get_param: AdminUser}
         contrail::auth: {get_param: ContrailAuth}
-        contrail::auth_host: {get_param: [EndpointMap, KeystonePublic, host] }
+        contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
         contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
         contrail::auth_port_ssl: {get_param: AuthPortSSL }
         contrail::auth_port_public: {get_param: AuthPortPublic }
@@ -122,3 +134,6 @@ outputs:
         contrail::rabbit_user: {get_param: RabbitUserName}
         contrail::rabbit_port: {get_param: RabbitClientPort}
         contrail::vip: {get_param: ContrailVIP}
+        contrail_analytics_vip: {get_param: ContrailAnalyticsVIP}
+        contrail_config_vip: {get_param: ContrailConfigVIP}
+        contrail_webui_vip: {get_param: ContrailWebuiVIP}
