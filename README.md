@@ -90,7 +90,7 @@ sudo virsh net-autostart br-mgmt
 ## define ironic nodes (single nic)
 ```
 num=0
-for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
+for i in compute control contrail-controller contrail-analytics contrail-analytics-database contrail-tsn
 do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
@@ -102,7 +102,7 @@ done
 ## define ironic nodes (multi nic)
 ```
 num=0
-for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
+for i in compute control contrail-controller contrail-analytics contrail-analytics-database contrail-tsn
 do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
