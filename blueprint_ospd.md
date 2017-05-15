@@ -2,18 +2,18 @@
 # 1. Introduction    
 RedHat OpenStack Platform (OSP) provides an installer called Director (OSPD).    
 OSPD is based on the OpenStack project TripleO (OOO - OpenStack on OpenStack).   
-TripleO has the concept of undercloud and overcloud. The undercloud is an    
+TripleO uses the concept of undercloud and overcloud. The undercloud is an    
 OpenStack installation which manages the deployment and lifecycle of the overcloud.    
 The overcloud is the actual OpenStack installation hosting the user workloads.    
-This document explains how Contrail installation is integrated into Director.    
+This document explains how a Contrail installation is integrated into Director.    
 
 # 2. Problem statement    
-OSPD uses a combination of heat templates and puppet modules in order to deploy    
-the overcloud. In order to integrate the Contrail deployment, Contrail based    
-heat templates and puppet modules must be created.    
+OSPD uses a combination of Heat templates and Puppet modules to deploy    
+the overcloud. In order to integrate the Contrail deployment, Contrail-based    
+Heat templates and Puppet modules must be created.    
 
 # 3. Proposed solution    
-For integrating Contrail three new roles are defined:    
+For integrating Contrail, three new roles are defined:    
 #### Contrail Controller    
 #### Contrail Analytics    
 #### Contrail Analytics Database    
@@ -50,6 +50,26 @@ for i in contrail-controller contrail-analytics contrail-database contrail-analy
   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
   openstack flavor set --property "capabilities:boot_option"="local" ${i}
 done
+```
+
+### get puppet modules
+```
+cd /var/www/html/contrail
+yum localinstall contrail-tripleo-puppet-<version>.el7.noarch.rpm puppet-contrail-<version>.el7.noarch.rpm
+mkdir -p ~/usr/share/openstack-puppet/modules/contrail
+cp -R /usr/share/openstack-puppet/modules/contrail/* /usr/share/openstack-puppet/modules/contrail/
+mkdir -p ~/usr/share/openstack-puppet/modules/tripleo
+cp -R /usr/share/contrail-tripleo-puppet/* ~/usr/share/openstack-puppet/modules/tripleo
+tar czvf puppet-modules.tgz usr/
+```
+
+### get tripleo-heat-templates
+```
+cp -r /usr/share/openstack-tripleo-heat-templates/ ~/tripleo-heat-templates
+cd /var/www/html/contrail
+yum localinstall contrail-tripleo-heat-templates-<version>.el7.noarch.rpm
+cp -r /usr/share/contrail-tripleo-heat-templates/environments/contrail ~/tripleo-heat-templates/environments
+cp -r /usr/share/contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
 ```
 
 ### contrail services (repo url etc.)
