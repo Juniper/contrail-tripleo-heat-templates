@@ -94,7 +94,7 @@ resources:
           network_config:
             -
               type: interface
-              name: vhost0
+              name: eth0
               use_dhcp: false
               dns_servers: {get_param: DnsServers}
               addresses:
@@ -108,10 +108,57 @@ resources:
                 -
                   ip_netmask: 169.254.169.254/32
                   next_hop: {get_param: EC2MetadataIp}
+            -
+              type: interface
+              name: vhost0
+              use_dhcp: false
+              mac: 52:54:00:26:6f:54
+              addresses:
+                -
+                  ip_netmask: {get_param: InternalApiIpSubnet}
+              routes:
                 -
                   default: true
-                  next_hop: {get_param: ControlPlaneDefaultRoute}
-
+                  next_hop: {get_param: InternalApiDefaultRoute}
+            -
+              type: linux_bridge
+              name: br0
+              use_dhcp: false
+              members:
+                -
+                  type: interface
+                  name: eth1
+                  # force the MAC address of the bridge to this interface
+                  #                   primary: true              
+                  #                   
+            -
+              type: vlan
+              vlan_id: {get_param: ManagementNetworkVlanID}
+              device: br0
+              addresses:
+                -
+                  ip_netmask: {get_param: ManagementIpSubnet}
+            -
+              type: vlan
+              vlan_id: {get_param: ExternalNetworkVlanID}
+              device: br0
+              addresses:
+                -
+                  ip_netmask: {get_param: ExternalIpSubnet}
+            -
+              type: vlan
+              vlan_id: {get_param: StorageNetworkVlanID}
+              device: br0
+              addresses:
+                -
+                  ip_netmask: {get_param: StorageIpSubnet}
+            -
+              type: vlan
+              vlan_id: {get_param: StorageMgmtNetworkVlanID}
+              device: br0
+              addresses:
+                -
+                  ip_netmask: {get_param: StorageMgmtIpSubnet}
 
 outputs:
   OS::stack_id:

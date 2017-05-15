@@ -5,6 +5,7 @@ resource_registry:
   OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: contrail-nic-config-vlan.yaml
   OS::TripleO::ContrailAnalyticsDatabase::Net::SoftwareConfig: contrail-nic-config-vlan.yaml
   OS::TripleO::ContrailTsn::Net::SoftwareConfig: contrail-nic-config-compute.yaml
+  OS::TripleO::ContrailDpdk::Net::SoftwareConfig: contrail-nic-config-compute-bond-vlan-dpdk.yaml
 
 parameter_defaults:
   ControlPlaneSubnetCidr: '24'

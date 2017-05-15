@@ -63,11 +63,6 @@ cp -R /usr/share/contrail-tripleo-puppet/* ~/usr/share/openstack-puppet/modules/
 tar czvf puppet-modules.tgz usr/
 ```
 
-### upload puppet modules to swift
-```
-upload-swift-artifacts -f puppet-modules.tgz
-```
-
 ### get tripleo-heat-templates
 ```
 cp -r /usr/share/openstack-tripleo-heat-templates/ ~/tripleo-heat-templates

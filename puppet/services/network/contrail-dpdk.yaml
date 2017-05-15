@@ -34,10 +34,6 @@ parameters:
     default: '255.255.255.0'
     description: vRouter netmask
     type: string
-  VrouterControlNodeIps:
-    description: List of Contrail Node IPs
-    type: comma_delimited_list
-    default: ''
 
 resources:
   ContrailBase:
@@ -51,20 +47,21 @@ outputs:
   role_data:
     description: Role data for the Neutron Compute OpenContrail plugin
     value:
-      service_name: contrail_vrouter
+      service_name: contrail_dpdk
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
           - contrail::vrouter::host_ip: {get_param: [ServiceNetMap, ContrailVrouterNetwork]}
+            contrail::vrouter::is_dpdk: 'true'
             contrail::vrouter::physical_interface: {get_param: VrouterPhysicalInterface}
             contrail::vrouter::gateway: {get_param: VrouterGateway}
             contrail::vrouter::netmask: {get_param: VrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
-            contrail::vrouter::control_node_ips: {get_param: VrouterControlNodeIps}
-            tripleo.contrail_vrouter.firewall_rules:
-              '111 contrail_vrouter_8085':
-                dport: 8085
-              '112 contrail_vrouter_8097':
-                dport: 8097
+            tripleo.neutron_compute_plugin_opencontrail.firewall_rules:
+              '111 neutron_compute_plugin_opencontrail proxy':
+                dport:
+                  - 8097
+                  - 8085
+                proto: tcp
       step_config: |
         include ::tripleo::network::contrail::vrouter
