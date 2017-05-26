@@ -390,7 +390,7 @@ virt-customize  -a overcloud-full-dpdk.qcow2 \
   --run-command 'echo "#!/bin/sh" >> /etc/sysconfig/modules/igb_uio.modules && echo "insmod /lib/modules/`uname -r`/weak-updates/igb_uio.ko" >> /etc/sysconfig/modules/igb_uio.modules && chmod +x /etc/sysconfig/modules/igb_uio.modules' \
   --run-command 'depmod -a' \
   --run-command 'git clone https://github.com/Juniper/contrail-nova-vif-driver' \
-  --run-command 'cd contrail-nova-vif-driver && python setup.py' \
+  --run-command 'cd contrail-nova-vif-driver && python setup.py install' \
   --run-command 'rm -rf /etc/yum.repos.d/contrail.repo' \
   --run-command 'subscription-manager unregister' \
   --selinux-relabel
