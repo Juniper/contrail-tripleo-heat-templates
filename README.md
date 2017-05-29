@@ -382,7 +382,7 @@ virt-customize  -a overcloud-full-dpdk.qcow2 \
   --sm-credentials aranjan.redhat:password:H3Ub9pth3x --sm-register --sm-attach auto \
   --run-command 'subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-rh-common-rpms --enable=rhel-ha-for-rhel-7-server-rpms --enable=rhel-7-server-openstack-10-rpms --enable=rhel-7-server-openstack-10-devtools-rpms' \
   --copy-in /tmp/dpdk/contrail.repo:/etc/yum.repos.d \
-  --run-command 'yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules supervisor contrail-vrouter-agent contrail-nodemgr contrail-setup contrail-tripleo-puppet puppet-contrail python-contrail' \
+  --run-command 'yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules supervisor contrail-vrouter-agent contrail-nodemgr contrail-setup contrail-tripleo-puppet puppet-contrail python-contrail lshw' \
   --run-command 'mkdir -p /lib/modules/`uname -r`/weak-updates' \
   --run-command 'cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates' \
   --run-command 'cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates' \
