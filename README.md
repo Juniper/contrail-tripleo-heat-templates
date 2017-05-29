@@ -355,3 +355,71 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml \
   --libvirt-type qemu
 ```
+
+# DPDK special
+## get dpdk tripleo-heat-templates
+```
+git clone http://github.com/Juniper/contrail-tripleo-heat-templates -b dpdk4
+cp contrail-tripleo-heat-templates/* ~/tripleo-heat-templates
+```
+
+## get contrail dpdk packages
+Ask Michael
+
+## extract contrail dpdk packages to webserver
+```
+cp contrail-3.2.2.0-33-dpdk.tgz /var/www/html/contrail
+cd /var/www/html/contrail && tar zxvf contrail-3.2.2.0-33-dpdk.tgz
+cd
+```
+
+## virt-customize compute overcloud image
+For DPDK the compute image must be modified. User/password for RH subscription must be provided:
+```
+cd ~/images
+cp overcloud-full.qcow2 overcloud-full-dpdk.qcow2
+virt-customize  -a overcloud-full-dpdk.qcow2 \
+  --sm-credentials $RH_USER:password:$RH_PASSWORD --sm-register --sm-attach auto \
+  --run-command 'subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-rh-common-rpms --enable=rhel-ha-for-rhel-7-server-rpms --enable=rhel-7-server-openstack-10-rpms' --enable=rhel-7-server-openstack-10-devtools-rpms \
+  --copy-in /tmp/dpdk/contrail.repo:/etc/yum.repos.d \
+  --run-command 'yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules supervisor contrail-vrouter-agent contrail-nodemgr contrail-setup contrail-tripleo-puppet puppet-contrail python-contrail' \
+  --run-command 'mkdir -p /lib/modules/`uname -r`/weak-updates' \
+  --run-command 'cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates' \
+  --run-command 'cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates' \
+  --run-command 'echo "#!/bin/sh" >> /etc/sysconfig/modules/rte_kni.modules && echo "insmod /lib/modules/`uname -r`/weak-updates/rte_kni.ko" >> /etc/sysconfig/modules/rte_kni.modules && chmod +x /etc/sysconfig/modules/rte_kni.modules' \
+  --run-command 'echo "#!/bin/sh" >> /etc/sysconfig/modules/igb_uio.modules && echo "insmod /lib/modules/`uname -r`/weak-updates/igb_uio.ko" >> /etc/sysconfig/modules/igb_uio.modules && chmod +x /etc/sysconfig/modules/igb_uio.modules' \
+  --run-command 'depmod -a' \
+  --run-command 'git clone https://github.com/Juniper/contrail-nova-vif-driver' \
+  --run-command 'cd contrail-nova-vif-driver && python setup.py install' \
+  --run-command 'rm -rf /etc/yum.repos.d/contrail.repo' \
+  --run-command 'subscription-manager unregister' \
+  --selinux-relabel
+```
+
+## upload image to glance
+```
+glance image-create --name overcloud-full-dpdk --container-format bare --disk-format qcow2 --file overcloud-full-dpdk.qcow2
+openstack image set overcloud-full-dpdk --property kernel_id=`glance image-list |grep bm-deploy-kernel |awk '{print $2}'` --property ramdisk_id=glance image-list |grep bm-deploy-ramdisk |awk '{print $2}'
+```
+
+## profile node for dpdk
+DPDK_NODE_UUID = uuid of dpdk node
+```
+ironic node-update $DPDK_NODE_UUID replace properties/capabilities=profile:contrail-dpdk,cpu_hugepages:true,cpu_txt:true,boot_option:local,cpu_aes:true,cpu_vt:true,cpu_hugepages_1g:true
+openstack flavor create contrail-dpdk --ram 4096 --vcpus 1 --disk 40
+openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="contrail-dpdk" contrail-dpdk
+```
+
+## deploy
+```
+openstack overcloud deploy --stack dpdk --templates tripleo-heat-templates/ \
+  --roles-file tripleo-heat-templates/environments/contrail/roles_data.yaml \
+  -e tripleo-heat-templates/environments/puppet-pacemaker.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
+  -e tripleo-heat-templates/environments/contrail/network-isolation.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-net-dpdk-bond-vlan.yaml \
+  -e tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml \
+  -e tripleo-heat-templates/environments/network-management.yaml \
+  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
+  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml
+ ```
