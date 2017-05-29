@@ -379,8 +379,8 @@ For DPDK the compute image must be modified. User/password for RH subscription m
 cd ~/images
 cp overcloud-full.qcow2 overcloud-full-dpdk.qcow2
 virt-customize  -a overcloud-full-dpdk.qcow2 \
-  --sm-credentials $RH_USER:password:$RH_PASSWORD --sm-register --sm-attach auto \
-  --run-command 'subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-rh-common-rpms --enable=rhel-ha-for-rhel-7-server-rpms --enable=rhel-7-server-openstack-10-rpms' --enable=rhel-7-server-openstack-10-devtools-rpms \
+  --sm-credentials aranjan.redhat:password:H3Ub9pth3x --sm-register --sm-attach auto \
+  --run-command 'subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-rh-common-rpms --enable=rhel-ha-for-rhel-7-server-rpms --enable=rhel-7-server-openstack-10-rpms --enable=rhel-7-server-openstack-10-devtools-rpms' \
   --copy-in /tmp/dpdk/contrail.repo:/etc/yum.repos.d \
   --run-command 'yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules supervisor contrail-vrouter-agent contrail-nodemgr contrail-setup contrail-tripleo-puppet puppet-contrail python-contrail' \
   --run-command 'mkdir -p /lib/modules/`uname -r`/weak-updates' \
@@ -394,6 +394,8 @@ virt-customize  -a overcloud-full-dpdk.qcow2 \
   --run-command 'rm -rf /etc/yum.repos.d/contrail.repo' \
   --run-command 'subscription-manager unregister' \
   --selinux-relabel
+
+
 ```
 
 ## upload image to glance
