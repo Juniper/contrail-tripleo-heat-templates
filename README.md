@@ -401,7 +401,7 @@ virt-customize  -a overcloud-full-dpdk.qcow2 \
 ## upload image to glance
 ```
 glance image-create --name overcloud-full-dpdk --container-format bare --disk-format qcow2 --file overcloud-full-dpdk.qcow2
-openstack image set overcloud-full-dpdk --property kernel_id=`glance image-list |grep bm-deploy-kernel |awk '{print $2}'` --property ramdisk_id=glance image-list |grep bm-deploy-ramdisk |awk '{print $2}'
+openstack image set overcloud-full-dpdk --property kernel_id=`glance image-list |grep bm-deploy-kernel |awk '{print $2}'` --property ramdisk_id=`glance image-list |grep bm-deploy-ramdisk |awk '{print $2}'`
 ```
 
 ## profile node for dpdk
