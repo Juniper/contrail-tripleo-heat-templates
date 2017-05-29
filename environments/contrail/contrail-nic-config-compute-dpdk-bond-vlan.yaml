@@ -42,7 +42,7 @@ parameters:
     description: Vlan ID for the external network traffic.
     type: number
   InternalApiNetworkVlanID:
-    default: 82
+    default: 217
     description: Vlan ID for the internal_api network traffic.
     type: number
   StorageNetworkVlanID:
@@ -122,13 +122,17 @@ resources:
               name: bond0
               use_dhcp: false
               bonding_options: "mode=802.3ad"
-              members:
-              -
-                type: interface
-                name: ens7f0
-              -
-                type: interface
-                name: ens7f1
+              #members:
+              #-
+              #  type: interface
+              #  name: ens7f0
+              #-
+              #  type: interface
+              #  name: ens7f1
+            -
+              type: interface
+              name: vhost0
+              use_dhcp: false
               addresses:
                 -
                   ip_netmask: {get_param: InternalApiIpSubnet}

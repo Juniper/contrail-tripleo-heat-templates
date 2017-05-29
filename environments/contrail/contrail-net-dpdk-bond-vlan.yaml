@@ -5,6 +5,7 @@ resource_registry:
   OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: contrail-nic-config-vlan.yaml
   OS::TripleO::ContrailAnalyticsDatabase::Net::SoftwareConfig: contrail-nic-config-vlan.yaml
   OS::TripleO::ContrailTsn::Net::SoftwareConfig: contrail-nic-config-compute.yaml
+  OS::TripleO::ContrailDpdk::Net::SoftwareConfig: contrail-nic-config-compute-dpdk-bond-vlan.yaml
 
 parameter_defaults:
   ControlPlaneSubnetCidr: '28'
@@ -18,13 +19,13 @@ parameter_defaults:
   ExternalNetCidr: 10.87.29.32/28
   ExternalAllocationPools: [{'start': '10.87.29.34', 'end': '10.87.29.46'}]
   EC2MetadataIp: 10.87.29.62  # Generally the IP of the Undercloud
-  DnsServers: ["8.8.8.8","8.8.4.4"]
+  DnsServers: ["10.87.64.101"]
   VrouterPhysicalInterface: bond0
   VrouterGateway: 192.168.100.1
   VrouterNetmask: 255.255.255.0
   ControlVirtualInterface: eno1
   PublicVirtualInterface: eno2
-  VlanParentInterface: bond0
+  #VlanParentInterface: bond0
   BondInterface: bond0
   BondInterfaceMembers: 'ens7f0,ens7f1'
 #  InternalApiNetworkVlanID: 82

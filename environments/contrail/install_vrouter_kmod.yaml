@@ -66,8 +66,8 @@ resources:
             EOF
               yum install -y contrail-tripleo-puppet puppet-contrail
               rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
-              #curl -o /contrail-tripleo-puppet.tgz ${contrail_repo}/contrail-tripleo-puppet.tgz
-              #cd / && tar zxvf /contrail-tripleo-puppet.tgz
+              curl -o /contrail-tripleo-puppet.tgz ${contrail_repo}/contrail-tripleo-puppet.tgz
+              cd / && tar zxvf /contrail-tripleo-puppet.tgz
             fi
             echo $hostname_map > /tmp/hostnamemap
             hname_list=(`cat /tmp/hostnamemap |tr -d ' '|tr -d '{'| tr -d '}' |tr ',' ' '`)
@@ -87,8 +87,9 @@ resources:
             if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" ]]; then
               yum remove -y python-redis
             fi
+            echo blabla > /tmp/bla
             if [[ `cat /tmp/rolename |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
-              echo "vm.nr_hugepages = 1024" >> /etc/sysctl.conf
+              echo "vm.nr_hugepages = 2048" >> /etc/sysctl.conf
               echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
               echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
               echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
@@ -96,24 +97,36 @@ resources:
               echo "net.ipv4.tcp_keepalive_intvl = 1" >> /etc/sysctl.conf
               /sbin/sysctl --system
               modprobe uio
-              if [[ ${contrail_repo} ]]; then
-                yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
-                mkdir -p /lib/modules/`uname -r`/weak-updates
-                cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates
-                cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates
-                depmod -a
-                insmod /lib/modules/`uname -r`/weak-updates/rte_kni.ko
-                insmod /lib/modules/`uname -r`/weak-updates/igb_uio.ko
-              fi
+              cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates
+              cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates
+              depmod -a
+              modprobe rte_kni >> /tmp/modlog
+              modprobe igb_uio >> /tmp/modlog
+              #if [[ ${contrail_repo} ]]; then
+              #  yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules
+              #  mkdir -p /lib/modules/`uname -r`/weak-updates
+              #  cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates
+              #  cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates
+              #  depmod -a
+              #  insmod /lib/modules/`uname -r`/weak-updates/rte_kni.ko
+              #  insmod /lib/modules/`uname -r`/weak-updates/igb_uio.ko
+              #fi
               pci_address=`ethtool -i ${phy_int} |grep bus-info| awk '{print $2}' |tr -d ' '`
               if [[ ${vlan_parent} ]]; then
                  pci_address=`ethtool -i ${vlan_parent} |grep bus-info| awk '{print $2}' |tr -d ' '`
               fi
               if [[ ${bond_int} ]]; then
                  bond_int_member_list=$(echo ${bond_int_members} | tr "," "\n")
+                 echo ${bond_int_member_list} > /tmp/b_m_l
                  ip link add name ${bond_int} type bond
+                 echo 4 > /sys/class/net/${bond_int}/bonding/mode
+                 echo "layer2" > /sys/class/net/${bond_int}/bonding/xmit_hash_policy
                  for member in ${bond_int_member_list}; do
-                     ip link set dev ${member} master ${bond_int}
+                     echo ${member} >> /tmp/member
+                     ip link set dev ${member} down
+                     echo "ip link set dev ${member} master ${bond_int}" >> /tmp/loggr
+                     ip link set dev ${member} master ${bond_int} &>  /tmp/loggr2
+                     echo rc $? >> /tmp/loggr
                  done
                  pci_address=0000:00:00.0
               fi
@@ -141,25 +154,26 @@ resources:
             platform=dpdk
             physical_interface_address=$pci_address
             physical_interface_mac=$mac
-            physical_uio_driver=uio_pci_generic
+            physical_uio_driver=igb_uio
             [VIRTUAL-HOST-INTERFACE]
             physical_interface=${phy_int}
             name=vhost0
             EOF
               echo $pci_address > /etc/contrail/dpdk_pci
               echo $mac > /etc/contrail/dpdk_mac
-              /opt/contrail/bin/vnagent_ExecStartPre.sh
-              vrouter_dpdk_cmd=`cat /etc/contrail/supervisord_vrouter_files/contrail-vrouter-dpdk.ini |grep command |awk -F'command=' '{print $2}'`
-              echo $vrouter_dpdk_cmd >> /tmp/debug.log
-              $vrouter_dpdk_cmd &
-              #vif --add 0 --mac $mac --vrf 0 --vhost-phys --type physical --pmd --id 0
-              #vif --add vhost0 --mac $mac --vrf 0 --type vhost --xconnect 0 --pmd --id 1
-              source /opt/contrail/bin/vrouter-functions.sh
-              vrouter_dpdk_start &
+              #/opt/contrail/bin/vnagent_ExecStartPre.sh
+              ##/etc/contrail/vnagent_ExecStartPre.sh
+              vrouter_dpdk_cmd=`cat /etc/contrail/supervisord_vrouter_files/contrail-vrouter-dpdk.ini |grep command |awk -F'command=' '{print $2}' |sed  's/mode=0/mode=4/g'`
+              echo $vrouter_dpdk_cmd >> /tmp/vrouter_dpdk_cmd
+              ##sh /tmp/vrouter_dpdk_cmd &
               sleep 20
-              os-net-config -c /etc/os-net-config/config.json
-              sleep 10
-              ip link set vhost0 address $mac
+              #source /opt/contrail/bin/vrouter-functions.sh
+              #vrouter_dpdk_start &
+              systemctl start supervisor-vrouter
+              sleep 20
+              #os-net-config -c /etc/os-net-config/config.json
+              #sleep 10
+              #ip link set vhost0 address $mac
               if [[ `ifconfig ${phy_int} |grep "inet "` ]]; then
                 def_gw=''
                 if [[ `ip route show |grep default|grep ${phy_int}` ]]; then
@@ -173,7 +187,7 @@ resources:
                   ip route add default via $def_gw
                 fi
               fi
-              ip link set vhost0 address $mac
+              #ip link set vhost0 address $mac
             fi
             if [[ `echo $role |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then 
               if [[ ${contrail_repo} ]]; then
@@ -214,6 +228,19 @@ resources:
                   ip link set vhost0 up
                   return 0
               }
+              if [[ ${bond_int} ]]; then
+                 bond_int_member_list=$(echo ${bond_int_members} | tr "," "\n")
+                 ip link add name ${bond_int} type bond
+                 echo 4 > /sys/class/net/${bond_int}/bonding/mode
+                 echo "layer2" > /sys/class/net/${bond_int}/bonding/xmit_hash_policy
+                 for member in ${bond_int_member_list}; do
+                     ip link set dev $member master ${bond_int}
+                 done
+              fi 
+              if [[ ${vlan_parent} ]]; then
+                  vlanId=`echo ${phy_int} | awk -F"vlan" '{print $2}'`
+                  ip link add name ${phy_int} link ${vlan_parent} type vlan id ${vlanId}
+              fi
               if [[ ${contrail_repo} ]]; then
                 yumdownloader contrail-vrouter --destdir /tmp
                 cd /tmp
@@ -222,17 +249,6 @@ resources:
                 insmod /tmp/vrouter.ko
               else
                 modprobe vrouter
-              fi
-              if [[ ${bond_int} ]]; then
-                 bond_int_member_list=$(echo ${bond_int_members} | tr "," "\n")
-                 ip link add name ${bond_int} type bond
-                 for member in ${bond_int_member_list}; do
-                     ip link set dev $member master ${bond_int}
-                 done
-              fi 
-              if [[ ${vlan_parent} ]]; then
-                  vlanId=`echo ${phy_int} | awk -F"vlan" '{print $2}'`
-                  ip link add name ${phy_int} link ${vlan_parent} type vlan id ${vlanId}
               fi
               insert_vrouter
               if [[ `ifconfig ${phy_int} |grep "inet "` ]]; then

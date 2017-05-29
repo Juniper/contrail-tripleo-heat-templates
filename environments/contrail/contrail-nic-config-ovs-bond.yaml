@@ -83,6 +83,16 @@ parameters:
   EC2MetadataIp: # Override this via parameter_defaults
     description: The IP address of the EC2 metadata server.
     type: string
+  BondInterfaceOvsOptions:
+    default: 'bond_mode=active-backup'
+    description: The ovs_options string for the bond interface. Set things like
+                 lacp=active and/or bond_mode=balance-slb using this option.
+    type: string
+    constraints:
+      - allowed_pattern: "^((?!balance.tcp).)*$"
+        description: |
+          The balance-tcp bond mode is known to cause packet loss and
+          should not be used in BondInterfaceOvsOptions.
 
 resources:
   OsNetConfigImpl:
@@ -118,17 +128,9 @@ resources:
                   ip_netmask: 10.87.64.0/25
                   next_hop: 10.87.29.49
             -
-              type: linux_bond
-              name: bond0
+              type: ovs_bridge
+              name: br1
               use_dhcp: false
-              bonding_options: "mode=802.3ad"
-              members:
-              -
-                type: interface
-                name: ens7f0
-              -
-                type: interface
-                name: ens7f1
               addresses:
                 -
                   ip_netmask: {get_param: InternalApiIpSubnet}
@@ -136,8 +138,21 @@ resources:
                 -
                   default: true
                   next_hop: {get_param: InternalApiDefaultRoute}
+              members:
+                -
+                  type: ovs_bond
+                  name: bond1
+                  ovs_options: {get_param: BondInterfaceOvsOptions}
+                  members:
+                    -
+                      type: interface
+                      name: ens7f0
+                      primary: true
+                    -
+                      type: interface
+                      name: ens7f1
             -
-              type: linux_bridge
+              type: ovs_bridge
               name: br0
               use_dhcp: false
               members:

@@ -19,6 +19,7 @@ resource_registry:
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../puppet/services/network/contrail-vrouter.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../puppet/services/network/contrail-neutron-plugin.yaml
 parameter_defaults:
+  ContrailDpdkImage: overcloud-full-dpdk
   ServiceNetMap:
     ContrailAnalyticsNetwork: internal_api
     ContrailAnalyticsDatabaseNetwork: internal_api
@@ -31,7 +32,7 @@ parameter_defaults:
     ContrailDpdkNetwork: internal_api
 #   KeystoneAdminApiNetwork: internal_api
   ContrailControlManageNamed: true
-  ContrailRepo: http://192.0.2.1/contrail
+  ContrailRepo: http://10.87.64.32/contrail3.2.2.0-33
   EnablePackageInstall: true
   ContrailConfigIfmapUserName: api-server
   ContrailConfigIfmapUserPassword: api-server
@@ -41,21 +42,21 @@ parameter_defaults:
   OvercloudContrailAnalyticsDatabaseFlavor: contrail-analytics-database
   OvercloudContrailTsnFlavor: contrail-tsn
   OvercloudComputeFlavor: compute
-  OvercloudContrailDpdkFlavor: compute-dpdk
-  ControllerCount: 3
-  ContrailControllerCount: 3
-  ContrailAnalyticsCount: 3
-  ContrailAnalyticsDatabaseCount: 3
+  OvercloudContrailDpdkFlavor: contrail-dpdk
+  ControllerCount: 1
+  ContrailControllerCount: 1
+  ContrailAnalyticsCount: 1
+  ContrailAnalyticsDatabaseCount: 1
   ContrailTsnCount: 0
-  ComputeCount: 1
-  ContrailDpdkCount: 0
+  ComputeCount: 0
+  ContrailDpdkCount: 2
   DnsServers: ["10.87.64.101"]
-  NtpServer: 10.0.0.1
+  NtpServer: 10.87.28.253
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
   NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
   NeutronTunnelTypes: ''
   NeutronMetadataProxySharedSecret: secret
   ContrailControlRNDCSecret: sHE1SM8nsySdgsoRxwARtA==
   NovaComputeExtraConfig:
-    # Required for Centos 7.3 and Qemu 2.6.0
-    nova::compute::libvirt::libvirt_cpu_mode: 'none'
+    nova::compute::libvirt::libvirt_cpu_mode: 'host-model'
+    nova::compute::libvirt::libvirt_vif_driver: 'nova_contrail_vif.contrailvif.VRouterVIFDriver'
