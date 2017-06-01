@@ -221,6 +221,7 @@ resources:
                 cp `find /tmp/lib/modules -name vrouter.ko |tail -1` /tmp
                 insmod /tmp/vrouter.ko
               else
+                depmod -a
                 modprobe vrouter
               fi
               if [[ ${bond_int} ]]; then
