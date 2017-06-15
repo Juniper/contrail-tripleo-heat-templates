@@ -28,4 +28,6 @@ parameter_defaults:
   #VlanParentInterface: bond0
   BondInterface: bond0
   BondInterfaceMembers: 'ens7f0,ens7f1'
+  BondMode: 2
+  BondPolicy: layer34
 #  InternalApiNetworkVlanID: 82

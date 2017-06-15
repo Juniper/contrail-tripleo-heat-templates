@@ -382,13 +382,7 @@ virt-customize  -a overcloud-full-dpdk.qcow2 \
   --sm-credentials $USER:password:$PWD --sm-register --sm-attach auto \
   --run-command 'subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-rh-common-rpms --enable=rhel-ha-for-rhel-7-server-rpms --enable=rhel-7-server-openstack-10-rpms --enable=rhel-7-server-openstack-10-devtools-rpms' \
   --copy-in /tmp/dpdk/contrail.repo:/etc/yum.repos.d \
-  --run-command 'yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init contrail-vrouter-dpdk-kernel-modules supervisor contrail-vrouter-agent contrail-nodemgr contrail-setup contrail-tripleo-puppet puppet-contrail python-contrail lshw' \
-  --run-command 'mkdir -p /lib/modules/`uname -r`/weak-updates' \
-  --run-command 'cp `find /lib/modules -name rte_kni.ko |tail -1` /lib/modules/`uname -r`/weak-updates' \
-  --run-command 'cp `find /lib/modules -name igb_uio.ko |tail -1` /lib/modules/`uname -r`/weak-updates' \
-  --run-command 'echo "#!/bin/sh" >> /etc/sysconfig/modules/rte_kni.modules && echo "insmod /lib/modules/`uname -r`/weak-updates/rte_kni.ko" >> /etc/sysconfig/modules/rte_kni.modules && chmod +x /etc/sysconfig/modules/rte_kni.modules' \
-  --run-command 'echo "#!/bin/sh" >> /etc/sysconfig/modules/igb_uio.modules && echo "insmod /lib/modules/`uname -r`/weak-updates/igb_uio.ko" >> /etc/sysconfig/modules/igb_uio.modules && chmod +x /etc/sysconfig/modules/igb_uio.modules' \
-  --run-command 'depmod -a' \
+  --run-command 'yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init supervisor contrail-vrouter-agent contrail-nodemgr contrail-setup contrail-tripleo-puppet puppet-contrail python-contrail lshw' \
   --run-command 'git clone https://github.com/Juniper/contrail-nova-vif-driver' \
   --run-command 'cd contrail-nova-vif-driver && python setup.py install' \
   --run-command 'rm -rf /etc/yum.repos.d/contrail.repo' \
