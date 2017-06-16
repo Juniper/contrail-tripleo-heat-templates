@@ -117,7 +117,7 @@ resources:
                  echo ${bond_policy} > /sys/class/net/${bond_int}/bonding/xmit_hash_policy
                  for member in ${bond_int_member_list}; do
                      ip link set dev ${member} down
-                     ip link set dev ${member} master ${bond_int} &>  /tmp/loggr2
+                     ip link set dev ${member} master ${bond_int}
                  done
                  pci_address=0000:00:00.0
               fi
@@ -144,7 +144,7 @@ resources:
             platform=dpdk
             physical_interface_address=$pci_address
             physical_interface_mac=$mac
-            physical_uio_driver=igb_uio
+            physical_uio_driver=uio_pci_generic
             [VIRTUAL-HOST-INTERFACE]
             physical_interface=${phy_int}
             name=vhost0
