@@ -24,6 +24,18 @@ parameters:
     default: ''
     description: Bond interface members
     type: string
+  BondMode:
+    default: '4'
+    description: Bond Mode
+    type: string
+  BondPolicy:
+    default: '1'
+    description: Bond Policy
+    type: string
+  VrouterGateway:
+    default: ''
+    description: Gateway for vRouter
+    type: string
   HostnameMap:
     default: {}
     description: Mapping of custom hostnames
