@@ -62,6 +62,7 @@ resources:
             bond_mode=$bond_mode
             bond_policy=$bond_policy
             vlan_parent=$vlan_parent
+            vrouter_gateway=$vrouter_gateway
             contrail_repo=$contrail_repo
             echo "127.0.0.1    `hostname`" >> /etc/hosts
             if [[ ${contrail_repo} ]]; then
@@ -148,6 +149,7 @@ resources:
             [VIRTUAL-HOST-INTERFACE]
             physical_interface=${phy_int}
             name=vhost0
+            gateway=${vrouter_gateway}
             EOF
               echo $pci_address > /etc/contrail/dpdk_pci
               echo $mac > /etc/contrail/dpdk_mac
@@ -251,6 +253,7 @@ resources:
             $vlan_parent: {get_param: VlanParentInterface}
             $contrail_repo: {get_param: ContrailRepo}
             $hostname_map: {get_param: HostnameMap}
+            $vrouter_gateway: {get_param: VrouterGateway}
 
 outputs:
   # This means get_resource from the parent template will get the userdata, see:
