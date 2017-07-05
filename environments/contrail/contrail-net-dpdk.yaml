@@ -28,4 +28,7 @@ parameter_defaults:
   #VlanParentInterface: bond0
   #BondInterface: bond0
   #BondInterfaceMembers: 'eth1,eth2'
+  #BondMode: 4
+  #BondPolicy: 1
+  #ContrailDpdkHugepages: 2048
   #InternalApiNetworkVlanID: 100

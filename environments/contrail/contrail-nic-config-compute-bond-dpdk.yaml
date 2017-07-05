@@ -114,10 +114,6 @@ resources:
               use_dhcp: false
               bonding_options: "mode=active-backup"
             -
-              type: vlan
-              vlan_id: {get_param: InternalApiNetworkVlanID}
-              device: bond0
-            -
               type: interface
               name: vhost0
               use_dhcp: false
