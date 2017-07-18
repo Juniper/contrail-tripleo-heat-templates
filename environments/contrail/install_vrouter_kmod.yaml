@@ -124,27 +124,24 @@ resources:
               if [[ ${bond_int} ]]; then
                  bond_int_member_list=$(echo ${bond_int_members} | tr "," "\n")
                  cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${bond_int}
-              DEVICE=${bond_int}
-              BOOTPROTO=none
-              ONBOOT=yes
-              USERCTL=no
-              BONDING_OPTS="mode=${bond_mode} xmit_hash_policy=${bond_policy}"
-              EOF
-              #   ip link add name ${bond_int} type bond
-              #   echo ${bond_mode} > /sys/class/net/${bond_int}/bonding/mode
-              #   echo ${bond_policy} > /sys/class/net/${bond_int}/bonding/xmit_hash_policy
+            DEVICE=${bond_int}
+            BOOTPROTO=none
+            ONBOOT=yes
+            USERCTL=yes
+            NM_CONTROLLER=no
+            BONDING_OPTS="mode=${bond_mode} xmit_hash_policy=${bond_policy}"
+            EOF
                  for member in ${bond_int_member_list}; do
                    cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${member}
-              DEVICE=${member}
-              BOOTPROTO=none
-              ONBOOT=yes
-              MASTER=${bond_int}
-              SLAVE=yes
-              USERCTL=no
-              EOF
+            DEVICE=${member}
+            BOOTPROTO=none
+            ONBOOT=yes
+            MASTER=${bond_int}
+            SLAVE=yes
+            USERCTL=no
+            NM_CONTROLLER=no
+            EOF
                    ip link set dev ${member} down
-              #    ip link set dev ${member} down
-              #    ip link set dev ${member} master ${bond_int}
                  done
                  ifup ${bond_int}
                  pci_address=0000:00:00.0
@@ -153,6 +150,15 @@ resources:
                   echo ${vlan_parent} >> /tmp/vlan_parent
                   vlanId=`echo ${phy_int} | awk -F"vlan" '{print $2}'`
                   ip link add name ${phy_int} link ${vlan_parent} type vlan id ${vlanId}
+                  echo ${vlan_parent} >> /tmp/vlan_parent
+                  cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${phy_int}
+            DEVICE=${phy_int}
+            BOOTPROTO=none
+            ONBOOT=yes
+            USERCTL=yes
+            NM_CONTROLLED=no
+            EOF
+                  ifup ${phy_int}
               fi
               cat <<EOF > /etc/contrail/agent_param
             LOG=/var/log/contrail.log
