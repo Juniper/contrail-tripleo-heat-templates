@@ -131,7 +131,7 @@ resources:
                  cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${bond_int}
             DEVICE=${bond_int}
             BOOTPROTO=none
-            ONBOOT=no
+            ONBOOT=yes
             USERCTL=yes
             NM_CONTROLLED=no
             BONDING_OPTS="mode=${bond_mode} xmit_hash_policy=${bond_policy}"
@@ -140,7 +140,7 @@ resources:
                    cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${member}
             DEVICE=${member}
             BOOTPROTO=none
-            ONBOOT=no
+            ONBOOT=yes
             MASTER=${bond_int}
             SLAVE=yes
             USERCTL=no
@@ -157,7 +157,7 @@ resources:
                   cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${phy_int}
             DEVICE=${phy_int}
             BOOTPROTO=none
-            ONBOOT=no
+            ONBOOT=yes
             USERCTL=yes
             NM_CONTROLLED=no
             VLAN=yes
