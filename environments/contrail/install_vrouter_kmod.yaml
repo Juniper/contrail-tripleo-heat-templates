@@ -36,6 +36,9 @@ parameters:
     default: '2048'
     description: DPDK hugepages
     type: string
+  ContrailDpdkCoremask:
+    default: '0xf'
+    description: Core pinning for DPDK
   VrouterGateway:
     default: ''
     description: Gateway for vRouter
@@ -73,6 +76,7 @@ resources:
             contrail_repo=$contrail_repo
             vrouter_gateway=$vrouter_gateway
             dpdk_hugepages=$dpdk_hugepages
+            dpdk_coremask=$dpdk_coremask
             echo "127.0.0.1    `hostname`" >> /etc/hosts
             if [[ ${contrail_repo} ]]; then
               cat <<EOF > /etc/yum.repos.d/contrail.repo
@@ -186,6 +190,7 @@ resources:
             EOF
               echo $pci_address > /etc/contrail/dpdk_pci
               echo $mac > /etc/contrail/dpdk_mac
+              sed -i "s#^command=#&/bin/taskset ${dpdk_coremask} #" /etc/contrail/supervisord_vrouter_files/contrail-vrouter-dpdk.ini
               systemctl start supervisor-vrouter
               if [[ `ifconfig ${phy_int} |grep "inet "` ]]; then
                 def_gw=''
@@ -289,6 +294,7 @@ resources:
             $hostname_map: {get_param: HostnameMap}
             $vrouter_gateway: {get_param: VrouterGateway}
             $dpdk_hugepages: {get_param: ContrailDpdkHugepages}
+            $dpdk_coremask: {get_param: ContrailDpdkCoremask}
 
 outputs:
   # This means get_resource from the parent template will get the userdata, see:
