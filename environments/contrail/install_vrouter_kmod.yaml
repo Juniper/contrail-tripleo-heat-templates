@@ -39,6 +39,7 @@ parameters:
   ContrailDpdkCoremask:
     default: '0xf'
     description: Core pinning for DPDK
+    type: string
   VrouterGateway:
     default: ''
     description: Gateway for vRouter
