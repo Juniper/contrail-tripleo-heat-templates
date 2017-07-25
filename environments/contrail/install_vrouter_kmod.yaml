@@ -184,10 +184,15 @@ resources:
             physical_interface_address=$pci_address
             physical_interface_mac=$mac
             physical_uio_driver=uio_pci_generic
+            log_file=/var/log/contrail/contrail-vrouter-agent.log
+            log_level=SYS_NOTICE
+            log_local=1
             [VIRTUAL-HOST-INTERFACE]
             physical_interface=${phy_int}
             name=vhost0
             gateway=${vrouter_gateway}
+            [SERVICE-INSTANCE]
+            netns_command=/bin/opencontrail-vrouter-netns
             EOF
               echo $pci_address > /etc/contrail/dpdk_pci
               echo $mac > /etc/contrail/dpdk_mac
