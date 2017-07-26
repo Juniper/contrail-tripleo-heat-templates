@@ -8,19 +8,19 @@ description: >
 
 parameters:
   ServiceNetMap:
+    type: json
     default: {}
     description: Mapping of service_name -> network name. Typically set
                  via parameter_defaults in the resource registry.  This
                  mapping overrides those in ServiceNetMapDefaults.
-    type: json
   DefaultPasswords:
-    default: {}
     type: json
+    default: {}
   EndpointMap:
+    type: json
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
                  via parameter_defaults in the resource registry.
-    type: json
 
 resources:
   ContrailBase:
@@ -30,6 +30,9 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       EndpointMap: {get_param: EndpointMap}
 
+  ContrailContainerBase:
+    type: ./contrail-container.yaml
+
 outputs:
   role_data:
     description: Role Contrail Analytics Database using composable services.
@@ -38,6 +41,7 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
+          - get_attr: [ContrailContainerBase, role_data, config_settings]
           - contrail::analytics::database::host_ip: {get_param: [ServiceNetMap, ContrailAnalyticsDatabaseNetwork]}
       step_config: |
         include ::tripleo::network::contrail::analyticsdatabase
