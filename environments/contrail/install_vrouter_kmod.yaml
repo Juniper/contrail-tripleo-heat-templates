@@ -92,6 +92,7 @@ resources:
               yum install -y contrail-tripleo-puppet puppet-contrail
               rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
             fi
+            mkdir /var/crashes
             echo $hostname_map > /tmp/hostnamemap
             hname_list=(`cat /tmp/hostnamemap |tr -d ' '|tr -d '{'| tr -d '}' |tr ',' ' '`)
             for rolename in "${hname_list[@]}"
