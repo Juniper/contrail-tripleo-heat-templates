@@ -213,7 +213,7 @@ resources:
                 fi
               fi
             fi
-            if [[ `echo $role |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then 
+            if [[ `echo $role |awk -F"-" '{print $2}'` == "compute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then
               if [[ ${contrail_repo} ]]; then
                 yum install -y contrail-vrouter-utils
               fi
