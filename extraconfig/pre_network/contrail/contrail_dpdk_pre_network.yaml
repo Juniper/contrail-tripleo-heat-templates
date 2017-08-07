@@ -68,14 +68,14 @@ resources:
       server:  {get_param: server}
       config: {get_resource: ContrailVrouterDpdkConfig}
       input_values:
+        contrail_repo: {get_param: ContrailRepo}
         phy_int: {get_param: ContrailVrouterPhysicalInterface}
         bond_int: {get_param: ContrailBondInterface}
         bond_int_members: {get_param: ContrailBondInterfaceMembers}
-        vlan_parent: {get_param: ContrailVlanParentInterface}
-        contrail_repo: {get_param: ContrailRepo}
-        vrouter_gateway: {get_param: ContrailVrouterGateway}
         bond_mode: {get_param: ContrailBondMode}
         bond_policy: {get_param: ContrailBondPolicy}
+        vlan_parent: {get_param: ContrailVlanParentInterface}
+        vrouter_gateway: {get_param: ContrailVrouterGateway}
         dpdk_hugepages: {get_param: ContrailDpdkHugePages}
         dpdk_coremask:  {get_param: ContrailDpdkCoremask}
       actions: ['CREATE'] # Only do this on CREATE
@@ -84,29 +84,53 @@ resources:
     type: OS::Heat::SoftwareConfig
     properties:
       group: script
+      inputs:
+      - name: contrail_repo
+      - name: phy_int
+      - name: bond_int
+      - name: bond_int_members
+      - name: bond_mode
+      - name: bond_policy
+      - name: vlan_parent
+      - name: vrouter_gateway
+      - name: dpdk_hugepages
+      - name: dpdk_coremask
       config: |
         #!/bin/bash
+        contrail_repo=$contrail_repo
         phy_int=$phy_int
         bond_int=$bond_int
         bond_int_members=$bond_int_members
         bond_mode=$bond_mode
         bond_policy=$bond_policy
         vlan_parent=$vlan_parent
-        contrail_repo=$contrail_repo
         vrouter_gateway=$vrouter_gateway
         dpdk_hugepages=$dpdk_hugepages
         dpdk_coremask=$dpdk_coremask
+        trace_file=/tmp/contrail.trace
+        date > $trace_file
+        echo phy_int=$phy_int \
+          bond_int=$bond_int \
+          bond_int_members=$bond_int_members \
+          bond_mode=$bond_mode \
+          bond_policy=$bond_policy \
+          vlan_parent=$vlan_parent \
+          contrail_repo=$contrail_repo \
+          vrouter_gateway=$vrouter_gateway \
+          dpdk_hugepages=$dpdk_hugepages \
+          dpdk_coremask=$dpdk_coremask >> $trace_file
+        ifconfig >> $trace_file 2>&1
+        ip route >> $trace_file 2>&1
+        echo "127.0.0.1    `hostname`" >> /etc/hosts
+        mkdir /var/crashes
         echo "vm.nr_hugepages = $dpdk_hugepages" >> /etc/sysctl.conf
         echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
         echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
         echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
         echo "net.ipv4.tcp_keepalive_probes = 5" >> /etc/sysctl.conf
         echo "net.ipv4.tcp_keepalive_intvl = 1" >> /etc/sysctl.conf
-        /sbin/sysctl --system
-        modprobe uio
-        if [[ ${contrail_repo} ]]; then
-          yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init
-        fi
+        /sbin/sysctl --system || echo /sbin/sysctl --system failed err=$? >> $trace_file
+        modprobe uio || echo modprobe uio failed >> $trace_file
         pci_address=`ethtool -i ${phy_int} |grep bus-info| awk '{print $2}' |tr -d ' '`
         if [[ ${vlan_parent} ]]; then
            pci_address=`ethtool -i ${vlan_parent} |grep bus-info| awk '{print $2}' |tr -d ' '`
@@ -137,7 +161,34 @@ resources:
         if [[ ${vlan_parent} ]]; then
           echo ${vlan_parent} >> /tmp/vlan_parent
           vlanId=`echo ${phy_int} | awk -F"vlan" '{print $2}'`
-          ip link add name ${phy_int} link ${vlan_parent} type vlan id ${vlanId}
+          echo "vlan_parent=$vlan_parent vlanId=$vlanId" >> $trace_file
+          cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${phy_int}
+        DEVICE=${phy_int}
+        BOOTPROTO=none
+        ONBOOT=yes
+        USERCTL=yes
+        NM_CONTROLLED=no
+        VLAN=yes
+        PHYSDEV=${vlan_parent}
+        EOF
+          ifup ${phy_int} || echo ifup ${phy_int} failed res=$? >> $trace_file
+        fi
+        # save ip and mask before starting services, otherwise they are always emty
+        # since dpdk device becomes non-network devices
+        def_gw=''
+        if [[ `ip route show | grep default | grep ${phy_int}` ]]; then
+          def_gw=`ip route show | grep default | grep ${phy_int} | awk '{print $3}'`
+        fi
+        ip=`ifconfig ${phy_int} | grep 'inet ' | awk '{print $2}'`
+        mask=`ifconfig ${phy_int} | grep 'inet ' | awk '{print $4}'`
+        mac=`ip link sh dev ${phy_int} | grep link/ether|awk '{print $2}' | tr -d ' '`
+        echo  "${phy_int} ip=$ip mask=$mask def_gw=$def_gw mac=$mac" >> $trace_file
+        # install vrouter packages and prepare configs
+        if [[ ${contrail_repo} ]]; then
+          yum install -y \
+            contrail-vrouter-utils \
+            contrail-vrouter-dpdk \
+            contrail-vrouter-dpdk-init || echo contrail packages installation failed err=$? >> $trace_file
         fi
         cat <<EOF > /etc/contrail/agent_param
         LOG=/var/log/contrail.log
@@ -151,8 +202,7 @@ resources:
         vgw_intf=__VGW_INTF_LIST__
         LOGFILE=--log-file=/var/log/contrail/vrouter.log
         EOF
-          mac=`ip link sh dev ${phy_int} | grep link/ether|awk '{print $2}' | tr -d ' '`
-          cat <<EOF > /etc/contrail/contrail-vrouter-agent.conf
+        cat <<EOF > /etc/contrail/contrail-vrouter-agent.conf
         [DEFAULT]
         platform=dpdk
         physical_interface_address=$pci_address
@@ -171,17 +221,37 @@ resources:
         echo $pci_address > /etc/contrail/dpdk_pci
         echo $mac > /etc/contrail/dpdk_mac
         sed -i "s#^command=#&/bin/taskset ${dpdk_coremask} #" /etc/contrail/supervisord_vrouter_files/contrail-vrouter-dpdk.ini
-        systemctl start supervisor-vrouter
-        if [[ `ifconfig ${phy_int} |grep "inet "` ]]; then
-          def_gw=''
-          if [[ `ip route show |grep default|grep ${phy_int}` ]]; then
-            def_gw=`ip route show |grep default|grep ${phy_int}|awk '{print $3}'`
-          fi
-          ip=`ifconfig ${phy_int} |grep "inet "|awk '{print $2}'`
-          mask=`ifconfig ${phy_int} |grep "inet "|awk '{print $4}'`
-          ip address delete $ip/$mask dev ${phy_int}
-          ip address add $ip/$mask dev vhost0
-          if [[ $def_gw ]]; then
-            ip route add default via $def_gw
-          fi
+        if sestatus | grep -i "Current mode" | grep -q enforcing ; then
+          echo systemctl daemon-reexec... >> $trace_file
+          systemctl daemon-reexec
+          echo systemctl daemon-reexec res=$? >> $trace_file
         fi
+        ldconfig || echo ldconfig failed res=$? >> $trace_file
+        # start contrail services assign mac to vhost0 and up the vhost0 interface
+        systemctl start supervisor-vrouter || echo lsystemctl start supervisor-vrouter failed res=$? >> $trace_file
+        sleep 10
+        ip link set dev vhost0 address $mac || echo ip link set dev vhost0 address $mac failed res=$? >> $trace_file
+        ip link set vhost0 up || echo ip link set vhost0 up res=$? >> $trace_file
+        # assign ip to vhost0
+        if [[ -n "$ip" && -n "$mask" ]]; then
+          ip address delete $ip/$mask dev ${phy_int} || echo ip address delete $ip/$mask dev ${phy_int} failed res=$? >> $trace_file
+          ip address add $ip/$mask dev vhost0 || echo ip address add $ip/$mask dev vhost0 failed res=$? >> $trace_file
+          if [[ $def_gw ]]; then
+            ip route add default via $def_gw || echo ip route add default via $def_gw failed res=$? >> $trace_file
+          else
+            echo ${phy_int} has no gateway >> $trace_file
+          fi
+        else
+          echo ${phy_int} has no IP >> $trace_file
+        fi
+        echo finishing... >> $trace_file
+        ifconfig >> $trace_file 2>&1
+        ip route >> $trace_file 2>&1
+
+outputs:
+  # This means get_resource from the parent template will get the userdata, see:
+  # http://docs.openstack.org/developer/heat/template_guide/composition.html#making-your-template-resource-more-transparent
+  # Note this is new-for-kilo, an alternative is returning a value then using
+  # get_attr in the parent template instead.
+  OS::stack_id:
+    value: {get_resource: userdata}

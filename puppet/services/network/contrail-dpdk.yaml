@@ -77,11 +77,10 @@ outputs:
             contrail::vrouter::netmask: {get_param: ContrailVrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             contrail::vrouter::control_node_ips: {get_param: ContrailVrouterControlNodeIps}
-            tripleo.neutron_compute_plugin_opencontrail.firewall_rules:
-              '111 neutron_compute_plugin_opencontrail proxy':
-                dport:
-                  - 8097
-                  - 8085
-                proto: tcp
+            tripleo.contrail_dpdk.firewall_rules:
+              '111 contrail_dpdk_8085':
+                dport: 8085
+              '112 contrail_dpdk_8097':
+                dport: 8097
       step_config: |
         include ::tripleo::network::contrail::vrouter
