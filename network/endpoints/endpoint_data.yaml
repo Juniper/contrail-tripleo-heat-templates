@@ -1,0 +1,343 @@
+# Data in this file is used to generate the endpoint_map.yaml template.
+# Run the script build_endpoint_map.py to regenerate the file.
+
+Aodh:
+    Internal:
+        net_param: AodhApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: AodhApi
+    port: 8042
+
+Barbican:
+    Internal:
+        net_param: BarbicanApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: BarbicanApi
+    port: 9311
+
+Ceilometer:
+    Internal:
+        net_param: CeilometerApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: CeilometerApi
+    port: 8777
+
+Ec2Api:
+    Internal:
+        net_param: Ec2Api
+    Public:
+        net_param: Public
+    Admin:
+        net_param: Ec2Api
+    port: 8788
+
+Gnocchi:
+    Internal:
+        net_param: GnocchiApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: GnocchiApi
+    port: 8041
+
+Panko:
+    Internal:
+        net_param: PankoApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: PankoApi
+    port: 8779
+
+Cinder:
+    Internal:
+        net_param: CinderApi
+        uri_suffixes:
+            '': /v1/%(tenant_id)s
+            V2: /v2/%(tenant_id)s
+            V3: /v3/%(tenant_id)s
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v1/%(tenant_id)s
+            V2: /v2/%(tenant_id)s
+            V3: /v3/%(tenant_id)s
+    Admin:
+        net_param: CinderApi
+        uri_suffixes:
+            '': /v1/%(tenant_id)s
+            V2: /v2/%(tenant_id)s
+            V3: /v3/%(tenant_id)s
+    port: 8776
+
+Congress:
+    Internal:
+        net_param: CongressApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: CongressApi
+    port: 1789
+
+Glance:
+    Internal:
+        net_param: GlanceApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: GlanceApi
+    port: 9292
+
+Mysql:
+    Internal:
+        net_param: Mysql
+    protocol: mysql+pymysql
+    port: 3306
+
+Heat:
+    Internal:
+        net_param: HeatApi
+        uri_suffixes:
+            '': /v1/%(tenant_id)s
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v1/%(tenant_id)s
+    Admin:
+        net_param: HeatApi
+        uri_suffixes:
+            '': /v1/%(tenant_id)s
+    port: 8004
+
+HeatCfn:
+    Internal:
+        net_param: HeatApi
+        uri_suffixes:
+            '': /v1
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v1
+    Admin:
+        net_param: HeatApi
+        uri_suffixes:
+            '': /v1
+    port: 8000
+
+Horizon:
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /dashboard
+    port: 80
+
+# TODO(ayoung): V3 is a temporary fix. Endpoints should be versionless.
+# Required for https://bugs.launchpad.net/puppet-nova/+bug/1542486
+Keystone:
+    Internal:
+        net_param: KeystonePublicApi
+        uri_suffixes:
+            '': /v2.0
+            EC2: /v2.0/ec2tokens
+            V3: /v3
+        names:
+            EC2: KeystoneEC2
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v2.0
+            V3: /v3
+    Admin:
+        net_param: KeystoneAdminApi
+        uri_suffixes:
+            '': /v2.0
+            V3: /v3
+        port: 35357
+    port: 5000
+
+Manila:
+    Internal:
+        net_param: ManilaApi
+        uri_suffixes:
+            '': /v2/%(tenant_id)s
+            V1: /v1/%(tenant_id)s
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v2/%(tenant_id)s
+            V1: /v1/%(tenant_id)s
+    Admin:
+        net_param: ManilaApi
+        uri_suffixes:
+            '': /v2/%(tenant_id)s
+            V1: /v1/%(tenant_id)s
+    port: 8786
+
+Mistral:
+    Internal:
+        net_param: MistralApi
+        uri_suffixes:
+            '': /v2
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v2
+    Admin:
+        net_param: MistralApi
+        uri_suffixes:
+            '': /v2
+    port: 8989
+
+Neutron:
+    Internal:
+        net_param: NeutronApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: NeutronApi
+    port: 9696
+
+Nova:
+    Internal:
+        net_param: NovaApi
+        uri_suffixes:
+            '': /v2.1
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v2.1
+    Admin:
+        net_param: NovaApi
+        uri_suffixes:
+            '': /v2.1
+    port: 8774
+
+NovaPlacement:
+    Internal:
+        net_param: NovaPlacement
+        uri_suffixes:
+            '': /placement
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /placement
+    Admin:
+        net_param: NovaPlacement
+        uri_suffixes:
+            '': /placement
+    port: 8778
+
+NovaVNCProxy:
+    Internal:
+        net_param: NovaApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: NovaApi
+    port: 6080
+
+Swift:
+    Internal:
+        net_param: SwiftProxy
+        uri_suffixes:
+            '': /v1/AUTH_%(tenant_id)s
+            S3:
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v1/AUTH_%(tenant_id)s
+            S3:
+    Admin:
+        net_param: SwiftProxy
+        uri_suffixes:
+            '':
+            S3:
+    port: 8080
+
+CephRgw:
+    Internal:
+        net_param: CephRgw
+        uri_suffixes:
+            '': /swift/v1
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /swift/v1
+    Admin:
+        net_param: CephRgw
+        uri_suffixes:
+            '': /swift/v1
+    port: 8080
+
+Sahara:
+    Internal:
+        net_param: SaharaApi
+        uri_suffixes:
+            '': /v1.1/%(tenant_id)s
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v1.1/%(tenant_id)s
+    Admin:
+        net_param: SaharaApi
+        uri_suffixes:
+            '': /v1.1/%(tenant_id)s
+    port: 8386
+
+Tacker:
+    Internal:
+        net_param: TackerApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: TackerApi
+    port: 9890
+
+Ironic:
+    Internal:
+        net_param: IronicApi
+        uri_suffixes:
+            '': /v1
+    Public:
+        net_param: Public
+        uri_suffixes:
+            '': /v1
+    Admin:
+        net_param: IronicApi
+        uri_suffixes:
+            '': /v1
+    port: 6385
+
+Zaqar:
+    Internal:
+        net_param: ZaqarApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: ZaqarApi
+    port: 8888
+
+ZaqarWebSocket:
+    Internal:
+        net_param: ZaqarApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: ZaqarApi
+    port: 9000
+    protocol: ws
+
+Octavia:
+    Internal:
+        net_param: OctaviaApi
+    Public:
+        net_param: Public
+    Admin:
+        net_param: OctaviaApi
+    port: 9876
