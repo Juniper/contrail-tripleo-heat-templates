@@ -2,7 +2,7 @@
 
 ## set password & subscription information
 ```
-export USER=<YOUR_RHEL_SUBS_USER> 
+export USER=<YOUR_RHEL_SUBS_USER>
 export PASSWORD=<YOUR_RHEL_SUBS_PWD>
 export POOLID=<YOUR_RHEL_POOL_ID>
 export ROOTPASSWORD=<UNDERCLOUD_ROOT_PWD> # choose a root user password
@@ -40,8 +40,8 @@ sudo chmod g+rw /var/lib/libvirt/images
 ```
 
 ## get rhel 7.3 kvm image
-goto: https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.3/x86_64/product-software    
-download: KVM Guest Image    
+goto: https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.3/x86_64/product-software
+download: KVM Guest Image
 
 ## prepare networking
 ```
@@ -218,15 +218,22 @@ sudo mkdir /var/www/html/contrail
 ```
 
 ## get contrail
+- R3.2
 ```
 curl -o ~/contrail-install-packages_3.2.0.0-21-newton.tgz http://10.84.5.120/github-build/R3.2/LATEST/redhat70/newton/contrail-install-packages_3.2.1.0-21-newton.tgz
 sudo tar zxvf ~/contrail-install-packages_3.2.0.0-21-newton.tgz -C /var/www/html/contrail/
+```
+- R4.0
+```
+curl -o ~/contrail-install-packages_4.0.1.0-25-newton.tgz http://10.84.5.120/github-build/R4.0/LATEST/redhat70/newton/contrail-install-packages_4.0.1.0-25-newton.tgz
+sudo tar zxvf ~/contrail-install-packages_4.0.1.0-25-newton.tgz -C /var/www/html/contrail/
+curl -o ~/contrail-docker-images_4.0.1.0-25.tgz http://10.84.5.120/github-build/R4.0/LATEST/redhat70/newton/contrail-docker-images_4.0.1.0-25.tgz
 ```
 
 ## Ironic Node definiton
 
 ## Option 1
-### define nodes in instackenv.json (option 1)   
+### define nodes in instackenv.json (option 1)
 (https://access.redhat.com/documentation/en/red-hat-openstack-platform/10/paged/director-installation-and-usage/chapter-5-configuring-basic-overcloud-requirements-with-the-cli-tools)
 ```
 vi ~/instackenv.json
@@ -238,7 +245,8 @@ openstack baremetal import --json ~/instackenv.json
 ```
 
 ## Option 2
-### define nodes with CLI 
+### define nodes with CLI
+- R3.2
 ```
 ssh_address=IP_OF_KVM_HOST
 ssh_user=stack
@@ -247,7 +255,20 @@ num=0
 for i in compute control contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn
 do
   num=$(expr $num + 1)
-  ironic node-create -d pxe_ssh -p cpus=4 -p memory_mb=16348 -p local_gb=40 -p cpu_arch=x86_64 -i ssh_username=${ssh_user} -i ssh_virt_type=virsh -i ssh_address=${ssh_address} -i ssh_key_contents=${ssh_key} -n ${i}-${num} -p capabilities=profile:${i} 
+  ironic node-create -d pxe_ssh -p cpus=4 -p memory_mb=16348 -p local_gb=40 -p cpu_arch=x86_64 -i ssh_username=${ssh_user} -i ssh_virt_type=virsh -i ssh_address=${ssh_address} -i ssh_key_contents=${ssh_key} -n ${i}-${num} -p capabilities=profile:${i}
+  ironic port-create -a "de:ad:be:ef:ba:0${num}" -n `openstack baremetal node show ${i}-${num} -c uuid -f value`
+done
+```
+- R4.0
+```
+ssh_address=IP_OF_KVM_HOST
+ssh_user=stack
+ssh_key=SSH_KEY_OF_SSH_USER (/home/stack/.ssh/id_dsa on kvm host)
+num=0
+for i in compute control contrail-controller contrail-analytics contrail-analytics-database contrail-tsn
+do
+  num=$(expr $num + 1)
+  ironic node-create -d pxe_ssh -p cpus=4 -p memory_mb=16348 -p local_gb=40 -p cpu_arch=x86_64 -i ssh_username=${ssh_user} -i ssh_virt_type=virsh -i ssh_address=${ssh_address} -i ssh_key_contents=${ssh_key} -n ${i}-${num} -p capabilities=profile:${i}
   ironic port-create -a "de:ad:be:ef:ba:0${num}" -n `openstack baremetal node show ${i}-${num} -c uuid -f value`
 done
 ```
@@ -264,8 +285,16 @@ openstack overcloud node introspect --all-manageable --provide
 ```
 
 ## node profiling
+- R3.2
 ```
 for i in contrail-controller contrail-analytics contrail-database contrail-analytics-database contrail-tsn; do
+  openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
+  openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="${i}" ${i}
+done
+```
+- R4.0
+```
+for i in contrail-controller contrail-analytics contrail-analytics-database contrail-tsn; do
   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
   openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="${i}" ${i}
 done
@@ -274,10 +303,18 @@ done
 # configure overcloud
 
 ## get puppet modules
+- R3.2
 ```
 mkdir -p ~/usr/share/openstack-puppet/modules
 git clone https://github.com/Juniper/contrail-tripleo-puppet -b stable/newton ~/usr/share/openstack-puppet/modules/tripleo
 git clone https://github.com/Juniper/puppet-contrail -b stable/newton ~/usr/share/openstack-puppet/modules/contrail
+tar czvf puppet-modules.tgz usr/
+```
+- R4.0
+```
+mkdir -p ~/usr/share/openstack-puppet/modules
+git clone https://github.com/Juniper/contrail-tripleo-puppet -b stable/newton ~/usr/share/openstack-puppet/modules/tripleo
+git clone https://github.com/Juniper/puppet-contrail -b R4.0 ~/usr/share/openstack-puppet/modules/contrail
 tar czvf puppet-modules.tgz usr/
 ```
 

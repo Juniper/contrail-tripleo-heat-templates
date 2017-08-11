@@ -42,6 +42,9 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       EndpointMap: {get_param: EndpointMap}
 
+  ContrailContainerBase:
+    type: ./contrail-container.yaml
+
 outputs:
   role_data:
     description: Role Contrail Config using composable services.
@@ -50,6 +53,7 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
+          - get_attr: [ContrailContainerBase, role_data, config_settings]
           - contrail::config::ifmap_password: {get_param: ContrailConfigIfmapUserPassword}
             contrail::config::ifmap_username: {get_param: ContrailConfigIfmapUserName}
             contrail::config::listen_ip_address: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
