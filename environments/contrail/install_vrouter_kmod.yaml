@@ -91,7 +91,6 @@ resources:
               dpdk_hugepages=$dpdk_hugepages \
               dpdk_coremask=$dpdk_coremask >> $trace_file
 
-            echo "127.0.0.1    `hostname`" >> /etc/hosts
             if [[ ${contrail_repo} ]]; then
               cat <<EOF > /etc/yum.repos.d/contrail.repo
             [Contrail]
