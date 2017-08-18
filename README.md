@@ -228,6 +228,7 @@ sudo tar zxvf ~/contrail-install-packages_3.2.0.0-21-newton.tgz -C /var/www/html
 curl -o ~/contrail-install-packages_4.0.1.0-25-newton.tgz http://10.84.5.120/github-build/R4.0/LATEST/redhat70/newton/contrail-install-packages_4.0.1.0-25-newton.tgz
 sudo tar zxvf ~/contrail-install-packages_4.0.1.0-25-newton.tgz -C /var/www/html/contrail/
 curl -o ~/contrail-docker-images_4.0.1.0-25.tgz http://10.84.5.120/github-build/R4.0/LATEST/redhat70/newton/contrail-docker-images_4.0.1.0-25.tgz
+sudo tar zxvf ~/contrail-docker-images_4.0.1.0-25.tgz  -C /var/www/html/contrail/
 ```
 
 ## Ironic Node definiton
