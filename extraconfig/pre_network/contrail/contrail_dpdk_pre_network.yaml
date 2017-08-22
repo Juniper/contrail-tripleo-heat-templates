@@ -125,10 +125,15 @@ resources:
         mkdir /var/crashes
         echo "vm.nr_hugepages = $dpdk_hugepages" >> /etc/sysctl.conf
         echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
+        mkdir /var/crashes
+        chmod -R 755 /var/crashes
+        ulimit -c unlimited
+        echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
         echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
         echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
         echo "net.ipv4.tcp_keepalive_probes = 5" >> /etc/sysctl.conf
         echo "net.ipv4.tcp_keepalive_intvl = 1" >> /etc/sysctl.conf
+        sysctl -p
         /sbin/sysctl --system || echo /sbin/sysctl --system failed err=$? >> $trace_file
         modprobe uio || echo modprobe uio failed >> $trace_file
         pci_address=`ethtool -i ${phy_int} |grep bus-info| awk '{print $2}' |tr -d ' '`
