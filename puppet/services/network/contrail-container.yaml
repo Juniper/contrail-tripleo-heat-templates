@@ -25,9 +25,10 @@ parameters:
     type: string
     default: 'contrail_configdb_cassandra_user'
   ContrailContainerTag:
-    description: Container tag to identify containers to be used.
+    description:  Container tag to identify containers to be used.
+                  Default is to use build number from installed Contrail packages.
     type: string
-    default: '4.0.1.0-25'
+    default: ''
   ContrailContainerUrl:
     description: Url for containers downloading, if not set then ContrailRepo will be used.
     type: string
@@ -62,20 +63,43 @@ parameters:
     type: boolean
     default: false
 
+conditions:
+  contrail_container_tag_unset: {equals : [{get_param: ContrailContainerTag}, '']}
+  contrail_container_url_unset: {equals : [{get_param: ContrailContainerUrl}, []]}
+  contrail_external_cassandra_servers_unset: {equals : [{get_param: ContrailExternalCassandraServers}, []]}
+  contrail_external_rabbitmq_servers_unset: {equals : [{get_param: ContrailExternalRabbitmqServers}, []]}
+  contrail_external_zookeeper_servers_unset: {equals : [{get_param: ContrailExternalZookeeperServers}, []]}
+
 outputs:
   role_data:
     description: Shared data for Contrail container based deployment.
     value:
       service_name: contrail_container
       config_settings:
-        contrail_analyticsdb_cassandra_password: {get_param: ContrailAnalyticsDBPassword}
-        contrail_analyticsdb_cassandra_user: {get_param: ContrailAnalyticsDBUser}
-        contrail_configdb_cassandra_password: {get_param: ContrailConfigDBPassword}
-        contrail_configdb_cassandra_user: {get_param: ContrailConfigDBUser}
-        contrail::container::tag: {get_param: ContrailContainerTag}
-        contrail::container::url: {get_param: ContrailContainerUrl}
-        contrail::external_lb: {get_param: ContrailExternalLB}
-        contrail::external_cassandra_servers: {get_param: ContrailExternalCassandraServers}
-        contrail::external_rabbitmq_servers: {get_param: ContrailExternalRabbitmqServers}
-        contrail::external_zookeeper_servers: {get_param: ContrailExternalZookeeperServers}
-        contrail_ssl_enabled: {get_param: ContrailSslEnabled}
+        map_merge:
+        - contrail_analyticsdb_cassandra_password: {get_param: ContrailAnalyticsDBPassword}
+          contrail_analyticsdb_cassandra_user: {get_param: ContrailAnalyticsDBUser}
+          contrail_configdb_cassandra_password: {get_param: ContrailConfigDBPassword}
+          contrail_configdb_cassandra_user: {get_param: ContrailConfigDBUser}
+          contrail_ssl_enabled: {get_param: ContrailSslEnabled}
+          contrail::external_lb: {get_param: ContrailExternalLB}
+        - if:
+          - contrail_container_tag_unset
+          - {}
+          - contrail::container::tag: {get_param: ContrailContainerTag}
+        - if:
+          - contrail_container_url_unset
+          - {}
+          - contrail::container::url: {get_param: ContrailContainerUrl}
+        - if:
+          - contrail_external_cassandra_servers_unset
+          - {}
+          - contrail::external_cassandra_servers: {get_param: ContrailExternalCassandraServers}
+        - if:
+          - contrail_external_rabbitmq_servers_unset
+          - {}
+          - contrail::external_rabbitmq_servers: {get_param: ContrailExternalRabbitmqServers}
+        - if:
+          - contrail_external_zookeeper_servers_unset
+          - {}
+          - contrail::external_zookeeper_servers: {get_param: ContrailExternalZookeeperServers}
