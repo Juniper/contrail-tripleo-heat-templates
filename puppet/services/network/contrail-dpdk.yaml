@@ -38,6 +38,10 @@ parameters:
     description: List of Contrail Node IPs
     type: comma_delimited_list
     default: ''
+  ContrailDpdkDriver:
+    default: 'uio_pci_generic'
+    description: DPDK Nic Driver
+    type: string
 
 resources:
   ContrailBase:
@@ -62,6 +66,7 @@ outputs:
             contrail::vrouter::netmask: {get_param: VrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             contrail::vrouter::control_node_ips: {get_param: VrouterControlNodeIps}
+            contrail::vrouter::dpdk_driver: {get_param: ContrailDpdkDriver}
             tripleo.contrail_dpdk.firewall_rules:
               '111 contrail_dpdk_8085':
                 dport: 8085
