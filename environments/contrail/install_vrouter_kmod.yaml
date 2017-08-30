@@ -258,6 +258,11 @@ resources:
               else
                 echo ${phy_int} has no IP >> $trace_file
               fi
+              if [[ ${dpdk_driver} == "vfio-pci" ]]; then
+                sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on iommu=pt"/g' -i /etc/default/grub ;
+                grub2-mkconfig -o /etc/grub2.cfg
+                reboot
+              fi
             fi
             if [[ `echo $role |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then
               if [[ ${contrail_repo} ]]; then
