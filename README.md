@@ -293,6 +293,7 @@ git clone https://github.com/Juniper/contrail-tripleo-heat-templates -b stable/o
 cp -r contrail-tripleo-heat-templates/environments/contrail ~/tripleo-heat-templates/environments
 cp -r contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
 cp -r contrail-tripleo-heat-templates/extraconfig ~/tripleo-heat-templates
+cp -r contrail-tripleo-heat-templates/network ~/tripleo-heat-templates
 ```
 
 ## contrail services (repo url etc.)

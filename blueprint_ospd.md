@@ -71,6 +71,7 @@ yum localinstall contrail-tripleo-heat-templates-<version>.el7.noarch.rpm
 cp -r /usr/share/contrail-tripleo-heat-templates/environments/contrail ~/tripleo-heat-templates/environments
 cp -r /usr/share/contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
 cp -r /usr/share/contrail-tripleo-heat-templates/extraconfig ~/tripleo-heat-templates
+cp -r /usr/share/contrail-tripleo-heat-templates/network ~/tripleo-heat-templates
 ```
 
 ### contrail services (repo url etc.)
