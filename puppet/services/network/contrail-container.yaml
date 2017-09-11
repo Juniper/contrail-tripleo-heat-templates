@@ -4,6 +4,12 @@ description: >
   Parameters for Contrail Container based deployment.
 
 parameters:
+  ContrailAnalyticsDBMinDiskGB:
+    description:  The min size for Contrail Analytics DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
   ContrailAnalyticsDBPassword:
     description:  The password for Contrail Analytics DB.
                   Change the password for production.
@@ -14,6 +20,12 @@ parameters:
     description: The password for Contrail Analytics DB
     type: string
     default: 'contrail_analyticsdb_cassandra_user'
+  ContrailConfigDBMinDiskGB:
+    description:  The min size for Contrail Config DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
   ContrailConfigDBPassword:
     description:  The password for Contrail Config DB.
                   Change the password for production.
@@ -69,6 +81,8 @@ conditions:
   contrail_external_cassandra_servers_unset: {equals : [{get_param: ContrailExternalCassandraServers}, []]}
   contrail_external_rabbitmq_servers_unset: {equals : [{get_param: ContrailExternalRabbitmqServers}, []]}
   contrail_external_zookeeper_servers_unset: {equals : [{get_param: ContrailExternalZookeeperServers}, []]}
+  contrail_configdb_min_disk_gb_unset: {equals : [{get_param: ContrailConfigDBMinDiskGB}, '']}
+  contrail_analyticsdb_min_disk_gb_unset: {equals : [{get_param: ContrailAnalyticsDBMinDiskGB}, '']}
 
 outputs:
   role_data:
@@ -103,3 +117,11 @@ outputs:
           - contrail_external_zookeeper_servers_unset
           - {}
           - contrail::external_zookeeper_servers: {get_param: ContrailExternalZookeeperServers}
+        - if:
+          - contrail_configdb_min_disk_gb_unset
+          - {}
+          - contrail_configdb_min_disk_gb: {get_param: ContrailConfigDBMinDiskGB}
+        - if:
+          - contrail_analyticsdb_min_disk_gb_unset
+          - {}
+          - contrail_analyticsdb_min_disk_gb: {get_param: ContrailAnalyticsDBMinDiskGB}

@@ -45,6 +45,10 @@ parameters:
     default: 8082
     description: Contrail Config api port
     type: number
+  ContrailStrictCompliance:
+    default: true
+    description: Run contrail-api to be strictly compliant with neutron.
+    type: boolean
 
 resources:
   ContrailBase:
@@ -75,5 +79,6 @@ outputs:
             contrail::config::listen_port: {get_param: ContrailConfigPort}
             contrail::config::redis_server: '127.0.0.1'
             contrail::config::host_ip: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+            contrail::config::strict_compliance: {get_param: ContrailStrictCompliance}
       step_config: |
         include ::tripleo::network::contrail::config
