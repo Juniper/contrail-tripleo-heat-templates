@@ -30,5 +30,5 @@ parameter_defaults:
   #BondInterfaceMembers: 'eth1,eth2'
   #BondMode: 4
   #BondPolicy: 1
-  #ContrailDpdkHugepages: 2048
+  #ContrailDpdkHugePages: 2048
   #InternalApiNetworkVlanID: 100

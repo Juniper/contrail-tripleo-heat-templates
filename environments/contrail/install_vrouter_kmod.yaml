@@ -32,7 +32,7 @@ parameters:
     default: '1'
     description: Bond Policy
     type: string
-  ContrailDpdkHugepages:
+  ContrailDpdkHugePages:
     default: '2048'
     description: DPDK hugepages
     type: string
@@ -356,7 +356,7 @@ resources:
             $contrail_repo: {get_param: ContrailRepo}
             $hostname_map: {get_param: HostnameMap}
             $vrouter_gateway: {get_param: VrouterGateway}
-            $dpdk_hugepages: {get_param: ContrailDpdkHugepages}
+            $dpdk_hugepages: {get_param: ContrailDpdkHugePages}
             $dpdk_coremask: {get_param: ContrailDpdkCoremask}
             $dpdk_driver: {get_param: ContrailDpdkDriver}
 
