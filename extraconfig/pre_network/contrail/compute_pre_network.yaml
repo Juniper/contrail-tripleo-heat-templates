@@ -79,6 +79,11 @@ resources:
       - name: vlan_parent
       config: |
         #!/bin/bash
+        export LOGFILE=/tmp/contrail_trace_full.txt
+        exec > >(tee -a $LOGFILE)
+        exec 2>&1
+        echo "=================== $(date) ==================="
+        set -xv
         contrail_repo=$contrail_repo
         phy_int=$phy_int
         bond_int=$bond_int
@@ -126,7 +131,7 @@ resources:
             vif --create vhost0 --mac $DEV_MAC
             vif --add ${phy_int} --mac $DEV_MAC --vrf 0 --vhost-phys --type physical
             vif --add vhost0 --mac $DEV_MAC --vrf 0 --type vhost --xconnect ${phy_int}
-            ip link set vhost0 up
+            ip link set dev vhost0 up
             return 0
         }
         if [[ ${bond_int} ]]; then
@@ -134,8 +139,10 @@ resources:
            ip link add name ${bond_int} type bond
            echo ${bond_mode} > /sys/class/net/${bond_int}/bonding/mode
            echo ${bond_policy} > /sys/class/net/${bond_int}/bonding/xmit_hash_policy
+           ip link set dev ${bond_int} up
            for member in ${bond_int_member_list}; do
-               ip link set dev $member master ${bond_int}
+               ip link set dev ${member} down
+               ip link set dev ${member} master ${bond_int}
            done
         fi
         if [[ ${vlan_parent} ]]; then
