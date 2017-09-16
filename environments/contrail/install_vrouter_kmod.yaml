@@ -72,6 +72,11 @@ resources:
         str_replace:
           template: |
             #!/bin/bash
+            export LOGFILE=/tmp/contrail_trace_full.txt
+            exec > >(tee -a $LOGFILE)
+            exec 2>&1
+            echo "=================== $(date) ==================="
+            set -xv
             phy_int=$phy_int
             bond_int=$bond_int
             bond_int_members=$bond_int_members
@@ -83,20 +88,6 @@ resources:
             dpdk_hugepages=$dpdk_hugepages
             dpdk_coremask=$dpdk_coremask
             dpdk_driver=$dpdk_driver
-            trace_file=/tmp/contrail.trace
-            date > $trace_file
-            echo phy_int=$phy_int \
-              bond_int=$bond_int \
-              bond_int_members=$bond_int_members \
-              bond_mode=$bond_mode \
-              bond_policy=$bond_policy \
-              vlan_parent=$vlan_parent \
-              contrail_repo=$contrail_repo \
-              vrouter_gateway=$vrouter_gateway \
-              dpdk_hugepages=$dpdk_hugepages \
-              dpdk_driver=$dpdk_driver \
-              dpdk_coremask=$dpdk_coremask >> $trace_file
-
             if [[ ${contrail_repo} ]]; then
               cat <<EOF > /etc/yum.repos.d/contrail.repo
             [Contrail]
@@ -134,16 +125,13 @@ resources:
               yum remove -y python-redis
             fi
             if [[ `cat /tmp/rolename |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
-              echo DPDK case >> $trace_file
-              ifconfig >> $trace_file 2>&1
-              ip route >> $trace_file 2>&1
               echo "vm.nr_hugepages = ${dpdk_hugepages}" >> /etc/sysctl.conf
               echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
               echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
               echo "net.ipv4.tcp_keepalive_probes = 5" >> /etc/sysctl.conf
               echo "net.ipv4.tcp_keepalive_intvl = 1" >> /etc/sysctl.conf
-              /sbin/sysctl --system || echo /sbin/sysctl --system failed err=$? >> $trace_file
-              modprobe uio || echo modprobe uio failed >> $trace_file
+              /sbin/sysctl --system
+              modprobe uio
               pci_address=`ethtool -i ${phy_int} |grep bus-info| awk '{print $2}' |tr -d ' '`
               if [[ ${vlan_parent} ]]; then
                  pci_address=`ethtool -i ${vlan_parent} |grep bus-info| awk '{print $2}' |tr -d ' '`
@@ -196,13 +184,12 @@ resources:
               ip=`ifconfig ${phy_int} | grep 'inet ' | awk '{print $2}'`
               mask=`ifconfig ${phy_int} | grep 'inet ' | awk '{print $4}'`
               mac=`ip link sh dev ${phy_int} | grep link/ether|awk '{print $2}' | tr -d ' '`
-              echo  "${phy_int} ip=$ip mask=$mask def_gw=$def_gw mac=$mac" >> $trace_file
               # install vrouter packages and prepare configs
               if [[ ${contrail_repo} ]]; then
                 yum install -y \
                   contrail-vrouter-utils \
                   contrail-vrouter-dpdk \
-                  contrail-vrouter-dpdk-init || echo contrail packages installation failed err=$? >> $trace_file
+                  contrail-vrouter-dpdk-init
               fi
               cat <<EOF > /etc/contrail/agent_param
             LOG=/var/log/contrail.log
@@ -236,27 +223,21 @@ resources:
               echo $mac > /etc/contrail/dpdk_mac
               sed -i "s#^command=#&/bin/taskset ${dpdk_coremask} #" /etc/contrail/supervisord_vrouter_files/contrail-vrouter-dpdk.ini
               if sestatus | grep -i "Current mode" | grep -q enforcing ; then
-                echo systemctl daemon-reexec... >> $trace_file
                 systemctl daemon-reexec
-                echo systemctl daemon-reexec res=$? >> $trace_file
               fi
-              ldconfig || echo ldconfig failed res=$? >> $trace_file
+              ldconfig
               # start contrail services assign mac to vhost0 and up the vhost0 interface
-              systemctl start supervisor-vrouter || echo lsystemctl start supervisor-vrouter failed res=$? >> $trace_file
+              systemctl start supervisor-vrouter
               sleep 10
-              ip link set dev vhost0 address $mac || echo ip link set dev vhost0 address $mac failed res=$? >> $trace_file
-              ip link set vhost0 up || echo ip link set vhost0 up res=$? >> $trace_file
+              ip link set dev vhost0 address $mac
+              ip link set dev vhost0 up
               # assign ip to vhost0
               if [[ -n "$ip" && -n "$mask" ]]; then
-                ip address delete $ip/$mask dev ${phy_int} || echo ip address delete $ip/$mask dev ${phy_int} failed res=$? >> $trace_file
-                ip address add $ip/$mask dev vhost0 || echo ip address add $ip/$mask dev vhost0 failed res=$? >> $trace_file
+                ip address delete $ip/$mask dev ${phy_int}
+                ip address add $ip/$mask dev vhost0
                 if [[ $def_gw ]]; then
-                  ip route add default via $def_gw || echo ip route add default via $def_gw failed res=$? >> $trace_file
-                else
-                  echo ${phy_int} has no gateway >> $trace_file
+                  ip route add default via $def_gw
                 fi
-              else
-                echo ${phy_int} has no IP >> $trace_file
               fi
               if [[ ${dpdk_driver} == "vfio-pci" ]]; then
                 sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on iommu=pt"/g' -i /etc/default/grub ;
@@ -302,7 +283,7 @@ resources:
                   vif --add ${phy_int} --mac $DEV_MAC --vrf 0 --vhost-phys --type physical
                   vif --add vhost0 --mac $DEV_MAC --vrf 0 --type vhost --xconnect ${phy_int}
                   ifconfig ${phy_int} up
-                  ip link set vhost0 up
+                  ip link set dev vhost0 up
                   return 0
               }
               if [[ ${contrail_repo} ]]; then
@@ -320,8 +301,10 @@ resources:
                  ip link add name ${bond_int} type bond
                  echo ${bond_mode} > /sys/class/net/${bond_int}/bonding/mode
                  echo ${bond_policy} > /sys/class/net/${bond_int}/bonding/xmit_hash_policy
+                 ip link set dev ${bond_int} up
                  for member in ${bond_int_member_list}; do
-                     ip link set dev $member master ${bond_int}
+                     ip link set dev ${member} down
+                     ip link set dev ${member} master ${bond_int}
                  done
               fi
               if [[ ${vlan_parent} ]]; then
@@ -343,9 +326,9 @@ resources:
                 fi
               fi
             fi
-            echo finishing... >> $trace_file
-            ifconfig >> $trace_file 2>&1
-            ip route >> $trace_file 2>&1
+            echo finishing...
+            ifconfig
+            ip route
           params:
             $phy_int: {get_param: VrouterPhysicalInterface}
             $bond_int: {get_param: BondInterface}
