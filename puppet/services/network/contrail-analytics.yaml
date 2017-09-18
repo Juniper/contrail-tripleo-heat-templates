@@ -50,9 +50,6 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       EndpointMap: {get_param: EndpointMap}
 
-  ContrailContainerBase:
-    type: ./contrail-container.yaml
-
 outputs:
   role_data:
     description: Role Contrail Analytics using composable services.
@@ -61,7 +58,6 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
-          - get_attr: [ContrailContainerBase, role_data, config_settings]
           - contrail::analytics::collector_http_server_port: {get_param: ContrailAnalyticsCollectorHttp}
             contrail::analytics::collector_sandesh_port: {get_param: ContrailAnalyticsCollectorSandesh}
             contrail::analytics::host_ip: {get_param: [ServiceNetMap, ContrailAnalyticsNetwork]}
