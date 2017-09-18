@@ -86,6 +86,10 @@ parameters:
     default: '127.0.0.1:12111'
     description: Memcached server
     type: string
+  ContrailVersion:
+    default: 4 
+    description: contrail version
+    type: number
   ContrailVIP:
     default: ''
     description: Contrail VIP
@@ -132,6 +136,7 @@ outputs:
         contrail::auth_port_ssl_public: {get_param: AuthPortSSLPublic }
         contrail::auth_protocol: {get_param: AuthProtocol }
         contrail::api_port: {get_param: ContrailConfigPort }
+        contrail::contrail_version: {get_param: ContrailVersion }
         contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
         contrail::insecure: {get_param: ContrailInsecure}
         contrail::memcached_server: {get_param: ContrailMemcachedServer}
