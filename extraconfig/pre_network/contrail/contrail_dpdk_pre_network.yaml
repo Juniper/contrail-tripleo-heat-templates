@@ -40,6 +40,10 @@ parameters:
     default: '0xf'
     description: Core pinning for DPDK
     type: string
+  ContrailDpdkDriver:
+    default: 'uio_pci_generic'
+    description: DPDK Nic Driver
+    type: string
   ContrailVrouterGateway:
     default: ''
     description: Gateway for vRouter
@@ -78,6 +82,7 @@ resources:
         vrouter_gateway: {get_param: ContrailVrouterGateway}
         dpdk_hugepages: {get_param: ContrailDpdkHugePages}
         dpdk_coremask:  {get_param: ContrailDpdkCoremask}
+        dpdk_driver: {get_param: ContrailDpdkDriver}
       actions: ['CREATE'] # Only do this on CREATE
 
   ContrailVrouterDpdkConfig:
@@ -95,6 +100,7 @@ resources:
       - name: vrouter_gateway
       - name: dpdk_hugepages
       - name: dpdk_coremask
+      - name: dpdk_driver
       config: |
         #!/bin/bash
         export LOGFILE=/tmp/contrail_trace_full.txt
@@ -112,6 +118,7 @@ resources:
         vrouter_gateway=$vrouter_gateway
         dpdk_hugepages=$dpdk_hugepages
         dpdk_coremask=$dpdk_coremask
+        dpdk_driver=$dpdk_driver
         echo "127.0.0.1    `hostname`" >> /etc/hosts
         mkdir /var/crashes
         echo "vm.nr_hugepages = $dpdk_hugepages" >> /etc/sysctl.conf
@@ -202,7 +209,7 @@ resources:
         platform=dpdk
         physical_interface_address=$pci_address
         physical_interface_mac=$mac
-        physical_uio_driver=uio_pci_generic
+        physical_uio_driver=${dpdk_driver}
         log_file=/var/log/contrail/contrail-vrouter-agent.log
         log_level=SYS_NOTICE
         log_local=1
@@ -232,6 +239,12 @@ resources:
           if [[ $def_gw ]]; then
             ip route add default via $def_gw
           fi
+        fi
+        if [[ ${dpdk_driver} == "vfio-pci" ]]; then
+          sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on iommu=pt"/g' -i /etc/default/grub ;
+          grub2-mkconfig -o /etc/grub2.cfg
+          systemctl enable supervisor-vrouter
+          reboot
         fi
         echo finishing...
         ifconfig
