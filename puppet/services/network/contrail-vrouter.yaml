@@ -38,6 +38,10 @@ parameters:
     description: List of Contrail Node IPs
     type: comma_delimited_list
     default: ''
+  VrouterAnalyticsNodeIps:
+    description: List of Contrail Analytics IPs
+    type: comma_delimited_list
+    default: ''
 
 resources:
   ContrailBase:
@@ -61,6 +65,7 @@ outputs:
             contrail::vrouter::netmask: {get_param: VrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             contrail::vrouter::control_node_ips: {get_param: VrouterControlNodeIps}
+            contrail::vrouter::analytics_node_ips: {get_param: VrouterAnalyticsNodeIps}
             tripleo.contrail_vrouter.firewall_rules:
               '111 contrail_vrouter_8085':
                 dport: 8085
