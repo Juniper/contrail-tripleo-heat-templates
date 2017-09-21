@@ -37,6 +37,15 @@ parameters:
     default: true
     description: Run contrail-api to be strictly compliant with neutron.
     type: boolean
+  ContrailConfigDBMinDiskGB:
+    description:  The min size for Contrail Config DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
+
+conditions:
+  contrail_configdb_min_disk_gb_unset: {equals : [{get_param: ContrailConfigDBMinDiskGB}, '']}
 
 resources:
   ContrailBase:
@@ -46,9 +55,6 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       EndpointMap: {get_param: EndpointMap}
 
-  ContrailContainerBase:
-    type: ./contrail-container.yaml
-
 outputs:
   role_data:
     description: Role Contrail Config using composable services.
@@ -56,14 +62,17 @@ outputs:
       service_name: contrail_config
       config_settings:
         map_merge:
-          - get_attr: [ContrailBase, role_data, config_settings]
-          - get_attr: [ContrailContainerBase, role_data, config_settings]
-          - contrail::config::ifmap_password: {get_param: ContrailConfigIfmapUserPassword}
-            contrail::config::ifmap_username: {get_param: ContrailConfigIfmapUserName}
-            contrail::config::listen_ip_address: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
-            contrail::config::listen_port: {get_param: ContrailConfigPort}
-            contrail::config::redis_server: '127.0.0.1'
-            contrail::config::host_ip: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
-            contrail::config::strict_compliance: {get_param: ContrailStrictCompliance}
+        - get_attr: [ContrailBase, role_data, config_settings]
+        - contrail::config::ifmap_password: {get_param: ContrailConfigIfmapUserPassword}
+          contrail::config::ifmap_username: {get_param: ContrailConfigIfmapUserName}
+          contrail::config::listen_ip_address: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+          contrail::config::listen_port: {get_param: ContrailConfigPort}
+          contrail::config::redis_server: '127.0.0.1'
+          contrail::config::host_ip: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+          contrail::config::strict_compliance: {get_param: ContrailStrictCompliance}
+        - if:
+          - contrail_configdb_min_disk_gb_unset
+          - {}
+          - contrail_configdb_min_disk_gb: {get_param: ContrailConfigDBMinDiskGB}
       step_config: |
         include ::tripleo::network::contrail::config
