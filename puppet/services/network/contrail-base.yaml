@@ -82,6 +82,10 @@ parameters:
     default: '127.0.0.1:12111'
     description: Memcached server
     type: string
+  ContrailVersion:
+    default: 4
+    description: contrail version
+    type: number
   ContrailVIP:
     default: ''
     description: Contrail VIP
@@ -102,6 +106,11 @@ parameters:
     default: 5672
     description: Set rabbit subscriber port, change this if using SSL
     type: number
+  ContrailSslEnabled:
+    description:  Flag to identify is SSL should be used in internal Contrail
+                  services communications (sandesh, introspect, xmpp, ..).
+    type: boolean
+    default: false
 
 conditions:
   contrail_config_vip_unset: {equals : [{get_param: ContrailConfigVIP}, '']}
@@ -127,12 +136,14 @@ outputs:
           contrail::auth_port_public: {get_param: [EndpointMap, KeystonePublic, port] }
           contrail::auth_protocol: {get_param: [EndpointMap, KeystonePublic, protocol] }
           contrail::api_port: {get_param: ContrailConfigPort }
+          contrail::contrail_version: {get_param: ContrailVersion }
           contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
           contrail::insecure: {get_param: ContrailInsecure}
           contrail::memcached_server: {get_param: ContrailMemcachedServer}
           contrail::rabbit_password: {get_param: RabbitPassword}
           contrail::rabbit_user: {get_param: RabbitUserName}
           contrail::rabbit_port: {get_param: RabbitClientPort}
+          contrail_ssl_enabled: {get_param: ContrailSslEnabled}
           contrail::vip: {get_param: ContrailVIP}
         -
           if:

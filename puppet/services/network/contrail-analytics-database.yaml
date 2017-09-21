@@ -33,6 +33,15 @@ parameters:
     description: Mapping of service endpoint -> protocol. Typically set
                  via parameter_defaults in the resource registry.
     type: json
+  ContrailAnalyticsDBMinDiskGB:
+    description:  The min size for Contrail Analytics DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
+
+conditions:
+  contrail_analyticsdb_min_disk_gb_unset: {equals : [{get_param: ContrailAnalyticsDBMinDiskGB}, '']}
 
 resources:
   ContrailBase:
@@ -45,9 +54,6 @@ resources:
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
 
-  ContrailContainerBase:
-    type: ./contrail-container.yaml
-
 outputs:
   role_data:
     description: Role Contrail Analytics Database using composable services.
@@ -55,8 +61,11 @@ outputs:
       service_name: contrail_analytics_database
       config_settings:
         map_merge:
-          - get_attr: [ContrailBase, role_data, config_settings]
-          - get_attr: [ContrailContainerBase, role_data, config_settings]
-          - contrail::analytics::database::host_ip: {get_param: [ServiceNetMap, ContrailAnalyticsDatabaseNetwork]}
+        - get_attr: [ContrailBase, role_data, config_settings]
+        - contrail::analytics::database::host_ip: {get_param: [ServiceNetMap, ContrailAnalyticsDatabaseNetwork]}
+        - if:
+          - contrail_analyticsdb_min_disk_gb_unset
+          - {}
+          - contrail_analyticsdb_min_disk_gb: {get_param: ContrailAnalyticsDBMinDiskGB}
       step_config: |
         include ::tripleo::network::contrail::analyticsdatabase
