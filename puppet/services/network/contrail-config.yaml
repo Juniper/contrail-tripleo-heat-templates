@@ -1,4 +1,4 @@
-heat_template_version: 2016-10-14
+heat_template_version: ocata
 
 description: >
   Contrail Config service deployment using puppet, this YAML file
@@ -7,6 +7,10 @@ description: >
   and configures Contrail Config.
 
 parameters:
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
   ServiceNetMap:
     default: {}
     description: Mapping of service_name -> network name. Typically set
@@ -15,6 +19,14 @@ parameters:
     type: json
   DefaultPasswords:
     default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
     type: json
   EndpointMap:
     default: {}
@@ -33,14 +45,30 @@ parameters:
     default: 8082
     description: Contrail Config api port
     type: number
+  ContrailStrictCompliance:
+    default: true
+    description: Run contrail-api to be strictly compliant with neutron.
+    type: boolean
+  ContrailConfigDBMinDiskGB:
+    description:  The min size for Contrail Config DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
+
+conditions:
+  contrail_configdb_min_disk_gb_unset: {equals : [{get_param: ContrailConfigDBMinDiskGB}, '']}
 
 resources:
   ContrailBase:
     type: ./contrail-base.yaml
     properties:
+      ServiceData: {get_param: ServiceData}
       ServiceNetMap: {get_param: ServiceNetMap}
       DefaultPasswords: {get_param: DefaultPasswords}
       EndpointMap: {get_param: EndpointMap}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
 
 outputs:
   role_data:
@@ -49,12 +77,17 @@ outputs:
       service_name: contrail_config
       config_settings:
         map_merge:
-          - get_attr: [ContrailBase, role_data, config_settings]
-          - contrail::config::ifmap_password: {get_param: ContrailConfigIfmapUserPassword}
-            contrail::config::ifmap_username: {get_param: ContrailConfigIfmapUserName}
-            contrail::config::listen_ip_address: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
-            contrail::config::listen_port: {get_param: ContrailConfigPort}
-            contrail::config::redis_server: '127.0.0.1'
-            contrail::config::host_ip: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+        - get_attr: [ContrailBase, role_data, config_settings]
+        - contrail::config::ifmap_password: {get_param: ContrailConfigIfmapUserPassword}
+          contrail::config::ifmap_username: {get_param: ContrailConfigIfmapUserName}
+          contrail::config::listen_ip_address: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+          contrail::config::listen_port: {get_param: ContrailConfigPort}
+          contrail::config::redis_server: '127.0.0.1'
+          contrail::config::host_ip: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+          contrail::config::strict_compliance: {get_param: ContrailStrictCompliance}
+        - if:
+          - contrail_configdb_min_disk_gb_unset
+          - {}
+          - contrail_configdb_min_disk_gb: {get_param: ContrailConfigDBMinDiskGB}
       step_config: |
         include ::tripleo::network::contrail::config
