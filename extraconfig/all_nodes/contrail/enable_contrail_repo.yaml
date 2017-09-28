@@ -30,6 +30,8 @@ resources:
             protect=1
             metadata_expire=30
             EOF
+              yum install -y contrail-tripleo-puppet puppet-contrail
+              rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
             fi
           params:
             $contrail_repo: {get_param: ContrailRepo}
