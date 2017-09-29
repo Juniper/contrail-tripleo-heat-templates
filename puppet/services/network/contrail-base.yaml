@@ -62,6 +62,10 @@ parameters:
     default: 'keystone'
     description: Keystone authentication method
     type: string
+  ContrailAuthVersion:
+    default: 2
+    description: Keystone authentication version (2, 3)
+    type: number
   ContrailAnalyticsVIP:
     default: ''
     description: Contrail Analytics Api Virtual IP address
@@ -87,7 +91,7 @@ parameters:
     description: Memcached server
     type: string
   ContrailVersion:
-    default: 4 
+    default: 4
     description: contrail version
     type: number
   ContrailVIP:
@@ -136,6 +140,7 @@ outputs:
         contrail::auth_port_ssl_public: {get_param: AuthPortSSLPublic }
         contrail::auth_protocol: {get_param: AuthProtocol }
         contrail::api_port: {get_param: ContrailConfigPort }
+        contrail::auth_version: {get_param: ContrailAuthVersion}
         contrail::contrail_version: {get_param: ContrailVersion }
         contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
         contrail::insecure: {get_param: ContrailInsecure}
