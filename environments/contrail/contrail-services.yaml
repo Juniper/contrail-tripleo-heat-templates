@@ -34,6 +34,7 @@ parameter_defaults:
     ContrailTsnNetwork: internal_api
     ContrailVrouterNetwork: internal_api
     ContrailDpdkNetwork: internal_api
+  ContrailVersion: 4
   ContrailRepo: http://192.168.24.1/contrail
   ContrailControlManageNamed: true
   EnablePackageInstall: true

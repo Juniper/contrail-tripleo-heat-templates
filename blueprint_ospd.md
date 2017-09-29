@@ -74,7 +74,7 @@ cp -r /usr/share/contrail-tripleo-heat-templates/extraconfig ~/tripleo-heat-temp
 cp -r /usr/share/contrail-tripleo-heat-templates/network ~/tripleo-heat-templates
 ```
 
-### contrail services (repo url etc.)
+### contrail services parameters (contrail version, repo url etc.)
 ```
 vi ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ```
