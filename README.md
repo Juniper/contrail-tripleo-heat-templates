@@ -296,10 +296,13 @@ cp -r contrail-tripleo-heat-templates/extraconfig ~/tripleo-heat-templates
 cp -r contrail-tripleo-heat-templates/network ~/tripleo-heat-templates
 ```
 
-## contrail services (repo url etc.)
+## contrail services parameters (contrail version, repo url etc.)
 ```
 vi ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ```
+    It is important to set correct ContrailVersion parameters:
+        3 - for Contrail 3.x
+        4 - for Contrail 4.x
 
 ## overcloud networking
 ### multi-nic
