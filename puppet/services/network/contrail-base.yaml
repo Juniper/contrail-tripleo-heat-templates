@@ -58,6 +58,10 @@ parameters:
     default: 'keystone'
     description: Keystone authentication method
     type: string
+  ContrailAuthVersion:
+    default: 2
+    description: Keystone authentication version (2, 3)
+    type: number
   ContrailAnalyticsVIP:
     default: ''
     description: Contrail Analytics Api Virtual IP address
@@ -131,6 +135,7 @@ outputs:
           contrail::admin_token: {get_param: AdminToken}
           contrail::admin_user: {get_param: AdminUser}
           contrail::auth: {get_param: ContrailAuth}
+          contrail::auth_version: {get_param: ContrailAuthVersion}
           contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
           contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
           contrail::auth_port_public: {get_param: [EndpointMap, KeystonePublic, port] }
