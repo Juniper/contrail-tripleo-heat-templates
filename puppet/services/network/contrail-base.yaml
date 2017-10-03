@@ -54,6 +54,10 @@ parameters:
     description: Keystone admin user name
     type: string
     default: 'admin'
+  KeystoneRegion:
+    type: string
+    default: 'regionOne'
+    description: Keystone region for endpoint
   ContrailAuth:
     default: 'keystone'
     description: Keystone authentication method
@@ -144,6 +148,7 @@ outputs:
           contrail::contrail_version: {get_param: ContrailVersion }
           contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
           contrail::insecure: {get_param: ContrailInsecure}
+          contrail::keystone_region: {get_param: KeystoneRegion}
           contrail::memcached_server: {get_param: ContrailMemcachedServer}
           contrail::rabbit_password: {get_param: RabbitPassword}
           contrail::rabbit_user: {get_param: RabbitUserName}
