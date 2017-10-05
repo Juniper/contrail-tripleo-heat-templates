@@ -145,6 +145,7 @@ resources:
         BOOTPROTO=none
         ONBOOT=yes
         USERCTL=no
+        NM_CONTROLLED=no
         BONDING_OPTS="mode=${bond_mode} xmit_hash_policy=${bond_policy}"
         EOF
           for member in ${bond_int_member_list}; do
@@ -154,6 +155,7 @@ resources:
         ONBOOT=yes
         MASTER=${bond_int}
         SLAVE=yes
+        NM_CONTROLLED=no
         USERCTL=no
         EOF
             ip link set dev ${member} down
