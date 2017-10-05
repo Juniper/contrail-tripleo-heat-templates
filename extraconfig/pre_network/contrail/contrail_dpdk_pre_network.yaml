@@ -164,7 +164,6 @@ resources:
         if [[ ${vlan_parent} ]]; then
           echo ${vlan_parent} >> /tmp/vlan_parent
           vlanId=`echo ${phy_int} | awk -F"vlan" '{print $2}'`
-          echo "vlan_parent=$vlan_parent vlanId=$vlanId" >> $trace_file
           cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${phy_int}
         DEVICE=${phy_int}
         BOOTPROTO=none
