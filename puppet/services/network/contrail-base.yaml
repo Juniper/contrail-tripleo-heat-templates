@@ -54,10 +54,30 @@ parameters:
     description: Keystone admin user name
     type: string
     default: 'admin'
+  KeystoneAuthType:
+    type: string
+    default: 'password'
+    description: Keystone auth type
+  KeystoneProjectDomainName:
+    type: string
+    default: 'Default'
+    description: Keystone Project Domain Name
+  KeystoneRegion:
+    type: string
+    default: 'regionOne'
+    description: Keystone region for endpoint
+  KeystoneUserDomainName:
+    type: string
+    default: 'Default'
+    description: Keystone User Domain Name
   ContrailAuth:
     default: 'keystone'
     description: Keystone authentication method
     type: string
+  ContrailAuthVersion:
+    default: 2
+    description: Keystone authentication version (2, 3)
+    type: number
   ContrailAnalyticsVIP:
     default: ''
     description: Contrail Analytics Api Virtual IP address
@@ -131,6 +151,7 @@ outputs:
           contrail::admin_token: {get_param: AdminToken}
           contrail::admin_user: {get_param: AdminUser}
           contrail::auth: {get_param: ContrailAuth}
+          contrail::auth_version: {get_param: ContrailAuthVersion}
           contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
           contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
           contrail::auth_port_public: {get_param: [EndpointMap, KeystonePublic, port] }
@@ -139,6 +160,10 @@ outputs:
           contrail::contrail_version: {get_param: ContrailVersion }
           contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
           contrail::insecure: {get_param: ContrailInsecure}
+          contrail::keystone_auth_type: {get_param: KeystoneAuthType}
+          contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
+          contrail::keystone_region: {get_param: KeystoneRegion}
+          contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
           contrail::memcached_server: {get_param: ContrailMemcachedServer}
           contrail::rabbit_password: {get_param: RabbitPassword}
           contrail::rabbit_user: {get_param: RabbitUserName}
