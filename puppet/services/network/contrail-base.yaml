@@ -58,10 +58,30 @@ parameters:
     default: 'http'
     description: Keystone authentication protocol
     type: string
+  KeystoneAuthType:
+    type: string
+    default: 'password'
+    description: Keystone auth type
+  KeystoneProjectDomainName:
+    type: string
+    default: 'Default'
+    description: Keystone Project Domain Name
+  KeystoneRegion:
+    type: string
+    default: 'regionOne'
+    description: Keystone region for endpoint
+  KeystoneUserDomainName:
+    type: string
+    default: 'Default'
+    description: Keystone User Domain Name
   ContrailAuth:
     default: 'keystone'
     description: Keystone authentication method
     type: string
+  ContrailAuthVersion:
+    default: 2
+    description: Keystone authentication version (2, 3)
+    type: number
   ContrailAnalyticsVIP:
     default: ''
     description: Contrail Analytics Api Virtual IP address
@@ -87,7 +107,7 @@ parameters:
     description: Memcached server
     type: string
   ContrailVersion:
-    default: 4 
+    default: 4
     description: contrail version
     type: number
   ContrailVIP:
@@ -136,6 +156,11 @@ outputs:
         contrail::auth_port_ssl_public: {get_param: AuthPortSSLPublic }
         contrail::auth_protocol: {get_param: AuthProtocol }
         contrail::api_port: {get_param: ContrailConfigPort }
+        contrail::keystone_auth_type: {get_param: KeystoneAuthType}
+        contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
+        contrail::keystone_region: {get_param: KeystoneRegion}
+        contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
+        contrail::auth_version: {get_param: ContrailAuthVersion}
         contrail::contrail_version: {get_param: ContrailVersion }
         contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
         contrail::insecure: {get_param: ContrailInsecure}
