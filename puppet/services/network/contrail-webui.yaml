@@ -22,7 +22,7 @@ parameters:
                  via parameter_defaults in the resource registry.
     type: json
   ContrailWebuiHttp:
-    default: 8080
+    default: 8180
     description: Contrail Webui http port
     type: number
   ContrailWebuiHttps:
