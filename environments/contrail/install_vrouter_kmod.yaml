@@ -8,6 +8,10 @@ parameters:
   ContrailRepo:
     type: string
     default: ''
+  ContrailRepoNew:
+    type: string
+    default: 'http://192.0.2.1/contrail-new'
+    description: To be used only for ISSU use-case. Set it to the location where the contrail 4.x version is hosted
   VrouterPhysicalInterface:
     default: 'eth0'
     description: vRouter physical interface
@@ -84,6 +88,7 @@ resources:
             bond_policy=$bond_policy
             vlan_parent=$vlan_parent
             contrail_repo=$contrail_repo
+            contrail_repo_new=$contrail_repo_new
             vrouter_gateway=$vrouter_gateway
             dpdk_hugepages=$dpdk_hugepages
             dpdk_coremask=$dpdk_coremask
@@ -98,8 +103,17 @@ resources:
             protect=1
             metadata_expire=30
             EOF
-              yum install -y contrail-tripleo-puppet puppet-contrail
-              rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
+            fi
+            if [[ ${contrail_repo_new} ]]; then
+              cat <<EOF > /etc/yum.repos.d/contrail-new.repo
+            [ContrailNew]
+            name=Contrail Repo New
+            baseurl=${contrail_repo_new}
+            enabled=1
+            gpgcheck=0
+            protect=1
+            metadata_expire=30
+            EOF
             fi
             mkdir /var/crashes
             chmod -R 755 /var/crashes
@@ -123,6 +137,9 @@ resources:
             fi
             if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" ]]; then
               yum remove -y python-redis
+            fi
+            if [[ `echo $role` != "overcloud-contrailcontroller-3" && `echo $role` != "overcloud-contrailcontroller-4" && `echo $role` != "overcloud-contrailcontroller-5" && `echo $role` != "overcloud-contrailanalytics-3" && `echo $role` != "overcloud-contrailanalytics-4" && `echo $role` != "overcloud-contrailanalytics-5" && `echo $role` != "overcloud-contrailanalyticsdatabase-3" && `echo $role` != "overcloud-contrailanalyticsdatabase-4" && `echo $role` != "overcloud-contrailanalyticsdatabase-5"]]; then
+              rm -rf /etc/yum.repos.d/contrail-new.repo
             fi
             if [[ `cat /tmp/rolename |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
               echo "vm.nr_hugepages = ${dpdk_hugepages}" >> /etc/sysctl.conf
@@ -337,6 +354,7 @@ resources:
             $bond_policy: {get_param: BondPolicy}
             $vlan_parent: {get_param: VlanParentInterface}
             $contrail_repo: {get_param: ContrailRepo}
+            $contrail_repo_new: {get_param: ContrailRepoNew}
             $hostname_map: {get_param: HostnameMap}
             $vrouter_gateway: {get_param: VrouterGateway}
             $dpdk_hugepages: {get_param: ContrailDpdkHugePages}
