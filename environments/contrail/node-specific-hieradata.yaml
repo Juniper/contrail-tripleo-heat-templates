@@ -1,23 +1,50 @@
-# This file must be used in case the user is looking to perform an ISSU style upgrade of their Contrail cluster from 3.2.x to 4.y version.
+# This file must be used in case the user is looking to perform an ISSU style upgrade of their Contrail
+# cluster from 3.2.x to 4.y version.
 # 
-# The NodeDataLookup section is organized as:
-## {"NODE-1-UUID": {"Node-1-hiera-key-1": "Node-1-hiera-value-1", "Node-1-hiera-key-2": "Node-1-hiera-value-2"},
-##  "NODE-2-UUID": {"Node-2-hiera-key-1": "Node-2-hiera-value-1", "Node-2-hiera-key-2": "Node-2-hiera-value-2"}}
-#
-# The UUID of each node can be obtained by issuing "openstack baremetal introspection data save <ironic-node-uuid> | jq .extra.system.product.uuid"
-#
-## HOW TO POPULATE NodeDataLookup for Contrail-ISSU use-case:
-# {"OpenStack-Node-UUID": {"contrail::contrail_version": 3},
-#  "Contrail-v3.2-Controller-UUID": {"contrail::contrail_version": 3, "contrail_database_node_ips": ["Contrail-v3.2-Controller-IP"]},
-#  "Contrail-v3.2-Analytics-UUID": {"contrail::contrail_version": 3, "contrail_analytics_database_node_ips": ["Contrail-v3.2-Analytics-DB-IP"], "contrail_database_node_ips": ["Contrail-v3.2-Controller-IP"]},
-#  "Contrail-v3.2-Analytics-DB-UUID": {"contrail::contrail_version": 3, "contrail_analytics_database_node_ips": ["Contrail-v3.2-Analytics-DB-IP"], "contrail_database_node_ips": ["Contrail-v3.2-Controller-IP"], "contrail_analytics_database_short_node_names": ["Contrail-v3.2-Analytics-DB-SHORT-HOSTNAME"]},
-#  "Compute-Node-UUID": {"contrail::contrail_version": 3},
-#  "Contrail-v4.y-Controller-UUID": {"contrail_database_node_ips": ["Contrail-v4.y-Controller-IP"], "contrail::rabbit_vhost": "<rmq-vhost-for-new-cluster>", "contrail_config_node_ips": ["Contrail-v4.y-Controller-IP"], "contrail_analytics_node_ips": ["Contrail-v4.y-Analytics-IP"]},
-#  "Contrail-v4.y-Analytics-UUID": {"contrail_analytics_database_node_ips": ["Contrail-v4.y-Analytics-DB-IP"], "contrail_database_node_ips": ["Contrail-v4.y-Controller-IP"], "contrail::rabbit_vhost": "<rmq-vhost-for-new-cluster>", "contrail_config_node_ips": ["Contrail-v4.y-Controller-IP"], "contrail_analytics_node_ips": ["Contrail-v4.y-Analytics-IP"]},
-#  "Contrail-v4.y-Analytics-DB-UUID": {"contrail_analytics_database_node_ips": ["Contrail-v4.y-Analytics-DB-IP"], "contrail_database_node_ips": ["Contrail-v4.y-Controller-IP"], "contrail_analytics_database_short_node_names": ["Contrail-v4.y-Analytics-DB-SHORT-HOSTNAME"], "contrail::rabbit_vhost": "<rmq-vhost-for-new-cluster>", "contrail_analytics_node_ips": ["Contrail-v4.y-Analytics-IP"]}}
+# The NodeDataLookup section is organized as: {"NODE-1-UUID": {"Node-1-hiera-key-1": "Node-1-hiera-value-1",
+# "Node-1-hiera-key-2": "Node-1-hiera-value-2"}, "NODE-2-UUID": {"Node-2-hiera-key-1": "Node-2-hiera-value-1",
+# "Node-2-hiera-key-2": "Node-2-hiera-value-2"}}
 # 
-# The sample UUID's/IP's/Names provided below are from a working sample. 
-# Keep the resource_registry section as it is, and make changes to the NodeDataLookup section according to your overcloud deployment.
+# The UUID of each node can be obtained by issuing "openstack baremetal introspection data save
+# <ironic-node-uuid> | jq .extra.system.product.uuid"
+# 
+# HOW TO POPULATE NodeDataLookup for Contrail-ISSU use-case: 
+# {"OpenStack-Node-UUID": {"contrail::contrail_version": 3}, 
+# "Contrail-v3.2-Controller-UUID": {"contrail::contrail_version": 3, 
+# "contrail_database_node_ips": ["Contrail-v3.2-Controller-IP"]}, 
+# "Contrail-v3.2-Analytics-UUID": {"contrail::contrail_version": 3, 
+# "contrail_analytics_database_node_ips": ["Contrail-v3.2-Analytics-DB-IP"],
+# "contrail_database_node_ips": ["Contrail-v3.2-Controller-IP"]}, 
+# "Contrail-v3.2-Analytics-DB-UUID": {"contrail::contrail_version": 3, 
+# "contrail_analytics_database_node_ips": ["Contrail-v3.2-Analytics-DB-IP"],
+# "contrail_database_node_ips": ["Contrail-v3.2-Controller-IP"],
+# "contrail_analytics_database_short_node_names": ["Contrail-v3.2-Analytics-DB-SHORT-HOSTNAME"]},
+# "Compute-Node-UUID": {"contrail::contrail_version": 3, "contrail_config_node_ips": ["Contrail-v3.x-Controller-IP"]}, 
+# "Contrail-v4.y-Controller-UUID": {"contrail_database_node_ips": ["Contrail-v4.y-Controller-IP"], 
+# "contrail::rabbit_vhost": "<rmq-vhost-for-new-cluster>", "contrail_config_node_ips": ["Contrail-v4.y-Controller-IP"],
+# "contrail_analytics_node_ips": ["Contrail-v4.y-Analytics-IP"]}, 
+# "Contrail-v4.y-Analytics-UUID": {"contrail_analytics_database_node_ips": ["Contrail-v4.y-Analytics-DB-IP"], 
+# "contrail_database_node_ips": ["Contrail-v4.y-Controller-IP"], "contrail::rabbit_vhost": "<rmq-vhost-for-new-cluster>",
+# "contrail_config_node_ips": ["Contrail-v4.y-Controller-IP"], "contrail_analytics_node_ips":
+# ["Contrail-v4.y-Analytics-IP"]}, 
+# "Contrail-v4.y-Analytics-DB-UUID": {"contrail_analytics_database_node_ips": ["Contrail-v4.y-Analytics-DB-IP"], 
+# "contrail_database_node_ips": ["Contrail-v4.y-Controller-IP"],
+# "contrail_analytics_database_short_node_names": ["Contrail-v4.y-Analytics-DB-SHORT-HOSTNAME"],
+# "contrail::rabbit_vhost": "<rmq-vhost-for-new-cluster>", "contrail_analytics_node_ips":
+# ["Contrail-v4.y-Analytics-IP"]}}
+# 
+# The sample UUID's/IP's/Names provided below are from a working sample. Keep the resource_registry section as
+# it is, and make changes to the NodeDataLookup section according to your overcloud deployment.
+#
+# The UUID-to-node mapping used in the following example is:
+# 003FEF0B-FC16-4C2E-B7EA-1B30008948A8: Contrail-3.2 Contrail-Analytics-Database node
+# 99FD12A9-191C-41B3-BF6B-3CE30C63CC01: OpenStack Controller node
+# D4B82082-5D64-4674-93AB-7377B6311820: Contrail-3.2 Contrail Controller node
+# 8350F888-1BB8-4CE9-9F48-096CAD3F39A9: Contrail-3.2 Contrail Analytics node
+# AB15DEA1-89B8-4621-9F79-5A6AE25BCF93: Compute node
+# AC0ED5FE-4B6E-4ED5-8FB7-A960E53F03B1: Contrail-4.0 Contrail Controller node
+# 38354BE7-77BD-4A8A-8C7C-3BED64A05684: Contrail-4.0 Contrail Analytics node
+# ED773F6E-AA03-41FD-A6CF-649205071D70: Contrail-4.0 Contrail Analytics-Database node
 #
 resource_registry:
   OS::TripleO::ContrailAnalyticsDatabaseExtraConfigPre: ../../puppet/extraconfig/pre_deploy/per_node.yaml
@@ -27,13 +54,20 @@ resource_registry:
 
 parameter_defaults:
   NodeDataLookup: |
-    {"003FEF0B-FC16-4C2E-B7EA-1B30008948A8": {"contrail::contrail_version": 3, "contrail_analytics_database_node_ips": ["10.0.0.60"], "contrail_database_node_ips": ["10.0.0.40"], "contrail_analytics_database_short_node_names": ["cadb-0"]},
-     "99FD12A9-191C-41B3-BF6B-3CE30C63CC01": {"contrail::contrail_version": 3},
-     "D4B82082-5D64-4674-93AB-7377B6311820": {"contrail::contrail_version": 3, "contrail_database_node_ips": ["10.0.0.40"]},
-     "8350F888-1BB8-4CE9-9F48-096CAD3F39A9": {"contrail::contrail_version": 3, "contrail_analytics_database_node_ips": ["10.0.0.60"], "contrail_database_node_ips": ["10.0.0.40"]},
-     "AB15DEA1-89B8-4621-9F79-5A6AE25BCF93": {"contrail::contrail_version": 3},
-     "AC0ED5FE-4B6E-4ED5-8FB7-A960E53F03B1": {"contrail_database_node_ips": ["10.0.0.41"], "contrail::rabbit_vhost": "new", "contrail_config_node_ips": ["10.0.0.41"], "contrail_analytics_node_ips": ["10.0.0.51"]},
-     "38354BE7-77BD-4A8A-8C7C-3BED64A05684": {"contrail_analytics_database_node_ips": ["10.0.0.61"], "contrail_database_node_ips": ["10.0.0.41"], "contrail::rabbit_vhost": "new", "contrail_config_node_ips": ["10.0.0.41"], "contrail_analytics_node_ips": ["10.0.0.51"]},
-     "ED773F6E-AA03-41FD-A6CF-649205071D70": {"contrail_analytics_database_node_ips": ["10.0.0.61"], "contrail_database_node_ips": ["10.0.0.41"], "contrail_analytics_database_short_node_names": ["cadb-1"], "contrail::rabbit_vhost": "new", "contrail_analytics_node_ips": ["10.0.0.41"]}}
-
-
+    {"003FEF0B-FC16-4C2E-B7EA-1B30008948A8": {"contrail::contrail_version": 3,
+    "contrail_analytics_database_node_ips": ["10.0.0.60"], "contrail_database_node_ips": ["10.0.0.40"],
+    "contrail_analytics_database_short_node_names": ["cadb-0"]}, "99FD12A9-191C-41B3-BF6B-3CE30C63CC01":
+    {"contrail::contrail_version": 3}, "D4B82082-5D64-4674-93AB-7377B6311820": {"contrail::contrail_version":
+    3, "contrail_database_node_ips": ["10.0.0.40"]}, "8350F888-1BB8-4CE9-9F48-096CAD3F39A9":
+    {"contrail::contrail_version": 3, "contrail_analytics_database_node_ips": ["10.0.0.60"],
+    "contrail_database_node_ips": ["10.0.0.40"]}, "AB15DEA1-89B8-4621-9F79-5A6AE25BCF93":
+    {"contrail::contrail_version": 3, "contrail_config_node_ips": ["10.0.0.40"]}, "AC0ED5FE-4B6E-4ED5-8FB7-A960E53F03B1": {"contrail_database_node_ips":
+    ["10.0.0.41"], "contrail::rabbit_vhost": "new", "contrail_config_node_ips": ["10.0.0.41"],
+    "contrail_analytics_node_ips": ["10.0.0.51"], "contrail_config_vip": "10.0.0.41"},
+    "38354BE7-77BD-4A8A-8C7C-3BED64A05684": {"contrail_analytics_database_node_ips": ["10.0.0.61"],
+    "contrail_database_node_ips": ["10.0.0.41"], "contrail::rabbit_vhost": "new", "contrail_config_node_ips":
+    ["10.0.0.41"], "contrail_analytics_node_ips": ["10.0.0.51"], "contrail_config_vip": "10.0.0.41"},
+    "ED773F6E-AA03-41FD-A6CF-649205071D70": {"contrail_analytics_database_node_ips": ["10.0.0.61"],
+    "contrail_database_node_ips": ["10.0.0.41"], "contrail_analytics_database_short_node_names": ["cadb-1"],
+    "contrail::rabbit_vhost": "new", "contrail_analytics_node_ips": ["10.0.0.41"], "contrail_config_vip":
+    "10.0.0.41"}}
