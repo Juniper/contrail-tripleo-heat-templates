@@ -152,7 +152,9 @@ done
 The virtual machines must be imported into ironic. There are different ways    
 to do that. One way is to create a list of all VMs in the following format:    
 MAC NODE_NAME IPMI/KVM_IP ROLE_NAME    
+```
 52:54:00:16:54:d8 control-1-at-5b3s30 10.87.64.31 control    
+```
 In order to get the initial list per KVM host the following command can be run:    
 ```
 for i in compute control contrail-controller contrail-analytics contrail-analytics-database    
@@ -388,6 +390,7 @@ cd ~
 for i in /usr/share/rhosp-director-images/overcloud-full-latest-11.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-11.0.tar; do tar -xvf $i; done
 openstack overcloud image upload --image-path /home/stack/images/
 cd ~
+```
 
 ## Create contrail repo
 ```
