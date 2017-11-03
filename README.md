@@ -1,4 +1,4 @@
-# introduction    
+# Introduction    
 Currently the following combinations of RHEL/OSP/Contrail are supported:    
 RHEL7.4/OSP11/Contrail 4.0.2    
 RHEL7.4/OSP10/Contrail 4.0.2    
@@ -6,7 +6,7 @@ RHEL7.4/OSP10/Contrail 3.2.6
 The infrastructure section should only be used as an EXAMPLE. It is not    
 considered as part of OSP/Contrail deployment.    
 
-# infrastructure considerations
+# Infrastructure considerations
 There are many different ways on how to create the infrastructure providing    
 the control plane elements. In this example all control plane functions    
 are provided as Virtual Machines hosted on KVM hosts. For HA 12 VMs are needed:       
@@ -32,6 +32,7 @@ are provided as Virtual Machines hosted on KVM hosts. For HA 12 VMs are needed:
 The shown architecture is JUST an example to illustrate a possible option    
 for the control plane setup.    
 
+```
     +------------------------------------------------+    
     |                                                |    
     |  KVM host 3                                    |    
@@ -67,26 +68,27 @@ for the control plane setup.
 |    +----+        +----+        +----+        +--+    
 |    |NIC1|        |NIC2|        |NIC3|        |    
 +----------------------------------------------+    
+```
 
-## control plane KVM host preparation (KVM 1-3)
+## Control plane KVM host preparation (KVM 1-3)
 
 The control plane KVM hosts will host the control plane VMs. Each KVM host    
 will need virtual switches and the virtual machine definitions. The tasks    
 described must be done on each of the three hosts.    
 NIC 1 - 3 have to be substituded with real NIC names.    
 
-### install basic packages
+### Install basic packages
 ```
 yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
 ```
 
-### start libvirtd & ovs
+### Start libvirtd & ovs
 ```
 systemctl start libvirtd
 systemctl start openvswitch
 ```
 
-### create virtual switches for the undercloud VM
+### Create virtual switches for the undercloud VM
 ```
 ovs-vsctl add-br br_prov
 ovs-vsctl add-br br_intapi
@@ -129,7 +131,7 @@ virsh net-start br_mgmt
 virsh net-autostart br_mgmt
 ```
 
-### define virtual machine templates
+### Define virtual machine templates
 As described above, each KVM host needs at least 4 virtual machine templates.    
 For lab testing the computes can be virtualized as well, with the usual    
 restrictions coming with nested HV.    
@@ -146,7 +148,7 @@ EOF
 done
 ```
 
-### get provisioning interface mac addresses for ironic PXE
+### Get provisioning interface mac addresses for ironic PXE
 The virtual machines must be imported into ironic. There are different ways    
 to do that. One way is to create a list of all VMs in the following format:    
 MAC NODE_NAME IPMI/KVM_IP ROLE_NAME    
@@ -186,12 +188,12 @@ This is an example of a full list across three KVM hosts:
 This list will be needed on the undercloud VM later on.    
 With that the control plane VM KVM host preparation is done.    
 
-## undercloud preparation on the KVM host hosting the undercloud VM
+## Undercloud preparation on the KVM host hosting the undercloud VM
 
 The undercloud VM can be installed on one of the three KVM hosts or on a    
 different one.    
 
-### set password & subscription information
+### Set password & subscription information
 ```
 export USER=<YOUR_RHEL_SUBS_USER>
 export PASSWORD=<YOUR_RHEL_SUBS_PWD>
@@ -200,41 +202,41 @@ export ROOTPASSWORD=<UNDERCLOUD_ROOT_PWD> # choose a root user password
 export STACKPASSWORD=<STACK_USER_PWD> # choose a stack user password
 ```
 
-### install basic packages
+### Install basic packages
 ```
 yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
 ```
 
-### start libvirtd & ovs
+### Start libvirtd & ovs
 ```
 systemctl start libvirtd
 systemctl start openvswitch
 ```
 
-### create and become stack user
+### Create and become stack user
 ```
 useradd -G libvirt stack
 echo $STACKPASSWORD |passwd stack --stdin
 echo "stack ALL=(root) NOPASSWD:ALL" | sudo tee -a /etc/sudoers.d/stack
 chmod 0440 /etc/sudoers.d/stack
 ```
-### create ssh key
+### Create ssh key
 ```
 ssh-keygen -t dsa
 ```
 
-### adjust permissions
+### Adjust permissions
 ```
 chgrp -R libvirt /var/lib/libvirt/images
 chmod g+rw /var/lib/libvirt/images
 ```
 
-### get rhel 7.4 kvm image
+### Get rhel 7.4 kvm image
 goto: https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.4/x86_64/product-software
 (at the time of this writing: rhel-server-7.4-x86_64-kvm.qcow2)
 download: KVM Guest Image
 
-### create virtual switches for the undercloud VM
+### Create virtual switches for the undercloud VM
 ```
 ovs-vsctl add-br br_prov
 ovs-vsctl add-br br_intapi
@@ -274,7 +276,7 @@ virsh net-start br_mgmt
 virsh net-autostart br_mgmt
 ```
 
-### prepare undercloud VM
+### Prepare undercloud VM
 #### OSP10
 ```
 export LIBGUESTFS_BACKEND=direct
@@ -321,7 +323,7 @@ virt-customize  -a undercloud.qcow2 \
 cp undercloud.qcow2 /var/lib/libvirt/images/undercloud.qcow2
 ```
 
-### install undercloud VM
+### Install undercloud VM
 ```
 virt-install --name undercloud \
   --disk /var/lib/libvirt/images/undercloud.qcow2 \
@@ -339,42 +341,42 @@ virt-install --name undercloud \
   --console pty,target_type=virtio
 ```
 
-### get undercloud ip
+### Get undercloud ip
 ```
 virsh domifaddr undercloud
 ```
 
-### ssh into undercloud
+### Ssh into undercloud
 ```
 ssh stack@<UNDERCLOUD_IP>
 ```
 
 # Undercloud configuration
 
-## configure undercloud (optionally)
+## Configure undercloud (optionally)
 ```
 cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf
 vi ~/undercloud.conf
 ```
 
-## install undercloud openstack
+## Install undercloud openstack
 ```
 openstack undercloud install
 ```
 
-## source undercloud credentials
+## Source undercloud credentials
 ```
 source ~/stackrc
 ```
 
-## get overcloud images
+## Get overcloud images
 ```
 sudo yum install rhosp-director-images rhosp-director-images-ipa
 mkdir ~/images
 cd ~/images
 ```
 
-## upload overcloud images
+## Upload overcloud images
 ### OSP10
 ```
 for i in /usr/share/rhosp-director-images/overcloud-full-latest-10.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-10.0.tar; do tar -xvf $i; done
@@ -387,12 +389,12 @@ for i in /usr/share/rhosp-director-images/overcloud-full-latest-11.0.tar /usr/sh
 openstack overcloud image upload --image-path /home/stack/images/
 cd ~
 
-## create contrail repo
+## Create contrail repo
 ```
 sudo mkdir /var/www/html/contrail
 ```
 
-## get contrail
+## Get contrail
 go to:    
 https://www.juniper.net/support/downloads/?p=contrail#sw
 
@@ -446,18 +448,18 @@ do
 done < <(cat ironic_list_bms)
 ```
 
-## configure boot mode
+## Configure boot mode
 ```
 openstack baremetal configure boot
 ```
 
-## node introspection
+## Node introspection
 ```
 for node in $(openstack baremetal node list -c UUID -f value) ; do openstack baremetal node manage $node ; done
 openstack overcloud node introspect --all-manageable --provide
 ```
 
-## node profiling
+## Node profiling
 ```
 for i in contrail-controller contrail-analytics contrail-database contrail-analytics-database; do
   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
@@ -465,9 +467,9 @@ for i in contrail-controller contrail-analytics contrail-database contrail-analy
 done
 ```
 
-# configure overcloud
+# Configure overcloud
 
-## install tripleo-heat-templates on the undercloud
+## Install tripleo-heat-templates on the undercloud
 ### Contrail 3.2.6
 ```
 yum localinstall /var/www/html/contrail/contrail-tripleo-heat-templates-3.2.6.0-60.el7.noarch.rpm
@@ -482,8 +484,8 @@ cp -r contrail-tripleo-heat-templates/environments/* ~/tripleo-heat-templates/en
 cp -r contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
 ```
 
-## contrail services (repo url etc.)
-### set Contrail version
+## Contrail services (repo url etc.)
+### Set Contrail version
 #### Contrail 3.2.6
 set ContrailVersion: 3 in ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml    
 ```
@@ -492,7 +494,7 @@ vi ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml
 #### Contrail 4.0.2
 4.0.2 is default    
 
-## overcloud networking
+## Overcloud networking
 ### NIC configurations
 #### OSP10
 ```
@@ -507,7 +509,7 @@ vi ~/tripleo-heat-templates/environments/configs/contrail/contrail-nic-config-co
 vi ~/tripleo-heat-templates/environments/configs/contrail/contrail-nic-config.yaml
 ```
 
-### static ip assignment
+### Static ip assignment
 #### OSP10
 ```
 vi ~/tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml
@@ -517,12 +519,12 @@ vi ~/tripleo-heat-templates/environments/contrail/ips-from-pool-all.yaml
 vi ~/tripleo-heat-templates/environments/ips-from-pool-all.yaml
 ```
 
-## provide subscription mgr credentials (rhel_reg_password, rhel_reg_pool_id, rhel_reg_repos, rhel_reg_user and method)
+## Provide subscription mgr credentials (rhel_reg_password, rhel_reg_pool_id, rhel_reg_repos, rhel_reg_user and method)
 ```
 vi ~/tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml
 ```
 
-# start overcloud installation
+# Start overcloud installation
 ## Contrail 3.2.6
 ```
 openstack overcloud deploy --templates tripleo-heat-templates/ \
