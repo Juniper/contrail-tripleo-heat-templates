@@ -45,6 +45,14 @@ parameters:
     description: named config file mgmt
     type: string
     default: true
+  ContrailControlEncapPriority:
+    description: List of Encapsulation priority
+    type: string
+    default: 'MPLSoUDP,MPLSoGRE,VXLAN'
+  ContrailControlVXLanVnIdMode:
+    description: Virtual Network id type to be used
+    type: string
+    default: 'automatic'
 
 resources:
   ContrailBase:
@@ -69,5 +77,7 @@ outputs:
             contrail::control::host_ip: {get_param: [ServiceNetMap, ContrailControlNetwork]}
             contrail::control::rndc_secret: {get_param: ContrailControlRNDCSecret}
             contrail::control::manage_named: {get_param: ContrailControlManageNamed}
+            contrail::control::encap_priority: {get_param: ContrailControlEncapPriority}
+            contrail::control::vxlan_vn_id_mode: {get_param: ContrailControlVXLanVnIdMode}
       step_config: |
         include ::tripleo::network::contrail::control
