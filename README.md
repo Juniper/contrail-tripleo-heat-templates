@@ -139,10 +139,10 @@ pSwitch configuration:
 -- all networks (vlan700,10,20,30,40,50) are configured as trunks    
 - ge1    
 -- tenant network is untagged
-- ge2:
+- ge2    
 -- provisioning network (vlan700) is the native vlan    
 -- all other networks (vlan710,20,30,40,50) are configured as trunks    
-- ge3:    
+- ge3    
 -- tenant network is untagged
 
 ## Control plane KVM host preparation (KVM 1-3)
