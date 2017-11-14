@@ -128,7 +128,7 @@ Layer2 (VLAN):
 ```
 
 vSwitch configuration:    
-- br0
+- br0    
 -- provisioning network (vlan700) is the native vlan    
 -- all other networks (vlan710,20,30,40,50) are configured as trunks    
 - br1    
