@@ -32,43 +32,118 @@ are provided as Virtual Machines hosted on KVM hosts. For HA 12 VMs are needed:
 The shown architecture is JUST an example to illustrate a possible option    
 for the control plane setup.    
 
+Layer1:    
+
 ```
-    +------------------------------------------------+    
-    |                                                |    
-    |  KVM host 3                                    |    
-  +-----------------------------------------------+  |    
-  |                                               |  |    
-  |  KVM host 2                                   |  |    
-+----------------------------------------------+  |  |    
-|                                              |  |  |    
-|  KVM host 1                                  |  |  |    
-|                                              |  |  |    
-|              +----------------------------+  |  |  |    
-|              |                            |  |  |  |    
-|              |  Contrail Analytics DB 1   |  |  |  |    
-|            +---------------------------+  |  |  |  |    
-|            |                           |  |  |  |  |    
-|            |  Contrail Analytics 1     |  |  |  |  |    
-|          +--------------------------+  |  |  |  |  |    
-|          |                          |  |  |  |  |  |    
-|          |  Contrail Controller 1   |  |  |  |  |  |    
-|        +-------------------------+  |  +--+  |  |  |    
-|        |                         |  |  |     |  |  |    
-|        |  OpenStack Controller 1 |  +--+     |  |  |    
-|        |                         |  |        |  |  |    
-|        | +-----+ +-----+ +-----+ +--+        |  |  |    
-|        | |VNIC1| |VNIC2| |VNIC3| |           |  |  |    
-|        +-------------------------+           |  |  |    
-|           |         |         |              |  |  |    
-|           |         |         |              |  |  |    
-|  +---------+  +-----------+  +---------+     |  |  |    
-|  | br_prov |  | br_intapi |  | br_mgmt |     |  |  |    
-|  +---------+  +-----------+  +---------+     |  +--+    
-|      |             |             |           |  |    
-|    +----+        +----+        +----+        +--+    
-|    |NIC1|        |NIC2|        |NIC3|        |    
-+----------------------------------------------+    
+   +-----------------------------------+
+   |KVM host 3                         |
+ +-----------------------------------+ |
+ |KVM host 2                         | |
++----------------------------------+ | |
+|KVM host 1                        | | |
+|    +---------------------------+ | | |
+|    |    Contrail Analytics DB 1| | | |
+|   ++-------------------------+ | | | |
+|   |   Contrail Analytics 1   | | | | |
+|  ++------------------------+ | | | | |
+|  |  Contrail Controller 1  | +-+ | | |
+| ++-----------------------+ | |   | | |      +----------------+
+| | OpenStack Controller 1 | +-+   | | |      |Compute Node N  |
+| |                        | |     | | |    +----------------+ |
+| | +-----+        +-----+ +-+     | | |    |Compute Node 2  | |
+| | |VNIC1|        |VNIC3| |       | | |  +----------------+ | |
+| +----+--------------+----+       | | |  |Compute Node 1  | | |
+|      |              |            | | |  |                | | |
+|      |              |            | | |  |                | | |
+|    +-+-+          +-+-+          | | |  |                | | |
+|    |br0|          |br1|          | | |  |                | | |
+|    +-+-+          +-+-+          | +-+  |                | | |
+|      |              |            | |    |                | | |
+|   +--+-+          +-+--+         +-+    | +----+  +----+ | +-+
+|   |NIC1|          |NIC3|         |      | |NIC1|  |NIC2| +-+
++------+--------------+------------+      +---+-------+----+
+       |              |                       |       |
++------+--------------+-----------------------+-------+--------+
+|                                                              |
+|                          Switch                              |
++--------------------------------------------------------------+
 ```
+
+Layer2 (VLAN):    
+```
++------------------------------------------------------------------------+
+|                              KVM                                       |
+|   +--------------+ +-----------+ +-----------+ +---------------------+ |
+|   | OpenStack    | | Contrail  | | Contrail  | | Contrail Controller | |
+|   | Controller   | | Analytics | | Analytics | |                     | |
+|   |              | |           | | DB        | |                     | |
+|   | +----------+ | | +-------+ | | +-------+ | | +-------+  +------+ | |
+|   | |  VNIC1   | | | | VNIC1 | | | | VNIC1 | | | | VNIC1 |  | VNIC2| | |
+|   +--------------+ +-----------+ +-----------+ +---------------------+ |
+|      | | | | | |      | | | |       | | | |       | | | |        |     |
+|      | | | | | |      | | | |       | | | |       | | | |        |     |
+|      | | | | | |      | | | |       | | | |       | | | |        |     |
+| +-----------------------------------------------------------+ +------+ |
+| |    | | | | | |      | | | |       | | | |       | | | |   | |  |   | |
+| |   +-----------------------------------------------------+ | |  |   | |
+| |   |  | | | | |        | | |         | | |         | | |   | |  |   | |
+| |   | +---------------------------------------------------+ | |  |   | |
+| |   | |  | | | |          | |           | |           | |   | |  |   | |
+| |   | | +-------------------------------------------------+ | |  |   | |
+| |   | | |  | | |            |             |             |   | |  |   | |
+| |   | | | +-----------------------------------------------+ | |  |   | |
+| |   | | | |  | |                                            | |  |   | |
+| |   | | | | +---------------------------------------------+ | |  |   | |
+| |   | | | | |  |                                            | |  |   | |
+| |   | | | | | +-------------------------------------------+ | |  |   | |
+| |   | | | | | |                                             | |  |   | | +--------------------+
+| |   | | | | | |            br0                              | |  |br1| | | Compute Node       |
+| +-----------------------------------------------------------+ +------+ | |                    |
+|     | | | | | |                                                  |     | |                    |
+|  +-------------+                                              +------+ | | +-------+ +------+ |
+|  |   NIC1      |                                              | NIC2 | | | | NIC1  | | NIC2 | |
++------------------------------------------------------------------------+ +--------------------+
+      | | | | | |                                                  |          | | | |     |
+  +-------------------------------------------------------------------------------------------+
+  | |    ge0      |                                             | ge1  |     |  ge2  |  | ge3||
+  | +-------------+                                             +------+     +-------+  +-----+
+  |   | | | | | |                                                  |          | | | |     |   |
+  |   | | | | | |            Switch                                |          | | | |     |   |
+  |   | | | | | |                              tenant (no vlan) -> +------------------------  |
+  |   | | | | | |                                                             | | | |         |
+  |   | | | | | +------------------storage_mgmt (vlan750) ----------------------------------  |
+  |   | | | | |                                                               | | | |         |
+  |   | | | | +--------------------storage (vlan740)----------------------------------------  |
+  |   | | | |                                                                 | | | |         |
+  |   | | | +----------------------management (vlan730)-------------------------------------  |
+  |   | | |                                                                   | | |           |
+  |   | | +------------------------external_api (vlan720)-----------------------------------  |
+  |   | |                                                                     | |             |
+  |   | +--------------------------internal_api (vlan710)-----------------------------------  |
+  |   |                                                                       |               |
+  |   +----------------------------provisioning (vlan700)-----------------------------------  |
+  |                                                                                           |
+  |                                                                                           |
+  +-------------------------------------------------------------------------------------------+
+```
+
+vSwitch configuration:    
+- br0
+-- provisioning network (vlan700) is the native vlan    
+-- all other networks (vlan710,20,30,40,50) are configured as trunks    
+- br1    
+-- tenant network is untagged    
+
+pSwitch configuration:    
+- ge0    
+-- all networks (vlan700,10,20,30,40,50) are configured as trunks    
+- ge1    
+-- tenant network is untagged
+- ge2:
+-- provisioning network (vlan700) is the native vlan    
+-- all other networks (vlan710,20,30,40,50) are configured as trunks    
+- ge3:    
+-- tenant network is untagged
 
 ## Control plane KVM host preparation (KVM 1-3)
 
@@ -90,45 +165,42 @@ systemctl start openvswitch
 
 ### Create virtual switches for the undercloud VM
 ```
-ovs-vsctl add-br br_prov
-ovs-vsctl add-br br_intapi
-ovs-vsctl add-br br_mgmt
-ovs-vsctl add-port br_prov NIC1
-ovs-vsctl add-port br_intapi NIC2
-ovs-vsctl add-port br_mgmt NIC3
-cat << EOF > br_prov.xml
+ovs-vsctl add-br br0
+ovs-vsctl add-br br1
+ovs-vsctl add-port br0 NIC1
+ovs-vsctl add-port br1 NIC2
+cat << EOF > br0.xml
 <network>
-  <name>br_prov</name>
+  <name>br0</name>
   <forward mode='bridge'/>
-  <bridge name='br_prov'/>
+  <bridge name='br0'/>
+  <virtualport type='openvswitch'/>
+  <portgroup name='overcloud'>
+    <vlan trunk='yes'>
+      <tag id='700' nativeMode='untagged'/>
+      <tag id='710'/>
+      <tag id='720'/>
+      <tag id='730'/>
+      <tag id='740'/>
+      <tag id='750'/>
+    </vlan>
+  </portgroup>
+</network>
+EOF
+cat << EOF > br1.xml
+<network>
+  <name>br1</name>
+  <forward mode='bridge'/>
+  <bridge name='br1'/>
   <virtualport type='openvswitch'/>
 </network>
 EOF
-cat << EOF > br_intapi.xml
-<network>
-  <name>br_intapi</name>
-  <forward mode='bridge'/>
-  <bridge name='br_intapi'/>
-  <virtualport type='openvswitch'/>
-</network>
-EOF
-cat << EOF > br_mgmt.xml
-<network>
-  <name>br_mgmt</name>
-  <forward mode='bridge'/>
-  <bridge name='br_mgmt'/>
-  <virtualport type='openvswitch'/>
-</network>
-EOF
-virsh net-define br_prov.xml
-virsh net-start br_prov
-virsh net-autostart br_prov
-virsh net-define br_intapi.xml
-virsh net-start br_intapi
-virsh net-autostart br_intapi
-virsh net-define br_mgmt.xml
-virsh net-start br_mgmt
-virsh net-autostart br_mgmt
+virsh net-define br0.xml
+virsh net-start br0
+virsh net-autostart br0
+virsh net-define br1.xml
+virsh net-start br1
+virsh net-autostart br1
 ```
 
 ### Define virtual machine templates
@@ -143,7 +215,7 @@ do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
   virsh define /dev/stdin <<EOF
-$(virt-install --name ${i}_$num --disk /var/lib/libvirt/images/${i}_${num}.qcow2 --vcpus=4 --ram=16348 --network network=br_prov,model=virtio --network network=br_intapi,model=virtio --network network=br_mgmt,model=virtio --virt-type kvm --import --os-variant rhel7 --serial pty --console pty,target_type=virtio --print-xml)
+$(virt-install --name ${i}_$num --disk /var/lib/libvirt/images/${i}_${num}.qcow2 --vcpus=4 --ram=16348 --network network=br0,model=virtio,portgroup=overcloud --network network=br1,model=virtio --virt-type kvm --import --os-variant rhel7 --serial pty --console pty,target_type=virtio --print-xml)
 EOF
 done
 ```
@@ -238,44 +310,31 @@ goto: https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.4/x86_64/pr
 (at the time of this writing: rhel-server-7.4-x86_64-kvm.qcow2)
 download: KVM Guest Image
 
-### Create virtual switches for the undercloud VM
+### Create virtual switches for the undercloud VM (in case it runs on a    
+### different KVM host than the overcloud VMs
 ```
-ovs-vsctl add-br br_prov
-ovs-vsctl add-br br_intapi
-ovs-vsctl add-br br_mgmt
-cat << EOF > br_prov.xml
+ovs-vsctl add-br br0
+cat << EOF > br0.xml
 <network>
-  <name>br_prov</name>
+  <name>br0</name>
   <forward mode='bridge'/>
-  <bridge name='br_prov'/>
+  <bridge name='br0'/>
   <virtualport type='openvswitch'/>
+  <portgroup name='overcloud'>
+    <vlan trunk='yes'>
+      <tag id='700' nativeMode='untagged'/>
+      <tag id='710'/>
+      <tag id='720'/>
+      <tag id='730'/>
+      <tag id='740'/>
+      <tag id='750'/>
+    </vlan>
+  </portgroup>
 </network>
 EOF
-cat << EOF > br_intapi.xml
-<network>
-  <name>br_intapi</name>
-  <forward mode='bridge'/>
-  <bridge name='br_intapi'/>
-  <virtualport type='openvswitch'/>
-</network>
-EOF
-cat << EOF > br_mgmt.xml
-<network>
-  <name>br_mgmt</name>
-  <forward mode='bridge'/>
-  <bridge name='br_mgmt'/>
-  <virtualport type='openvswitch'/>
-</network>
-EOF
-virsh net-define br_prov.xml
-virsh net-start br_prov
-virsh net-autostart br_prov
-virsh net-define br_intapi.xml
-virsh net-start br_intapi
-virsh net-autostart br_intapi
-virsh net-define br_mgmt.xml
-virsh net-start br_mgmt
-virsh net-autostart br_mgmt
+virsh net-define br0.xml
+virsh net-start br0
+virsh net-autostart br0
 ```
 
 ### Prepare undercloud VM
@@ -332,8 +391,7 @@ virt-install --name undercloud \
   --vcpus=4 \
   --ram=16348 \
   --network network=default,model=virtio \
-  --network network=br_prov,model=virtio \
-  --network network=br_intapi,model=virtio \
+  --network network=br0,model=virtio,portgroup=overcloud \
   --virt-type kvm \
   --import \
   --os-variant rhel7 \
