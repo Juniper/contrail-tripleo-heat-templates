@@ -310,10 +310,11 @@ goto: https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.4/x86_64/pr
 (at the time of this writing: rhel-server-7.4-x86_64-kvm.qcow2)
 download: KVM Guest Image
 
-### Create virtual switches for the undercloud VM (in case it runs on a    
-### different KVM host than the overcloud VMs
+### Create virtual switches for the undercloud VM (in case it runs on a
+different KVM host than the overcloud VMs
 ```
 ovs-vsctl add-br br0
+ovs-vsctl add-port br0 NIC1
 cat << EOF > br0.xml
 <network>
   <name>br0</name>
