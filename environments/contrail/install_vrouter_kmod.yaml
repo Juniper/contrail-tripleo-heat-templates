@@ -361,11 +361,17 @@ resources:
             ip route
           params:
             $phy_int: {get_param: VrouterPhysicalInterface}
+            $phy_dpdk_int: {get_param: VrouterDpdkPhysicalInterface}
             $bond_int: {get_param: BondInterface}
+            $bond_dpdk_int: {get_param: BondDpdkInterface}
             $bond_int_members: {get_param: BondInterfaceMembers}
+            $bond_dpdk_int_members: {get_param: BondDpdkInterfaceMembers}
             $bond_mode: {get_param: BondMode}
+            $bond_dpdk_mode: {get_param: BondDpdkMode}
             $bond_policy: {get_param: BondPolicy}
+            $bond_dpdk_policy: {get_param: BondDpdkPolicy}
             $vlan_parent: {get_param: VlanParentInterface}
+            $vlan_dpdk_parent: {get_param: VlanDpdkParentInterface}
             $contrail_repo: {get_param: ContrailRepo}
             $hostname_map: {get_param: HostnameMap}
             $vrouter_gateway: {get_param: VrouterGateway}
