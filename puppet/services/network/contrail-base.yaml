@@ -126,6 +126,10 @@ parameters:
     default: 5672
     description: Set rabbit subscriber port, change this if using SSL
     type: number
+  RabbitVhost:
+    default: '/'
+    description: RabbitMQ vHost value to be used by Contrail cluster
+    type: string
   ContrailSslEnabled:
     description:  Flag to identify is SSL should be used in internal Contrail
                   services communications (sandesh, introspect, xmpp, ..).
@@ -168,6 +172,7 @@ outputs:
           contrail::rabbit_password: {get_param: RabbitPassword}
           contrail::rabbit_user: {get_param: RabbitUserName}
           contrail::rabbit_port: {get_param: RabbitClientPort}
+          contrail::rabbit_vhost: {get_param: RabbitVhost}
           contrail_ssl_enabled: {get_param: ContrailSslEnabled}
           contrail::vip: {get_param: ContrailVIP}
         -
