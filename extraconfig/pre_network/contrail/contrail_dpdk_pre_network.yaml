@@ -45,8 +45,8 @@ parameters:
     description: DPDK Nic Driver
     type: string
   ContrailVrouterGateway:
-    default: ''
-    description: Gateway for vRouter
+    default: '192.168.24.1'
+    description: vRouter default gateway
     type: string
   RoleParameters:
     type: json
