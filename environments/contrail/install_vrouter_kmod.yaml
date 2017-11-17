@@ -12,6 +12,10 @@ parameters:
     default: 'eth0'
     description: vRouter physical interface
     type: string
+  VrouterDpdkPhysicalInterface:
+    default: 'eth0'
+    description: vRouter physical interface
+    type: string
   VlanParentInterface:
     default: ''
     description: Parent interface of vlan interface
@@ -78,6 +82,7 @@ resources:
             echo "=================== $(date) ==================="
             set -xv
             phy_int=$phy_int
+            phy_dpdk_int=$phy_dpdk_int
             bond_int=$bond_int
             bond_int_members=$bond_int_members
             bond_mode=$bond_mode
@@ -132,7 +137,7 @@ resources:
               echo "net.ipv4.tcp_keepalive_intvl = 1" >> /etc/sysctl.conf
               /sbin/sysctl --system
               modprobe uio
-              pci_address=`ethtool -i ${phy_int} |grep bus-info| awk '{print $2}' |tr -d ' '`
+              pci_address=`ethtool -i ${phy_dpdk_int} |grep bus-info| awk '{print $2}' |tr -d ' '`
               if [[ ${vlan_parent} ]]; then
                  pci_address=`ethtool -i ${vlan_parent} |grep bus-info| awk '{print $2}' |tr -d ' '`
               fi
@@ -163,9 +168,9 @@ resources:
               fi
               if [[ ${vlan_parent} ]]; then
                   echo ${vlan_parent} >> /tmp/vlan_parent
-                  vlanId=`echo ${phy_int} | awk -F"vlan" '{print $2}'`
-                  cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${phy_int}
-            DEVICE=${phy_int}
+                  vlanId=`echo ${phy_dpdk_int} | awk -F"vlan" '{print $2}'`
+                  cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${phy_dpdk_int}
+            DEVICE=${phy_dpdk_int}
             BOOTPROTO=none
             ONBOOT=yes
             USERCTL=yes
@@ -173,17 +178,17 @@ resources:
             VLAN=yes
             PHYSDEV=${vlan_parent}
             EOF
-                  ifup ${phy_int}
+                  ifup ${phy_dpdk_int}
               fi
               # save ip and mask before starting services, otherwise they are always emty
               # since dpdk device becomes non-network devices
               def_gw=''
-              if [[ `ip route show | grep default | grep ${phy_int}` ]]; then
-                def_gw=`ip route show | grep default | grep ${phy_int} | awk '{print $3}'`
+              if [[ `ip route show | grep default | grep ${phy_dpdk_int}` ]]; then
+                def_gw=`ip route show | grep default | grep ${phy_dpdk_int} | awk '{print $3}'`
               fi
-              ip=`ifconfig ${phy_int} | grep 'inet ' | awk '{print $2}'`
-              mask=`ifconfig ${phy_int} | grep 'inet ' | awk '{print $4}'`
-              mac=`ip link sh dev ${phy_int} | grep link/ether|awk '{print $2}' | tr -d ' '`
+              ip=`ifconfig ${phy_dpdk_int} | grep 'inet ' | awk '{print $2}'`
+              mask=`ifconfig ${phy_dpdk_int} | grep 'inet ' | awk '{print $4}'`
+              mac=`ip link sh dev ${phy_dpdk_int} | grep link/ether|awk '{print $2}' | tr -d ' '`
               # install vrouter packages and prepare configs
               if [[ ${contrail_repo} ]]; then
                 yum install -y \
@@ -198,7 +203,7 @@ resources:
             pname=contrail-vrouter-agent
             LIBDIR=/usr/lib64
             DEVICE=vhost0
-            dev=${phy_int}
+            dev=${phy_dpdk_int}
             vgw_subnet_ip=__VGW_SUBNET_IP__
             vgw_intf=__VGW_INTF_LIST__
             LOGFILE=--log-file=/var/log/contrail/vrouter.log
@@ -213,7 +218,7 @@ resources:
             log_level=SYS_NOTICE
             log_local=1
             [VIRTUAL-HOST-INTERFACE]
-            physical_interface=${phy_int}
+            physical_interface=${phy_dpdk_int}
             name=vhost0
             gateway=${vrouter_gateway}
             [SERVICE-INSTANCE]
@@ -233,7 +238,7 @@ resources:
               ip link set dev vhost0 up
               # assign ip to vhost0
               if [[ -n "$ip" && -n "$mask" ]]; then
-                ip address delete $ip/$mask dev ${phy_int}
+                ip address delete $ip/$mask dev ${phy_dpdk_int}
                 ip address add $ip/$mask dev vhost0
                 if [[ $def_gw ]]; then
                   ip route add default via $def_gw
