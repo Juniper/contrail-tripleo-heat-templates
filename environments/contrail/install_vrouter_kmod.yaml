@@ -20,7 +20,15 @@ parameters:
     default: ''
     description: Parent interface of vlan interface
     type: string
+  VlanParentDpdkInterface:
+    default: ''
+    description: Parent interface of vlan interface
+    type: string
   BondInterface:
+    default: ''
+    description: Bond interface name
+    type: string
+  BondDpdkInterface:
     default: ''
     description: Bond interface name
     type: string
@@ -28,11 +36,23 @@ parameters:
     default: ''
     description: Bond interface members
     type: string
+  BondDpdkInterfaceMembers:
+    default: ''
+    description: Bond interface members
+    type: string
   BondMode:
     default: '4'
     description: Bond Mode
     type: string
+  BondDpdkMode:
+    default: '4'
+    description: Bond Mode
+    type: string
   BondPolicy:
+    default: '1'
+    description: Bond Policy
+    type: string
+  BondDpdkPolicy:
     default: '1'
     description: Bond Policy
     type: string
@@ -84,10 +104,15 @@ resources:
             phy_int=$phy_int
             phy_dpdk_int=$phy_dpdk_int
             bond_int=$bond_int
+            bond_dpdk_int=$bond_dpdk_int
             bond_int_members=$bond_int_members
+            bond_dpdk_int_members=$bond_dpdk_int_members
             bond_mode=$bond_mode
+            bond_dpdk_mode=$bond_dpdk_mode
             bond_policy=$bond_policy
+            bond_dpdk_policy=$bond_dpdk_policy
             vlan_parent=$vlan_parent
+            vlan_dpdk_parent=$vlan_dpdk_parent
             contrail_repo=$contrail_repo
             vrouter_gateway=$vrouter_gateway
             dpdk_hugepages=$dpdk_hugepages
@@ -138,36 +163,36 @@ resources:
               /sbin/sysctl --system
               modprobe uio
               pci_address=`ethtool -i ${phy_dpdk_int} |grep bus-info| awk '{print $2}' |tr -d ' '`
-              if [[ ${vlan_parent} ]]; then
-                 pci_address=`ethtool -i ${vlan_parent} |grep bus-info| awk '{print $2}' |tr -d ' '`
+              if [[ ${vlan_dpdk_parent} ]]; then
+                 pci_address=`ethtool -i ${vlan_dpdk_parent} |grep bus-info| awk '{print $2}' |tr -d ' '`
               fi
-              if [[ ${bond_int} ]]; then
-                 bond_int_member_list=$(echo ${bond_int_members} | tr "," "\n")
-                 cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${bond_int}
-            DEVICE=${bond_int}
+              if [[ ${bond_dpdk_int} ]]; then
+                 bond_dpdk_int_member_list=$(echo ${bond_dpdk_int_members} | tr "," "\n")
+                 cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${bond_dpdk_int}
+            DEVICE=${bond_dpdk_int}
             BOOTPROTO=none
             ONBOOT=yes
             USERCTL=yes
             NM_CONTROLLED=no
-            BONDING_OPTS="mode=${bond_mode} xmit_hash_policy=${bond_policy}"
+            BONDING_OPTS="mode=${bond_dpdk_mode} xmit_hash_policy=${bond_dpdk_policy}"
             EOF
-                 for member in ${bond_int_member_list}; do
+                 for member in ${bond_dpdk_int_member_list}; do
                    cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${member}
             DEVICE=${member}
             BOOTPROTO=none
             ONBOOT=yes
-            MASTER=${bond_int}
+            MASTER=${bond_dpdk_int}
             SLAVE=yes
             USERCTL=no
             NM_CONTROLLED=no
             EOF
                    ip link set dev ${member} down
                  done
-                 ifup ${bond_int}
+                 ifup ${bond_dpdk_int}
                  pci_address=0000:00:00.0
               fi
-              if [[ ${vlan_parent} ]]; then
-                  echo ${vlan_parent} >> /tmp/vlan_parent
+              if [[ ${vlan_dpdk_parent} ]]; then
+                  echo ${vlan_dpdk_parent} >> /tmp/vlan_parent
                   vlanId=`echo ${phy_dpdk_int} | awk -F"vlan" '{print $2}'`
                   cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${phy_dpdk_int}
             DEVICE=${phy_dpdk_int}
@@ -176,7 +201,7 @@ resources:
             USERCTL=yes
             NM_CONTROLLED=no
             VLAN=yes
-            PHYSDEV=${vlan_parent}
+            PHYSDEV=${vlan_dpdk_parent}
             EOF
                   ifup ${phy_dpdk_int}
               fi
