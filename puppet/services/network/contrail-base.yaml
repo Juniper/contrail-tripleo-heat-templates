@@ -98,6 +98,10 @@ parameters:
     default: 5998
     description: Contrail Config Api  port
     type: number
+  ContrailGlobalAsn:
+    default: 64512
+    description: Global ASN
+    type: number
   ContrailInsecure:
     default: false
     description: Keystone insecure mode
@@ -160,6 +164,7 @@ outputs:
         contrail::auth_port_ssl_public: {get_param: AuthPortSSLPublic }
         contrail::auth_protocol: {get_param: AuthProtocol }
         contrail::api_port: {get_param: ContrailConfigPort }
+        contrail::global_asn: {get_param: ContrailGlobalAsn }
         contrail::keystone_auth_type: {get_param: KeystoneAuthType}
         contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
         contrail::keystone_region: {get_param: KeystoneRegion}
