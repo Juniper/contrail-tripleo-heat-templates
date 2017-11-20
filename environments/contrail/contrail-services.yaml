@@ -48,6 +48,8 @@ parameter_defaults:
   ContrailAnalyticsDatabaseCount: 3
   ContrailTsnCount: 0
   ComputeCount: 1
+  ContrailVersion: 3
+  ContrailGlobalAsn: 64512
   ContrailDpdkCount: 0
   DnsServers: ["10.87.64.101"]
   NtpServer: 10.0.0.1
