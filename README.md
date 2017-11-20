@@ -227,7 +227,7 @@ In order to get the initial list per KVM host the following command can be run:
 ```
 for i in compute control contrail-controller contrail-analytics contrail-analytics-database    
 do
-  prov_mac=`virsh domiflist ${i}|grep br_prov|awk '{print $5}'`
+  prov_mac=`virsh domiflist ${i}|grep br0|awk '{print $5}'`
   echo ${prov_mac} ${i} >> ironic_list
 done
 ```
