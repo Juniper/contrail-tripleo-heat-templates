@@ -20,7 +20,7 @@ parameters:
     default: ''
     description: Parent interface of vlan interface
     type: string
-  VlanParentDpdkInterface:
+  VlanDpdkParentInterface:
     default: ''
     description: Parent interface of vlan interface
     type: string
