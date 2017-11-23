@@ -33,6 +33,10 @@ parameters:
     default: '255.255.255.0'
     description: vRouter netmask
     type: string
+  ContrailVrouterTSNEVPNMode:
+    default: false
+    description: TSN EVPN Mode
+    type: boolean
 
 resources:
   ContrailBase:
@@ -56,6 +60,7 @@ outputs:
             contrail::vrouter::netmask: {get_param: VrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             contrail::vrouter::is_tsn: 'true'
+            contrail::vrouter::tsn_evpn_mode: {get_param: ContrailVrouterTSNEVPNMode}
             tripleo.neutron_compute_plugin_opencontrail.firewall_rules:
               '111 neutron_compute_plugin_opencontrail proxy':
                 dport: 8097
