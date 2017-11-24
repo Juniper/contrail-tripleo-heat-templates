@@ -428,3 +428,24 @@ openstack overcloud deploy --stack dpdk --templates tripleo-heat-templates/ \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
   -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/rhel-registration-resource-registry.yaml
  ```
+
+
+# TSN special
+
+In case of EVPN VXLAN Provisioning when more than 2 TSN nodes are present, user should provide per TSN node specific hiera data with "contrail::vrouter::tsn_servers" containing a pair of TSNs.
+
+```
+vi tripleo-heat-templates/environments/contrail/contrail-tsn-servers.yaml
+```
+
+## deploy
+```
+openstack overcloud deploy --templates tripleo-heat-templates/ \
+  --roles-file tripleo-heat-templates/environments/contrail/roles_data_contrail.yaml \
+  -e .tripleo/environments/deployment-artifacts.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-net-single.yaml \
+  -e contrail_controller_vip_env.yaml \
+  -e misc_opts.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-tsn-servers.yaml
+```
