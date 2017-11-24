@@ -1,0 +1,26 @@
+# This file must be used in case if there are more TSNs then it is needed to use ‘per-node hiera data’
+#
+# The NodeDataLookup section is organized as:
+## {"NODE-1-UUID": {"Node-1-hiera-key-1": "Node-1-hiera-value-1", "Node-1-hiera-key-2": "Node-1-hiera-value-2"},
+##  "NODE-2-UUID": {"Node-2-hiera-key-1": "Node-2-hiera-value-1", "Node-2-hiera-key-2": "Node-2-hiera-value-2"}}
+#
+# The UUID of each node can be obtained by issuing "openstack baremetal introspection data save <ironic-node-uuid> | jq .extra.system.product.uuid"
+#
+## HOW TO POPULATE NodeDataLookup:
+# {"Contrail-TSN-1-UUID": {"contrail::vrouter::tsn_servers": ['Contrail-TSN-ACTIVE-IP','Contrail-TSN-BACKUP-IP']},
+#  "Contrail-TSN-2-UUID": {"contrail::vrouter::tsn_servers": ['Contrail-TSN-ACTIVE-IP','Contrail-TSN-BACKUP-IP']},
+#  "Contrail-TSN-3-UUID": {"contrail::vrouter::tsn_servers": ['Contrail-TSN-ACTIVE-IP','Contrail-TSN-BACKUP-IP']},
+#  "Contrail-TSN-4-UUID": {"contrail::vrouter::tsn_servers": ['Contrail-TSN-ACTIVE-IP','Contrail-TSN-BACKUP-IP']}}
+#
+# The sample UUID's/IP's/Names provided below are from a working sample.
+# Keep the resource_registry section as it is, and make changes to the NodeDataLookup section according to your overcloud deployment.
+#
+resource_registry:
+  OS::TripleO::ContrailTSNExtraConfigPre: ../../puppet/extraconfig/pre_deploy/per_node.yaml
+
+parameter_defaults:
+  NodeDataLookup: |
+    {"16CDCDA6-B096-46C7-A646-B188183E39F4": {"contrail::vrouter::tsn_servers": ['10.0.0.1','10.0.0.2']},
+     "99FD12A9-191C-41B3-BF6B-3CE30C63CC01": {"contrail::vrouter::tsn_servers": ['10.0.0.1','10.0.0.2']},
+     "D4B82082-5D64-4674-93AB-7377B6311820": {"contrail::vrouter::tsn_servers": ['10.0.0.3','10.0.0.4']},
+     "AB15DEA1-89B8-4621-9F79-5A6AE25BCF93": {"contrail::vrouter::tsn_servers": ['10.0.0.3','10.0.0.4']}}
