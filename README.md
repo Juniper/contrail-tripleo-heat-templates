@@ -613,6 +613,46 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   --libvirt-type qemu
 ```
 
+# DPDK special
+
+For dpdk a modified overcloud image has to be created. This step can be done    
+on the undercloud but will take very long if the kvm host doesn't have    
+nested HV enabled. Alternatively, the overcloud image can be downloaded to the    
+kvm host and be customized there.    
+
+## Customize DPDK overcloud image
+
+```
+cp /home/stack/images/overcloud-full.qcow2 /home/stack/images/overcloud-full-dpdk.qcow2
+export LIBGUESTFS_BACKEND=direct
+/usr/bin/virt-customize  -a /home/stack/images/overcloud-full-dpdk.qcow2 \
+  --sm-credentials $USER:password:$PASSWORD --sm-register --sm-attach auto \
+  --run-command 'subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-rh-common-rpms --enable=rhel-ha-for-rhel-7-server-rpms --enable=rhel-7-server-openstack-10-rpms --enable=rhel-7-server-openstack-10-devtools-rpms' \
+  --copy-in /etc/yum.repos.d/contrail.repo:/etc/yum.repos.d \
+  --run-command 'rm -fr /var/cache/yum/*' \
+  --run-command 'yum clean all' \
+  --run-command 'rm -rf /etc/yum.repos.d/contrail.repo' \
+  --run-command 'subscription-manager unregister' \
+  --selinux-relabel
+```
+
+## Upload modified dpdk image to glance
+
+```
+glance image-create --name overcloud-full-dpdk --container-format bare --disk-format qcow2 --file overcloud-full-dpdk.qcow2
+openstack image set overcloud-full-dpdk --property kernel_id=`glance image-list |grep bm-deploy-kernel |awk '{print $2}'` --property ramdisk_id=`glance image-list |grep bm-deploy-ramdisk |awk '{print $2}'`
+```
+
+## Profile ironic node with DPDK
+
+```
+ironic node-update $DPDK_NODE_UUID replace properties/capabilities=profile:contrail-dpdk,cpu_hugepages:true,cpu_txt:true,boot_option:local,cpu_aes:true,cpu_vt:true,cpu_hugepages_1g:true
+openstack flavor create contrail-dpdk --ram 4096 --vcpus 1 --disk 40
+openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="contrail-dpdk" contrail-dpdk
+```
+
+Where $DPDK_NODE_UUID is the ironic UUID of the DPDK node    
+
 # TSN special
 
 In case of EVPN VXLAN Provisioning when more than 2 TSN nodes are present, user should provide per TSN node specific hiera data with "contrail::vrouter::tsn_servers" containing a pair of TSNs.
