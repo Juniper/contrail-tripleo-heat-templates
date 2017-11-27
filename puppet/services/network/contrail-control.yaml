@@ -89,7 +89,7 @@ outputs:
           - if:
             - contrail_control_md5_unset
             - {}
-            - contrail_control_md5: {get_param: ContrailControlMD5}
+            - contrail::control::md5: {get_param: ContrailControlMD5}
 
       step_config: |
         include ::tripleo::network::contrail::control
