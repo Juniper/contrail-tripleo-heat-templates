@@ -37,6 +37,10 @@ parameters:
     description: Autonomous System Number
     type: number
     default: 64512
+  ContrailControlMD5:
+    description: Md5 config for the node
+    type: string
+    default: ''
   ContrailControlRNDCSecret:
     description: sda1/256 hmac key, e.g. echo -n "values" | openssl dgst -sha256 -hmac key -binary | base64
     type: string
@@ -74,6 +78,7 @@ outputs:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
           - contrail::control::asn: {get_param: ContrailControlASN }
+            contrail::control::md5: {get_param: ContrailControlMD5}
             contrail::control::host_ip: {get_param: [ServiceNetMap, ContrailControlNetwork]}
             contrail::control::rndc_secret: {get_param: ContrailControlRNDCSecret}
             contrail::control::manage_named: {get_param: ContrailControlManageNamed}
