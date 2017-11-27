@@ -37,6 +37,10 @@ parameters:
     description: Autonomous System Number
     type: number
     default: 64512
+  ContrailControlMD5:
+    description: Md5 config for the node
+    type: string
+    default: ''
   ContrailControlRNDCSecret:
     description: sda1/256 hmac key, e.g. echo -n "values" | openssl dgst -sha256 -hmac key -binary | base64
     type: string
@@ -53,6 +57,9 @@ parameters:
     description: Virtual Network id type to be used
     type: string
     default: 'automatic'
+
+conditions:
+  contrail_control_md5_unset: {equals : [{get_param: ContrailControlMD5}, '']}
 
 resources:
   ContrailBase:
@@ -79,5 +86,10 @@ outputs:
             contrail::control::manage_named: {get_param: ContrailControlManageNamed}
             contrail::control::encap_priority: {get_param: ContrailControlEncapPriority}
             contrail::control::vxlan_vn_id_mode: {get_param: ContrailControlVXLanVnIdMode}
+          - if:
+            - contrail_control_md5_unset
+            - {}
+            - contrail_control_md5: {get_param: ContrailControlMD5}
+
       step_config: |
         include ::tripleo::network::contrail::control
