@@ -21,8 +21,30 @@ parameter_defaults:
   EC2MetadataIp: 192.0.2.1  # Generally the IP of the Undercloud
   DnsServers: ["10.87.64.101"]
   VrouterPhysicalInterface: eth1
+#  VrouterDpdkPhysicalInterface: eth1
+#  VrouterTsnPhysicalInterface: eth1
   VrouterGateway: 10.0.0.1
   VrouterNetmask: 255.255.255.0
   ControlVirtualInterface: eth0
   PublicVirtualInterface: vlan10
-# VlanParentInterface: eth1 # If VrouterPhysicalInterface is a vlan interface using vlanX notation
+## if PhysicalInterface is a vlan interface using vlanX notation
+# VlanParentInterface: eth1
+# VlanDpdkParentInterface: eth1
+# VlanTsnParentInterface: eth1
+## if vhost0 is based on a bond
+# BondInterface: bond0
+# BondDpdkInterface: bond0
+# BondTsnInterface: bond0
+# BondInterfaceMembers: eth0,eth1
+# BondDpdkInterfaceMembers: eth0,eth1
+# BondTsnInterfaceMembers: eth0,eth1
+# BondMode: 4
+# BondDpdkMode: 4
+# BondTsnMode: 4
+# BondPolicy: 1
+# BondDpdkPolicy: 1
+# BondTsnPolicy: 1
+## dpdk parameter
+# ContrailDpdkHugePages: 2048
+# ContrailDpdkCoremask: 0xf
+# ContrailDpdkDriver: uio_pci_generic
