@@ -58,6 +58,9 @@ parameters:
     type: string
     default: 'automatic'
 
+conditions:
+  contrail_control_md5_unset: {equals : [{get_param: ContrailControlMD5}, '']}
+
 resources:
   ContrailBase:
     type: ./contrail-base.yaml
@@ -84,5 +87,10 @@ outputs:
             contrail::control::manage_named: {get_param: ContrailControlManageNamed}
             contrail::control::encap_priority: {get_param: ContrailControlEncapPriority}
             contrail::control::vxlan_vn_id_mode: {get_param: ContrailControlVXLanVnIdMode}
+          - if:
+            - contrail_control_md5_unset
+            - {}
+            - contrail::control::md5: {get_param: ContrailControlMD5}
+
       step_config: |
         include ::tripleo::network::contrail::control
