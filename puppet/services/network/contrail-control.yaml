@@ -54,6 +54,9 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       EndpointMap: {get_param: EndpointMap}
 
+conditions:
+  contrail_control_md5_unset: {equals : [{get_param: ContrailControlMD5}, '']}
+
 outputs:
   role_data:
     description: Role Contrail Control using composable services.
@@ -69,5 +72,10 @@ outputs:
             contrail::control::manage_named: {get_param: ContrailControlManageNamed}
             contrail::control::encap_priority: {get_param: ContrailControlEncapPriority}
             contrail::control::vxlan_vn_id_mode: {get_param: ContrailControlVXLanVnIdMode}
+          - if:
+            - contrail_control_md5_unset
+            - {}
+            - contrail::control::md5: {get_param: ContrailControlMD5}
+
       step_config: |
         include ::tripleo::network::contrail::control
