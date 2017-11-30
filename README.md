@@ -653,12 +653,26 @@ openstack flavor set --property "capabilities:boot_option"="local" --property "c
 
 Where $DPDK_NODE_UUID is the ironic UUID of the DPDK node    
 
+## Additional DPDK parameters
+
+More DPDK parameters can be configured in:    
+
+```
+tripleo-heat-templates/environments/contrail/contrail-net.yaml
+```
+
 # TSN special
 
 In case of EVPN VXLAN Provisioning when more than 2 TSN nodes are present, user should provide per TSN node specific hiera data with "contrail::vrouter::tsn_servers" containing a pair of TSNs.
 
 ```
 vi tripleo-heat-templates/environments/contrail/contrail-tsn-servers.yaml
+```
+
+The TSN interface used for the vrouter has to be configured:    
+
+```
+tripleo-heat-templates/environments/contrail/contrail-net.yaml
 ```
 
 ## deploy
