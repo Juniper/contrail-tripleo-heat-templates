@@ -629,6 +629,7 @@ export LIBGUESTFS_BACKEND=direct
   --sm-credentials $USER:password:$PASSWORD --sm-register --sm-attach auto \
   --run-command 'subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-rh-common-rpms --enable=rhel-ha-for-rhel-7-server-rpms --enable=rhel-7-server-openstack-10-rpms --enable=rhel-7-server-openstack-10-devtools-rpms' \
   --copy-in /etc/yum.repos.d/contrail.repo:/etc/yum.repos.d \
+  --run-command 'yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init' \
   --run-command 'rm -fr /var/cache/yum/*' \
   --run-command 'yum clean all' \
   --run-command 'rm -rf /etc/yum.repos.d/contrail.repo' \
