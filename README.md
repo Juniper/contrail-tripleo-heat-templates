@@ -530,11 +530,11 @@ done
 ## Install tripleo-heat-templates on the undercloud
 ### Contrail 3.2.6
 ```
-yum localinstall /var/www/html/contrail/contrail-tripleo-heat-templates-3.2.6.0-60.el7.noarch.rpm
+sudo yum localinstall /var/www/html/contrail/contrail-tripleo-heat-templates-3.2.6.0-60.el7.noarch.rpm
 ```
 ### Contrail 4.0.2
 ```
-yum localinstall /var/www/html/contrail/contrail-tripleo-heat-templates-4.0.2.0-35.el7.noarch.rpm
+sudo yum localinstall /var/www/html/contrail/contrail-tripleo-heat-templates-4.0.2.0-35.el7.noarch.rpm
 ```
 ```
 cp -r /usr/share/openstack-tripleo-heat-templates/ ~/tripleo-heat-templates
