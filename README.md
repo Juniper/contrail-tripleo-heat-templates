@@ -531,6 +531,21 @@ done
 ### Contrail 3.2.6
 ```
 yum localinstall /var/www/html/contrail/contrail-tripleo-heat-templates-3.2.6.0-60.el7.noarch.rpm
+
+cp -r /usr/share/openstack-tripleo-heat-templates/ ~/tripleo-heat-templates
+
+cd /var/www/html/contrail/
+sudo yum localinstall -y contrail-tripleo-puppet-3.2.6.0-60.el7.noarch.rpm puppet-contrail-3.2.6.0-60.el7.noarch.rpm
+
+mkdir -p ~/usr/share/openstack-puppet/modules/contrail
+cp -R /usr/share/openstack-puppet/modules/contrail/* ~/usr/share/openstack-puppet/modules/contrail/
+
+mkdir -p ~/usr/share/openstack-puppet/modules/tripleo
+cp -R /usr/share/contrail-tripleo-puppet/* ~/usr/share/openstack-puppet/modules/tripleo
+cd ~
+
+tar czvf puppet-modules.tgz ~/usr/
+upload-swift-artifacts -f puppet-modules.tgz
 ```
 ### Contrail 4.0.2
 ```
