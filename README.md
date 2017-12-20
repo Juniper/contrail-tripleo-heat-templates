@@ -578,6 +578,8 @@ vi ~/tripleo-heat-templates/environments/ips-from-pool-all.yaml
 ```
 
 ## Provide subscription mgr credentials (rhel_reg_password, rhel_reg_pool_id, rhel_reg_repos, rhel_reg_user and method)
+### OSP10
+Make also sure you add the repro "rhel-7-server-openstack-10-devtools-rpms" to rhel_reg_repos as it's needed for vRouter installation
 ```
 vi ~/tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml
 ```
