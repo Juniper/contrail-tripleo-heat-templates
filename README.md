@@ -538,8 +538,8 @@ yum localinstall /var/www/html/contrail/contrail-tripleo-heat-templates-4.0.2.0-
 ```
 ```
 cp -r /usr/share/openstack-tripleo-heat-templates/ ~/tripleo-heat-templates
-cp -r contrail-tripleo-heat-templates/environments/* ~/tripleo-heat-templates/environments
-cp -r contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
+cp -r /usr/share/contrail-tripleo-heat-templates/environments/* ~/tripleo-heat-templates/environments
+cp -r /usr/share/contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
 ```
 
 ## Contrail services (repo url etc.)
