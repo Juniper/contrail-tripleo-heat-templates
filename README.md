@@ -501,7 +501,7 @@ do
   name=`echo $line|awk '{print $2}'`
   ipmi_address=`echo $line|awk '{print $3}'`
   profile=`echo $line|awk '{print $4}'`
-  uuid=`ironic node-create -d pxe_ipmitool -p cpus=4 -p memory_mb=16348 -p local_gb=100 -p cpu_arch=x86_64 -i ipmi_username=${ipmi_user} -i ipmi_address=${ipmi_ip} -i ipmi_password=${ipmi_password} -n $name -p capabilities=profile:${profile} | tail -2|awk '{print $4}'`
+  uuid=`ironic node-create -d pxe_ipmitool -p cpus=4 -p memory_mb=16348 -p local_gb=100 -p cpu_arch=x86_64 -i ipmi_username=${ipmi_user} -i ipmi_address=${ipmi_address} -i ipmi_password=${ipmi_password} -n $name -p capabilities=profile:${profile} | tail -2|awk '{print $4}'`
   ironic port-create -a ${mac} -n ${uuid}
 done < <(cat ironic_list_bms)
 ```
