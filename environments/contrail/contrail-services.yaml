@@ -27,3 +27,5 @@ parameter_defaults:
   NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
   NeutronTunnelTypes: ''
   NeutronMetadataProxySharedSecret: secret
+  NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
+  NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
