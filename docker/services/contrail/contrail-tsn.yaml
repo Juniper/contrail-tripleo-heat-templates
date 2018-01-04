@@ -1,4 +1,4 @@
-heat_template_version: ocata
+heat_template_version: queens
 
 description: >
   Contrail TSN Service
@@ -31,7 +31,7 @@ parameters:
                  via parameter_defaults in the resource registry.
     type: json
   NeutronMetadataProxySharedSecret:
-    description: Metadata Secret
+    description: Shared secret to prevent spoofing
     type: string
     hidden: true
   ContrailVrouterPhysicalInterface:
@@ -46,18 +46,6 @@ parameters:
     default: '255.255.255.0'
     description: vRouter netmask
     type: string
-  ContrailVrouterTSNEVPNMode:
-    default: false
-    description: TSN EVPN Mode
-    type: boolean
-  ContrailVrouterControlNodeIps:
-    description: List of Contrail Node IPs
-    type: comma_delimited_list
-    default: ''
-  ContrailVrouterAnalyticsNodeIps:
-    description: List of Contrail Analytics IPs
-    type: comma_delimited_list
-    default: ''
 
 resources:
   ContrailBase:
@@ -84,13 +72,9 @@ outputs:
             contrail::vrouter::netmask: {get_param: ContrailVrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             contrail::vrouter::is_tsn: 'true'
-            contrail::vrouter::tsn_evpn_mode: {get_param: ContrailVrouterTSNEVPNMode}
-            contrail::vrouter::control_node_ips: {get_param: ContrailVrouterControlNodeIps}
-            contrail::vrouter::analytics_node_ips: {get_param: ContrailVrouterAnalyticsNodeIps}
-            tripleo.contrail_tsn.firewall_rules:
-              '111 contrail_tsn_8085':
-                dport: 8085
-              '112 contrail_tsn_8097':
+            tripleo.neutron_compute_plugin_opencontrail.firewall_rules:
+              '111 neutron_compute_plugin_opencontrail proxy':
                 dport: 8097
+                proto: tcp
       step_config: |
         include ::tripleo::network::contrail::vrouter

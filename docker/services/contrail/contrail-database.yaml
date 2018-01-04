@@ -1,8 +1,10 @@
-heat_template_version: ocata
+heat_template_version: queens
 
 description: >
-  Contrail Heat plugin adds Contrail specific heat resources enabling heat
-  to orchestrate Contrail
+  Contrail Database service deployment using puppet, this YAML file
+  creates the interface between the HOT template
+  and the puppet manifest that actually installs
+  and configures Contrail Database.
 
 parameters:
   ServiceData:
@@ -45,11 +47,12 @@ resources:
 
 outputs:
   role_data:
-    description: Contrail Heat plugin
+    description: Role Contrail Database using composable services.
     value:
-      service_name: contrail_heat
+      service_name: contrail_database
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
+          - contrail::database::host_ip: {get_param: [ServiceNetMap, ContrailDatabaseNetwork]}
       step_config: |
-        include ::tripleo::network::contrail::heat
+        include ::tripleo::network::contrail::database

@@ -1,0 +1,211 @@
+heat_template_version: queens
+
+description: >
+  Contrail containerized Config Config service
+
+parameters:
+  DockerContrailConfigApiImage:
+    description: image
+    type: string
+  DockerContrailConfigSchemaImage:
+    description: image
+    type: string
+  DockerContrailConfigSvcmonitorImage:
+    description: image
+    type: string
+  DockerContrailConfigDevicemgrImage:
+    description: image
+    type: string
+  DockerContrailRedisImage:
+    description: image
+    type: string
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+
+resources:
+
+  ContainersCommon:
+    type: ../containers-common.yaml
+
+
+  ContrailConfigBase:
+    type: ../../../puppet/services/network/contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+outputs:
+  role_data:
+    description: Role data for the Contrail Config service.
+    value:
+      service_name: contrail_config
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailConfigBase, role_data, config_settings]
+      service_config_settings: {get_attr: [ContrailConfigBase, role_data, service_config_settings]}
+      docker_config:
+        step_5:
+          contrail_config_api:
+            image: &contrail_config_api_image {get_param: DockerContrailConfigApiImage}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                -
+                  - /var/log/contrail:/var/log/contrail
+            env_file:
+              - /etc/contrail/common_config.env
+          contrail_config_schema:
+            image: &contrail_config_schema_image {get_param: DockerContrailConfigSchemaImage}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                -
+                  - /var/log/contrail:/var/log/contrail
+            env_file:
+              - /etc/contrail/common_config.env
+          contrail_config_svc_monitor:
+            image: &contrail_config_svc_monitor_image {get_param: DockerContrailConfigSvcmonitorImage}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                -
+                  - /var/log/contrail:/var/log/contrail
+            env_file:
+              - /etc/contrail/common_config.env
+          contrail_config_redis:
+            image: &contrail_config_redis_image {get_param: DockerContrailRedisImage}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                -
+                  - /var/log/contrail:/var/log/contrail
+            env_file:
+              - /etc/contrail/common_config.env
+      host_prep_tasks:
+        - name: create contrail directories
+          file: 
+            path: "{{ item }}"
+            state: directory
+            recurse: yes
+          with_items:
+            - /var/log/contrail
+            - /etc/contrail
+        - name: register /etc/contrail/common_config.env
+          stat:
+            path: /etc/contrail/common_config.env
+          register: p
+        - name: create /etc/contrail/common_config.env
+          copy: 
+            dest: /etc/contrail/common_config.env
+            content: ""
+          when: not p.stat.exists
+        - name: get keystone admin api vip
+          shell: hiera -c /etc/puppet/hiera.yaml keystone_admin_api_vip
+          register: keystone_admin_api_vip
+        - name: get keystone public api vip
+          shell: hiera -c /etc/puppet/hiera.yaml keystone_public_api_vip
+          register: keystone_public_api_vip
+        - name: get keystone admin password
+          shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_password
+          register: keystone_admin_password
+        - name: get keystone admin user
+          shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_user
+          register: keystone_admin_user
+        - name: get keystone admin tenant
+          shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_tenant_name
+          register: keystone_admin_tenant
+        - name: get contrail config database node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
+          register: contrail_config_database_node_ips_list
+        - name: turn contrail config db ips into json
+          set_fact:
+            contrail_config_database_node_ips_json: "{{ contrail_config_database_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_config_database_node_ips_string: "{{ contrail_config_database_node_ips_json | join(',') }}"
+        - name: get contrail config node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_config_node_ips
+          register: contrail_config_node_ips_list
+        - name: turn contrail config ips into json
+          set_fact:
+            contrail_config_node_ips_json: "{{ contrail_config_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}" 
+        - name: get contrail analytics node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
+          register: contrail_analytics_node_ips_list
+        - name: turn contrail analytics ips into json
+          set_fact:
+            contrail_analytics_node_ips_json: "{{ contrail_analytics_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
+        - name: write contrail config node ips to environment file
+          lineinfile: dest=/etc/contrail/common_config.env regexp='.*CONFIG_NODES$' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
+        - name: write contrail config db node ips to environment file
+          lineinfile: dest=/etc/contrail/common_config.env regexp='.*CONFIGDB_NODES$' line="CONFIGDB_NODES={{ contrail_config_database_node_ips_string }}" state=present
+        - name: write contrail config db node ips to environment file
+          lineinfile: dest=/etc/contrail/common_config.env regexp='.*ZOOKEEPER_NODES$' line="ZOOKEEPER_NODES={{ contrail_config_database_node_ips_string }}" state=present
+        - name: write contrail config rmq node ips to environment file
+          lineinfile: dest=/etc/contrail/common_config.env regexp='.*RABBITMQ_NODES$' line="RABBITMQ_NODES={{ contrail_config_database_node_ips_string }}" state=present
+        - name: write contrail analytics node ips to environment file
+          lineinfile: dest=/etc/contrail/common_config.env regexp='.*ANALYTICS_NODES$' line="ANALYTICS_NODES={{ contrail_analytics_node_ips_string }}" state=present
+        - name: write remaining contrail config env cars
+          lineinfile: dest=/etc/contrail/common_config.env line="{{ item }}" state=present
+          with_items:
+            - RABBITMQ_NODE_PORT=5673
+            - OPENSTACK_VERSION=ocata
+            - CLOUD_ORCHESTRATOR=openstack
+            - AUTH_MODE=keystone
+            - KEYSTONE_AUTH_HOST={{ keystone_admin_api_vip.stdout }}
+            - KEYSTONE_AUTH_ADMIN_PASSWORD={{ keystone_admin_password.stdout }}
+            - KEYSTONE_AUTH_ADMIN_USER={{ keystone_admin_user.stdout }}
+            - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
+            
+      metadata_settings:
+        get_attr: [ContrailConfigBase, role_data, metadata_settings]

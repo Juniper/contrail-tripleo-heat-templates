@@ -1,4 +1,4 @@
-heat_template_version: ocata
+heat_template_version: queens
 
 description: >
   OpenStack Neutron Compute OpenContrail plugin
@@ -31,7 +31,7 @@ parameters:
                  via parameter_defaults in the resource registry.
     type: json
   NeutronMetadataProxySharedSecret:
-    description: Metadata Secret
+    description: Shared secret to prevent spoofing
     type: string
     hidden: true
   ContrailVrouterPhysicalInterface:
@@ -48,10 +48,6 @@ parameters:
     type: string
   ContrailVrouterControlNodeIps:
     description: List of Contrail Node IPs
-    type: comma_delimited_list
-    default: ''
-  ContrailVrouterAnalyticsNodeIps:
-    description: List of Contrail Analytics IPs
     type: comma_delimited_list
     default: ''
 
@@ -80,7 +76,6 @@ outputs:
             contrail::vrouter::netmask: {get_param: ContrailVrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             contrail::vrouter::control_node_ips: {get_param: ContrailVrouterControlNodeIps}
-            contrail::vrouter::analytics_node_ips: {get_param: ContrailVrouterAnalyticsNodeIps}
             tripleo.contrail_vrouter.firewall_rules:
               '111 contrail_vrouter_8085':
                 dport: 8085

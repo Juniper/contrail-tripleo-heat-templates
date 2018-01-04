@@ -1,4 +1,4 @@
-heat_template_version: ocata
+heat_template_version: queens
 
 description: >
   OpenStack Neutron Compute OpenContrail plugin
@@ -31,7 +31,7 @@ parameters:
                  via parameter_defaults in the resource registry.
     type: json
   NeutronMetadataProxySharedSecret:
-    description: Metadata Secret
+    description: Shared secret to prevent spoofing
     type: string
     hidden: true
   ContrailVrouterPhysicalInterface:
@@ -39,25 +39,13 @@ parameters:
     description: vRouter physical interface
     type: string
   ContrailVrouterGateway:
-    default: '192.0.2.1'
+    default: '192.168.24.1'
     description: vRouter default gateway
     type: string
   ContrailVrouterNetmask:
     default: '255.255.255.0'
     description: vRouter netmask
     type: string
-  ContrailVrouterControlNodeIps:
-    description: List of Contrail Node IPs
-    type: comma_delimited_list
-    default: ''
-  ContrailDpdkDriver:
-    default: 'uio_pci_generic'
-    description: DPDK Nic Driver
-    type: string
-  ContrailVrouterAnalyticsNodeIps:
-    description: List of Contrail Analytics IPs
-    type: comma_delimited_list
-    default: ''
 
 resources:
   ContrailBase:
@@ -84,13 +72,11 @@ outputs:
             contrail::vrouter::gateway: {get_param: ContrailVrouterGateway}
             contrail::vrouter::netmask: {get_param: ContrailVrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
-            contrail::vrouter::control_node_ips: {get_param: ContrailVrouterControlNodeIps}
-            contrail::vrouter::dpdk_driver: {get_param: ContrailDpdkDriver}
-            contrail::vrouter::analytics_node_ips: {get_param: ContrailVrouterAnalyticsNodeIps}
-            tripleo.contrail_dpdk.firewall_rules:
-              '111 contrail_dpdk_8085':
-                dport: 8085
-              '112 contrail_dpdk_8097':
-                dport: 8097
+            tripleo.neutron_compute_plugin_opencontrail.firewall_rules:
+              '111 neutron_compute_plugin_opencontrail proxy':
+                dport:
+                  - 8097
+                  - 8085
+                proto: tcp
       step_config: |
         include ::tripleo::network::contrail::vrouter

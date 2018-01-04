@@ -1,10 +1,7 @@
-heat_template_version: ocata
+heat_template_version: queens
 
 description: >
-  Contrail Database service deployment using puppet, this YAML file
-  creates the interface between the HOT template
-  and the puppet manifest that actually installs
-  and configures Contrail Database.
+  OpenStack Neutron Opencontrail plugin
 
 parameters:
   ServiceData:
@@ -33,10 +30,14 @@ parameters:
     description: Mapping of service endpoint -> protocol. Typically set
                  via parameter_defaults in the resource registry.
     type: json
+  ContrailExtensions:
+    description: List of OpenContrail extensions to be enabled
+    type: comma_delimited_list
+    default: 'ipam:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_ipam.NeutronPluginContrailIpam,policy:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_policy.NeutronPluginContrailPolicy,route-table:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_vpc.NeutronPluginContrailVpc,contrail:None'
 
 resources:
   ContrailBase:
-    type: ./contrail-base.yaml
+    type: ../../../puppet/services/network/contrail-base.yaml
     properties:
       ServiceData: {get_param: ServiceData}
       ServiceNetMap: {get_param: ServiceNetMap}
@@ -47,12 +48,15 @@ resources:
 
 outputs:
   role_data:
-    description: Role Contrail Database using composable services.
+    description: Role data for the Neutron Opencontrail plugin
     value:
-      service_name: contrail_database
+      service_name: contrail_neutron_plugin
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
-          - contrail::database::host_ip: {get_param: [ServiceNetMap, ContrailDatabaseNetwork]}
+          - neutron::api_extensions_path: '/opt/plugin/site-packages/neutron_plugin_contrail/extensions:/opt/plugin/site-packages/neutron_lbaas/extensionsi:/blabla'
+            neutron::service_plugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+            neutron::core_plugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
+            contrail::vrouter::contrail_extensions: {get_param: ContrailExtensions}
       step_config: |
-        include ::tripleo::network::contrail::database
+        include ::tripleo::network::contrail::neutron_plugin
