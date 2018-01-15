@@ -64,7 +64,7 @@ outputs:
         map_merge:
           - get_attr: [ContrailNeutronPluginBase, role_data, config_settings]
           - neutron::api_extensions_path: '/opt/plugin/site-packages/neutron_plugin_contrail/extensions:/opt/plugin/site-packages/neutron_lbaas/extensionsi:/blabla'
-            neutron::service_plugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+            #neutron::service_plugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
             neutron::core_plugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
             contrail::vrouter::contrail_extensions: {get_param: ContrailExtensions}
       # BEGIN DOCKER SETTINGS

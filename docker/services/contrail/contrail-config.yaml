@@ -45,6 +45,19 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
+  EnableInternalTLS:
+    type: boolean
+    default: false
+  InternalTLSCAFile:
+    default: '/etc/ipa/ca.crt'
+    type: string
+    description: Specifies the default CA cert to use if TLS is used for
+                 services in the internal network.
+  InternalTLSCRLPEMFile:
+    default: '/etc/pki/CA/crl/overcloud-crl.pem'
+    type: string
+    description: Specifies the default CRL PEM file to use for revocation if
+                 TLS is used for services in the internal network.
 
 resources:
 
@@ -62,6 +75,9 @@ resources:
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
 
+conditions:
+  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
+
 outputs:
   role_data:
     description: Role data for the Contrail Config service.
@@ -70,7 +86,34 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailConfigBase, role_data, config_settings]
-      service_config_settings: {get_attr: [ContrailConfigBase, role_data, service_config_settings]}
+      service_config_settings:
+        haproxy:
+          tripleo.contrail_config.haproxy_endpoints:
+            contrail_config_api:
+              public_virtual_ip: "%{hiera('contrail_config_vip')}"
+              internal_ip: "%{hiera('contrail_config_vip')}"
+              service_port: 8082
+              ip_addresses: "%{hiera('contrail_config_node_ips')}"
+              server_names: "%{hiera('contrail_config_node_names')}"
+              mode: 'http'
+              public_ssl_port: 18082
+              service_network: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+              member_options:
+                list_concat:
+                  - [ 'check', 'inter 2000', 'rise 2', 'fall 5' ]
+                  - if:
+                      - internal_tls_enabled
+                      - - 'ssl'
+                        - 'verify required'
+                        - list_join:
+                          - ' '
+                          - - 'ca-file'
+                            - {get_param: InternalTLSCAFile}
+                        - list_join:
+                          - ' '
+                          - - 'crl-file'
+                            - {get_param: InternalTLSCRLPEMFile}
+                      - null
       docker_config:
         step_5:
           contrail_config_api:
