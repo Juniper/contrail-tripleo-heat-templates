@@ -27,6 +27,7 @@ parameter_defaults:
   DnsServers: ["8.8.8.8"]
   NtpServer: 10.3.0.1
   ContrailVrouterPhysicalInterface: eth1
+  VrouterDpdkPhysicalInterface: eth1
   ContrailVrouterGateway: 10.0.0.1
   ContrailVrouterNetmask: 255.255.255.0
   ControlVirtualInterface: eth0
