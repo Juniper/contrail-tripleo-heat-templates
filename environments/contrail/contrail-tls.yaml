@@ -1,0 +1,8 @@
+parameter_defaults:
+  ContrailSslEnabled: true
+
+  ContrailCaCert:  |
+    The contents of the CA go here
+
+  ContrailCaKey: |
+    The contents of the CA private key go here
