@@ -42,22 +42,6 @@ parameters:
     description: Keystone admin user name
     type: string
     default: 'admin'
-  AuthPortSSL:
-    default: 13357
-    description: Keystone SSL port
-    type: number
-  AuthPortPublic:
-    default: 5000
-    description: Keystone Public port
-    type: number
-  AuthPortSSLPublic:
-    default: 13000
-    description: Keystone Public SSL port
-    type: number
-  AuthProtocol:
-    default: 'http'
-    description: Keystone authentication protocol
-    type: string
   KeystoneAuthType:
     type: string
     default: 'password'
@@ -134,11 +118,74 @@ parameters:
     default: '/'
     description: RabbitMQ vHost value to be used by Contrail cluster
     type: string
+  RabbitClientUseSSL:
+    default: false
+    description: >
+        Rabbit client subscriber parameter to specify
+        an SSL connection to the RabbitMQ host.
+    type: string
   ContrailSslEnabled:
     description:  Flag to identify is SSL should be used in internal Contrail
                   services communications (sandesh, introspect, xmpp, ..).
     type: boolean
     default: false
+  ContrailServiceCertFile:
+    default: '/etc/contrail/ssl/certs/server.pem'
+    description: Path to the node's public certificate
+    type: string
+  ContrailServiceKeyFile:
+    default: '/etc/contrail/ssl/private/server-privkey.pem'
+    description: Path to server's/node's private key
+    type: string
+  ContrailCaCertFile:
+    default: '/etc/contrail/ssl/certs/ca-cert.pem'
+    description: Path to CA certificate
+    type: string
+  ContrailCaCert:
+    default: ''
+    description: Content of CA certificate
+    type: string
+    hidden: true
+  ContrailCaKeyFile:
+    default: '/etc/contrail/ssl/private/ca-privkey.pem'
+    description: Path to CA private key
+    type: string
+  ContrailCaKey:
+    default: ''
+    description: Content of CA private key
+    type: string
+    hidden: true
+  ContrailAuthCaCert:
+    default: ''
+    description: Content of Auth CA certificate
+    type: string
+    hidden: true
+  ContrailAuthCaCertFile:
+    default: '/etc/contrail/ssl/certs/auth-ca-cert.pem'
+    description: Path to auth CA file
+    type: string
+  ContrailInternalApiSsl:
+    description:  Flag to identify is SSL should be used in Contrail internal
+                  api services.
+    type: boolean
+    default: false
+
+conditions:
+  contrail_vip_unset: {equals : [{get_param: ContrailVIP}, '']}
+  contrail_config_vip_unset: {equals : [{get_param: ContrailConfigVIP}, '']}
+  contrail_analytics_vip_unset: {equals : [{get_param: ContrailAnalyticsVIP}, '']}
+  contrail_webui_vip_unset: {equals : [{get_param: ContrailWebuiVIP}, '']}
+  contrail_ca_cert_unset: {equals : [{get_param: ContrailCaCert}, '']}
+  contrail_ca_key_unset: {equals : [{get_param: ContrailCaKey}, '']}
+  contrail_auth_ca_cert_unset: {equals : [{get_param: ContrailAuthCaCert}, '']}
+  ssl_is_on:
+    or:
+    - equals:
+      - get_param: ContrailSslEnabled
+      - true
+    - equals:
+      - get_param: ContrailInternalApiSsl
+      - true
 
 outputs:
   role_data:
@@ -146,35 +193,77 @@ outputs:
     value:
       service_name: contrail_base
       config_settings:
-        contrail::aaa_mode: {get_param: AAAMode}
-        contrail::analytics_aaa_mode: {get_param: AAAModeAnalytics}
-        contrail::admin_password: {get_param: AdminPassword}
-        contrail::admin_tenant_name: {get_param: AdminTenantName}
-        contrail::admin_token: {get_param: AdminToken}
-        contrail::admin_user: {get_param: AdminUser}
-        contrail::auth: {get_param: ContrailAuth}
-        contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
-        contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
-        contrail::auth_port_ssl: {get_param: AuthPortSSL }
-        contrail::auth_port_public: {get_param: AuthPortPublic }
-        contrail::auth_port_ssl_public: {get_param: AuthPortSSLPublic }
-        contrail::auth_protocol: {get_param: AuthProtocol }
-        contrail::api_port: {get_param: ContrailConfigPort }
-        contrail::keystone_auth_type: {get_param: KeystoneAuthType}
-        contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
-        contrail::keystone_region: {get_param: KeystoneRegion}
-        contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
-        contrail::auth_version: {get_param: ContrailAuthVersion}
-        contrail::contrail_version: {get_param: ContrailVersion }
-        contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
-        contrail::insecure: {get_param: ContrailInsecure}
-        contrail::memcached_server: {get_param: ContrailMemcachedServer}
-        contrail::rabbit_password: {get_param: RabbitPassword}
-        contrail::rabbit_user: {get_param: RabbitUserName}
-        contrail::rabbit_port: {get_param: RabbitClientPort}
-        contrail::rabbit_vhost: {get_param: RabbitVhost}
-        contrail::vip: {get_param: ContrailVIP}
-        contrail_analytics_vip: {get_param: ContrailAnalyticsVIP}
-        contrail_config_vip: {get_param: ContrailConfigVIP}
-        contrail_webui_vip: {get_param: ContrailWebuiVIP}
-        contrail_ssl_enabled: {get_param: ContrailSslEnabled}
+        map_merge:
+        - contrail::aaa_mode: {get_param: AAAMode}
+          contrail::analytics_aaa_mode: {get_param: AAAModeAnalytics}
+          contrail::admin_password: {get_param: AdminPassword}
+          contrail::admin_tenant_name: {get_param: AdminTenantName}
+          contrail::admin_token: {get_param: AdminToken}
+          contrail::admin_user: {get_param: AdminUser}
+          contrail::auth: {get_param: ContrailAuth}
+          contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
+          contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
+          contrail::auth_protocol: {get_param: [EndpointMap, KeystoneAdmin, protocol] }
+          contrail::auth_host_internal: {get_param: [EndpointMap, KeystoneInternal, host] }
+          contrail::auth_port_internal: {get_param: [EndpointMap, KeystoneInternal, port] }
+          contrail::auth_protocol_internal: {get_param: [EndpointMap, KeystoneInternal, protocol] }
+          contrail::api_port: {get_param: ContrailConfigPort }
+          contrail::keystone_auth_type: {get_param: KeystoneAuthType}
+          contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
+          contrail::keystone_region: {get_param: KeystoneRegion}
+          contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
+          contrail::auth_version: {get_param: ContrailAuthVersion}
+          contrail::contrail_version: {get_param: ContrailVersion }
+          contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
+          contrail::insecure: {get_param: ContrailInsecure}
+          contrail::memcached_server: {get_param: ContrailMemcachedServer}
+          contrail::rabbit_password: {get_param: RabbitPassword}
+          contrail::rabbit_user: {get_param: RabbitUserName}
+          contrail::rabbit_port: {get_param: RabbitClientPort}
+          contrail::rabbit_vhost: {get_param: RabbitVhost}
+          contrail::rabbit_use_ssl: {get_param: RabbitClientUseSSL}
+          contrail_ssl_enabled: {get_param: ContrailSslEnabled}
+          contrail_internal_api_ssl: {get_param: ContrailInternalApiSsl}
+        -
+          if:
+          - ssl_is_on
+          - map_merge:
+            - contrail::service_key_file: {get_param: ContrailServiceKeyFile}
+              contrail::service_cert_file: {get_param: ContrailServiceCertFile}
+              contrail::ca_cert_file: {get_param: ContrailCaCertFile}
+              contrail::ca_key_file: {get_param: ContrailCaKeyFile}
+            - if:
+              - contrail_ca_cert_unset
+              - {}
+              - contrail::ca_cert: {get_param: ContrailCaCert}
+            - if:
+              - contrail_ca_key_unset
+              - {}
+              - contrail::ca_key: {get_param: ContrailCaKey}
+            - if:
+              - contrail_auth_ca_cert_unset
+              - {}
+              - contrail::auth_ca_cert: {get_param: ContrailAuthCaCert}
+                contrail::auth_ca_file: {get_param: ContrailAuthCaCertFile}
+          - {}
+        -
+          if:
+          - contrail_vip_unset
+          - {}
+          - contrail::vip: {get_param: ContrailVIP}
+        -
+          if:
+          - contrail_config_vip_unset
+          - {}
+          - contrail_config_vip: {get_param: ContrailConfigVIP}
+        -
+          if:
+          - contrail_webui_vip_unset
+          - {}
+          - contrail_webui_vip: {get_param: ContrailWebuiVIP}
+        -
+          if:
+          - contrail_analytics_vip_unset
+          - {}
+          - contrail_analytics_vip: {get_param: ContrailAnalyticsVIP}
+
