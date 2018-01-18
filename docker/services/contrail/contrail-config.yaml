@@ -249,6 +249,7 @@ outputs:
             - KEYSTONE_AUTH_ADMIN_PASSWORD={{ keystone_admin_password.stdout }}
             - KEYSTONE_AUTH_ADMIN_USER={{ keystone_admin_user.stdout }}
             - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
+            - KEYSTONE_AUTH_URL_VERSION=v3
             
       metadata_settings:
         get_attr: [ContrailConfigBase, role_data, metadata_settings]
