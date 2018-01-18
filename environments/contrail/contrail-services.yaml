@@ -24,9 +24,9 @@ parameter_defaults:
   ContrailControllerCount: 1
   ComputeCount: 1
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
-  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+  NeutronServicePlugins: ''
+#  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
   NeutronTunnelTypes: ''
   NeutronMetadataProxySharedSecret: secret
-  NeutronApiOptVolumes: ['test1:/test1','test2:/test2']
-  NeutronApiOptEnvVars: ['abc=123','def=456']
-  
+  NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
+  NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
