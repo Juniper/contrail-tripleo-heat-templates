@@ -89,7 +89,7 @@ outputs:
       service_config_settings:
         haproxy:
           tripleo.contrail_config.haproxy_endpoints:
-            contrail_config_api:
+            contrail_config:
               public_virtual_ip: "%{hiera('contrail_config_vip')}"
               internal_ip: "%{hiera('contrail_config_vip')}"
               service_port: 8082
