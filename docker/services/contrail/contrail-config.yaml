@@ -94,6 +94,9 @@ outputs:
               internal_ip: "%{hiera('contrail_config_vip')}"
               service_port: 8082
               mode: 'http'
+              listen_options:
+                balance:
+                  - 'source'
               public_ssl_port: 18082
               service_network: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
               member_options:
