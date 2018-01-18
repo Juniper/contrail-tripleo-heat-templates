@@ -93,8 +93,6 @@ outputs:
               public_virtual_ip: "%{hiera('contrail_config_vip')}"
               internal_ip: "%{hiera('contrail_config_vip')}"
               service_port: 8082
-              ip_addresses: "%{hiera('contrail_config_node_ips')}"
-              server_names: "%{hiera('contrail_config_node_names')}"
               mode: 'http'
               public_ssl_port: 18082
               service_network: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
