@@ -7,8 +7,12 @@ resource_registry:
   OS::TripleO::Services::ContrailAnalytics: ../../docker/services/contrail/contrail-analytics.yaml
   OS::TripleO::Services::ContrailControl: ../../docker/services/contrail/contrail-control.yaml
   OS::TripleO::Services::ContrailWebui: ../../docker/services/contrail/contrail-webui.yaml
+  OS::TripleO::Services::ContrailVrouter: ../../docker/services/contrail/contrail-vrouter.yaml
 #  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-plugin.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
+#  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
+  OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
+
 parameter_defaults:
   ServiceNetMap:
     ContrailDatabaseNetwork: internal_api
@@ -17,12 +21,13 @@ parameter_defaults:
     ContrailAnalyticsNetwork: internal_api
     ContrailControlNetwork: internal_api
     ContrailWebuiNetwork: internal_api
+    ContrailVrouterNetwork: internal_api
   OvercloudContrailControllerFlavor: contrail-controller
   OvercloudControllerFlavor: control
   OvercloudComputeFlavor: compute
   ControllerCount: 1
   ContrailControllerCount: 1
-  ComputeCount: 1
+  ComputeCount: 2
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
   NeutronServicePlugins: ''
 #  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
@@ -30,3 +35,4 @@ parameter_defaults:
   NeutronMetadataProxySharedSecret: secret
   NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
   NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
+  ContrailRepo: http://10.87.64.32/contrail-5.0.0-121-ocata
