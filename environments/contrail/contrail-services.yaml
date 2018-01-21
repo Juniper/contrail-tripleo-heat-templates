@@ -10,7 +10,7 @@ resource_registry:
   OS::TripleO::Services::ContrailVrouter: ../../docker/services/contrail/contrail-vrouter.yaml
 #  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-plugin.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
-#  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
+  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
 
 parameter_defaults:
@@ -35,4 +35,6 @@ parameter_defaults:
   NeutronMetadataProxySharedSecret: secret
   NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
   NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
+  NovaApiOptVolumes: ['opt_plugin:/opt/plugin']
+  NovaApiOptEnvVars: ['PATH=$PATH:/opt/plugin/bin']
   ContrailRepo: http://10.87.64.32/contrail-5.0.0-121-ocata

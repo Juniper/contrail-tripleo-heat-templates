@@ -1,9 +1,20 @@
 heat_template_version: queens
 
 description: >
-  OpenStack Neutron Compute OpenContrail plugin
+  Contrail containerized Vrouter service
 
 parameters:
+  DockerContrailVrouterAgentImage:
+    description: image
+    type: string
+  DockerContrailNovaPluginImage:
+    description: image
+    type: string
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
   ServiceData:
     default: {}
     description: Dictionary packing service data
@@ -25,61 +36,155 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
-  EndpointMap:
-    default: {}
-    description: Mapping of service endpoint -> protocol. Typically set
-                 via parameter_defaults in the resource registry.
-    type: json
-  NeutronMetadataProxySharedSecret:
-    description: Shared secret to prevent spoofing
+  EnableInternalTLS:
+    type: boolean
+    default: false
+  InternalTLSCAFile:
+    default: '/etc/ipa/ca.crt'
     type: string
-    hidden: true
-  ContrailVrouterPhysicalInterface:
-    default: 'eth0'
-    description: vRouter physical interface
+    description: Specifies the default CA cert to use if TLS is used for
+                 services in the internal network.
+  InternalTLSCRLPEMFile:
+    default: '/etc/pki/CA/crl/overcloud-crl.pem'
     type: string
-  ContrailVrouterGateway:
-    default: '192.168.24.1'
-    description: vRouter default gateway
-    type: string
-  ContrailVrouterNetmask:
-    default: '255.255.255.0'
-    description: vRouter netmask
-    type: string
-  ContrailVrouterControlNodeIps:
-    description: List of Contrail Node IPs
-    type: comma_delimited_list
-    default: ''
+    description: Specifies the default CRL PEM file to use for revocation if
+                 TLS is used for services in the internal network.
 
 resources:
-  ContrailBase:
-    type: ./contrail-base.yaml
+
+  ContainersCommon:
+    type: ../containers-common.yaml
+
+
+  ContrailVrouterBase:
+    type: ../../../puppet/services/network/contrail-base.yaml
     properties:
+      EndpointMap: {get_param: EndpointMap}
       ServiceData: {get_param: ServiceData}
       ServiceNetMap: {get_param: ServiceNetMap}
       DefaultPasswords: {get_param: DefaultPasswords}
-      EndpointMap: {get_param: EndpointMap}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
 
+conditions:
+  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
+
 outputs:
   role_data:
-    description: Role data for the Neutron Compute OpenContrail plugin
+    description: Role data for the Contrail Vrouter service.
     value:
       service_name: contrail_vrouter
       config_settings:
         map_merge:
-          - get_attr: [ContrailBase, role_data, config_settings]
-          - contrail::vrouter::host_ip: {get_param: [ServiceNetMap, ContrailVrouterNetwork]}
-            contrail::vrouter::physical_interface: {get_param: ContrailVrouterPhysicalInterface}
-            contrail::vrouter::gateway: {get_param: ContrailVrouterGateway}
-            contrail::vrouter::netmask: {get_param: ContrailVrouterNetmask}
-            contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
-            contrail::vrouter::control_node_ips: {get_param: ContrailVrouterControlNodeIps}
-            tripleo.contrail_vrouter.firewall_rules:
-              '111 contrail_vrouter_8085':
-                dport: 8085
-              '112 contrail_vrouter_8097':
-                dport: 8097
-      step_config: |
-        include ::tripleo::network::contrail::vrouter
+          - get_attr: [ContrailVrouterBase, role_data, config_settings]
+      service_config_settings:
+        tripleo.contrail_vrouter.firewall_rules:
+          '111 contrail_vrouter_8085':
+            dport: 8085
+          '112 contrail_vrouter_8097':
+            dport: 8097
+      docker_config:
+        step_3:
+          contrail_nova_plugin:
+            image: &contrail_nova_plugin_image {get_param: DockerContrailNovaPluginImage}
+            volumes:
+              - opt_plugin:/opt/plugin
+        step_5:
+          contrail_vrouter_agent:
+            image: &contrail_vrouter_agent_image {get_param: DockerContrailVrouterAgentImage}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                -
+                  - /var/log/contrail:/var/log/contrail
+            env_file:
+              - /etc/contrail/common_vrouter.env
+      host_prep_tasks:
+        - name: create contrail directories
+          file: 
+            path: "{{ item }}"
+            state: directory
+            recurse: yes
+          with_items:
+            - /var/log/contrail
+            - /etc/contrail
+        - name: register /etc/contrail/common_vrouter.env
+          stat:
+            path: /etc/contrail/common_vrouter.env
+          register: p
+        - name: create /etc/contrail/common_vrouter.env
+          copy: 
+            dest: /etc/contrail/common_vrouter.env
+            content: ""
+          when: not p.stat.exists
+        - name: get keystone admin api vip
+          shell: hiera -c /etc/puppet/hiera.yaml keystone_admin_api_vip
+          register: keystone_admin_api_vip
+        - name: get keystone public api vip
+          shell: hiera -c /etc/puppet/hiera.yaml keystone_public_api_vip
+          register: keystone_public_api_vip
+        - name: get keystone admin password
+          shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_password
+          register: keystone_admin_password
+        - name: get keystone admin user
+          shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_user
+          register: keystone_admin_user
+        - name: get keystone admin tenant
+          shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_tenant_name
+          register: keystone_admin_tenant
+        - name: get contrail config database node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
+          register: contrail_config_database_node_ips_list
+        - name: turn contrail config db ips into json
+          set_fact:
+            contrail_config_database_node_ips_json: "{{ contrail_config_database_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_config_database_node_ips_string: "{{ contrail_config_database_node_ips_json | join(',') }}"
+        - name: get contrail config node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_config_node_ips
+          register: contrail_config_node_ips_list
+        - name: turn contrail config ips into json
+          set_fact:
+            contrail_config_node_ips_json: "{{ contrail_config_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}" 
+        - name: get contrail analytics node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
+          register: contrail_analytics_node_ips_list
+        - name: turn contrail analytics ips into json
+          set_fact:
+            contrail_analytics_node_ips_json: "{{ contrail_analytics_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
+        - name: write contrail config node ips to environment file
+          lineinfile: dest=/etc/contrail/common_vrouter.env regexp='.*CONFIG_NODES$' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
+        - name: write contrail config db node ips to environment file
+          lineinfile: dest=/etc/contrail/common_vrouter.env regexp='.*CONFIGDB_NODES$' line="CONFIGDB_NODES={{ contrail_config_database_node_ips_string }}" state=present
+        - name: write contrail config db node ips to environment file
+          lineinfile: dest=/etc/contrail/common_vrouter.env regexp='.*ZOOKEEPER_NODES$' line="ZOOKEEPER_NODES={{ contrail_config_database_node_ips_string }}" state=present
+        - name: write contrail config rmq node ips to environment file
+          lineinfile: dest=/etc/contrail/common_vrouter.env regexp='.*RABBITMQ_NODES$' line="RABBITMQ_NODES={{ contrail_config_database_node_ips_string }}" state=present
+        - name: write contrail analytics node ips to environment file
+          lineinfile: dest=/etc/contrail/common_vrouter.env regexp='.*ANALYTICS_NODES$' line="ANALYTICS_NODES={{ contrail_analytics_node_ips_string }}" state=present
+        - name: write remaining contrail config env cars
+          lineinfile: dest=/etc/contrail/common_vrouter.env line="{{ item }}" state=present
+          with_items:
+            - RABBITMQ_NODE_PORT=5673
+            - OPENSTACK_VERSION=ocata
+            - CLOUD_ORCHESTRATOR=openstack
+            - AUTH_MODE=keystone
+            - KEYSTONE_AUTH_HOST={{ keystone_public_api_vip.stdout }}
+            - KEYSTONE_AUTH_ADMIN_PASSWORD={{ keystone_admin_password.stdout }}
+            - KEYSTONE_AUTH_ADMIN_USER={{ keystone_admin_user.stdout }}
+            - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
+            - KEYSTONE_AUTH_URL_VERSION=/v3
+            
+      metadata_settings:
+        get_attr: [ContrailVrouterBase, role_data, metadata_settings]
