@@ -19,9 +19,9 @@ parameter_defaults:
     ContrailAnalyticsDatabaseNetwork: internal_api
     ContrailConfigNetwork: internal_api
     ContrailAnalyticsNetwork: internal_api
-    ContrailControlNetwork: internal_api
+    ContrailControlNetwork: tenant
     ContrailWebuiNetwork: internal_api
-    ContrailVrouterNetwork: internal_api
+    ContrailVrouterNetwork: tenant
   OvercloudContrailControllerFlavor: contrail-controller
   OvercloudControllerFlavor: control
   OvercloudComputeFlavor: compute
@@ -38,3 +38,4 @@ parameter_defaults:
   NovaApiOptVolumes: ['opt_plugin:/opt/plugin']
   NovaApiOptEnvVars: ['PATH=$PATH:/opt/plugin/bin']
   ContrailRepo: http://10.87.64.32/contrail-5.0.0-121-ocata
+  ContrailVrouterGateway: 10.0.0.1

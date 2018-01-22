@@ -10,6 +10,10 @@ parameters:
   DockerContrailNovaPluginImage:
     description: image
     type: string
+  ContrailVrouterGateway:
+    default: '192.168.24.1'
+    description: vRouter default gateway
+    type: string
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -77,6 +81,7 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailVrouterBase, role_data, config_settings]
+          - contrail::vrouter::gateway: {get_param: ContrailVrouterGateway}
       service_config_settings:
         tripleo.contrail_vrouter.firewall_rules:
           '111 contrail_vrouter_8085':
@@ -136,6 +141,9 @@ outputs:
         - name: get keystone admin tenant
           shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_tenant_name
           register: keystone_admin_tenant
+        - name: get contrail vrouter gateway
+          shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::gateway
+          register: contrail_vrouter_gateway
         - name: get contrail config database node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
           register: contrail_config_database_node_ips_list
@@ -154,6 +162,15 @@ outputs:
         - name: turn json into comma separated string
           set_fact:
             contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}" 
+        - name: get contrail control node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_control_node_ips
+          register: contrail_control_node_ips_list
+        - name: turn contrail control ips into json
+          set_fact:
+            contrail_control_node_ips_json: "{{ contrail_control_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_control_node_ips_string: "{{ contrail_control_node_ips_json | join(',') }}"
         - name: get contrail analytics node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
           register: contrail_analytics_node_ips_list
@@ -165,6 +182,8 @@ outputs:
             contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
         - name: write contrail config node ips to environment file
           lineinfile: dest=/etc/contrail/common_vrouter.env regexp='.*CONFIG_NODES$' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
+        - name: write contrail control  node ips to environment file
+          lineinfile: dest=/etc/contrail/common_vrouter.env regexp='.*CONTROL_NODES$' line="CONTROL_NODES={{ contrail_control_node_ips_string }}" state=present
         - name: write contrail config db node ips to environment file
           lineinfile: dest=/etc/contrail/common_vrouter.env regexp='.*CONFIGDB_NODES$' line="CONFIGDB_NODES={{ contrail_config_database_node_ips_string }}" state=present
         - name: write contrail config db node ips to environment file
@@ -185,6 +204,7 @@ outputs:
             - KEYSTONE_AUTH_ADMIN_USER={{ keystone_admin_user.stdout }}
             - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
             - KEYSTONE_AUTH_URL_VERSION=/v3
+            - VROUTER_GATEWAY={{ contrail_vrouter_gateway }}
             
       metadata_settings:
         get_attr: [ContrailVrouterBase, role_data, metadata_settings]
