@@ -93,7 +93,7 @@ outputs:
           contrail_nova_plugin:
             image: &contrail_nova_plugin_image {get_param: DockerContrailNovaPluginImage}
             volumes:
-              - opt_plugin:/opt/plugin
+              - vrouter_port_control:/opt/plugin/bin
         step_5:
           contrail_vrouter_agent:
             image: &contrail_vrouter_agent_image {get_param: DockerContrailVrouterAgentImage}
@@ -204,7 +204,7 @@ outputs:
             - KEYSTONE_AUTH_ADMIN_USER={{ keystone_admin_user.stdout }}
             - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
             - KEYSTONE_AUTH_URL_VERSION=/v3
-            - VROUTER_GATEWAY={{ contrail_vrouter_gateway }}
+            - VROUTER_GATEWAY={{ contrail_vrouter_gateway.stdout }}
             
       metadata_settings:
         get_attr: [ContrailVrouterBase, role_data, metadata_settings]
