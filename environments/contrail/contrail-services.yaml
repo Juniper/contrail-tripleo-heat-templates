@@ -35,7 +35,7 @@ parameter_defaults:
   NeutronMetadataProxySharedSecret: secret
   NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
   NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
-  NovaComputeOptEnvVars: ['PATH="${PATH}:/opt/plugin/bin"']
+  NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
   NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin']
   ContrailRepo: http://10.87.64.32/contrail-5.0.0-121-ocata
   ContrailVrouterGateway: 10.0.0.1
