@@ -35,9 +35,9 @@ parameter_defaults:
 # BondInterface: bond0
 # BondDpdkInterface: bond0
 # BondTsnInterface: bond0
-# BondInterfaceMembers: eth0,eth1
-# BondDpdkInterfaceMembers: eth0,eth1
-# BondTsnInterfaceMembers: eth0,eth1
+# BondInterfaceMembers: 'eth0,eth1'
+# BondDpdkInterfaceMembers: 'eth0,eth1'
+# BondTsnInterfaceMembers: 'eth0,eth1'
 # BondMode: 4
 # BondDpdkMode: 4
 # BondTsnMode: 4
