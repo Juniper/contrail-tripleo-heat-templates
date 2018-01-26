@@ -426,12 +426,35 @@ openstack undercloud install
 source ~/stackrc
 ```
 
+## Find latest version of OSP10 overcloud image to be able to use newer server h
+```
+repoquery --show-duplicates rhosp-director-images*
+.
+.
+rhosp-director-images-0:10.0-20161212.1.el7ost.noarch
+.
+rhosp-director-images-0:10.0-20171108.1.el7ost.noarch
+rhosp-director-images-ipa-0:10.0-20161212.1.el7ost.noarch
+.
+rhosp-director-images-ipa-0:10.0-20171108.1.el7ost.noarch
+```
+
 ## Get overcloud images
+
+### OSP10
+```
+sudo yum install rhosp-director-images-0:10.0-20171108.1.el7ost.noarch rhosp-director-images-0:10.0-20171108.1.el7ost.noarch
+mkdir ~/images
+cd ~/images
+```
+
+### OSP11
 ```
 sudo yum install rhosp-director-images rhosp-director-images-ipa
 mkdir ~/images
 cd ~/images
 ```
+
 
 ## Upload overcloud images
 ### OSP10
