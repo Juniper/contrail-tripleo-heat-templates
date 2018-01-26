@@ -1,7 +1,7 @@
 # Introduction    
 Currently the following combinations of RHEL/OSP/Contrail are supported:    
 RHEL7.4/OSP11/Contrail >= 4.1.0    
-RHEL7.4/OSP10/Contrail >= 4.1.0 
+RHEL7.4/OSP10/Contrail >= 4.1.0     
 RHEL7.4/OSP11/Contrail >= 4.0.2    
 RHEL7.4/OSP10/Contrail >= 4.0.2    
 RHEL7.4/OSP10/Contrail >= 3.2.6    
