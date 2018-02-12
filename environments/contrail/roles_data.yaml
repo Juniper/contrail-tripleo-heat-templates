@@ -218,6 +218,7 @@
     - OS::TripleO::Services::Snmp
     - OS::TripleO::Services::TripleoPackages
     - OS::TripleO::Services::SensuClient
+    - OS::TripleO::Services::NeutronSriovAgent
     - OS::TripleO::Services::FluentdClient
     - OS::TripleO::Services::VipHosts
 
@@ -236,6 +237,7 @@
     - OS::TripleO::Services::ComputeCeilometerAgent
     - OS::TripleO::Services::TripleoPackages
     - OS::TripleO::Services::TripleoFirewall
+    - OS::TripleO::Services::NeutronSriovAgent
     - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::FluentdClient
     - OS::TripleO::Services::VipHosts
