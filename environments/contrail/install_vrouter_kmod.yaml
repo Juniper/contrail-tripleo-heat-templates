@@ -92,6 +92,10 @@ parameters:
     default: 'uio_pci_generic'
     description: DPDK Nic Driver
     type: string
+  ContrailSriovOn:
+    description: If SR-IOV is configured
+    type: boolean
+    default: false
   VrouterGateway:
     default: ''
     description: Gateway for vRouter
@@ -299,7 +303,7 @@ resources:
                   ip route add default via $def_gw
                 fi
               fi
-              if [[ ${dpdk_driver} == "vfio-pci" ]]; then
+              if [[ ${dpdk_driver} == "vfio-pci" || ${sriov_on} == 'true' ]]; then
                 sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on iommu=pt"/g' -i /etc/default/grub ;
                 grub2-mkconfig -o /etc/grub2.cfg
                 systemctl enable supervisor-vrouter
@@ -422,6 +426,7 @@ resources:
             $dpdk_hugepages: {get_param: ContrailDpdkHugePages}
             $dpdk_coremask: {get_param: ContrailDpdkCoremask}
             $dpdk_driver: {get_param: ContrailDpdkDriver}
+            $sriov_on: {get_param: ContrailSriovOn}
 
 outputs:
   # This means get_resource from the parent template will get the userdata, see:
