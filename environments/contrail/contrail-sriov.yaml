@@ -10,6 +10,7 @@ parameter_defaults:
   # Number of VFs that needs to be configured for a physical interface
   #NeutronSriovNumVFs: "ens20f2:4"
 
+  # White list of PCI devices available to VMs. Choose the best format which suits your deployment.
   #NovaPCIPassthrough:
   #  - devname: "ens20f2"
   #    physical_network: "datacentre"
