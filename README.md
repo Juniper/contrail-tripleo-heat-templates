@@ -632,3 +632,26 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   -e misc_opts.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-tsn-servers.yaml
 ```
+
+# SR-IOV special
+
+If you are enabling SR-IOV on a system you should complete the following:
+ 
+```
+vi tripleo-heat-templates/environments/contrail/contrail-sriov.yaml
+```
+
+- set NeutronSriovNumVFs: number of VFs that needs to be configured for a physical interface
+- set NovaPCIPassthrough: the white list of PCI devices available to VMs
+
+## deploy
+```
+openstack overcloud deploy --templates tripleo-heat-templates/ \
+  --roles-file tripleo-heat-templates/environments/contrail/roles_data_contrail.yaml \
+  -e .tripleo/environments/deployment-artifacts.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-net-single.yaml \
+  -e contrail_controller_vip_env.yaml \
+  -e misc_opts.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-sriov.yaml
+```
