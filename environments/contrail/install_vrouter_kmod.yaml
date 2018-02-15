@@ -100,10 +100,6 @@ parameters:
     default: ''
     description: Gateway for vRouter
     type: string
-  HostnameMap:
-    default: {}
-    description: Mapping of custom hostnames
-    type: json
 
 description: >
   This is an example showing how you can do firstboot configuration
@@ -170,25 +166,15 @@ resources:
             ulimit -c unlimited
             echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
             sysctl -p
-            echo $hostname_map > /tmp/hostnamemap
-            hname_list=(`cat /tmp/hostnamemap |tr -d ' '|tr -d '{'| tr -d '}' |tr ',' ' '`)
-            for rolename in "${hname_list[@]}"
-            do
-              if [[ `echo $rolename|awk -F":" '{print $2}'` == `hostname -s` ]];then
-                role=`echo $rolename|awk -F":" '{print $1}'`
-              fi
-            done
-            if [[ -z $role ]]; then
-                role=`hostname`
-            fi
+            role=`curl http://169.254.169.254/latest/meta-data/instance-type`
             echo $role > /tmp/rolename
-            if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailcontroller" || `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" || `echo $role |awk -F"-" '{print $2}'` == "contrailanalyticsdatabase" ]]; then
+            if [[ "$role" == "contrail-controller" || "$role" == "contrail-analytics" || "$role" == "contrail-analytics-database" ]]; then
               sed -i '/\[main\]/a \ \ \ \ \parser = future' /etc/puppet/puppet.conf
             fi
-            if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" ]]; then
+            if [[ "$role" == "contrail-analytics" ]]; then
               yum remove -y python-redis
             fi
-            if [[ `cat /tmp/rolename |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
+            if [[ "$role" == "compute-dpdk" || "$role" == "contrail-dpdk" ]]; then
               echo "vm.nr_hugepages = ${dpdk_hugepages}" >> /etc/sysctl.conf
               echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
               echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
@@ -310,8 +296,8 @@ resources:
                 reboot
               fi
             fi
-            if [[ `echo $role |awk -F"-" '{print $2}'` == "novacompute" || `echo $role |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then
-              if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then
+            if [[ "$role" == "compute" || "$role" == "contrail-tsn" ]]; then
+              if [[ "$role" == "contrail-tsn" ]]; then
                 phy_int=${phy_tsn_int}
                 vlan_parent=${vlan_tsn_parent}
                 bond_int=${bond_tsn_int}
@@ -421,7 +407,6 @@ resources:
             $vlan_dpdk_parent: {get_param: VlanDpdkParentInterface}
             $vlan_tsn_parent: {get_param: VlanTsnParentInterface}
             $contrail_repo: {get_param: ContrailRepo}
-            $hostname_map: {get_param: HostnameMap}
             $vrouter_gateway: {get_param: VrouterGateway}
             $dpdk_hugepages: {get_param: ContrailDpdkHugePages}
             $dpdk_coremask: {get_param: ContrailDpdkCoremask}
