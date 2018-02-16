@@ -1,8 +1,10 @@
 # Introduction    
 Currently the following combinations of RHEL/OSP/Contrail are supported:    
-RHEL7.4/OSP11/Contrail 4.0.2    
-RHEL7.4/OSP10/Contrail 4.0.2    
-RHEL7.4/OSP10/Contrail 3.2.6    
+RHEL7.4/OSP11/Contrail >= 4.1.0    
+RHEL7.4/OSP10/Contrail >= 4.1.0     
+RHEL7.4/OSP11/Contrail >= 4.0.2    
+RHEL7.4/OSP10/Contrail >= 4.0.2    
+RHEL7.4/OSP10/Contrail >= 3.2.6    
 The infrastructure section should only be used as an EXAMPLE. It is not    
 considered as part of OSP/Contrail deployment.    
 
@@ -501,7 +503,7 @@ do
   name=`echo $line|awk '{print $2}'`
   ipmi_address=`echo $line|awk '{print $3}'`
   profile=`echo $line|awk '{print $4}'`
-  uuid=`ironic node-create -d pxe_ipmitool -p cpus=4 -p memory_mb=16348 -p local_gb=100 -p cpu_arch=x86_64 -i ipmi_username=${ipmi_user} -i ipmi_address=${ipmi_ip} -i ipmi_password=${ipmi_password} -n $name -p capabilities=profile:${profile} | tail -2|awk '{print $4}'`
+  uuid=`ironic node-create -d pxe_ipmitool -p cpus=4 -p memory_mb=16348 -p local_gb=100 -p cpu_arch=x86_64 -i ipmi_username=${ipmi_user} -i ipmi_address=${ipmi_address} -i ipmi_password=${ipmi_password} -n $name -p capabilities=profile:${profile} | tail -2|awk '{print $4}'`
   ironic port-create -a ${mac} -n ${uuid}
 done < <(cat ironic_list_bms)
 ```
@@ -538,8 +540,8 @@ yum localinstall /var/www/html/contrail/contrail-tripleo-heat-templates-4.0.2.0-
 ```
 ```
 cp -r /usr/share/openstack-tripleo-heat-templates/ ~/tripleo-heat-templates
-cp -r contrail-tripleo-heat-templates/environments/* ~/tripleo-heat-templates/environments
-cp -r contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
+cp -r /usr/share/contrail-tripleo-heat-templates/environments/* ~/tripleo-heat-templates/environments
+cp -r /usr/share/contrail-tripleo-heat-templates/puppet/services/network/* ~/tripleo-heat-templates/puppet/services/network
 ```
 
 ## Contrail services (repo url etc.)
@@ -578,6 +580,8 @@ vi ~/tripleo-heat-templates/environments/ips-from-pool-all.yaml
 ```
 
 ## Provide subscription mgr credentials (rhel_reg_password, rhel_reg_pool_id, rhel_reg_repos, rhel_reg_user and method)
+### OSP10
+Make also sure you add the repro "rhel-7-server-openstack-10-devtools-rpms" to rhel_reg_repos as it's needed for vRouter installation
 ```
 vi ~/tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml
 ```
@@ -613,12 +617,67 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   --libvirt-type qemu
 ```
 
+# DPDK special
+
+For dpdk a modified overcloud image has to be created. This step can be done    
+on the undercloud but will take very long if the kvm host doesn't have    
+nested HV enabled. Alternatively, the overcloud image can be downloaded to the    
+kvm host and be customized there.    
+
+## Customize DPDK overcloud image
+
+```
+cp /home/stack/images/overcloud-full.qcow2 /home/stack/images/overcloud-full-dpdk.qcow2
+export LIBGUESTFS_BACKEND=direct
+/usr/bin/virt-customize  -a /home/stack/images/overcloud-full-dpdk.qcow2 \
+  --sm-credentials $USER:password:$PASSWORD --sm-register --sm-attach auto \
+  --run-command 'subscription-manager repos --enable=rhel-7-server-rpms --enable=rhel-7-server-extras-rpms --enable=rhel-7-server-rh-common-rpms --enable=rhel-ha-for-rhel-7-server-rpms --enable=rhel-7-server-openstack-10-rpms --enable=rhel-7-server-openstack-10-devtools-rpms' \
+  --copy-in /etc/yum.repos.d/contrail.repo:/etc/yum.repos.d \
+  --run-command 'yum install -y contrail-vrouter-utils contrail-vrouter-dpdk contrail-vrouter-dpdk-init' \
+  --run-command 'rm -fr /var/cache/yum/*' \
+  --run-command 'yum clean all' \
+  --run-command 'rm -rf /etc/yum.repos.d/contrail.repo' \
+  --run-command 'subscription-manager unregister' \
+  --selinux-relabel
+```
+
+## Upload modified dpdk image to glance
+
+```
+glance image-create --name overcloud-full-dpdk --container-format bare --disk-format qcow2 --file overcloud-full-dpdk.qcow2
+openstack image set overcloud-full-dpdk --property kernel_id=`glance image-list |grep bm-deploy-kernel |awk '{print $2}'` --property ramdisk_id=`glance image-list |grep bm-deploy-ramdisk |awk '{print $2}'`
+```
+
+## Profile ironic node with DPDK
+
+```
+ironic node-update $DPDK_NODE_UUID replace properties/capabilities=profile:contrail-dpdk,cpu_hugepages:true,cpu_txt:true,boot_option:local,cpu_aes:true,cpu_vt:true,cpu_hugepages_1g:true
+openstack flavor create contrail-dpdk --ram 4096 --vcpus 1 --disk 40
+openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="contrail-dpdk" contrail-dpdk
+```
+
+Where $DPDK_NODE_UUID is the ironic UUID of the DPDK node    
+
+## Additional DPDK parameters
+
+More DPDK parameters can be configured in:    
+
+```
+tripleo-heat-templates/environments/contrail/contrail-net.yaml
+```
+
 # TSN special
 
 In case of EVPN VXLAN Provisioning when more than 2 TSN nodes are present, user should provide per TSN node specific hiera data with "contrail::vrouter::tsn_servers" containing a pair of TSNs.
 
 ```
 vi tripleo-heat-templates/environments/contrail/contrail-tsn-servers.yaml
+```
+
+The TSN interface used for the vrouter has to be configured:    
+
+```
+tripleo-heat-templates/environments/contrail/contrail-net.yaml
 ```
 
 ## deploy

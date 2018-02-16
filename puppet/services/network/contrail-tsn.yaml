@@ -22,7 +22,7 @@ parameters:
     description: Metadata Secret
     type: string
     hidden: true
-  VrouterPhysicalInterface:
+  VrouterTsnPhysicalInterface:
     default: 'eth0'
     description: vRouter physical interface
     type: string
@@ -75,7 +75,7 @@ outputs:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
           - contrail::vrouter::host_ip: {get_param: [ServiceNetMap, ContrailVrouterNetwork]}
-            contrail::vrouter::physical_interface: {get_param: VrouterPhysicalInterface}
+            contrail::vrouter::physical_interface: {get_param: VrouterTsnPhysicalInterface}
             contrail::vrouter::gateway: {get_param: VrouterGateway}
             contrail::vrouter::netmask: {get_param: VrouterNetmask}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}

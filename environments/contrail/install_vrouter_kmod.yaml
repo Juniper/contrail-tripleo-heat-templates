@@ -16,11 +16,19 @@ parameters:
     default: 'eth0'
     description: vRouter physical interface
     type: string
+  VrouterTsnPhysicalInterface:
+    default: 'eth0'
+    description: vRouter physical interface
+    type: string
   VlanParentInterface:
     default: ''
     description: Parent interface of vlan interface
     type: string
   VlanDpdkParentInterface:
+    default: ''
+    description: Parent interface of vlan interface
+    type: string
+  VlanTsnParentInterface:
     default: ''
     description: Parent interface of vlan interface
     type: string
@@ -32,11 +40,19 @@ parameters:
     default: ''
     description: Bond interface name
     type: string
+  BondTsnInterface:
+    default: ''
+    description: Bond interface name
+    type: string
   BondInterfaceMembers:
     default: ''
     description: Bond interface members
     type: string
   BondDpdkInterfaceMembers:
+    default: ''
+    description: Bond interface members
+    type: string
+  BondTsnInterfaceMembers:
     default: ''
     description: Bond interface members
     type: string
@@ -48,11 +64,19 @@ parameters:
     default: '4'
     description: Bond Mode
     type: string
+  BondTsnMode:
+    default: '4'
+    description: Bond Mode
+    type: string
   BondPolicy:
     default: '1'
     description: Bond Policy
     type: string
   BondDpdkPolicy:
+    default: '1'
+    description: Bond Policy
+    type: string
+  BondTsnPolicy:
     default: '1'
     description: Bond Policy
     type: string
@@ -76,10 +100,6 @@ parameters:
     default: ''
     description: Gateway for vRouter
     type: string
-  HostnameMap:
-    default: {}
-    description: Mapping of custom hostnames
-    type: json
 
 description: >
   This is an example showing how you can do firstboot configuration
@@ -107,16 +127,22 @@ resources:
             set -xv
             phy_int=$phy_int
             phy_dpdk_int=$phy_dpdk_int
+            phy_tsn_int=$phy_tsn_int
             bond_int=$bond_int
             bond_dpdk_int=$bond_dpdk_int
+            bond_tsn_int=$bond_tsn_int
             bond_int_members=$bond_int_members
             bond_dpdk_int_members=$bond_dpdk_int_members
+            bond_tsn_int_members=$bond_tsn_int_members
             bond_mode=$bond_mode
             bond_dpdk_mode=$bond_dpdk_mode
+            bond_tsn_mode=$bond_tsn_mode
             bond_policy=$bond_policy
             bond_dpdk_policy=$bond_dpdk_policy
+            bond_tsn_policy=$bond_tsn_policy
             vlan_parent=$vlan_parent
             vlan_dpdk_parent=$vlan_dpdk_parent
+            vlan_tsn_parent=$vlan_tsn_parent
             contrail_repo=$contrail_repo
             vrouter_gateway=$vrouter_gateway
             dpdk_hugepages=$dpdk_hugepages
@@ -140,25 +166,15 @@ resources:
             ulimit -c unlimited
             echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
             sysctl -p
-            echo $hostname_map > /tmp/hostnamemap
-            hname_list=(`cat /tmp/hostnamemap |tr -d ' '|tr -d '{'| tr -d '}' |tr ',' ' '`)
-            for rolename in "${hname_list[@]}"
-            do
-              if [[ `echo $rolename|awk -F":" '{print $2}'` == `hostname -s` ]];then
-                role=`echo $rolename|awk -F":" '{print $1}'`
-              fi
-            done
-            if [[ -z $role ]]; then
-                role=`hostname`
-            fi
+            role=`curl http://169.254.169.254/latest/meta-data/instance-type`
             echo $role > /tmp/rolename
-            if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailcontroller" || `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" || `echo $role |awk -F"-" '{print $2}'` == "contrailanalyticsdatabase" ]]; then
+            if [[ "$role" == "contrail-controller" || "$role" == "contrail-analytics" || "$role" == "contrail-analytics-database" ]]; then
               sed -i '/\[main\]/a \ \ \ \ \parser = future' /etc/puppet/puppet.conf
             fi
-            if [[ `echo $role |awk -F"-" '{print $2}'` == "contrailanalytics" ]]; then
+            if [[ "$role" == "contrail-analytics" ]]; then
               yum remove -y python-redis
             fi
-            if [[ `cat /tmp/rolename |awk -F"-" '{print $2}'` == "contraildpdk" ]]; then
+            if [[ "$role" == "compute-dpdk" || "$role" == "contrail-dpdk" ]]; then
               echo "vm.nr_hugepages = ${dpdk_hugepages}" >> /etc/sysctl.conf
               echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
               echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
@@ -280,7 +296,15 @@ resources:
                 reboot
               fi
             fi
-            if [[ `echo $role |awk -F"-" '{print $2}'` == "novacompute" || `hostname |awk -F"-" '{print $2}'` == "contrailtsn" ]]; then
+            if [[ "$role" == "compute" || "$role" == "contrail-tsn" ]]; then
+              if [[ "$role" == "contrail-tsn" ]]; then
+                phy_int=${phy_tsn_int}
+                vlan_parent=${vlan_tsn_parent}
+                bond_int=${bond_tsn_int}
+                bond_mode=${bond_tsn_mode}
+                bond_int_members=${bond_tsn_int_members}
+                bond_policy=${bond_tsn_policy}
+              fi
               if [[ ${contrail_repo} ]]; then
                 yum install -y contrail-vrouter-utils
               fi
@@ -366,18 +390,23 @@ resources:
           params:
             $phy_int: {get_param: VrouterPhysicalInterface}
             $phy_dpdk_int: {get_param: VrouterDpdkPhysicalInterface}
+            $phy_tsn_int: {get_param: VrouterTsnPhysicalInterface}
             $bond_int: {get_param: BondInterface}
             $bond_dpdk_int: {get_param: BondDpdkInterface}
+            $bond_tsn_int: {get_param: BondTsnInterface}
             $bond_int_members: {get_param: BondInterfaceMembers}
             $bond_dpdk_int_members: {get_param: BondDpdkInterfaceMembers}
+            $bond_tsn_int_members: {get_param: BondTsnInterfaceMembers}
             $bond_mode: {get_param: BondMode}
             $bond_dpdk_mode: {get_param: BondDpdkMode}
+            $bond_tsn_mode: {get_param: BondTsnMode}
             $bond_policy: {get_param: BondPolicy}
             $bond_dpdk_policy: {get_param: BondDpdkPolicy}
+            $bond_tsn_policy: {get_param: BondTsnPolicy}
             $vlan_parent: {get_param: VlanParentInterface}
             $vlan_dpdk_parent: {get_param: VlanDpdkParentInterface}
+            $vlan_tsn_parent: {get_param: VlanTsnParentInterface}
             $contrail_repo: {get_param: ContrailRepo}
-            $hostname_map: {get_param: HostnameMap}
             $vrouter_gateway: {get_param: VrouterGateway}
             $dpdk_hugepages: {get_param: ContrailDpdkHugePages}
             $dpdk_coremask: {get_param: ContrailDpdkCoremask}
