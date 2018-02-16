@@ -12,6 +12,7 @@ parameter_defaults:
   EC2MetadataIp: 192.0.2.1  # Generally the IP of the Undercloud
   DnsServers: ["8.8.8.8","8.8.4.4"]
   VrouterPhysicalInterface: eth0
+  VrouterDpdkPhysicalInterface: eth0
   VrouterGateway: 192.0.2.1
   VrouterNetmask: 255.255.255.0
   ControlVirtualInterface: eth0
