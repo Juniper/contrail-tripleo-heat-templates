@@ -7,12 +7,15 @@ parameters:
   DockerContrailCassandraImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-external-cassandra"
   DockerContrailKafkaImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-external-kafka"
   DockerContrailZookeeperImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-external-zookeeper"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set

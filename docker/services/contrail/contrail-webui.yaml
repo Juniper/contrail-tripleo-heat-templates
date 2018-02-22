@@ -7,9 +7,11 @@ parameters:
   DockerContrailWebuiWebImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-controller-webui-web"
   DockerContrailWebuiJobImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-controller-webui-job"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set

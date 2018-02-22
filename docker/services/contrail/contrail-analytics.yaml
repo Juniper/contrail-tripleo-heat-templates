@@ -7,21 +7,27 @@ parameters:
   DockerContrailAnalyticsApiImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-analytics-api"
   DockerContrailAnalyticsTopologyImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-analytics-topology"
   DockerContrailAnalyticsSnmpCollectorImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-analytics-snmp-collector"
   DockerContrailAnalyticsQueryEngineImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-analytics-query-engine"
   DockerContrailAnalyticsCollectorImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-analytics-collector"
   DockerContrailAnalyticsAlarmGenImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-analytics-alarm-gen"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set

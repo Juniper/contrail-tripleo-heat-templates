@@ -7,12 +7,15 @@ parameters:
   DockerContrailControlControlImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-controller-control-control"
   DockerContrailControlNamedImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-controller-control-named"
   DockerContrailControlDnsImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-controller-control-dns"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set

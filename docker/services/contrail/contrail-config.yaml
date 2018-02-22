@@ -7,18 +7,23 @@ parameters:
   DockerContrailConfigApiImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-controller-config-api"
   DockerContrailConfigSchemaImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-controller-config-schema"
   DockerContrailConfigSvcmonitorImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-controller-config-svcmonitor"
   DockerContrailConfigDevicemgrImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-controller-config-devicemgr"
   DockerContrailRedisImage:
     description: image
     type: string
+    default: "docker.io/redis"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set

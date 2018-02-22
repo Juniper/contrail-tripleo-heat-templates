@@ -7,9 +7,11 @@ parameters:
   DockerContrailVrouterAgentImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-agent-vrouter"
   DockerContrailNovaPluginImage:
     description: image
     type: string
+    default: "opencontrailnightly/contrail-openstack-compute-init"
   ContrailVrouterGateway:
     default: '192.168.24.1'
     description: vRouter default gateway
@@ -98,7 +100,7 @@ outputs:
           contrail_vrouter_agent:
             image: &contrail_vrouter_agent_image {get_param: DockerContrailVrouterAgentImage}
             net: host
-            privileged: false
+            privileged: true
             detach: true
             user: root
             volumes:

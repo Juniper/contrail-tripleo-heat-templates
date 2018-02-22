@@ -22,6 +22,7 @@ parameters:
   DockerNeutronConfigImage:
     description: The container image to use for the neutron config_volume
     type: string
+    default: "opencontrailnightly/contrail-openstack-neutron-init"
   DefaultPasswords:
     type: json
   RoleName:
