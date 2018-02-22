@@ -108,6 +108,7 @@ outputs:
                 - {get_attr: [ContainersCommon, volumes]}
                 -
                   - /var/log/contrail:/var/log/contrail
+                  - /var/lib/contrail/ports
             env_file:
               - /etc/contrail/common_vrouter.env
       host_prep_tasks:
