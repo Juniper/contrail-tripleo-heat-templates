@@ -1,4 +1,4 @@
-#on all KVM hosts
+# on all KVM hosts
 
 ## prepare virtual bmc (on all hosts hosting overcloud nodes)
 
@@ -37,8 +37,8 @@ virt-customize  -a /var/lib/libvirt/images/queensY.qcow2 \
   --selinux-relabel
 ```
 
-#virsh define is missing
-^^^^^^^^^^^^^^^^^^^^^^^^
+virsh define is missing
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ## get undercloud ip and log into it
 ```
@@ -46,7 +46,7 @@ undercloud_ip=`virsh domifaddr queensY |grep ipv4 |awk '{print $4}' |awk -F"/" '
 ssh ${undercloud_ip}
 ```
 
-#on the undercloud
+# on the undercloud
 
 ## Undercloud configuration
 ```
@@ -139,12 +139,12 @@ cp -r contrail-tripleo-heat-templates/* tripleo-heat-templates/
 ```
 
 ## Tripleo container management
-###for stable
+### for stable
 ```
 tripleo_tag=current-tripleo-rdo
 ```
 
-###for testing
+### for testing
 ```
 tripleo_tag=tripleo-ci-testing
 ```
