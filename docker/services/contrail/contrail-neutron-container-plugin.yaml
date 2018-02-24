@@ -22,7 +22,7 @@ parameters:
   DockerNeutronConfigImage:
     description: The container image to use for the neutron config_volume
     type: string
-    default: "opencontrailnightly/contrail-openstack-neutron-init"
+    default: "contrail-openstack-neutron-init"
   DefaultPasswords:
     type: json
   RoleName:
@@ -37,17 +37,30 @@ parameters:
     description: List of OpenContrail extensions to be enabled
     type: comma_delimited_list
     default: 'ipam:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_ipam.NeutronPluginContrailIpam,policy:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_policy.NeutronPluginContrailPolicy,route-table:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_vpc.NeutronPluginContrailVpc,contrail:None'
-  DockerContrailNeutronPluginImage:
+  DockerContrailNeutronPluginImageName:
     description: The container image to use for the contrail neutron plugin
     type: string
+    default: "contrail-openstack-neutron-init"
+  NeutronServicePlugins:
+    description: The Neutron Service Plugins
+    type: string
+    default: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+  NeutronApiExtensionPath:
+    description: Path to Neutron API plugin
+    type: string
+    default: '/opt/plugin/site-packages/neutron_plugin_contrail/extensions:/opt/plugin/site-packages/neutron_lbaas/extensions'
+  NeutronCorePlugin:
+    description: Neutron Core Plugin Name
+    type: string
+    default: 'neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2'
 
 resources:
 
   ContainersCommon:
     type: ../containers-common.yaml
 
-  ContrailNeutronPluginBase:
-    type: ../../../puppet/services/network/contrail-base.yaml
+  ContrailBase:
+    type: contrail-base.yaml
     properties:
       EndpointMap: {get_param: EndpointMap}
       ServiceData: {get_param: ServiceData}
@@ -63,10 +76,10 @@ outputs:
       service_name: contrail_neutron_plugin
       config_settings:
         map_merge:
-          - get_attr: [ContrailNeutronPluginBase, role_data, config_settings]
-          - neutron::api_extensions_path: '/opt/plugin/site-packages/neutron_plugin_contrail/extensions:/opt/plugin/site-packages/neutron_lbaas/extensionsi:/blabla'
-            #neutron::service_plugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
-            neutron::core_plugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - neutron::api_extensions_path: {get_param: NeutronApiExtensionPath}
+            #neutron::service_plugins: {get_param: NeutronServicePlugins}
+            neutron::core_plugin: {get_param: NeutronCorePlugin}
             contrail::vrouter::contrail_extensions: {get_param: ContrailExtensions}
       # BEGIN DOCKER SETTINGS
       puppet_config:
@@ -79,6 +92,13 @@ outputs:
       docker_config:
         step_3:
           contrail_neutron_plugin:
-            image: &contrail_neutron_plugin_image {get_param: DockerContrailNeutronPluginImage}
+            image: &contrail_neutron_plugin_image
+              list_join:
+              - ''
+              - - {get_attr: [ContrailBase, role_data, contrail_registry]}
+                - '/'
+                - {get_param: DockerContrailNeutronPluginImageName}
+                - ':'
+                - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             volumes:
               - opt_plugin:/opt/plugin

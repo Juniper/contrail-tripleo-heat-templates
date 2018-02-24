@@ -4,14 +4,18 @@ description: >
   Contrail containerized Config Webui service
 
 parameters:
-  DockerContrailWebuiWebImage:
+  DockerContrailWebuiWebImageName:
     description: image
     type: string
-    default: "opencontrailnightly/contrail-controller-webui-web"
-  DockerContrailWebuiJobImage:
+    default: "contrail-controller-webui-web"
+  DockerContrailWebuiJobImageName:
     description: image
     type: string
-    default: "opencontrailnightly/contrail-controller-webui-job"
+    default: "contrail-controller-webui-job"
+  DockerContrailRedisImageName:
+    description: image
+    type: string
+    default: "docker.io/redis"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -58,8 +62,8 @@ resources:
     type: ../containers-common.yaml
 
 
-  ContrailWebuiBase:
-    type: ../../../puppet/services/network/contrail-base.yaml
+  ContrailBase:
+    type: contrail-base.yaml
     properties:
       EndpointMap: {get_param: EndpointMap}
       ServiceData: {get_param: ServiceData}
@@ -78,7 +82,7 @@ outputs:
       service_name: contrail_webui
       config_settings:
         map_merge:
-          - get_attr: [ContrailWebuiBase, role_data, config_settings]
+          - get_attr: [ContrailBase, role_data, config_settings]
       service_config_settings:
         haproxy:
           tripleo.contrail_webui.haproxy_endpoints:
@@ -113,11 +117,19 @@ outputs:
       docker_config:
         step_5:
           contrail_webui_web:
-            image: &contrail_webui_web_image {get_param: DockerContrailWebuiWebImage}
+            image: &contrail_webui_web_image
+              list_join:
+              - ''
+              - - {get_attr: [ContrailBase, role_data, contrail_registry]}
+                - '/'
+                - {get_param: DockerContrailWebuiWebImageName}
+                - ':'
+                - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             net: host
             privileged: false
             detach: true
             user: root
+            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -126,17 +138,38 @@ outputs:
             env_file:
               - /etc/contrail/common_webui.env
           contrail_webui_job:
-            image: &contrail_webui_job_image {get_param: DockerContrailWebuiJobImage}
+            image: &contrail_webui_job_image
+              list_join:
+                - ''
+                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
+                  - '/'
+                  - {get_param: DockerContrailWebuiJobImageName}
+                  - ':'
+                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             net: host
             privileged: false
             detach: true
             user: root
+            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
                 -
                   - /var/log/contrail:/var/log/contrail
-                  - /etc/contrail
+            env_file:
+              - /etc/contrail/common_webui.env
+          contrail_config_redis:
+            image: &contrail_config_redis_image {get_param: DockerContrailRedisImageName}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                -
+                  - /var/log/contrail:/var/log/contrail
             env_file:
               - /etc/contrail/common_webui.env
       host_prep_tasks:
@@ -223,4 +256,4 @@ outputs:
             - KEYSTONE_AUTH_URL_VERSION=/v3
             
       metadata_settings:
-        get_attr: [ContrailWebuiBase, role_data, metadata_settings]
+        get_attr: [ContrailBase, role_data, metadata_settings]
