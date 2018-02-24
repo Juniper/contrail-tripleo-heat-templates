@@ -133,6 +133,7 @@ for i in contrail-controller contrail-analytics contrail-database contrail-analy
 ```
 
 ## create tht template copy
+```
 cp -r /usr/share/openstack-tripleo-heat-templates/ tripleo-heat-templates
 git clone https://github.com/juniper/contrail-tripleo-heat-templates -b stable/queens
 cp -r contrail-tripleo-heat-templates/* tripleo-heat-templates/
