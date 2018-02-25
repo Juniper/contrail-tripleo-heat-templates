@@ -1,7 +1,6 @@
 # on all KVM hosts
 
 ## prepare virtual bmc (on all hosts hosting overcloud nodes)
-
 ```
 vbmc add compute_1 --port 16230 --username admin --password contrail123
 vbmc add compute_2 --port 16231 --username admin --password contrail123
@@ -19,14 +18,15 @@ vbmc start control_1
 ```
 
 ## create undercloud VM on KVM host hosting the undercloud
-
 ```
-qemu-img create -f qcow2 /var/lib/libvirt/images/queensY.qcow2 100G
-virt-resize --expand /dev/sda1 /root/rhel-server-7.4-x86_64-kvm.qcow2 /var/lib/libvirt/images/queensY.qcow2
-virt-customize  -a /var/lib/libvirt/images/queensY.qcow2 \
+undercloud_name=queensa
+export LIBGUESTFS_BACKEND=direct
+qemu-img create -f qcow2 /var/lib/libvirt/images/${undercloud_name}.qcow2 100G
+virt-resize --expand /dev/sda1 /root/rhel-server-7.4-x86_64-kvm.qcow2 /var/lib/libvirt/images/${undercloud_name}.qcow2
+virt-customize  -a /var/lib/libvirt/images/${undercloud_name}.qcow2 \
   --run-command 'xfs_growfs /' \
   --root-password password:contrail123 \
-  --hostname queensY.local \
+  --hostname ${undercloud_name}.local \
   --run-command 'useradd stack' \
   --password stack:password:contrail123 \
   --run-command 'echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack' \
@@ -37,21 +37,39 @@ virt-customize  -a /var/lib/libvirt/images/queensY.qcow2 \
   --selinux-relabel
 ```
 
-virsh define is missing
-^^^^^^^^^^^^^^^^^^^^^^^
+## virsh define undercloud VM
+```
+virt-install --name ${undercloud_name} \
+  --disk /var/lib/libvirt/images/${undercloud_name}.qcow2 \
+  --vcpus=4 \
+  --ram=16348 \
+  --network network=default,model=virtio \
+  --network network=br0,model=virtio,portgroup=prov \
+  --virt-type kvm \
+  --import \
+  --os-variant rhel7 \
+  --graphics vnc \
+  --serial pty \
+  --noautoconsole \
+  --console pty,target_type=virtio
+```
+
+```
+virsh start ${undercloud_name}
+```
 
 ## get undercloud ip and log into it
 ```
-undercloud_ip=`virsh domifaddr queensY |grep ipv4 |awk '{print $4}' |awk -F"/" '{print $1}'`
+undercloud_ip=`virsh domifaddr ${undercloud_name} |grep ipv4 |awk '{print $4}' |awk -F"/" '{print $1}'`
 ssh ${undercloud_ip}
 ```
 
 # on the undercloud
 
-## Undercloud configuration
+## Undercloud installation
 ```
-hostnamectl set-hostname queensZ.local
-hostnamectl set-hostname --transient queensZ.local
+hostnamectl set-hostname queensa.local
+hostnamectl set-hostname --transient queensa.local
 vi /etc/hosts
 yum localinstall -y http://satellite.englab.juniper.net/pub/katello-ca-consumer-latest.noarch.rpm
 subscription-manager register --activationkey=rhel-7-osp --org=Juniper
@@ -65,6 +83,25 @@ su - stack
 source stackrc
 cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf
 openstack undercloud install
+```
+
+## forwarding
+```
+iptables -A FORWARD -i br-ctlplane -o eth0 -j ACCEPT
+iptables -A FORWARD -i eth0 -o br-ctlplane -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+```
+
+## set overcloud nameserver
+```
+openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dns-nameserver 8.8.8.8
+```
+
+## add an external api interface
+```
+sudo ip link add name vlan720 link br-ctlplane type vlan id 720
+sudo ip addr add 10.2.0.254/24 dev vlan720
+sudo ip link set dev vlan720 up
 ```
 
 ## Overcloud image prep, build and upload
@@ -84,7 +121,6 @@ openstack overcloud image upload
 ## Ironic preparation
 
 ### create list with ironic nodes (adjust!!!)
-
 ```
 cat << EOM > ironic_list
 52:54:00:16:54:d8 control-1-at-5b3s30 10.87.64.31 control 16235
@@ -109,7 +145,6 @@ EOM
 ```
 
 ### add overcloud nodes to ironic
-
 ```
 ipmi_password=contrail123
 ipmi_user=admin
@@ -140,6 +175,11 @@ cp -r contrail-tripleo-heat-templates/* tripleo-heat-templates/
 ```
 
 ## Tripleo container management
+
+```
+newgrp docker
+```
+
 ### for stable
 ```
 tripleo_tag=current-tripleo-rdo
@@ -163,33 +203,7 @@ openstack overcloud container image prepare \
   --output-images-file ~/overcloud_containers.yaml
 openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
 ```
-
-## Create the roles
-```
-cd tripleo-heat-templates
-openstack overcloud roles generate -o roles_data_contrail_aio.yaml --roles-path roles Controller Compute ContrailAIO
-```
-#remove tenant nw from controller role (vi roles_data_contrail_aio.yaml)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-## Configure the overcloud services
-### nic templates
-```
-vi tripleo-heat-templates/network/config/contrail/compute-nic-config.yaml
-vi tripleo-heat-templates/network/config/contrail/contrail-controller-nic-config.yaml
-vi controller-nic-config.yaml
-```
-
-### contrail services config
-```
-vi tripleo-heat-templates/environments/contrail/contrail-services.yaml
-```
-
-### contrail net config
-```
-tripleo-heat-templates/environments/contrail/contrail-net.yaml
-```
-
+The last command might need to be repeated multiple times (bug?).    
 
 ## deploy the stack
 ```
@@ -201,17 +215,6 @@ openstack overcloud deploy --templates tripleo-heat-templates \
   -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-net.yaml \
   --roles-file tripleo-heat-templates/roles_data_contrail_aio.yaml
-```
-
-# nova patch (might not be needed)
-```
-docker exec -it -u root nova_compute bash
-yum install -y patch
-cd /usr/lib/python2.7/site-packages/
-curl -O https://github.com/openstack/nova/commit/5a646d82bad6a71da28296e3ab06dc5ce2c0f716.patch
-patch -f -p1 < 5a646d82bad6a71da28296e3ab06dc5ce2c0f716.patch
-exit
-docker restart nova_compute
 ```
 
 # quick VM start
