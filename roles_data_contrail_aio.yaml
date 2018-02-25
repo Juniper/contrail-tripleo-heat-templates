@@ -67,6 +67,7 @@
     - OS::TripleO::Services::CinderScheduler
     - OS::TripleO::Services::CinderVolume
     - OS::TripleO::Services::Clustercheck
+    - OS::TripleO::Services::ContrailHeatApiPlugin
     - OS::TripleO::Services::Collectd
     - OS::TripleO::Services::Congress
     - OS::TripleO::Services::Docker
