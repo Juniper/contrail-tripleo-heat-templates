@@ -8,7 +8,6 @@ resource_registry:
   OS::TripleO::Services::ContrailControl: ../../docker/services/contrail/contrail-control.yaml
   OS::TripleO::Services::ContrailWebui: ../../docker/services/contrail/contrail-webui.yaml
   OS::TripleO::Services::ContrailVrouter: ../../docker/services/contrail/contrail-vrouter.yaml
-#  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-plugin.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
@@ -36,6 +35,7 @@ parameter_defaults:
   NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
   NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
   NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
-  NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin']
-  ContrailRepo: http://192.168.24.1/tripleo
+  NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin','/var/lib/contrail/ports']
   ContrailVrouterGateway: 10.0.0.1
+  ContrailRegistry: michaelhenkel
+  ContrailImageTag: 5.0-20180223080156-centos7-queens

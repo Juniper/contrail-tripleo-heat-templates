@@ -82,6 +82,14 @@ parameters:
     default: '127.0.0.1:12111'
     description: Memcached server
     type: string
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
   ContrailVIP:
     default: ''
     description: Contrail VIP
@@ -113,6 +121,8 @@ outputs:
     description: Shared role data for the Contrail services.
     value:
       service_name: contrail_base
+      contrail_registry: {get_param: ContrailRegistry}
+      contrail_imagetag: {get_param: ContrailImageTag}
       config_settings:
         map_merge:
         - contrail::aaa_mode: {get_param: AAAMode}

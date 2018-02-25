@@ -24,6 +24,18 @@ parameters:
       toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
+  DockerContrailVrouterKernelInitImageName:
+    description: image
+    type: string
+    default: "contrail-agent-vrouter-init-kernel"
 
 description: >
   This template installs the Contrail kernel module  packages in order
@@ -45,7 +57,9 @@ resources:
       server:  {get_param: server}
       config: {get_resource: ContrailVrouterModuleConfig}
       input_values:
-        contrail_repo: {get_param: ContrailRepo}
+        contrail_registry: {get_param: ContrailRegistry}
+        contrail_imagetag: {get_param: ContrailImageTag}
+        contrail_vrouter_init_image: {get_param: DockerContrailVrouterKernelInitImageName}
       actions:
         if:
           - deployment_actions_empty
@@ -65,35 +79,24 @@ resources:
         exec 2>&1
         echo "=================== $(date) ==================="
         set -xv
-        contrail_repo=$contrail_repo
+        contrail_registry=$contrail_registry
+        contrail_imagetag=$contrail_imagetag
+        contrail_vrouter_init_image=$contrail_vrouter_init_image
         mkdir /var/crashes
         chmod -R 755 /var/crashes
         ulimit -c unlimited
         echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
         sysctl -p
-        if [[ ${contrail_repo} ]]; then
-        curl -o /etc/sysconfig/network-scripts/ifup-vhost ${contrail_repo}/ifup-vhost
-        chmod +x /etc/sysconfig/network-scripts/ifup-vhost
-          cat <<EOF > /etc/yum.repos.d/contrail.repo
-        [Contrail]
-        name=Contrail Repo
-        baseurl=${contrail_repo}
-        enabled=1
-        gpgcheck=0
-        protect=1
-        metadata_expire=30
-        EOF
-          yum install -y contrail-vrouter-utils
-          yumdownloader contrail-vrouter --destdir /tmp
-          cd /tmp
-          rpm2cpio /tmp/contrail-vrouter*.rpm | cpio -idmv
-          mkdir -p /lib/modules/`uname -r`/kernel/net/contrail
-          cp `find /tmp/lib/modules -name vrouter.ko |tail -1` /lib/modules/`uname -r`/kernel/net/contrail
-          depmod -a
-          insmod /lib/modules/`uname -r`/kernel/net/contrail/vrouter.ko
-        else
-          modprobe vrouter
-        fi
+        systemctl start docker
+        docker run \
+            --privileged \
+            --name vrouter-kernel-init \
+            -v /usr/src:/usr/src \
+            -v /lib/modules:/lib/modules \
+            -v /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts \
+            -v /bin:/host/bin \
+            ${contrail_registry}/${contrail_vrouter_init_image}:${contrail_imagetag}
+        #docker rm -f vrouter-kernel-init
 
 #outputs:
 #  # This means get_resource from the parent template will get the userdata, see:
