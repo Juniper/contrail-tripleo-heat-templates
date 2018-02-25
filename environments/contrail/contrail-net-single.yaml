@@ -1,8 +1,8 @@
 resource_registry:
-  OS::TripleO::Controller::Net::SoftwareConfig: ../../network/config/contrail/controller-nic-config.yaml
-  OS::TripleO::ContrailController::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config.yaml
-  OS::TripleO::Compute::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-config.yaml
-  OS::TripleO::ContrailDpdk::Net::SoftwareConfig: ../../network/config/contrail/contrail-dpdk-nic-config.yaml
+  OS::TripleO::Controller::Net::SoftwareConfig: ../../network/config/contrail/controller-nic-config-single.yaml
+  OS::TripleO::ContrailController::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config-single.yaml
+  OS::TripleO::Compute::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-config-single.yaml
+  OS::TripleO::ContrailDpdk::Net::SoftwareConfig: ../../network/config/contrail/contrail-dpdk-nic-config-single.yaml
 
 parameter_defaults:
   # Customize all these values to match the local environment

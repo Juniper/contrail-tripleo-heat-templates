@@ -1,53 +1,10 @@
-heat_template_version: ocata
+heat_template_version: queens
 
 # NOTE: You don't need to pass the parameter explicitly from the
 # parent template, it can be specified via the parameter_defaults
 # in the resource_registry instead, if you want to override the default
 # and/or share values with other templates in the tree.
 parameters:
-  ContrailRepo:
-    type: string
-    default: ''
-  ContrailVrouterPhysicalInterface:
-    default: 'eth0'
-    description: vRouter physical interface
-    type: string
-  ContrailVlanParentInterface:
-    default: ''
-    description: Parent interface of vlan interface
-    type: string
-  ContrailBondInterface:
-    default: ''
-    description: Bond interface name
-    type: string
-  ContrailBondInterfaceMembers:
-    default: ''
-    description: Bond interface members
-    type: string
-  ContrailBondMode:
-    default: '4'
-    description: Bond Mode
-    type: string
-  ContrailBondPolicy:
-    default: '1'
-    description: Bond Policy
-    type: string
-  ContrailDpdkHugePages:
-    default: '2048'
-    description: DPDK Hugepages setting
-    type: string
-  ContrailDpdkCoremask:
-    default: '0xf'
-    description: Core pinning for DPDK
-    type: string
-  ContrailDpdkDriver:
-    default: 'uio_pci_generic'
-    description: DPDK Nic Driver
-    type: string
-  ContrailVrouterGateway:
-    default: '192.168.24.1'
-    description: vRouter default gateway
-    type: string
   RoleParameters:
     type: json
     description: Role Specific parameters
@@ -55,52 +12,88 @@ parameters:
   ServiceNames:
     type: comma_delimited_list
     default: []
+  deployment_actions:
+    default: ['CREATE']
+    type: comma_delimited_list
+    description: >
+      List of stack actions that will trigger any deployments in this
+      templates. The actions will be an empty list of the server is in the
+      toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
+  ContrailRegistryInsecure:
+    default: false
+    description: Contrail Registry
+    type: boolean
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
+  DockerContrailVrouterKernelInitDpdkImageName:
+    description: image
+    type: string
+    default: "contrail-vrouter-kernel-init-dpdk"
+  DockerContrailVrouterAgentDpdkImageName:
+    description: image
+    type: string
+    default: "contrail-vrouter-agent-dpdk"
+  DockerContrailVrouterAgentDpdkContainerName:
+    description: image
+    type: string
+    default: "contrail-vrouter-agent-dpdk"
+  DockerContrailVrouterAgentContainerName:
+    description: image
+    type: string
+    default: "contrail-vrouter-agent"
 
 description: >
   This template installs the Contrail dpdk packages in order
   to bring vhost0 interface up. Vhost0 interface must be up before
   os-net-config takes over.
 
+conditions:
+  deployment_actions_empty:
+    equals:
+      - {get_param: deployment_actions}
+      - []
+
 resources:
 
-  ContrailVrouterDpdkDeployment:
+  ContrailVrouterDpdkModuleDeployment:
     type: OS::Heat::SoftwareDeployment
     properties:
-      name: ContrailVrouterDpdkDeployment
+      name: ContrailVrouterDpdkModuleDeployment
       server:  {get_param: server}
-      config: {get_resource: ContrailVrouterDpdkConfig}
+      config: {get_resource: ContrailVrouterDpdkModuleConfig}
       input_values:
-        contrail_repo: {get_param: ContrailRepo}
-        phy_int: {get_param: ContrailVrouterPhysicalInterface}
-        bond_int: {get_param: ContrailBondInterface}
-        bond_int_members: {get_param: ContrailBondInterfaceMembers}
-        bond_mode: {get_param: ContrailBondMode}
-        bond_policy: {get_param: ContrailBondPolicy}
-        vlan_parent: {get_param: ContrailVlanParentInterface}
-        vrouter_gateway: {get_param: ContrailVrouterGateway}
-        dpdk_hugepages: {get_param: ContrailDpdkHugePages}
-        dpdk_coremask:  {get_param: ContrailDpdkCoremask}
-        dpdk_driver: {get_param: ContrailDpdkDriver}
-      actions: ['CREATE'] # Only do this on CREATE
+        contrail_registry_insecure: {get_param: ContrailRegistryInsecure}
+        contrail_registry: {get_param: ContrailRegistry}
+        contrail_imagetag: {get_param: ContrailImageTag}
+        contrail_vrouter_init_image: {get_param: DockerContrailVrouterKernelInitDpdkImageName}
+        contrail_vrouter_agent_dpdk_image: {get_param: DockerContrailVrouterAgentDpdkImageName}
+        contrail_vrouter_agent_container_name: {get_param: DockerContrailVrouterAgentContainerName}
+        contrail_vrouter_agent_dpdk_container_name: {get_param: DockerContrailVrouterAgentDpdkContainerName}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
 
-  ContrailVrouterDpdkConfig:
+  ContrailVrouterDpdkModuleConfig:
     type: OS::Heat::SoftwareConfig
     properties:
       group: script
       inputs:
-      - name: contrail_repo
-      - name: phy_int
-      - name: bond_int
-      - name: bond_int_members
-      - name: bond_mode
-      - name: bond_policy
-      - name: vlan_parent
-      - name: vrouter_gateway
-      - name: dpdk_hugepages
-      - name: dpdk_coremask
-      - name: dpdk_driver
+      - name: contrail_registry_insecure
+      - name: contrail_registry
+      - name: contrail_imagetag
+      - name: contrail_vrouter_init_image
+      - name: contrail_vrouter_agent_dpdk_image
+      - name: contrail_vrouter_agent_container_name
       config: |
         #!/bin/bash
         export LOGFILE=/tmp/contrail_trace_full.txt
@@ -108,153 +101,43 @@ resources:
         exec 2>&1
         echo "=================== $(date) ==================="
         set -xv
-        contrail_repo=$contrail_repo
-        phy_int=$phy_int
-        bond_int=$bond_int
-        bond_int_members=$bond_int_members
-        bond_mode=$bond_mode
-        bond_policy=$bond_policy
-        vlan_parent=$vlan_parent
-        vrouter_gateway=$vrouter_gateway
-        dpdk_hugepages=$dpdk_hugepages
-        dpdk_coremask=$dpdk_coremask
-        dpdk_driver=$dpdk_driver
-        echo "127.0.0.1    `hostname`" >> /etc/hosts
-        mkdir /var/crashes
-        echo "vm.nr_hugepages = $dpdk_hugepages" >> /etc/sysctl.conf
-        echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
+        contrail_registry_insecure=$contrail_registry_insecure
+        contrail_registry=$contrail_registry
+        contrail_imagetag=$contrail_imagetag
+        contrail_vrouter_init_image=$contrail_vrouter_init_image
+        if [[ ${contrail_registry_insecure} == 'True' ]]; then
+          found=0
+          registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
+          for reg in $registries; do if [[ ${reg} == ${contrail_registry} ]]; then found=1; fi; done
+          if [[ ${found} -eq 0 ]]; then
+            registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
+            registry_string="${registry_string} --insecure-registry ${contrail_registry}"
+            complete_string="INSECURE_REGISTRY=\"${registry_string}\""
+            echo ${complete_string}
+            if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
+              sed "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
+            else
+              echo ${complete_string} >> /etc/sysconfig/docker
+            fi
+            systemctl restart docker
+          fi
+        fi
         mkdir /var/crashes
         chmod -R 755 /var/crashes
         ulimit -c unlimited
         echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
-        echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
-        echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
-        echo "net.ipv4.tcp_keepalive_probes = 5" >> /etc/sysctl.conf
-        echo "net.ipv4.tcp_keepalive_intvl = 1" >> /etc/sysctl.conf
         sysctl -p
-        /sbin/sysctl --system
-        modprobe uio
-        pci_address=`ethtool -i ${phy_int} |grep bus-info| awk '{print $2}' |tr -d ' '`
-        if [[ ${vlan_parent} ]]; then
-           pci_address=`ethtool -i ${vlan_parent} |grep bus-info| awk '{print $2}' |tr -d ' '`
-        fi
-        if [[ ${bond_int} ]]; then
-          bond_int_member_list=$(echo ${bond_int_members} | tr "," "\n")
-          cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${bond_int}
-        DEVICE=${bond_int}
-        BOOTPROTO=none
-        ONBOOT=yes
-        USERCTL=no
-        NM_CONTROLLED=no
-        BONDING_OPTS="mode=${bond_mode} xmit_hash_policy=${bond_policy}"
-        EOF
-          for member in ${bond_int_member_list}; do
-            cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${member}
-        DEVICE=${member}
-        BOOTPROTO=none
-        ONBOOT=yes
-        MASTER=${bond_int}
-        SLAVE=yes
-        NM_CONTROLLED=no
-        USERCTL=no
-        EOF
-            ip link set dev ${member} down
-          done
-          ifup ${bond_int}
-          pci_address=0000:00:00.0
-        fi
-        if [[ ${vlan_parent} ]]; then
-          echo ${vlan_parent} >> /tmp/vlan_parent
-          vlanId=`echo ${phy_int} | awk -F"vlan" '{print $2}'`
-          cat <<EOF> /etc/sysconfig/network-scripts/ifcfg-${phy_int}
-        DEVICE=${phy_int}
-        BOOTPROTO=none
-        ONBOOT=yes
-        USERCTL=yes
-        NM_CONTROLLED=no
-        VLAN=yes
-        PHYSDEV=${vlan_parent}
-        EOF
-          ifup ${phy_int}
-        fi
-        # save ip and mask before starting services, otherwise they are always emty
-        # since dpdk device becomes non-network devices
-        def_gw=''
-        if [[ `ip route show | grep default | grep ${phy_int}` ]]; then
-          def_gw=`ip route show | grep default | grep ${phy_int} | awk '{print $3}'`
-        fi
-        ip=`ifconfig ${phy_int} | grep 'inet ' | awk '{print $2}'`
-        mask=`ifconfig ${phy_int} | grep 'inet ' | awk '{print $4}'`
-        mac=`ip link sh dev ${phy_int} | grep link/ether|awk '{print $2}' | tr -d ' '`
-        # install vrouter packages and prepare configs
-        if [[ ${contrail_repo} ]]; then
-          yum install -y \
-            contrail-vrouter-utils \
-            contrail-vrouter-dpdk \
-            contrail-vrouter-dpdk-init
-        fi
-        cat <<EOF > /etc/contrail/agent_param
-        LOG=/var/log/contrail.log
-        CONFIG=/etc/contrail/contrail-vrouter-agent.conf
-        prog=/usr/bin/contrail-vrouter-agent
-        pname=contrail-vrouter-agent
-        LIBDIR=/usr/lib64
-        DEVICE=vhost0
-        dev=${phy_int}
-        vgw_subnet_ip=__VGW_SUBNET_IP__
-        vgw_intf=__VGW_INTF_LIST__
-        LOGFILE=--log-file=/var/log/contrail/vrouter.log
-        EOF
-        cat <<EOF > /etc/contrail/contrail-vrouter-agent.conf
-        [DEFAULT]
-        platform=dpdk
-        physical_interface_address=$pci_address
-        physical_interface_mac=$mac
-        physical_uio_driver=${dpdk_driver}
-        log_file=/var/log/contrail/contrail-vrouter-agent.log
-        log_level=SYS_NOTICE
-        log_local=1
-        [VIRTUAL-HOST-INTERFACE]
-        physical_interface=${phy_int}
-        name=vhost0
-        gateway=${vrouter_gateway}
-        [SERVICE-INSTANCE]
-        netns_command=/bin/opencontrail-vrouter-netns
-        EOF
-        echo $pci_address > /etc/contrail/dpdk_pci
-        echo $mac > /etc/contrail/dpdk_mac
-        sed -i "s#^command=#&/bin/taskset ${dpdk_coremask} #" /etc/contrail/supervisord_vrouter_files/contrail-vrouter-dpdk.ini
-        if sestatus | grep -i "Current mode" | grep -q enforcing ; then
-          systemctl daemon-reexec
-        fi
-        ldconfig
-        # start contrail services assign mac to vhost0 and up the vhost0 interface
-        systemctl start supervisor-vrouter
-        sleep 10
-        ip link set dev vhost0 address $mac
-        ip link set dev vhost0 up
-        # assign ip to vhost0
-        if [[ -n "$ip" && -n "$mask" ]]; then
-          ip address delete $ip/$mask dev ${phy_int}
-          ip address add $ip/$mask dev vhost0
-          if [[ $def_gw ]]; then
-            ip route add default via $def_gw
-          fi
-        fi
-        if [[ ${dpdk_driver} == "vfio-pci" ]]; then
-          sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on iommu=pt"/g' -i /etc/default/grub ;
-          grub2-mkconfig -o /etc/grub2.cfg
-          systemctl enable supervisor-vrouter
-          reboot
-        fi
-        echo finishing...
-        ifconfig
-        ip route
-
-outputs:
-  # This means get_resource from the parent template will get the userdata, see:
-  # http://docs.openstack.org/developer/heat/template_guide/composition.html#making-your-template-resource-more-transparent
-  # Note this is new-for-kilo, an alternative is returning a value then using
-  # get_attr in the parent template instead.
-  OS::stack_id:
-    value: {get_resource: userdata}
+        systemctl start docker
+        docker run \
+            --rm \
+            --privileged \
+            -e "AGENT_MODE=dpdk" \
+            -e "CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE=${contrail_registry}/${contrail_vrouter_agent_dpdk_image}:${contrail_imagetag}" \
+            -e "CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME="${contrail_vrouter_agent_dpdk_container_name}" \
+            -e "CONTRAIL_VROUTER_AGENT_CONTAINER_NAME=${contrail_vrouter_agent_container_name}" \
+            --name $contrail_vrouter_init_image \
+            -v /dev:/dev \
+            -v /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts \
+            -v /lib/modules:/lib/modules \
+            -v /bin:/host/bin \
+            ${contrail_registry}/${contrail_vrouter_init_image}:${contrail_imagetag}

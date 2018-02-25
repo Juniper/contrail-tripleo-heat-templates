@@ -7,7 +7,7 @@ parameters:
   DockerContrailVrouterAgentImageName:
     description: image
     type: string
-    default: "contrail-vrouter-agent"
+    default: "contrail-agent-vrouter"
   DockerContrailNovaPluginImageName:
     description: image
     type: string
@@ -81,19 +81,19 @@ conditions:
 
 outputs:
   role_data:
-    description: Role data for the Contrail Vrouter service.
+    description: Role data for the Contrail Vrouter Dpdk service.
     value:
-      service_name: contrail_vrouter
+      service_name: contrail_vrouter_dpdk
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
           - contrail::vrouter::gateway: {get_param: ContrailVrouterGateway}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
       service_config_settings:
-        tripleo.contrail_vrouter.firewall_rules:
-          '111 contrail_vrouter_8085':
+        tripleo.contrail_vrouter_dpdk.firewall_rules:
+          '111 contrail_vrouter_dpdk_8085':
             dport: 8085
-          '112 contrail_vrouter_8097':
+          '112 contrail_vrouter_dpdk_8097':
             dport: 8097
       docker_config:
         step_3:
@@ -108,55 +108,7 @@ outputs:
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             volumes:
               - vrouter_port_control:/opt/plugin/bin
-        step_4:
-          contrail_vrouter_agent_node_init:
-            image: &contrail_node_init_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_attr: [ContrailBase, role_data, contrail_node_init_image_name]}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              - {get_attr: [ContrailBase, role_data, contrail_status_image]}
-            net: host
-            pid: host
-            privileged: true
-            detach: true
-            user: root
-            volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /usr/bin:/host/usr/bin
-                  - /etc/contrail/ssl:/etc/contrail/ssl
-                  - /etc/timezone:/etc/timezone
-                  - /var/log/contrail:/var/log/contrail
-                  - /var/run/docker.sock:/var/run/docker.sock
-                  - /var/crashes:/var/crashes
-            env_file:
-              - /etc/contrail/common_vrouter.env
         step_5:
-          contrail_vrouter_agent_nodemgr:
-            image: &contrail_nodemgr_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              - NODE_TYPE=vrouter
-            net: host
-            detach: true
-            user: root
-            restart: always
-            volumes_from:
-              - contrail_vrouter_agent_node_init
-            env_file:
-              - /etc/contrail/common_vrouter.env
           contrail_vrouter_agent:
             image: &contrail_vrouter_agent_image
               list_join:
@@ -283,6 +235,7 @@ outputs:
             - KEYSTONE_AUTH_URL_VERSION=/v3
             - VROUTER_GATEWAY={{ contrail_vrouter_gateway.stdout }}
             - METADATA_PROXY_SECRET={{ contrail_metadata_secret.stdout }}
+            - AGENT_MODE=dpdk
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
