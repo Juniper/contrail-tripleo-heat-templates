@@ -1,0 +1,57 @@
+heat_template_version: queens
+
+description: >
+  OpenStack containerized Contrail Neutron Plugin configured with Puppet
+
+parameters:
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DockerNeutronConfigImage:
+    description: The container image to use for the neutron config_volume
+    type: string
+  DefaultPasswords:
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+
+resources:
+
+  ContrailNeutronPluginBase:
+    type: contrail-neutron-plugin.yaml
+
+outputs:
+  role_data:
+    description: Role data for the Contrail Neutron Plugin role.
+    value:
+      service_name: {get_attr: [ContrailNeutronPluginBase, role_data, service_name]}
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailNeutronPluginBase, role_data, config_settings]
+      # BEGIN DOCKER SETTINGS
+      puppet_config:
+        config_volume: 'neutron'
+        puppet_tags: neutron_plugin_opencontrail,ini_setting,create_ini_settings,neutron_config,neutron_api_config,inifile
+        step_config:
+          get_attr: [ContrailNeutronPluginBase, role_data, step_config]
+        config_image: {get_param: DockerNeutronConfigImage}
+      kolla_config: {}
+      docker_config: {}

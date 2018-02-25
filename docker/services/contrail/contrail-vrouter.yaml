@@ -4,14 +4,12 @@ description: >
   Contrail containerized Vrouter service
 
 parameters:
-  DockerContrailVrouterAgentImageName:
+  DockerContrailVrouterAgentImage:
     description: image
     type: string
-    default: "contrail-agent-vrouter"
-  DockerContrailNovaPluginImageName:
+  DockerContrailNovaPluginImage:
     description: image
     type: string
-    default: "contrail-openstack-compute-init"
   ContrailVrouterGateway:
     default: '192.168.24.1'
     description: vRouter default gateway
@@ -62,8 +60,8 @@ resources:
     type: ../containers-common.yaml
 
 
-  ContrailBase:
-    type: contrail-base.yaml
+  ContrailVrouterBase:
+    type: ../../../puppet/services/network/contrail-base.yaml
     properties:
       EndpointMap: {get_param: EndpointMap}
       ServiceData: {get_param: ServiceData}
@@ -82,7 +80,7 @@ outputs:
       service_name: contrail_vrouter
       config_settings:
         map_merge:
-          - get_attr: [ContrailBase, role_data, config_settings]
+          - get_attr: [ContrailVrouterBase, role_data, config_settings]
           - contrail::vrouter::gateway: {get_param: ContrailVrouterGateway}
       service_config_settings:
         tripleo.contrail_vrouter.firewall_rules:
@@ -93,37 +91,21 @@ outputs:
       docker_config:
         step_3:
           contrail_nova_plugin:
-            image: &contrail_nova_plugin_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailNovaPluginImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_nova_plugin_image {get_param: DockerContrailNovaPluginImage}
             volumes:
               - vrouter_port_control:/opt/plugin/bin
         step_5:
           contrail_vrouter_agent:
-            image: &contrail_vrouter_agent_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailVrouterAgentImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_vrouter_agent_image {get_param: DockerContrailVrouterAgentImage}
             net: host
-            privileged: true
+            privileged: false
             detach: true
             user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
                 -
                   - /var/log/contrail:/var/log/contrail
-                  - /var/lib/contrail/ports
             env_file:
               - /etc/contrail/common_vrouter.env
       host_prep_tasks:
@@ -225,4 +207,4 @@ outputs:
             - VROUTER_GATEWAY={{ contrail_vrouter_gateway.stdout }}
             
       metadata_settings:
-        get_attr: [ContrailBase, role_data, metadata_settings]
+        get_attr: [ContrailVrouterBase, role_data, metadata_settings]

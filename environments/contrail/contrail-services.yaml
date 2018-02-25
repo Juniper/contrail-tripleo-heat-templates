@@ -36,6 +36,6 @@ parameter_defaults:
   NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
   NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
   NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
-  NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin','/var/lib/contrail/ports']
+  NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin']
   ContrailRepo: http://192.168.24.1/tripleo
   ContrailVrouterGateway: 10.0.0.1

@@ -4,22 +4,21 @@ description: >
   Contrail containerized Config Config service
 
 parameters:
-  DockerContrailConfigApiImageName:
+  DockerContrailConfigApiImage:
     description: image
     type: string
-    default: "contrail-controller-config-api"
-  DockerContrailConfigSchemaImageName:
+  DockerContrailConfigSchemaImage:
     description: image
     type: string
-    default: "contrail-controller-config-schema"
-  DockerContrailConfigSvcmonitorImageName:
+  DockerContrailConfigSvcmonitorImage:
     description: image
     type: string
-    default: "contrail-controller-config-svcmonitor"
-  DockerContrailConfigDevicemgrImageName:
+  DockerContrailConfigDevicemgrImage:
     description: image
     type: string
-    default: "contrail-controller-config-devicemgr"
+  DockerContrailRedisImage:
+    description: image
+    type: string
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -66,8 +65,8 @@ resources:
     type: ../containers-common.yaml
 
 
-  ContrailBase:
-    type: contrail-base.yaml
+  ContrailConfigBase:
+    type: ../../../puppet/services/network/contrail-base.yaml
     properties:
       EndpointMap: {get_param: EndpointMap}
       ServiceData: {get_param: ServiceData}
@@ -86,7 +85,7 @@ outputs:
       service_name: contrail_config
       config_settings:
         map_merge:
-          - get_attr: [ContrailBase, role_data, config_settings]
+          - get_attr: [ContrailConfigBase, role_data, config_settings]
       service_config_settings:
         haproxy:
           tripleo.contrail_config.haproxy_endpoints:
@@ -119,19 +118,11 @@ outputs:
       docker_config:
         step_5:
           contrail_config_api:
-            image: &contrail_config_api_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailConfigApiImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_config_api_image {get_param: DockerContrailConfigApiImage}
             net: host
             privileged: false
             detach: true
             user: root
-            resatrt: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -140,19 +131,11 @@ outputs:
             env_file:
               - /etc/contrail/common_config.env
           contrail_config_schema:
-            image: &contrail_config_schema_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailConfigSchemaImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_config_schema_image {get_param: DockerContrailConfigSchemaImage}
             net: host
             privileged: false
             detach: true
             user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -161,19 +144,11 @@ outputs:
             env_file:
               - /etc/contrail/common_config.env
           contrail_config_svc_monitor:
-            image: &contrail_config_svc_monitor_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailConfigSvcmonitorImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_config_svc_monitor_image {get_param: DockerContrailConfigSvcmonitorImage}
             net: host
             privileged: false
             detach: true
             user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -181,20 +156,12 @@ outputs:
                   - /var/log/contrail:/var/log/contrail
             env_file:
               - /etc/contrail/common_config.env
-          contrail_config_device_manager:
-            image: &contrail_config_device_manager_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailConfigDevicemgrImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+          contrail_config_redis:
+            image: &contrail_config_redis_image {get_param: DockerContrailRedisImage}
             net: host
             privileged: false
             detach: true
             user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -286,4 +253,4 @@ outputs:
             - KEYSTONE_AUTH_URL_VERSION=/v3
             
       metadata_settings:
-        get_attr: [ContrailBase, role_data, metadata_settings]
+        get_attr: [ContrailConfigBase, role_data, metadata_settings]

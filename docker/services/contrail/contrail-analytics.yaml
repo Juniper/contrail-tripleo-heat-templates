@@ -4,30 +4,24 @@ description: >
   Contrail containerized Config Analytics service
 
 parameters:
-  DockerContrailAnalyticsApiImageName:
+  DockerContrailAnalyticsApiImage:
     description: image
     type: string
-    default: "contrail-analytics-api"
-  DockerContrailAnalyticsTopologyImageName:
+  DockerContrailAnalyticsTopologyImage:
     description: image
     type: string
-    default: "contrail-analytics-topology"
-  DockerContrailAnalyticsSnmpCollectorImageName:
+  DockerContrailAnalyticsSnmpCollectorImage:
     description: image
     type: string
-    default: "contrail-analytics-snmp-collector"
-  DockerContrailAnalyticsQueryEngineImageName:
+  DockerContrailAnalyticsQueryEngineImage:
     description: image
     type: string
-    default: "contrail-analytics-query-engine"
-  DockerContrailAnalyticsCollectorImageName:
+  DockerContrailAnalyticsCollectorImage:
     description: image
     type: string
-    default: "contrail-analytics-collector"
-  DockerContrailAnalyticsAlarmGenImageName:
+  DockerContrailAnalyticsAlarmGenImage:
     description: image
     type: string
-    default: "contrail-analytics-alarm-gen"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -61,8 +55,8 @@ resources:
     type: ../containers-common.yaml
 
 
-  ContrailBase:
-    type: contrail-base.yaml
+  ContrailAnalyticsBase:
+    type: ../../../puppet/services/network/contrail-base.yaml
     properties:
       EndpointMap: {get_param: EndpointMap}
       ServiceData: {get_param: ServiceData}
@@ -78,23 +72,15 @@ outputs:
       service_name: contrail_analytics
       config_settings:
         map_merge:
-          - get_attr: [ContrailBase, role_data, config_settings]
-      service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
+          - get_attr: [ContrailAnalyticsBase, role_data, config_settings]
+      service_config_settings: {get_attr: [ContrailAnalyticsBase, role_data, service_config_settings]}
       docker_config:
         step_5:
           contrail_anlytics_api:
-            image: &contrail_analytics_api_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailAnalyticsApiImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_analytics_api_image {get_param: DockerContrailAnalyticsApiImage}
             net: host
             privileged: false
             detach: true
-            restart: always
             user: root
             volumes:
               list_concat:
@@ -104,19 +90,11 @@ outputs:
             env_file:
               - /etc/contrail/common_analytics.env
           contrail_analytics_topology:
-            image: &contrail_analytics_topology_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailAnalyticsTopologyImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_analytics_topology_image {get_param: DockerContrailAnalyticsTopologyImage}
             net: host
             privileged: false
             detach: true
             user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -125,19 +103,11 @@ outputs:
             env_file:
               - /etc/contrail/common_analytics.env
           contrail_analytics_queryengine:
-            image: &contrail_analytics_queryengine_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailAnalyticsQueryEngineImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_analytics_queryengine_image {get_param: DockerContrailAnalyticsQueryEngineImage}
             net: host
             privileged: false
             detach: true
             user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -146,19 +116,11 @@ outputs:
             env_file:
               - /etc/contrail/common_analytics.env
           contrail_analytics_collector:
-            image: &contrail_analytics_collector_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailAnalyticsCollectorImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_analytics_collector_image {get_param: DockerContrailAnalyticsCollectorImage}
             net: host
             privileged: false
             detach: true
             user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -167,40 +129,11 @@ outputs:
             env_file:
               - /etc/contrail/common_analytics.env
           contrail_analytics_alarmgen:
-            image: &contrail_analytics_alarmgen_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailAnalyticsAlarmGenImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_analytics_alarmgen_image {get_param: DockerContrailAnalyticsAlarmGenImage}
             net: host
             privileged: false
             detach: true
             user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
-            env_file:
-              - /etc/contrail/common_analytics.env
-          contrail_analytics_snmp_collector:
-            image: &contrail_analytics_snmp_collector_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -303,4 +236,4 @@ outputs:
             - KEYSTONE_AUTH_URL_VERSION=/v3
             
       metadata_settings:
-        get_attr: [ContrailBase, role_data, metadata_settings]
+        get_attr: [ContrailAnalyticsBase, role_data, metadata_settings]

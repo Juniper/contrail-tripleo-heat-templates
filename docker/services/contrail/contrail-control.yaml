@@ -4,18 +4,15 @@ description: >
   Contrail containerized Config Control service
 
 parameters:
-  DockerContrailControlControlImageName:
+  DockerContrailControlControlImage:
     description: image
     type: string
-    default: "contrail-controller-control-control"
-  DockerContrailControlNamedImageName:
+  DockerContrailControlNamedImage:
     description: image
     type: string
-    default: "contrail-controller-control-named"
-  DockerContrailControlDnsImageName:
+  DockerContrailControlDnsImage:
     description: image
     type: string
-    default: "contrail-controller-control-dns"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -49,8 +46,8 @@ resources:
     type: ../containers-common.yaml
 
 
-  ContrailBase:
-    type: contrail-base.yaml
+  ContrailControlBase:
+    type: ../../../puppet/services/network/contrail-base.yaml
     properties:
       EndpointMap: {get_param: EndpointMap}
       ServiceData: {get_param: ServiceData}
@@ -66,24 +63,16 @@ outputs:
       service_name: contrail_control
       config_settings:
         map_merge:
-          - get_attr: [ContrailBase, role_data, config_settings]
-      service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
+          - get_attr: [ContrailControlBase, role_data, config_settings]
+      service_config_settings: {get_attr: [ContrailControlBase, role_data, service_config_settings]}
       docker_config:
         step_5:
           contrail_control_control:
-            image: &contrail_control_control_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailControlControlImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_control_control_image {get_param: DockerContrailControlControlImage}
             net: host
             privileged: false
             detach: true
             user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -92,37 +81,21 @@ outputs:
             env_file:
               - /etc/contrail/common_control.env
           contrail_control_named:
-            image: &contrail_control_named_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailControlNamedImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_control_named_image {get_param: DockerContrailControlNamedImage}
             net: host
             privileged: true
             detach: true
             user: root
-            restart: always
             volumes_from: 
               - contrail_control_dns
             env_file:
               - /etc/contrail/common_control.env
           contrail_control_dns:
-            image: &contrail_control_dns_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailControlDnsImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_control_dns_image {get_param: DockerContrailControlDnsImage}
             net: host
             privileged: false
             detach: true
             user: root
-            restart: always
             volumes:
               list_concat:
                 - {get_attr: [ContainersCommon, volumes]}
@@ -164,15 +137,6 @@ outputs:
         - name: get keystone admin tenant
           shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_tenant_name
           register: keystone_admin_tenant
-        - name: get contrail control node ips
-          shell: hiera -c /etc/puppet/hiera.yaml contrail_control_node_ips
-          register: contrail_control_node_ips_list
-        - name: turn contrail control ips into json
-          set_fact:
-            contrail_control_node_ips_json: "{{ contrail_control_node_ips_list.stdout | from_json }}"
-        - name: turn json into comma separated string
-          set_fact:
-            contrail_control_node_ips_string: "{{ contrail_control_node_ips_json | join(',') }}"
         - name: get contrail config database node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
           register: contrail_config_database_node_ips_list
@@ -200,13 +164,11 @@ outputs:
         - name: turn json into comma separated string
           set_fact:
             contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
-        - name: write contrail control node ips to environment file
-          lineinfile: dest=/etc/contrail/common_control.env regexp='.*CONTROL_NODES$' line="CONTROL_NODES={{ contrail_control_node_ips_string }}" state=present
         - name: write contrail config node ips to environment file
           lineinfile: dest=/etc/contrail/common_control.env regexp='.*CONFIG_NODES$' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
         - name: write contrail config db node ips to environment file
           lineinfile: dest=/etc/contrail/common_control.env regexp='.*CONFIGDB_NODES$' line="CONFIGDB_NODES={{ contrail_config_database_node_ips_string }}" state=present
-        - name: write contrail config zk node ips to environment file
+        - name: write contrail config db node ips to environment file
           lineinfile: dest=/etc/contrail/common_control.env regexp='.*ZOOKEEPER_NODES$' line="ZOOKEEPER_NODES={{ contrail_config_database_node_ips_string }}" state=present
         - name: write contrail config rmq node ips to environment file
           lineinfile: dest=/etc/contrail/common_control.env regexp='.*RABBITMQ_NODES$' line="RABBITMQ_NODES={{ contrail_config_database_node_ips_string }}" state=present
@@ -225,4 +187,4 @@ outputs:
             - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
             
       metadata_settings:
-        get_attr: [ContrailBase, role_data, metadata_settings]
+        get_attr: [ContrailControlBase, role_data, metadata_settings]
