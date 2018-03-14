@@ -608,7 +608,7 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   --roles-file tripleo-heat-templates/environments/contrail/roles_data.yaml \
   -e tripleo-heat-templates/environments/puppet-pacemaker.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
-  -e tripleo-heat-templates/environments/network-isolation.yaml \
+  -e tripleo-heat-templates/environments/contrail/network-isolation.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-net.yaml \
   -e tripleo-heat-templates/environments/ips-from-pool-all.yaml \
   -e tripleo-heat-templates/environments/network-management.yaml \
