@@ -81,7 +81,6 @@ outputs:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
           - contrail::control::asn: {get_param: ContrailControlASN }
-            contrail::control::md5: {get_param: ContrailControlMD5}
             contrail::control::host_ip: {get_param: [ServiceNetMap, ContrailControlNetwork]}
             contrail::control::rndc_secret: {get_param: ContrailControlRNDCSecret}
             contrail::control::manage_named: {get_param: ContrailControlManageNamed}

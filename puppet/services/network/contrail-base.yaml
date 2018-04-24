@@ -187,7 +187,6 @@ conditions:
   contrail_config_vip_unset: {equals : [{get_param: ContrailConfigVIP}, '']}
   contrail_analytics_vip_unset: {equals : [{get_param: ContrailAnalyticsVIP}, '']}
   contrail_webui_vip_unset: {equals : [{get_param: ContrailWebuiVIP}, '']}
-  ssl_enabled: {equals: [{get_param: ContrailSslEnabled}, true]}
   contrail_ca_cert_unset: {equals : [{get_param: ContrailCaCert}, '']}
   contrail_ca_key_unset: {equals : [{get_param: ContrailCaKey}, '']}
   contrail_auth_ca_cert_unset: {equals : [{get_param: ContrailAuthCaCert}, '']}
@@ -264,13 +263,6 @@ outputs:
           - contrail_vip_unset
           - {}
           - contrail::vip: {get_param: ContrailVIP}
-        -
-          if:
-          - ssl_enabled
-          - contrail::ca_certificate: {get_param: ContrailCaCert}
-            contrail::service_key: {get_param: ContrailServiceKey}
-            contrail::service_certificate: {get_param: ContrailServiceCert}
-          - {}
         -
           if:
           - contrail_config_vip_unset
