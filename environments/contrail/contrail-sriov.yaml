@@ -1,0 +1,24 @@
+## A Heat environment that can be used to deploy SR-IOV
+
+parameter_defaults:
+  ContrailSriovOn: 'true'
+
+  # Add PciPassthroughFilter to the scheduler default filters
+  NovaSchedulerDefaultFilters: ['RetryFilter','AvailabilityZoneFilter','RamFilter','ComputeFilter','ComputeCapabilitiesFilter','ImagePropertiesFilter','ServerGroupAntiAffinityFilter','ServerGroupAffinityFilter','PciPassthroughFilter']
+  NovaSchedulerAvailableFilters: ["nova.scheduler.filters.all_filters","nova.scheduler.filters.pci_passthrough_filter.PciPassthroughFilter"]
+
+  # Number of VFs that needs to be configured for a physical interface
+  #NeutronSriovNumVFs: "ens20f2:4"
+
+  #NovaPCIPassthrough:
+  #  - devname: "ens20f2"
+  #    physical_network: "datacentre"
+  #  - address: "*:0a:00.*"
+  #  - address: ":0a:00."
+  #    physical_network: "datacentre"
+  #  - vendor_id: 1137
+  #    product_id: 0071
+  #  - vendor_id: 1137
+  #    product_id: 0071
+  #    address: "0000:0a:00.1"
+  #    physical_network: "datacentre"
