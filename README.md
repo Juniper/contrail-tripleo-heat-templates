@@ -692,10 +692,23 @@ openstack overcloud deploy --templates tripleo-heat-templates/ \
   -e tripleo-heat-templates/environments/contrail/contrail-tsn-servers.yaml
 ```
 
+
 # SR-IOV special
 
 If you are enabling SR-IOV on a system you should complete the following:
- 
+
+## enable the Intel Input-Output Memory Management Unit (IOMMU) on Linux
+
+For SR-IOV on compute nodes iommu should be enabled.
+
+```
+sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 intel_iommu=on iommu=pt"/g' -i /etc/default/grub ;
+grub2-mkconfig -o /etc/grub2.cfg
+reboot
+```
+
+## edit contrail-sriov.yaml file
+
 ```
 vi tripleo-heat-templates/environments/contrail/contrail-sriov.yaml
 ```

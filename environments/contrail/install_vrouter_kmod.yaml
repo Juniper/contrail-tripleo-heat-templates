@@ -152,6 +152,7 @@ resources:
             dpdk_hugepages=$dpdk_hugepages
             dpdk_coremask=$dpdk_coremask
             dpdk_driver=$dpdk_driver
+            sriov_on=$sriov_on
             if [[ ${contrail_repo} ]]; then
               cat <<EOF > /etc/yum.repos.d/contrail.repo
             [Contrail]
@@ -303,8 +304,12 @@ resources:
                   ip route add default via $def_gw
                 fi
               fi
-              if [[ ${dpdk_driver} == "vfio-pci" || ${sriov_on} == 'true' ]]; then
-                sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on iommu=pt"/g' -i /etc/default/grub ;
+              if [[ ${dpdk_driver} == "vfio-pci" || ${sriov_on} == 'True' ]]; then
+                if [[ ${dpdk_driver} == "vfio-pci" ]]; then
+                  sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on iommu=pt"/g' -i /etc/default/grub ;
+                else
+                  sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on"/g' -i /etc/default/grub ;
+                fi
                 grub2-mkconfig -o /etc/grub2.cfg
                 systemctl enable supervisor-vrouter
                 reboot
@@ -397,11 +402,13 @@ resources:
                   ip route add default via $def_gw
                 fi
               fi
-              if [[ ${sriov_on} == 'true' ]]; then
-                sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on iommu=pt"/g' -i /etc/default/grub ;
-                grub2-mkconfig -o /etc/grub2.cfg
-                systemctl enable supervisor-vrouter
-                reboot
+              if [[ ${sriov_on} == 'True' ]]; then
+                if ! grep -q 'intel_iommu=on' /etc/default/grub ; then
+                  sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on"/g' -i /etc/default/grub ;
+                  grub2-mkconfig -o /etc/grub2.cfg
+                fi
+                # reboot doesnot keep vhost0
+                # reboot
               fi
             fi
             echo finishing...
