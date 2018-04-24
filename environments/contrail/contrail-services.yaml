@@ -19,7 +19,7 @@ resource_registry:
   OS::TripleO::Services::ContrailDpdk: ../../puppet/services/network/contrail-dpdk.yaml
   OS::TripleO::Services::ComputeNeutronCorePluginContrail: ../../puppet/services/network/contrail-vrouter.yaml
   OS::TripleO::Services::NeutronCorePluginContrail: ../../puppet/services/network/contrail-neutron-plugin.yaml
-  OS::TripleO::NodeUserData: ../../extraconfig/all_nodes/contrail/enable_contrail_repo.yaml
+  OS::TripleO::NodeUserData: ../../extraconfig/all_nodes/contrail/contrail_extraconfig.yaml
   OS::TripleO::ContrailTsn::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
   OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml

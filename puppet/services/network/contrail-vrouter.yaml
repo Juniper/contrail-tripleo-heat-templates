@@ -54,6 +54,17 @@ parameters:
     description: List of Contrail Analytics IPs
     type: comma_delimited_list
     default: ''
+  ContrailSriovOn:
+    description: If SR-IOV is configured
+    type: boolean
+    default: false
+  NeutronSriovNumVFs:
+    description: >
+      Provide the list of VFs to be reserved for each SR-IOV interface.
+      Format "<interface_name1>:<numvfs1>,<interface_name2>:<numvfs2>"
+      Example "eth1:4096,eth2:128"
+    type: comma_delimited_list
+    default: ""
 
 resources:
   ContrailBase:
@@ -81,6 +92,8 @@ outputs:
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             contrail::vrouter::control_node_ips: {get_param: ContrailVrouterControlNodeIps}
             contrail::vrouter::analytics_node_ips: {get_param: ContrailVrouterAnalyticsNodeIps}
+            contrail::vrouter::sriov_on: {get_param: ContrailSriovOn}
+            tripleo::host::sriov::number_of_vfs: {get_param: NeutronSriovNumVFs}
             tripleo.contrail_vrouter.firewall_rules:
               '111 contrail_vrouter_8085':
                 dport: 8085

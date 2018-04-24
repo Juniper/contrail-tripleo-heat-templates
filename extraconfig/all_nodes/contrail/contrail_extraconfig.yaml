@@ -4,6 +4,10 @@ parameters:
   ContrailRepo:
     type: string
     default: 'http://192.168.24.1/contrail'
+  ContrailSriovOn:
+    description: If SR-IOV is configured
+    type: boolean
+    default: false
 
 resources:
   userdata:
@@ -20,6 +24,7 @@ resources:
           template: |
             #!/bin/bash
             contrail_repo=$contrail_repo
+            sriov_on=$sriov_on
             if [[ ${contrail_repo} ]]; then
                cat <<EOF > /etc/yum.repos.d/contrail.repo
             [Contrail]
@@ -33,8 +38,16 @@ resources:
               yum install -y contrail-tripleo-puppet puppet-contrail
               rsync -a /usr/share/contrail-tripleo-puppet/ /usr/share/openstack-puppet/modules/tripleo/
             fi
+            if [[ ${sriov_on} == 'True' ]]; then
+              if ! grep -q 'intel_iommu=on' /etc/default/grub ; then
+                sed 's/^\(GRUB_CMDLINE_LINUX=".*\)"/\1 $KERNEL_ARGS intel_iommu=on"/g' -i /etc/default/grub ;
+                grub2-mkconfig -o /etc/grub2.cfg
+                reboot
+              fi
+            fi
           params:
             $contrail_repo: {get_param: ContrailRepo}
+            $sriov_on: {get_param: ContrailSriovOn}
 
 outputs:
   # This means get_resource from the parent template will get the userdata, see:
