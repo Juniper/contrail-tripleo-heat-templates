@@ -109,7 +109,7 @@ vbmc start control_1
 undercloud_name=queensa
 export LIBGUESTFS_BACKEND=direct
 qemu-img create -f qcow2 /var/lib/libvirt/images/${undercloud_name}.qcow2 100G
-virt-resize --expand /dev/sda1 /root/rhel-server-7.4-x86_64-kvm.qcow2 /var/lib/libvirt/images/${undercloud_name}.qcow2
+virt-resize --expand /dev/sda1 /root/CentOS-7-x86_64-GenericCloud-1710.qcow2 /var/lib/libvirt/images/${undercloud_name}.qcow2
 virt-customize  -a /var/lib/libvirt/images/${undercloud_name}.qcow2 \
   --run-command 'xfs_growfs /' \
   --root-password password:contrail123 \
@@ -158,13 +158,9 @@ ssh ${undercloud_ip}
 hostnamectl set-hostname queensa.local
 hostnamectl set-hostname --transient queensa.local
 vi /etc/hosts
-yum localinstall -y http://satellite.englab.juniper.net/pub/katello-ca-consumer-latest.noarch.rpm
-subscription-manager register --activationkey=rhel-7-osp --org=Juniper
-yum install -y yum-utils
-yum-config-manager --enable rhelosp-rhel-7-server-opt
 tripeo_repos=`python -c 'import requests;r = requests.get("https://trunk.rdoproject.org/centos7-queens/current"); print r.text ' |grep python2-tripleo-repos|awk -F"href=\"" '{print $2}'|awk -F"\"" '{print $1}'`
 yum install -y https://trunk.rdoproject.org/centos7-queens/current/${tripeo_repos}
-tripleo-repos current-tripleo-dev
+tripleo-repos -b queens current
 yum install -y python-tripleoclient
 su - stack
 source stackrc

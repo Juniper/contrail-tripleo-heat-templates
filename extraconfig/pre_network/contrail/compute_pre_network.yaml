@@ -35,7 +35,7 @@ parameters:
   DockerContrailVrouterKernelInitImageName:
     description: image
     type: string
-    default: "contrail-agent-vrouter-init-kernel"
+    default: "contrail-vrouter-kernel-init"
 
 description: >
   This template installs the Contrail kernel module  packages in order
