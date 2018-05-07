@@ -170,9 +170,9 @@ openstack undercloud install
 
 ## forwarding
 ```
-iptables -A FORWARD -i br-ctlplane -o eth0 -j ACCEPT
-iptables -A FORWARD -i eth0 -o br-ctlplane -m state --state RELATED,ESTABLISHED -j ACCEPT
-iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -A FORWARD -i br-ctlplane -o eth0 -j ACCEPT
+sudo iptables -A FORWARD -i eth0 -o br-ctlplane -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ```
 
 ## set overcloud nameserver
@@ -188,6 +188,18 @@ sudo ip link set dev vlan720 up
 ```
 
 ## Overcloud image prep, build and upload
+### CentOS
+```
+mkdir images
+cd images
+curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/ironic-python-agent.tar
+curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/overcloud-full.tar
+tar xvf ironic-python-agent.tar
+tar xvf overcloud-full.tar
+openstack overcloud image upload
+```
+
+### RedHat
 ```
 export OS_YAML="/usr/share/openstack-tripleo-common/image-yaml/overcloud-images-rhel7.yaml"
 export DIB_YUM_REPO_CONF="/etc/yum.repos.d/delorean*"
@@ -205,6 +217,7 @@ openstack overcloud image upload
 
 ### create list with ironic nodes (adjust!!!)
 ```
+cd
 cat << EOM > ironic_list
 52:54:00:16:54:d8 control-1-at-5b3s30 10.87.64.31 control 16235
 52:54:00:2a:7d:99 compute-1-at-5b3s30 10.87.64.31 compute 16230
@@ -263,30 +276,26 @@ cp -r contrail-tripleo-heat-templates/* tripleo-heat-templates/
 newgrp docker
 ```
 
-### for stable
-```
-tripleo_tag=current-tripleo-rdo
-```
-
-### for testing
-```
-tripleo_tag=tripleo-ci-testing
-```
 ### Get and upload the containers
 ```
-tag=`openstack overcloud container image tag discover \
-     --image trunk.registry.rdoproject.org/master/centos-binary-base:${tripleo_tag} \
-     --tag-from-label rdo_version`
+openstack overcloud container image prepare \
+  --namespace docker.io/tripleoqueens \
+  --tag current-tripleo \
+  --tag-from-label rdo_version \
+  --output-env-file ~/docker_registry.yaml
+
+tag=`grep "docker.io/tripleoqueens" docker_registry.yaml |tail -1 |awk -F":" '{print $3}'`
 
 openstack overcloud container image prepare \
-  --namespace trunk.registry.rdoproject.org/master \
+  --namespace docker.io/tripleoqueens \
   --tag ${tag} \
   --push-destination 192.168.24.1:8787 \
   --output-env-file ~/docker_registry.yaml \
   --output-images-file ~/overcloud_containers.yaml
+
 openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
 ```
-The last command might need to be repeated multiple times (bug?).    
+The last command takes a while.
 
 ## overcloud config files
 ### nic templates
@@ -303,7 +312,6 @@ tripleo-heat-templates/environments/contrail/contrail-net.yaml
 ```
 tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ```
-
 ## deploy the stack
 ```
 openstack overcloud deploy --templates tripleo-heat-templates \
