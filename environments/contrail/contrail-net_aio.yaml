@@ -1,0 +1,32 @@
+resource_registry:
+  OS::TripleO::Controller::Net::SoftwareConfig: ../../network/config/contrail/controller-nic-config_aio.yaml
+  OS::TripleO::Compute::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-config.yaml
+
+parameter_defaults:
+  # Customize all these values to match the local environment
+  TenantNetCidr: 10.0.0.0/24
+  InternalApiNetCidr: 10.1.0.0/24
+  ExternalNetCidr: 10.2.0.0/24
+  StorageNetCidr: 10.3.0.0/24
+  StorageMgmtNetCidr: 10.4.0.0/24
+  # CIDR subnet mask length for provisioning network
+  ControlPlaneSubnetCidr: '24'
+  # Allocation pools
+  TenantAllocationPools: [{'start': '10.0.0.10', 'end': '10.0.0.200'}]
+  InternalApiAllocationPools: [{'start': '10.1.0.10', 'end': '10.1.0.200'}]
+  ExternalAllocationPools: [{'start': '10.2.0.10', 'end': '10.2.0.200'}]
+  StorageAllocationPools: [{'start': '10.3.0.10', 'end': '10.3.0.200'}]
+  StorageMgmtAllocationPools: [{'start': '10.4.0.10', 'end': '10.4.0.200'}]
+  # Routes
+  ControlPlaneDefaultRoute: 192.168.24.1
+  InternalApiDefaultRoute: 10.1.0.1
+  ExternalInterfaceDefaultRoute: 10.2.0.1
+  # Vlans
+  InternalApiNetworkVlanID: 710
+  ExternalNetworkVlanID: 720
+  StorageNetworkVlanID: 730
+  StorageMgmtNetworkVlanID: 740
+  # Services
+  EC2MetadataIp: 192.168.24.1  # Generally the IP of the Undercloud
+  DnsServers: ["10.84.5.100"]
+  NtpServer: 10.0.0.1

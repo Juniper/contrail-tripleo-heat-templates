@@ -7,7 +7,7 @@ parameters:
   DockerContrailVrouterAgentImageName:
     description: image
     type: string
-    default: "contrail-agent-vrouter"
+    default: "contrail-vrouter-agent"
   DockerContrailNovaPluginImageName:
     description: image
     type: string

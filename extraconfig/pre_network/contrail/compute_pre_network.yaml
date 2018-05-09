@@ -25,11 +25,11 @@ parameters:
   server:
     type: string
   ContrailRegistry:
-    default: 'opencontrailnightly'
+    default: 'michaelhenkel'
     description: Contrail Registry
     type: string
   ContrailImageTag:
-    default: 'latest'
+    default: 'queens-5.0.1-20180105-1209'
     description: Contrail container image tag
     type: string
   DockerContrailVrouterKernelInitImageName:
