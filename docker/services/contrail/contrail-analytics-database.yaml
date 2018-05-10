@@ -138,6 +138,9 @@ outputs:
                 - {get_attr: [ContainersCommon, volumes]}
                 -
                   - /var/log/contrail:/var/log/contrail
+                  - analytics_cassandra:/var/lib/cassandra/data
+            environment:
+              - "NODE_TYPE=database"
             env_file:
               - /etc/contrail/common_analytics_database.env
           contrail_analytics_zookeeper:
@@ -159,6 +162,10 @@ outputs:
                 - {get_attr: [ContainersCommon, volumes]}
                 -
                   - /var/log/contrail:/var/log/contrail
+                  - analytics_zookeeper:/data
+                  - analytics_zookeeper:/datalog
+            environment:
+              - "NODE_TYPE=database"
             env_file:
               - /etc/contrail/common_analytics_database.env
           contrail_analytics_kafka:
@@ -180,6 +187,8 @@ outputs:
                 - {get_attr: [ContainersCommon, volumes]}
                 -
                   - /var/log/contrail:/var/log/contrail
+            environment:
+              - "NODE_TYPE=database"
             env_file:
               - /etc/contrail/common_analytics_database.env
       host_prep_tasks:

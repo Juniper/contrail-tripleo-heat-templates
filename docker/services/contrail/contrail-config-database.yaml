@@ -89,6 +89,9 @@ outputs:
                 - {get_attr: [ContainersCommon, volumes]}
                 -
                   - /var/log/contrail:/var/log/contrail
+                  - config_cassandra:/var/lib/cassandra/data
+            environment:
+              - "NODE_TYPE=config"
             env_file:
               - /etc/contrail/common.env
           contrail_config_zookeeper:
@@ -110,8 +113,12 @@ outputs:
                 - {get_attr: [ContainersCommon, volumes]}
                 -
                   - /var/log/contrail:/var/log/contrail
+                  - config_zookeeper:/data
+                  - config_zookeeper:/datalog
             env_file:
               - /etc/contrail/common.env
+            environment:
+              - "NODE_TYPE=config"
           contrail_config_rabbitmq:
             image: &contrail_config_rabbitmq_image
               list_join:
@@ -133,6 +140,8 @@ outputs:
                   - /var/log/contrail:/var/log/contrail
             env_file:
               - /etc/contrail/common.env
+            environment:
+              - "NODE_TYPE=config"
       host_prep_tasks:
         - name: create contrail directories
           file: 
