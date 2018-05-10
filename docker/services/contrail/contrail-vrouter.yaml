@@ -108,7 +108,55 @@ outputs:
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             volumes:
               - vrouter_port_control:/opt/plugin/bin
+        step_4:
+          contrail_vrouter_agent_node_init:
+            image: &contrail_node_init_image
+              list_join:
+                - ''
+                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
+                  - '/'
+                  - {get_attr: [ContrailBase, role_data, contrail_node_init_image_name]}
+                  - ':'
+                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              - {get_attr: [ContrailBase, role_data, contrail_status_image]}
+            net: host
+            pid: host
+            privileged: true
+            detach: true
+            user: root
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                -
+                  - /usr/bin:/host/usr/bin
+                  - /etc/contrail/ssl:/etc/contrail/ssl
+                  - /etc/timezone:/etc/timezone
+                  - /var/log/contrail:/var/log/contrail
+                  - /var/run/docker.sock:/var/run/docker.sock
+                  - /var/crashes:/var/crashes
+            env_file:
+              - /etc/contrail/common_vrouter.env
         step_5:
+          contrail_vrouter_agent_nodemgr:
+            image: &contrail_nodemgr_image
+              list_join:
+                - ''
+                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
+                  - '/'
+                  - {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                  - ':'
+                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              - NODE_TYPE=vrouter
+            net: host
+            detach: true
+            user: root
+            restart: always
+            volumes_from:
+              - contrail_vrouter_agent_node_init
+            env_file:
+              - /etc/contrail/common_vrouter.env
           contrail_vrouter_agent:
             image: &contrail_vrouter_agent_image
               list_join:

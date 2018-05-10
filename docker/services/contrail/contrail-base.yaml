@@ -98,6 +98,18 @@ parameters:
     default: ''
     description: Contrail Webui Virtual IP address
     type: string
+  DockerContrailNodeInitImageName:
+    description: image
+    type: string
+    default: "contrail-node-init"
+  DockerContrailNodemgrImageName:
+    description: image
+    type: string
+    default: "contrail-nodemgr"
+  DockerContrailStatusImageName:
+    description: image
+    type: string
+    default: "contrail-status"
   RabbitPassword:
     description: The password for RabbitMQ
     type: string
@@ -123,6 +135,17 @@ outputs:
       service_name: contrail_base
       contrail_registry: {get_param: ContrailRegistry}
       contrail_imagetag: {get_param: ContrailImageTag}
+      contrail_node_init_image_name: {get_param: DockerContrailNodeInitImageName}
+      contrail_nodemgr_image_name: {get_param: DockerContrailNodemgrImageName}
+      contrail_status_image:
+        list_join:
+          - ''
+          - - 'CONTRAIL_STATUS_IMAGE='
+          - - {get_param: ContrailRegistry}
+            - '/'
+            - {get_param: DockerContrailStatusImageName}
+            - ':'
+            - {get_param: ContrailImageTag}
       config_settings:
         map_merge:
         - contrail::aaa_mode: {get_param: AAAMode}
