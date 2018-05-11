@@ -222,6 +222,8 @@ outputs:
           lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*CASSANDRA_SEEDS$' line="CASSANDRA_SEEDS={{ contrail_analytics_database_node_ips_string }}" state=present
         - name: write contrail analytics zk node ips to environment file
           lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*ZOOKEEPER_NODES$' line="ZOOKEEPER_NODES={{ contrail_analytics_database_node_ips_string }}" state=present
+        - name: write contrail analytics zk node ips to environment file
+          lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*ZOOKEEPER_ANALYTICS_NODES$' line="ZOOKEEPER_ANALYTICS_NODES={{ contrail_analytics_database_node_ips_string }}" state=present
         - name: write contrail config Kafka node ips to environment file
           lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*KAFKA_NODES$' line="KAFKA_NODES={{ contrail_config_database_node_ips_string }}" state=present
         - name: write remaining contrail config env cars
