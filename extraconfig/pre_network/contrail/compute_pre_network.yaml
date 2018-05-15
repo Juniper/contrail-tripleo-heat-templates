@@ -24,6 +24,10 @@ parameters:
       toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
+  ContrailRegistryInsecure:
+    default: false
+    description: Contrail Registry
+    type: boolean
   ContrailRegistry:
     default: 'michaelhenkel'
     description: Contrail Registry
@@ -57,6 +61,7 @@ resources:
       server:  {get_param: server}
       config: {get_resource: ContrailVrouterModuleConfig}
       input_values:
+        contrail_registry_insecure: {get_param: ContrailRegistryInsecure}
         contrail_registry: {get_param: ContrailRegistry}
         contrail_imagetag: {get_param: ContrailImageTag}
         contrail_vrouter_init_image: {get_param: DockerContrailVrouterKernelInitImageName}
@@ -79,9 +84,27 @@ resources:
         exec 2>&1
         echo "=================== $(date) ==================="
         set -xv
+        contrail_registry_insecure=$contrail_registry_insecure
         contrail_registry=$contrail_registry
         contrail_imagetag=$contrail_imagetag
         contrail_vrouter_init_image=$contrail_vrouter_init_image
+        if [[ ${contrail_registry_insecure} == 'True' ]]; then
+          found=0
+          registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
+          for reg in $registries; do if [[ ${reg} == ${contrail_registry} ]]; then found=1; fi; done
+          if [[ ${found} -eq 0 ]]; then
+            registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
+            registry_string="${registry_string} --insecure-registry ${contrail_registry}"
+            complete_string="INSECURE_REGISTRY=\"${registry_string}\""
+            echo ${complete_string}
+            if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
+              sed "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
+            else
+              echo ${complete_string} >> /etc/sysconfig/docker
+            fi
+            systemctl restart docker
+          fi
+        fi
         mkdir /var/crashes
         chmod -R 755 /var/crashes
         ulimit -c unlimited
