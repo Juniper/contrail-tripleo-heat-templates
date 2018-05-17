@@ -285,6 +285,9 @@ outputs:
         - name: get keystone admin tenant
           shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_tenant_name
           register: keystone_admin_tenant
+        - name: get nova api vip
+          shell: hiera -c /etc/puppet/hiera.yaml nova_api_vip
+          register: nova_api_vip
         - name: get contrail config database node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
           register: contrail_config_database_node_ips_list
@@ -334,6 +337,7 @@ outputs:
             - KEYSTONE_AUTH_ADMIN_USER={{ keystone_admin_user.stdout }}
             - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
             - KEYSTONE_AUTH_URL_VERSION=/v3
+            - IPFABRIC_SERVICE_HOST={{ nova_api_vip.stdout }}
             
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]

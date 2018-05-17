@@ -151,27 +151,6 @@ outputs:
                   - /var/log/contrail:/var/log/contrail
             env_file:
               - /etc/contrail/common_analytics.env
-          contrail_analytics_topology:
-            image: &contrail_analytics_topology_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailAnalyticsTopologyImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
-            env_file:
-              - /etc/contrail/common_analytics.env
           contrail_analytics_queryengine:
             image: &contrail_analytics_queryengine_image
               list_join:
@@ -221,27 +200,6 @@ outputs:
                 - - {get_attr: [ContrailBase, role_data, contrail_registry]}
                   - '/'
                   - {get_param: DockerContrailAnalyticsAlarmGenImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
-            env_file:
-              - /etc/contrail/common_analytics.env
-          contrail_analytics_snmp_collector:
-            image: &contrail_analytics_snmp_collector_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             net: host
