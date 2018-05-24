@@ -105,17 +105,31 @@ vbmc start control_1
 ```
 
 ## create undercloud VM on KVM host hosting the undercloud
+### CentOS 7.5
 ```
+mkdir images 
+curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz -o images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
+zx -d images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
+cloud_image=images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2
+```
+### RHEL 7.5
+Download from RedHat portal
+```
+cloud_image=images/rhel-server-7.5-beta-1-x86_64-kvm.qcow2
+```
+```
+root_password=contrail123
+stack_password=contrail123
 undercloud_name=queensa
 export LIBGUESTFS_BACKEND=direct
 qemu-img create -f qcow2 /var/lib/libvirt/images/${undercloud_name}.qcow2 100G
-virt-resize --expand /dev/sda1 /root/CentOS-7-x86_64-GenericCloud-1710.qcow2 /var/lib/libvirt/images/${undercloud_name}.qcow2
+virt-resize --expand /dev/sda1 ${cloud_image} /var/lib/libvirt/images/${undercloud_name}.qcow2
 virt-customize  -a /var/lib/libvirt/images/${undercloud_name}.qcow2 \
   --run-command 'xfs_growfs /' \
-  --root-password password:contrail123 \
+  --root-password password:${root_password} \
   --hostname ${undercloud_name}.local \
   --run-command 'useradd stack' \
-  --password stack:password:contrail123 \
+  --password stack:password:${stack_password} \
   --run-command 'echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack' \
   --chmod 0440:/etc/sudoers.d/stack \
   --run-command 'sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config' \
@@ -155,12 +169,33 @@ ssh ${undercloud_ip}
 
 ## Undercloud installation
 ```
-hostnamectl set-hostname queensa.local
-hostnamectl set-hostname --transient queensa.local
-vi /etc/hosts
+undercloud_hostname=queensa
+hostnamectl set-hostname ${undercloud_hostname}.local
+hostnamectl set-hostname --transient ${undercloud_hostname}.local
+```
+Get the undercloud ip and set the correct entries in /etc/hosts, ie:    
+```
+undercloud_ip=192.168.122.52
+echo ${undercloud_ip} ${undercloud_hostname}.local ${undercloud_hostname} >> /etc/hosts
+```
+### tripleo queens/current
+```
 tripeo_repos=`python -c 'import requests;r = requests.get("https://trunk.rdoproject.org/centos7-queens/current"); print r.text ' |grep python2-tripleo-repos|awk -F"href=\"" '{print $2}'|awk -F"\"" '{print $1}'`
 yum install -y https://trunk.rdoproject.org/centos7-queens/current/${tripeo_repos}
 tripleo-repos -b queens current
+```
+
+### OSP13-beta
+Register with Satellite (can be done with CDN as well)    
+```
+satellite_fqdn=satellite.englab.juniper.net
+act_key=osp13
+org=Juniper
+yum localinstall -y http://${satellite_fqdn}/pub/katello-ca-consumer-latest.noarch.rpm
+subscription-manager register --activationkey=${act_key} --org=${org}
+```
+
+```
 yum install -y python-tripleoclient
 su - stack
 source stackrc
@@ -187,31 +222,30 @@ sudo ip addr add 10.2.0.254/24 dev vlan720
 sudo ip link set dev vlan720 up
 ```
 
-## Overcloud image prep, build and upload
-### CentOS
+## Overcloud image download and upload to glance
 ```
 mkdir images
 cd images
+```
+
+### tripleo current
+
+```
 curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/ironic-python-agent.tar
 curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/overcloud-full.tar
 tar xvf ironic-python-agent.tar
 tar xvf overcloud-full.tar
-openstack overcloud image upload
 ```
 
-### RedHat
+### OSP13-beta
 ```
-export OS_YAML="/usr/share/openstack-tripleo-common/image-yaml/overcloud-images-rhel7.yaml"
-export DIB_YUM_REPO_CONF="/etc/yum.repos.d/delorean*"
-export DIB_LOCAL_IMAGE=rhel-server-7.4-x86_64-kvm.qcow2
-export REG_METHOD=satellite
-export REG_SAT_URL="http://satellite.englab.juniper.net"
-export REG_ORG="Juniper"
-export REG_ACTIVATION_KEY="rhel-7-osp"
-export REG_REPOS="rhel-7-server-rpms rhel-7-server-extras-rpms rhel-ha-for-rhel-7-server-rpms rhel-7-server-optional-rpms"
-openstack overcloud image build --config-file /usr/share/openstack-tripleo-common/image-yaml/overcloud-images.yaml --config-file $OS_YAML
-source stackrc
-openstack overcloud image upload
+sudo yum install rhosp-director-images rhosp-director-images-ipa
+for i in /usr/share/rhosp-director-images/overcloud-full-latest-13.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-13.0.tar ; do tar -xvf $i; done
+```
+
+```
+cd
+openstack overcloud image upload --image-path /home/stack/images/
 ```
 ## Ironic preparation
 
@@ -277,6 +311,7 @@ newgrp docker
 ```
 
 ### Get and upload the containers
+#### tripleo
 ```
 openstack overcloud container image prepare \
   --namespace docker.io/tripleoqueens \
@@ -292,7 +327,20 @@ openstack overcloud container image prepare \
   --push-destination 192.168.24.1:8787 \
   --output-env-file ~/docker_registry.yaml \
   --output-images-file ~/overcloud_containers.yaml
+```
+#### OSP13-beta
+```
+openstack overcloud container image prepare \
+ --push-destination=192.168.24.1:8787  \
+ --tag-from-label {version}-{release} \
+ --output-images-file=/home/stack/local_registry_images.yaml  \
+ --namespace=registry.access.redhat.com/rhosp13-beta  \
+ --prefix=openstack-  \
+ --tag-from-label {version}-{release}  \
+ --output-env-file=/home/stack/overcloud_images.yaml
+```
 
+```
 openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
 ```
 The last command takes a while.
@@ -312,13 +360,15 @@ tripleo-heat-templates/environments/contrail/contrail-net.yaml
 ```
 tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ```
+#### Patch tripleoclient for OSP13-beta
+see https://review.openstack.org/#/c/564692/     
+
 ## deploy the stack
 ```
 openstack overcloud deploy --templates tripleo-heat-templates \
   -e docker_registry.yaml \
   -e tripleo-heat-templates/environments/network-isolation.yaml \
   -e tripleo-heat-templates/environments/docker.yaml \
-  -e tripleo-heat-templates/extraconfig/pre_deploy/rhel-registration/environment-rhel-registration.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
   -e tripleo-heat-templates/environments/contrail/contrail-net.yaml \
   --roles-file tripleo-heat-templates/roles_data_contrail_aio.yaml
