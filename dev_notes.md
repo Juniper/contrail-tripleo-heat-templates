@@ -88,7 +88,7 @@
 # on all KVM hosts
 
 ## prepare virtual bmc (on all hosts hosting overcloud nodes)
-```
+```bash
 vbmc add compute_1 --port 16230 --username admin --password contrail123
 vbmc add compute_2 --port 16231 --username admin --password contrail123
 vbmc add contrail-analytics-database_1 --port 16232 --username admin --password contrail123
