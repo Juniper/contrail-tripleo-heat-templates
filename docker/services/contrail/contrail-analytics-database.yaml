@@ -96,7 +96,7 @@ outputs:
                   - /var/run/docker.sock:/var/run/docker.sock
                   - /var/crashes:/var/crashes
             env_file:
-              - /etc/contrail/common.env
+              - /etc/contrail/common_analytics_database.env
         step_5:
           contrail_analytics_database_nodemgr:
             image: &contrail_nodemgr_image
@@ -118,7 +118,7 @@ outputs:
             volumes_from:
               - contrail_analytics_database_node_init
             env_file:
-              - /etc/contrail/common.env
+              - /etc/contrail/common_analytics_database.env
           contrail_analytics_database:
             image: &contrail_analytics_database_image
               list_join:
@@ -210,6 +210,15 @@ outputs:
             content: ""
           when: not p.stat.exists
         - name: get contrail config database node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
+          register: contrail_config_database_node_ips_list
+        - name: turn contrail config db ips into json
+          set_fact:
+            contrail_config_database_node_ips_json: "{{ contrail_config_database_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_config_database_node_ips_string: "{{ contrail_config_database_node_ips_json | join(',') }}"
+        - name: get contrail analytics database node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_database_node_ips
           register: contrail_analytics_database_node_ips_list
         - name: turn contrail analytics database ips into json
