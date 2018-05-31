@@ -107,7 +107,7 @@ vbmc start control_1
 ## create undercloud VM on KVM host hosting the undercloud
 ### CentOS 7.5
 ```
-mkdir images 
+mkdir images
 curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz -o images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
 zx -d images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
 cloud_image=images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2
@@ -173,7 +173,7 @@ undercloud_hostname=queensa
 hostnamectl set-hostname ${undercloud_hostname}.local
 hostnamectl set-hostname --transient ${undercloud_hostname}.local
 ```
-Get the undercloud ip and set the correct entries in /etc/hosts, ie:    
+Get the undercloud ip and set the correct entries in /etc/hosts, ie:
 ```
 undercloud_ip=192.168.122.52
 echo ${undercloud_ip} ${undercloud_hostname}.local ${undercloud_hostname} >> /etc/hosts
@@ -186,7 +186,7 @@ tripleo-repos -b queens current
 ```
 
 ### OSP13-beta
-Register with Satellite (can be done with CDN as well)    
+Register with Satellite (can be done with CDN as well)
 ```
 satellite_fqdn=satellite.englab.juniper.net
 act_key=osp13
@@ -361,7 +361,7 @@ tripleo-heat-templates/environments/contrail/contrail-net.yaml
 tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ```
 #### Patch tripleoclient for OSP13-beta
-see https://review.openstack.org/#/c/564692/     
+see https://review.openstack.org/#/c/564692/
 
 ## deploy the stack
 ```

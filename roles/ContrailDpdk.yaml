@@ -1,0 +1,61 @@
+###############################################################################
+# Role: ContrailDpdk                                                          #
+###############################################################################
+- name: ContrailDpdk
+  description: |
+    Contrail Dpdk Node role
+  CountDefault: 1
+  tags:
+    - contraildpdk
+  networks:
+    - InternalApi
+    - Tenant
+    - Storage
+  HostnameFormatDefault: '%stackname%-contraildpdk-%index%'
+  # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
+  # Set uses_deprecated_params to True if any deprecated params are used.
+  uses_deprecated_params: True
+  deprecated_param_image: 'ContrailDpdkImage'
+  deprecated_param_extraconfig: 'ContrailDpdkExtraConfig'
+  deprecated_param_metadata: 'NovaComputeServerMetadata'
+  deprecated_param_scheduler_hints: 'NovaComputeSchedulerHints'
+  deprecated_param_ips: 'NovaComputeIPs'
+  deprecated_server_resource_name: 'NovaCompute'
+  deprecated_nic_config_name: 'compute.yaml'
+  disable_upgrade_deployment: True
+  ServicesDefault:
+    - OS::TripleO::Services::Aide
+    - OS::TripleO::Services::AuditD
+    - OS::TripleO::Services::CACerts
+    - OS::TripleO::Services::CephClient
+    - OS::TripleO::Services::CephExternal
+    - OS::TripleO::Services::CertmongerUser
+    - OS::TripleO::Services::Collectd
+    - OS::TripleO::Services::ContrailDpdk
+    - OS::TripleO::Services::ComputeCeilometerAgent
+    - OS::TripleO::Services::ComputeNeutronL3Agent
+    - OS::TripleO::Services::ComputeNeutronMetadataAgent
+    - OS::TripleO::Services::Docker
+    - OS::TripleO::Services::Fluentd
+    - OS::TripleO::Services::Ipsec
+    - OS::TripleO::Services::Iscsid
+    - OS::TripleO::Services::Kernel
+    - OS::TripleO::Services::LoginDefs
+    - OS::TripleO::Services::MySQLClient
+    - OS::TripleO::Services::NovaCompute
+    - OS::TripleO::Services::NovaLibvirt
+    - OS::TripleO::Services::NovaMigrationTarget
+    - OS::TripleO::Services::Ntp
+    - OS::TripleO::Services::ContainersLogrotateCrond
+    - OS::TripleO::Services::Rhsm
+    - OS::TripleO::Services::RsyslogSidecar
+    - OS::TripleO::Services::Securetty
+    - OS::TripleO::Services::SensuClient
+    - OS::TripleO::Services::SkydiveAgent
+    - OS::TripleO::Services::Snmp
+    - OS::TripleO::Services::Sshd
+    - OS::TripleO::Services::Timezone
+    - OS::TripleO::Services::TripleoFirewall
+    - OS::TripleO::Services::TripleoPackages
+    - OS::TripleO::Services::Tuned
+    - OS::TripleO::Services::Ptp

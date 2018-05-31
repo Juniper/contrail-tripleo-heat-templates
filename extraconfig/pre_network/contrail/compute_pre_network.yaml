@@ -5,9 +5,6 @@ heat_template_version: queens
 # in the resource_registry instead, if you want to override the default
 # and/or share values with other templates in the tree.
 parameters:
-  ContrailRepo:
-    type: string
-    default: ''
   RoleParameters:
     type: json
     description: Role Specific parameters
@@ -40,6 +37,10 @@ parameters:
     description: image
     type: string
     default: "contrail-vrouter-kernel-init"
+  DockerContrailVrouterAgentContainerName:
+    description: image
+    type: string
+    default: "contrail-vrouter-agent"
 
 description: >
   This template installs the Contrail kernel module  packages in order
@@ -65,6 +66,7 @@ resources:
         contrail_registry: {get_param: ContrailRegistry}
         contrail_imagetag: {get_param: ContrailImageTag}
         contrail_vrouter_init_image: {get_param: DockerContrailVrouterKernelInitImageName}
+        contrail_vrouter_agent_container_name: {get_param: DockerContrailVrouterAgentContainerName}
       actions:
         if:
           - deployment_actions_empty
@@ -76,7 +78,11 @@ resources:
     properties:
       group: script
       inputs:
-      - name: contrail_repo
+      - name: contrail_registry_insecure
+      - name: contrail_registry
+      - name: contrail_imagetag
+      - name: contrail_vrouter_init_image
+      - name: contrail_vrouter_agent_container_name
       config: |
         #!/bin/bash
         export LOGFILE=/tmp/contrail_trace_full.txt
@@ -112,19 +118,11 @@ resources:
         sysctl -p
         systemctl start docker
         docker run \
+            --rm \
             --privileged \
-            --name vrouter-kernel-init \
-            -v /usr/src:/usr/src \
-            -v /lib/modules:/lib/modules \
+            -e "CONTRAIL_VROUTER_AGENT_CONTAINER_NAME=${contrail_vrouter_agent_container_name}" \
+            --name $contrail_vrouter_init_image \
             -v /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts \
+            -v /lib/modules:/lib/modules \
             -v /bin:/host/bin \
             ${contrail_registry}/${contrail_vrouter_init_image}:${contrail_imagetag}
-        #docker rm -f vrouter-kernel-init
-
-#outputs:
-#  # This means get_resource from the parent template will get the userdata, see:
-#  # http://docs.openstack.org/developer/heat/template_guide/composition.html#making-your-template-resource-more-transparent
-#  # Note this is new-for-kilo, an alternative is returning a value then using
-#  # get_attr in the parent template instead.
-#  OS::stack_id:
-#    value: {get_resource: userdata}
