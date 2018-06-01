@@ -97,7 +97,7 @@ outputs:
                   - /var/run/docker.sock:/var/run/docker.sock
                   - /var/crashes:/var/crashes
             env_file:
-              - /etc/contrail/common_config.env
+              - /etc/contrail/common_control.env
         step_5:
           contrail_control_nodemgr:
             image: &contrail_nodemgr_image
@@ -153,7 +153,7 @@ outputs:
             detach: true
             user: root
             restart: always
-            volumes_from: 
+            volumes_from:
               - contrail_control_dns
             env_file:
               - /etc/contrail/common_control.env
@@ -181,7 +181,7 @@ outputs:
               - /etc/contrail/common_control.env
       host_prep_tasks:
         - name: create contrail directories
-          file: 
+          file:
             path: "{{ item }}"
             state: directory
             recurse: yes
@@ -193,7 +193,7 @@ outputs:
             path: /etc/contrail/common_control.env
           register: p
         - name: create /etc/contrail/common_control.env
-          copy: 
+          copy:
             dest: /etc/contrail/common_control.env
             content: ""
           when: not p.stat.exists
@@ -238,7 +238,7 @@ outputs:
             contrail_config_node_ips_json: "{{ contrail_config_node_ips_list.stdout | from_json }}"
         - name: turn json into comma separated string
           set_fact:
-            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}" 
+            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}"
         - name: get contrail analytics node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
           register: contrail_analytics_node_ips_list
@@ -271,6 +271,6 @@ outputs:
             - KEYSTONE_AUTH_ADMIN_PASSWORD={{ keystone_admin_password.stdout }}
             - KEYSTONE_AUTH_ADMIN_USER={{ keystone_admin_user.stdout }}
             - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
-            
+
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
