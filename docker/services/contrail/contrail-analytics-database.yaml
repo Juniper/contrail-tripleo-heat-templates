@@ -96,7 +96,7 @@ outputs:
                   - /var/run/docker.sock:/var/run/docker.sock
                   - /var/crashes:/var/crashes
             env_file:
-              - /etc/contrail/common.env
+              - /etc/contrail/common_analytics_database.env
         step_5:
           contrail_analytics_database_nodemgr:
             image: &contrail_nodemgr_image
@@ -118,7 +118,7 @@ outputs:
             volumes_from:
               - contrail_analytics_database_node_init
             env_file:
-              - /etc/contrail/common.env
+              - /etc/contrail/common_analytics_database.env
           contrail_analytics_database:
             image: &contrail_analytics_database_image
               list_join:
@@ -193,7 +193,7 @@ outputs:
               - /etc/contrail/common_analytics_database.env
       host_prep_tasks:
         - name: create contrail directories
-          file: 
+          file:
             path: "{{ item }}"
             state: directory
             recurse: yes
@@ -205,11 +205,11 @@ outputs:
             path: /etc/contrail/common_analytics_database.env
           register: p
         - name: create /etc/contrail/common_analytics_database.env
-          copy: 
+          copy:
             dest: /etc/contrail/common_analytics_database.env
             content: ""
           when: not p.stat.exists
-        - name: get contrail config database node ips
+        - name: get contrail analytics database node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_database_node_ips
           register: contrail_analytics_database_node_ips_list
         - name: turn contrail analytics database ips into json
@@ -217,7 +217,7 @@ outputs:
             contrail_analytics_database_node_ips_json: "{{ contrail_analytics_database_node_ips_list.stdout | from_json }}"
         - name: turn json into comma separated string
           set_fact:
-            contrail_analytics_database_node_ips_string: "{{ contrail_analytics_database_node_ips_json | join(',') }}" 
+            contrail_analytics_database_node_ips_string: "{{ contrail_analytics_database_node_ips_json | join(',') }}"
         - name: write contrail analytics db node ips to environment file
           lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*CASSANDRA_SEEDS$' line="CASSANDRA_SEEDS={{ contrail_analytics_database_node_ips_string }}" state=present
         - name: write contrail analytics zk node ips to environment file
@@ -225,7 +225,7 @@ outputs:
         - name: write contrail analytics zk node ips to environment file
           lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*ZOOKEEPER_ANALYTICS_NODES$' line="ZOOKEEPER_ANALYTICS_NODES={{ contrail_analytics_database_node_ips_string }}" state=present
         - name: write contrail config Kafka node ips to environment file
-          lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*KAFKA_NODES$' line="KAFKA_NODES={{ contrail_config_database_node_ips_string }}" state=present
+          lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*KAFKA_NODES$' line="KAFKA_NODES={{ contrail_analytics_database_node_ips_string }}" state=present
         - name: write remaining contrail config env cars
           lineinfile: dest=/etc/contrail/common_analytics_database.env line="{{ item }}" state=present
           with_items:
