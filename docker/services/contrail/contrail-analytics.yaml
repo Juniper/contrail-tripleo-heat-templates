@@ -56,10 +56,8 @@ parameters:
     type: json
 
 resources:
-
   ContainersCommon:
     type: ../containers-common.yaml
-
 
   ContrailBase:
     type: contrail-base.yaml

@@ -60,11 +60,12 @@ parameters:
     description: Specifies the default CRL PEM file to use for revocation if
                  TLS is used for services in the internal network.
 
-resources:
+conditions:
+  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
+resources:
   ContainersCommon:
     type: ../containers-common.yaml
-
 
   ContrailBase:
     type: contrail-base.yaml
@@ -76,8 +77,6 @@ resources:
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
 
-conditions:
-  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 outputs:
   role_data:

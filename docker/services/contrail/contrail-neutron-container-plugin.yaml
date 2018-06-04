@@ -55,7 +55,6 @@ parameters:
     default: 'neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2'
 
 resources:
-
   ContainersCommon:
     type: ../containers-common.yaml
 

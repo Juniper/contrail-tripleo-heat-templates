@@ -44,10 +44,8 @@ parameters:
     type: json
 
 resources:
-
   ContainersCommon:
     type: ../containers-common.yaml
-
 
   ContrailBase:
     type: contrail-base.yaml
@@ -144,7 +142,7 @@ outputs:
               - "NODE_TYPE=config"
       host_prep_tasks:
         - name: create contrail directories
-          file: 
+          file:
             path: "{{ item }}"
             state: directory
             recurse: yes
@@ -156,7 +154,7 @@ outputs:
             path: /etc/contrail/common.env
           register: p
         - name: create /etc/contrail/common.env
-          copy: 
+          copy:
             dest: /etc/contrail/common.env
             content: ""
           when: not p.stat.exists
@@ -168,7 +166,7 @@ outputs:
             contrail_config_database_node_ips_json: "{{ contrail_config_database_node_ips_list.stdout | from_json }}"
         - name: turn json into comma separated string
           set_fact:
-            contrail_config_database_node_ips_string: "{{ contrail_config_database_node_ips_json | join(',') }}" 
+            contrail_config_database_node_ips_string: "{{ contrail_config_database_node_ips_json | join(',') }}"
         - name: write contrail config db node ips to environment file
           lineinfile: dest=/etc/contrail/common.env regexp='.*CASSANDRA_SEEDS$' line="CASSANDRA_SEEDS={{ contrail_config_database_node_ips_string }}" state=present
         - name: write contrail config zk node ips to environment file
