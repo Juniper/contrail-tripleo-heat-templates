@@ -284,7 +284,7 @@ DEPLOY_KERNEL=$(openstack image show bm-deploy-kernel -f value -c id)
 DEPLOY_RAMDISK=$(openstack image show bm-deploy-ramdisk -f value -c id)
 for i in `openstack baremetal node list -c UUID -f value`; do openstack baremetal node set $i --driver-info deploy_kernel=$DEPLOY_KERNEL --driver-info deploy_ramdisk=$DEPLOY_RAMDISK; done
 for i in `openstack baremetal node list -c UUID -f value`; do openstack baremetal node show $i -c properties -f value; done
-```
+ ```
 
 ### introspect the nodes
 ```
@@ -315,7 +315,7 @@ newgrp docker
 
 ```
 openstack overcloud container image prepare \
-  --namespace docker.io/tripleoqueens \
+   --namespace docker.io/tripleoqueens \
 #  --tag current-tripleo \
   --tag-from-label rdo_version \
   --output-env-file ~/docker_registry.yaml
@@ -327,8 +327,7 @@ openstack overcloud container image prepare \
   --tag ${tag} \
   --push-destination 192.168.24.1:8787 \
   --output-env-file ~/docker_registry.yaml \
-
---output-images-file ~/overcloud_containers.yaml
+  --output-images-file ~/overcloud_containers.yaml
 ```
 openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
 #### OSP13-beta
