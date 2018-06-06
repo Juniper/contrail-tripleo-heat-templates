@@ -312,10 +312,11 @@ newgrp docker
 
 ### Get and upload the containers
 #### tripleo
+
 ```
 openstack overcloud container image prepare \
   --namespace docker.io/tripleoqueens \
-  --tag current-tripleo \
+#  --tag current-tripleo \
   --tag-from-label rdo_version \
   --output-env-file ~/docker_registry.yaml
 
@@ -326,7 +327,8 @@ openstack overcloud container image prepare \
   --tag ${tag} \
   --push-destination 192.168.24.1:8787 \
   --output-env-file ~/docker_registry.yaml \
-  --output-images-file ~/overcloud_containers.yaml
+
+--output-images-file ~/overcloud_containers.yaml
 ```
 openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
 #### OSP13-beta
@@ -364,7 +366,9 @@ tripleo-heat-templates/environments/contrail/contrail-services.yaml
 #### Patch tripleoclient for OSP13-beta
 see https://review.openstack.org/#/c/564692/
 
-## deploy the stack
+### deploy the stack
+
+##tripleo
 ```
 openstack overcloud deploy --templates tripleo-heat-templates \
   -e docker_registry.yaml \
@@ -374,6 +378,13 @@ openstack overcloud deploy --templates tripleo-heat-templates \
   -e tripleo-heat-templates/environments/contrail/contrail-net.yaml \
   --roles-file tripleo-heat-templates/roles_data_contrail_aio.yaml
 ```
+##  OSP13-beta 
+openstack overcloud deploy --templates tripleo-heat-templates \
+  -e overcloud_images.yaml \
+  -e tripleo-heat-templates/environments/network-isolation.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
+  -e tripleo-heat-templates/environments/contrail/contrail-net.yaml \
+  --roles-file tripleo-heat-templates/roles_data_contrail_aio.yaml
 
 # quick VM start
 ```
