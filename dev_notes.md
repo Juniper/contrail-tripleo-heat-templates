@@ -328,6 +328,7 @@ openstack overcloud container image prepare \
   --output-env-file ~/docker_registry.yaml \
   --output-images-file ~/overcloud_containers.yaml
 ```
+openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
 #### OSP13-beta
 ```
 openstack overcloud container image prepare \
@@ -341,7 +342,7 @@ openstack overcloud container image prepare \
 ```
 
 ```
-openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
+openstack overcloud container image upload --config-file ~/overcloud_images.yaml
 ```
 The last command takes a while.
 
