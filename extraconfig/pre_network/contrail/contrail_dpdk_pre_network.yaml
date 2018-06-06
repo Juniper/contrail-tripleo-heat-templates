@@ -62,7 +62,6 @@ conditions:
       - []
 
 resources:
-
   ContrailVrouterDpdkModuleDeployment:
     type: OS::Heat::SoftwareDeployment
     properties:

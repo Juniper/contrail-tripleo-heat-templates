@@ -4,6 +4,12 @@ description: >
   Contrail containerized Config Databse service
 
 parameters:
+  ContrailAnalyticsDBMinDiskGB:
+    description:  The min size for Contrail Analytics DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
   DockerContrailCassandraImageName:
     description: image
     type: string
@@ -43,11 +49,12 @@ parameters:
     description: Parameters specific to the role
     type: json
 
-resources:
+conditions:
+  contrail_analyticsdb_min_disk_gb_unset: {equals : [{get_param: ContrailAnalyticsDBMinDiskGB}, '']}
 
+resources:
   ContainersCommon:
     type: ../containers-common.yaml
-
 
   ContrailBase:
     type: contrail-base.yaml
@@ -108,9 +115,17 @@ outputs:
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             environment:
-              - NODE_TYPE=database
-              - CASSANDRA_CQL_PORT=9042
-              - CASSANDRA_JMX_LOCAL_PORT=7200
+              list_concat:
+                - if:
+                  - contrail_analyticsdb_min_disk_gb_unset
+                  - []
+                  - - list_join:
+                      - ''
+                      - - 'DATABASE_NODEMGR__DEFAULTS__minimum_diskGB='
+                        - {get_param: ContrailAnalyticsDBMinDiskGB}
+                - - NODE_TYPE=database
+                  - CASSANDRA_CQL_PORT=9042
+                  - CASSANDRA_JMX_LOCAL_PORT=7200
             net: host
             detach: true
             user: root

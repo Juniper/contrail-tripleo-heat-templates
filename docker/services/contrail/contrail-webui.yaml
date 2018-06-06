@@ -56,11 +56,12 @@ parameters:
     description: Specifies the default CRL PEM file to use for revocation if
                  TLS is used for services in the internal network.
 
-resources:
+conditions:
+  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
+resources:
   ContainersCommon:
     type: ../containers-common.yaml
-
 
   ContrailBase:
     type: contrail-base.yaml
@@ -71,9 +72,6 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
-
-conditions:
-  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 outputs:
   role_data:
@@ -174,7 +172,7 @@ outputs:
               - /etc/contrail/common_webui.env
       host_prep_tasks:
         - name: create contrail directories
-          file: 
+          file:
             path: "{{ item }}"
             state: directory
             recurse: yes
@@ -186,7 +184,7 @@ outputs:
             path: /etc/contrail/common_webui.env
           register: p
         - name: create /etc/contrail/common_webui.env
-          copy: 
+          copy:
             dest: /etc/contrail/common_webui.env
             content: ""
           when: not p.stat.exists
@@ -222,7 +220,7 @@ outputs:
             contrail_config_node_ips_json: "{{ contrail_config_node_ips_list.stdout | from_json }}"
         - name: turn json into comma separated string
           set_fact:
-            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}" 
+            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}"
         - name: get contrail analytics node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
           register: contrail_analytics_node_ips_list
@@ -254,6 +252,6 @@ outputs:
             - KEYSTONE_AUTH_ADMIN_USER={{ keystone_admin_user.stdout }}
             - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
             - KEYSTONE_AUTH_URL_VERSION=/v3
-            
+
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
