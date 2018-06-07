@@ -30,7 +30,7 @@ parameters:
     description: Contrail Registry
     type: string
   ContrailImageTag:
-    default: 'queens-5.0.1-20180105-1209'
+    default: 'latest'
     description: Contrail container image tag
     type: string
   DockerContrailVrouterKernelInitImageName:
