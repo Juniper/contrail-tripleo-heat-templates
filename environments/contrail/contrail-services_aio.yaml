@@ -9,11 +9,11 @@ resource_registry:
   OS::TripleO::Services::ContrailWebui: ../../docker/services/contrail/contrail-webui.yaml
   OS::TripleO::Services::ContrailVrouter: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Services::ContrailDpdk: ../../docker/services/contrail/contrail-vrouter-dpdk.yaml
-#  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-plugin.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
-  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Services::ContrailHeatApiPlugin: ../../docker/services/contrail/contrail-heat-container-plugin.yaml
+  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
+  OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
 
 parameter_defaults:
   ServiceNetMap:
@@ -28,8 +28,9 @@ parameter_defaults:
   OvercloudControllerFlavor: control
   OvercloudComputeFlavor: compute
   ControllerCount: 1
-#  ContrailControllerCount: 1
+  ContrailControllerCount: 1
   ComputeCount: 1
+  ContrailDpdkCount: 0
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
   NeutronServicePlugins: ''
 #  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
@@ -41,5 +42,6 @@ parameter_defaults:
   NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin','/var/lib/contrail/ports']
   HeatApiOptVolumes: ['vnc_api:/usr/lib/python2.7/site-packages/vnc_api','cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common','gen_heat:/usr/lib/heat/contrail_heat']
   ContrailVrouterGateway: 10.0.0.1
-#  ContrailRegistry: michaelhenkel
-#  ContrailImageTag: 5.0-20180223080156-centos7-queens
+  ContrailRegistryInsecure: false
+  ContrailRegistry: opencontrailnightly
+  ContrailImageTag: latest

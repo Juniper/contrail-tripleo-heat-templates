@@ -132,7 +132,7 @@ resources:
             --privileged \
             -e "AGENT_MODE=dpdk" \
             -e "CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE=${contrail_registry}/${contrail_vrouter_agent_dpdk_image}:${contrail_imagetag}" \
-            -e "CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME="${contrail_vrouter_agent_dpdk_container_name}" \
+            -e "CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME=${contrail_vrouter_agent_dpdk_container_name}" \
             -e "CONTRAIL_VROUTER_AGENT_CONTAINER_NAME=${contrail_vrouter_agent_container_name}" \
             --name $contrail_vrouter_init_image \
             -v /dev:/dev \
