@@ -12,10 +12,6 @@ parameters:
     description: image
     type: string
     default: "contrail-controller-webui-job"
-  DockerContrailRedisImageName:
-    description: image
-    type: string
-    default: "docker.io/redis"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -72,6 +68,9 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+
+  ContrailRedis:
+    type: contrail-redis.yaml
 
 outputs:
   role_data:
@@ -144,20 +143,6 @@ outputs:
                   - {get_param: DockerContrailWebuiJobImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
-            env_file:
-              - /etc/contrail/common_webui.env
-          contrail_config_redis:
-            image: &contrail_config_redis_image {get_param: DockerContrailRedisImageName}
             net: host
             privileged: false
             detach: true
