@@ -14,7 +14,7 @@ outputs:
     description: Role data for the Contrail Redis common part.
     value:
       docker_config:
-        step_5:
+        step_4:
           contrail_redis:
             image: &contrail_redis_image {get_param: DockerContrailRedisImageName}
             net: host

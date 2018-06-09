@@ -71,9 +71,6 @@ conditions:
   internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 resources:
-  ContainersCommon:
-    type: ../containers-common.yaml
-
   ContrailBase:
     type: contrail-base.yaml
     properties:
@@ -83,7 +80,6 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
-
 
 outputs:
   role_data:
@@ -123,16 +119,13 @@ outputs:
                             - {get_param: InternalTLSCRLPEMFile}
                       - null
       docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
+        step_4:
+          get_attr: [ContrailRedis, role_data, docker_config, step_4]
         step_5:
           contrail_config_nodemgr:
-            image: &contrail_nodemgr_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
               list_concat:
                 - if:
@@ -150,36 +143,7 @@ outputs:
             user: root
             restart: always
             volumes_from:
-              - contrail_config_node_init
-            env_file:
-              - /etc/contrail/common_config.env
-        step_4:
-          contrail_config_node_init:
-            image: &contrail_node_init_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_attr: [ContrailBase, role_data, contrail_node_init_image_name]}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              - {get_attr: [ContrailBase, role_data, contrail_status_image]}
-            net: host
-            pid: host
-            privileged: true
-            detach: true
-            user: root
-            volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /usr/bin:/host/usr/bin
-                  - /etc/contrail/ssl:/etc/contrail/ssl
-                  - /etc/timezone:/etc/timezone
-                  - /var/log/contrail:/var/log/contrail
-                  - /var/run/docker.sock:/var/run/docker.sock
-                  - /var/crashes:/var/crashes
+              - contrail_node_init
             env_file:
               - /etc/contrail/common_config.env
           contrail_config_api:

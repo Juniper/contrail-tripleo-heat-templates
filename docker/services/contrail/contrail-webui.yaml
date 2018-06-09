@@ -112,6 +112,8 @@ outputs:
                             - {get_param: InternalTLSCRLPEMFile}
                       - null
       docker_config:
+        step_4:
+          get_attr: [ContrailRedis, docker_config, step_4]
         step_5:
           contrail_webui_web:
             image: &contrail_webui_web_image
