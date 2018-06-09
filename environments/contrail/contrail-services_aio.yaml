@@ -24,9 +24,10 @@ parameter_defaults:
     ContrailControlNetwork: tenant
     ContrailWebuiNetwork: internal_api
     ContrailVrouterNetwork: tenant
-  OvercloudContrailControllerFlavor: contrail-controller
   OvercloudControllerFlavor: control
+  OvercloudContrailControllerFlavor: contrail-controller
   OvercloudComputeFlavor: compute
+  OvercloudContrailDpdkFlavor: compute-dpdk
   ControllerCount: 1
   ContrailControllerCount: 1
   ComputeCount: 1
