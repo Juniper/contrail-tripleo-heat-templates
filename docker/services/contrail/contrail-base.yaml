@@ -180,6 +180,12 @@ outputs:
           - contrail_analytics_vip_unset
           - {}
           - contrail_analytics_vip: {get_param: ContrailAnalyticsVIP}
+      contrail_base_volumes: &contrail_base_volumes
+        list_concat:
+          - {get_attr: [ContainersCommon, volumes]}
+          - - /etc/contrail/ssl:/etc/contrail/ssl
+            - /var/crashes:/var/crashes
+            - /var/log/containers/contrail:/var/log/contrail
       docker_config:
         step_2:
           contrail_node_init:
@@ -192,24 +198,19 @@ outputs:
                   - ':'
                   - {get_param: ContrailImageTag}
             environment:
-              list_join:
-                - ''
-                - - 'CONTRAIL_STATUS_IMAGE='
-                - - {get_param: ContrailRegistry}
-                  - '/'
-                  - {get_param: DockerContrailStatusImageName}
-                  - ':'
-                  - {get_param: ContrailImageTag}
+              - list_join:
+                  - ''
+                  - - 'CONTRAIL_STATUS_IMAGE='
+                    - {get_param: ContrailRegistry}
+                    - '/'
+                    - {get_param: DockerContrailStatusImageName}
+                    - ':'
+                    - {get_param: ContrailImageTag}
             net: host
             pid: host
             privileged: true
             user: root
             volumes:
               list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
+                - *contrail_base_volumes
                 - - /usr/bin:/host/usr/bin
-                  - /etc/contrail/ssl:/etc/contrail/ssl
-                  - /etc/timezone:/etc/timezone
-                  - /var/log/contrail:/var/log/contrail
-                  - /var/run/docker.sock:/var/run/docker.sock
-                  - /var/crashes:/var/crashes

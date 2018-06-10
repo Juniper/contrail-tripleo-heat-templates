@@ -16,7 +16,7 @@ outputs:
       docker_config:
         step_4:
           contrail_redis:
-            image: &contrail_redis_image {get_param: DockerContrailRedisImageName}
+            image: {get_param: DockerContrailRedisImageName}
             net: host
             privileged: false
             detach: true

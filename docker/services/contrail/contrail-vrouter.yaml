@@ -117,8 +117,10 @@ outputs:
             detach: true
             user: root
             restart: always
-            volumes_from:
-              - contrail_node_init
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /var/run/docker.sock:/var/run/docker.sock
             env_file:
               - /etc/contrail/common_vrouter.env
           contrail_vrouter_agent:
@@ -137,11 +139,10 @@ outputs:
             restart: always
             volumes:
               list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                 - - /dev:/dev
                   - /lib/modules:/lib/modules
                   - /var/run:/var/run
-                  - /var/log/contrail:/var/log/contrail
                   - /var/lib/contrail/ports
             env_file:
               - /etc/contrail/common_vrouter.env
@@ -152,8 +153,8 @@ outputs:
             state: directory
             recurse: yes
           with_items:
-            - /var/log/contrail
-            - /etc/contrail
+            - /var/log/containers/contrail
+            - /etc/contrail/ssl
         - name: register /etc/contrail/common_vrouter.env
           stat:
             path: /etc/contrail/common_vrouter.env

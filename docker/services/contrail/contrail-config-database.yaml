@@ -84,10 +84,8 @@ outputs:
             restart: always
             volumes:
               list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
-                  - config_cassandra:/var/lib/cassandra/data
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - config_cassandra:/var/lib/cassandra/data
             environment:
               - "NODE_TYPE=config"
             env_file:
@@ -108,10 +106,8 @@ outputs:
             restart: always
             volumes:
               list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
-                  - config_zookeeper:/data
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - config_zookeeper:/data
                   - config_zookeeper:/datalog
             env_file:
               - /etc/contrail/common.env
@@ -132,10 +128,7 @@ outputs:
             user: root
             restart: always
             volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
             env_file:
               - /etc/contrail/common.env
             environment:
@@ -147,8 +140,8 @@ outputs:
             state: directory
             recurse: yes
           with_items:
-            - /var/log/contrail
-            - /etc/contrail
+            - /var/log/containers/contrail
+            - /etc/contrail/ssl
         - name: register /etc/contrail/common.env
           stat:
             path: /etc/contrail/common.env
