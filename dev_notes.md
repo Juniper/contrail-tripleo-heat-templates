@@ -115,7 +115,7 @@ cloud_image=images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2
 ### RHEL 7.5
 Download from RedHat portal
 ```
-cloud_image=images/rhel-server-7.5-beta-1-x86_64-kvm.qcow2
+cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2
 ```
 ```
 root_password=contrail123
@@ -169,14 +169,15 @@ ssh ${undercloud_ip}
 
 ## Undercloud installation
 ```
-undercloud_hostname=queensa
-hostnamectl set-hostname ${undercloud_hostname}.local
-hostnamectl set-hostname --transient ${undercloud_hostname}.local
+undercloud_name=queensa
+undercloud_suffic=local
+hostnamectl set-hostname ${undercloud_name}.${undercloud_suffix}
+hostnamectl set-hostname --transient ${undercloud_name}.${undercloud_suffix}
 ```
-Get the undercloud ip and set the correct entries in /etc/hosts, ie:
+Get the undercloud ip and set the correct entries in /etc/hosts, ie (assuming the mgmt nic is eth0):
 ```
-undercloud_ip=192.168.122.52
-echo ${undercloud_ip} ${undercloud_hostname}.local ${undercloud_hostname} >> /etc/hosts
+undercloud_ip=`ip addr sh dev eth0 |grep "inet " |awk '{print $2}' |awk -F"/" '{print $1}'`
+echo ${undercloud_ip} ${undercloud_name}.${undercloud_suffix} ${undercloud_name} >> /etc/hosts
 ```
 ### tripleo queens/current
 ```
@@ -198,9 +199,9 @@ subscription-manager register --activationkey=${act_key} --org=${org}
 ```
 yum install -y python-tripleoclient
 su - stack
-source stackrc
 cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf
 openstack undercloud install
+source stackrc
 ```
 
 ## forwarding
