@@ -103,7 +103,7 @@ resources:
             complete_string="INSECURE_REGISTRY=\"${registry_string}\""
             echo ${complete_string}
             if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
-              sed "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
+              sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
             else
               echo ${complete_string} >> /etc/sysconfig/docker
             fi
