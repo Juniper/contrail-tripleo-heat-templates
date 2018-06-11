@@ -344,11 +344,17 @@ openstack overcloud container image prepare \
  --output-env-file=/home/stack/overcloud_images.yaml
 ```
 
-If Contrail containers are downloaded from a private insecure registry, the registry must be    
-allowed in the docker client
+#### Optional: adding Contrail containers to undercloud registry
+setting Contrail container tag (default: latest)    
+```
+contrail_tag=rhel-master-132
+```
+
+##### Adding private unsecure registry to undercloud docker client
+This step is only required if Contrail containers are not downloaded from hub.juniper.net or dockerhub but from a    
+unsecure private registry (in this example ci-repo.englab.juniper.net:5000).        
 ```
 contrail_registry=ci-repo.englab.juniper.net:5000
-contrail_tag=rhel-master-132
 registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
 registry_string="${registry_string} --insecure-registry ${contrail_registry}"
 complete_string="INSECURE_REGISTRY=\"${registry_string}\""
@@ -361,6 +367,46 @@ fi
 sudo systemctl restart docker
 ```
 
+##### Adding Contrail containers
+```
+contrail_tag=rhel-master-132
+cat << EOM > contrail_container_list
+DockerContrailAnalyticsApiImageName contrail-analytics-api
+DockerContrailAnalyticsCollectorImageName contrail-analytics-collector
+DockerContrailAnalyticsQueryEngineImageName contrail-analytics-query-engine
+DockerContrailConfigApiImageName contrail-controller-config-api
+DockerContrailConfigDevicemgrImageName contrail-controller-config-devicemgr
+DockerContrailConfigSchemaImageName contrail-controller-config-schema
+DockerContrailConfigSvcmonitorImageName contrail-controller-config-svcmonitor
+DockerContrailControlControlImageName contrail-controller-control-control
+DockerContrailControlDnsImageName contrail-controller-control-dns
+DockerContrailControlNamedImageName contrail-controller-control-named
+DockerContrailWebuiJobImageName contrail-controller-webui-job
+DockerContrailWebuiWebImageName contrail-controller-webui-web
+DockerContrailCassandraImageName contrail-external-cassandra
+DockerContrailKafkaImageName contrail-external-kafka
+DockerContrailRabbitmqImageName contrail-external-rabbitmq
+DockerContrailZookeeperImageName contrail-external-zookeeper
+DockerContrailNodeInitImageName contrail-node-init
+DockerContrailNodemgrImageName contrail-nodemgr
+DockerContrailNovaPluginImageName contrail-openstack-compute-init
+DockerContrailHeatPluginImageName contrail-openstack-heat-init
+DockerNeutronConfigImage contrail-openstack-neutron-init
+DockerContrailVrouterAgentImageName contrail-vrouter-agent
+DockerContrailVrouterKernelInitImageName contrail-vrouter-kernel-init
+EOM
+
+while IFS= read -r line
+do
+  thtImageName=`echo ${line} |awk '{print $1}'`
+  contrailImageName=`echo ${line} |awk '{print $2}'`
+  echo "- imagename: ${contrail_registry}/${contrailImageName}:${contrail_tag}" >> ~/local_registry_images.yaml 
+  echo "  push_destination: 192.168.24.1:8787" >> ~/local_registry_images.yaml 
+  echo "  ${thtImageName}: 192.168.24.1:8787/${contrailImageName}:${contrail_tag}" >> ~/overcloud_images.yaml
+done < <(cat contrail_container_list)
+```
+
+#### Upload containers
 ```
 openstack overcloud container image upload --config-file ~/overcloud_images.yaml
 ```
