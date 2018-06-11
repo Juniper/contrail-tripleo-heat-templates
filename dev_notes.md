@@ -119,16 +119,17 @@ mkdir ~/images
 cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2
 ```
 ```
+undercloud_name=queensa
+undercloud_suffix=local
 root_password=contrail123
 stack_password=contrail123
-undercloud_name=queensa
 export LIBGUESTFS_BACKEND=direct
 qemu-img create -f qcow2 /var/lib/libvirt/images/${undercloud_name}.qcow2 100G
 virt-resize --expand /dev/sda1 ${cloud_image} /var/lib/libvirt/images/${undercloud_name}.qcow2
 virt-customize  -a /var/lib/libvirt/images/${undercloud_name}.qcow2 \
   --run-command 'xfs_growfs /' \
   --root-password password:${root_password} \
-  --hostname ${undercloud_name}.local \
+  --hostname ${undercloud_name}.${undercloud_suffix} \
   --run-command 'useradd stack' \
   --password stack:password:${stack_password} \
   --run-command 'echo "stack ALL=(root) NOPASSWD:ALL" | tee -a /etc/sudoers.d/stack' \
@@ -170,8 +171,8 @@ ssh ${undercloud_ip}
 
 ## Undercloud installation
 ```
-undercloud_name=queensa
-undercloud_suffic=local
+undercloud_name=`hostname -s`
+undercloud_suffic=`hostname -d`
 hostnamectl set-hostname ${undercloud_name}.${undercloud_suffix}
 hostnamectl set-hostname --transient ${undercloud_name}.${undercloud_suffix}
 ```
