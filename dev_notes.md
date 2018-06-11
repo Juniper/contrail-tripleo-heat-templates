@@ -433,6 +433,46 @@ tripleo-heat-templates/environments/contrail/contrail-services.yaml
 #### Patch tripleoclient for OSP13-beta
 see https://review.openstack.org/#/c/564692/
 
+```
+cat << EOM > ~/tripleoclient.patch
+--- /usr/lib/python2.7/site-packages/tripleoclient/v1/overcloud_deploy.py       2018-04-23 13:08:19.000000000 -0400
++++ /usr/lib/python2.7/site-packages/tripleoclient/v1/overcloud_deploy.py       2018-06-11 03:06:47.406536446 -0400
+@@ -326,14 +326,8 @@
+                         path = path[1:]
+                     env['resource_registry'][name] = path
+
+-        # Parameters are removed from the environment and sent to the update
+-        # parameters action, this stores them in the plan environment and
+-        # means the UI can find them.
+-        if 'parameter_defaults' in env:
+-            params = env.pop('parameter_defaults')
+-            workflow_params.update_parameters(
+-                self.workflow_client, container=container_name,
+-                parameters=params)
++        # Parameters are removed from the environment
++        params = env.pop('parameter_defaults', None)
+
+         contents = yaml.safe_dump(env, default_flow_style=False)
+
+@@ -355,6 +349,13 @@
+             self.object_client.put_object(
+                 container_name, constants.PLAN_ENVIRONMENT, yaml_string)
+
++        # Parameters are sent to the update parameters action, this stores them
++        # in the plan environment and means the UI can find them.
++        if params:
++            workflow_params.update_parameters(
++                self.workflow_client, container=container_name,
++                parameters=params)
++
+     def _upload_missing_files(self, container_name, files_dict, tht_root):
+         """Find the files referenced in custom environments and upload them
+
+EOM
+sudo -s
+cd / && patch -p0 < ~stack/tripleoclient.patch && exit
+```
+
 ## deploy the stack
 ```
 openstack overcloud deploy --templates ~/tripleo-heat-templates \
