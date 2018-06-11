@@ -242,7 +242,7 @@ tar xvf overcloud-full.tar
 
 ### OSP13-beta
 ```
-sudo yum install rhosp-director-images rhosp-director-images-ipa
+sudo yum install -y rhosp-director-images rhosp-director-images-ipa
 for i in /usr/share/rhosp-director-images/overcloud-full-latest-13.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-13.0.tar ; do tar -xvf $i; done
 ```
 
