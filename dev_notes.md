@@ -172,7 +172,7 @@ ssh ${undercloud_ip}
 ## Undercloud installation
 ```
 undercloud_name=`hostname -s`
-undercloud_suffic=`hostname -d`
+undercloud_suffix=`hostname -d`
 hostnamectl set-hostname ${undercloud_name}.${undercloud_suffix}
 hostnamectl set-hostname --transient ${undercloud_name}.${undercloud_suffix}
 ```
