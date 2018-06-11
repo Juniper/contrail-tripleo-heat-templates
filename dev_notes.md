@@ -344,6 +344,23 @@ openstack overcloud container image prepare \
  --output-env-file=/home/stack/overcloud_images.yaml
 ```
 
+If Contrail containers are downloaded from a private insecure registry, the registry must be    
+allowed in the docker client
+```
+contrail_registry=ci-repo.englab.juniper.net:5000
+contrail_tag=rhel-master-132
+registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
+registry_string="${registry_string} --insecure-registry ${contrail_registry}"
+complete_string="INSECURE_REGISTRY=\"${registry_string}\""
+echo ${complete_string}
+if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
+  sed "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
+else
+  echo ${complete_string} >> /etc/sysconfig/docker
+fi
+sudo systemctl restart docker
+```
+
 ```
 openstack overcloud container image upload --config-file ~/overcloud_images.yaml
 ```
