@@ -113,8 +113,9 @@ zx -d images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
 cloud_image=images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2
 ```
 ### RHEL 7.5
-Download from RedHat portal
+Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal
 ```
+mkdir ~/images
 cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2
 ```
 ```
