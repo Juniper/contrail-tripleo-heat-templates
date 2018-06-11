@@ -323,7 +323,7 @@ openstack overcloud container image prepare \
   --namespace docker.io/tripleoqueens \
   --tag current-tripleo \
   --tag-from-label rdo_version \
-  --output-env-file ~/docker_registry.yaml
+  --output-env-file=~/overcloud_images.yaml
 
 tag=`grep "docker.io/tripleoqueens" docker_registry.yaml |tail -1 |awk -F":" '{print $3}'`
 
@@ -331,8 +331,8 @@ openstack overcloud container image prepare \
   --namespace docker.io/tripleoqueens \
   --tag ${tag} \
   --push-destination 192.168.24.1:8787 \
-  --output-env-file ~/docker_registry.yaml \
-  --output-images-file ~/overcloud_containers.yaml
+  --output-env-file=~/overcloud_images.yaml \
+  --output-images-file=~/local_registry_images.yaml
 ```
 openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
 #### OSP13-beta
@@ -340,11 +340,11 @@ openstack overcloud container image upload --config-file ~/overcloud_containers.
 openstack overcloud container image prepare \
  --push-destination=192.168.24.1:8787  \
  --tag-from-label {version}-{release} \
- --output-images-file=/home/stack/local_registry_images.yaml  \
+ --output-images-file=~/local_registry_images.yaml  \
  --namespace=registry.access.redhat.com/rhosp13-beta  \
  --prefix=openstack-  \
  --tag-from-label {version}-{release}  \
- --output-env-file=/home/stack/overcloud_images.yaml
+ --output-env-file=~/overcloud_images.yaml
 ```
 
 #### Optional: adding Contrail containers to undercloud registry
@@ -435,13 +435,13 @@ see https://review.openstack.org/#/c/564692/
 
 ## deploy the stack
 ```
-openstack overcloud deploy --templates tripleo-heat-templates \
-  -e docker_registry.yaml \
-  -e tripleo-heat-templates/environments/network-isolation.yaml \
-  -e tripleo-heat-templates/environments/docker.yaml \
-  -e tripleo-heat-templates/environments/contrail/contrail-services.yaml \
-  -e tripleo-heat-templates/environments/contrail/contrail-net.yaml \
-  --roles-file tripleo-heat-templates/roles_data_contrail_aio.yaml
+openstack overcloud deploy --templates ~/tripleo-heat-templates \
+  -e ~/overcloud_images.yaml \
+  -e ~/tripleo-heat-templates/environments/network-isolation.yaml \
+  -e ~/tripleo-heat-templates/environments/docker.yaml \
+  -e ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml \
+  -e ~/tripleo-heat-templates/environments/contrail/contrail-net.yaml \
+  --roles-file ~/tripleo-heat-templates/roles_data_contrail_aio.yaml
 ```
 
 # quick VM start
