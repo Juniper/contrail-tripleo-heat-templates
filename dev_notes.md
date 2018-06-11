@@ -360,9 +360,9 @@ registry_string="${registry_string} --insecure-registry ${contrail_registry}"
 complete_string="INSECURE_REGISTRY=\"${registry_string}\""
 echo ${complete_string}
 if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
-  sed "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
+  sudo sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
 else
-  echo ${complete_string} >> /etc/sysconfig/docker
+  sudo echo ${complete_string} >> /etc/sysconfig/docker
 fi
 sudo systemctl restart docker
 ```
