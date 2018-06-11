@@ -311,6 +311,9 @@ cp -r contrail-tripleo-heat-templates/* tripleo-heat-templates/
 
 ```
 newgrp docker
+exit
+su - stack
+source stackrc
 ```
 
 ### Get and upload the containers
@@ -408,7 +411,7 @@ done < <(cat contrail_container_list)
 
 #### Upload containers
 ```
-openstack overcloud container image upload --config-file ~/overcloud_images.yaml
+openstack overcloud container image upload --config-file ~/local_registry_images.yaml 
 ```
 The last command takes a while.
 
