@@ -8,14 +8,6 @@ parameters:
     description: image
     type: string
     default: "contrail-analytics-api"
-  DockerContrailAnalyticsTopologyImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-topology"
-  DockerContrailAnalyticsSnmpCollectorImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-snmp-collector"
   DockerContrailAnalyticsQueryEngineImageName:
     description: image
     type: string
