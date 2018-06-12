@@ -128,6 +128,10 @@ conditions:
   contrail_analytics_vip_unset: {equals : [{get_param: ContrailAnalyticsVIP}, '']}
   contrail_webui_vip_unset: {equals : [{get_param: ContrailWebuiVIP}, '']}
 
+resources:
+  ContainersCommon:
+    type: ../containers-common.yaml
+
 outputs:
   role_data:
     description: Shared role data for the Contrail services.
@@ -135,15 +139,12 @@ outputs:
       service_name: contrail_base
       contrail_registry: {get_param: ContrailRegistry}
       contrail_imagetag: {get_param: ContrailImageTag}
-      contrail_node_init_image_name: {get_param: DockerContrailNodeInitImageName}
-      contrail_nodemgr_image_name: {get_param: DockerContrailNodemgrImageName}
-      contrail_status_image:
+      contrail_nodemgr_image_name:
         list_join:
           - ''
-          - - 'CONTRAIL_STATUS_IMAGE='
           - - {get_param: ContrailRegistry}
             - '/'
-            - {get_param: DockerContrailStatusImageName}
+            - {get_param: DockerContrailNodemgrImageName}
             - ':'
             - {get_param: ContrailImageTag}
       config_settings:
@@ -167,18 +168,49 @@ outputs:
           contrail::rabbit_user: {get_param: RabbitUserName}
           contrail::rabbit_port: {get_param: RabbitClientPort}
           contrail::vip: {get_param: ContrailVIP}
-        - 
-          if:
+        - if:
           - contrail_config_vip_unset
           - {}
           - contrail_config_vip: {get_param: ContrailConfigVIP}
-        - 
-          if:
+        - if:
           - contrail_webui_vip_unset
           - {}
           - contrail_webui_vip: {get_param: ContrailWebuiVIP}
-        - 
-          if:
+        - if:
           - contrail_analytics_vip_unset
           - {}
           - contrail_analytics_vip: {get_param: ContrailAnalyticsVIP}
+      contrail_base_volumes: &contrail_base_volumes
+        list_concat:
+          - {get_attr: [ContainersCommon, volumes]}
+          - - /etc/contrail/ssl:/etc/contrail/ssl
+            - /var/crashes:/var/crashes
+            - /var/log/containers/contrail:/var/log/contrail
+      docker_config:
+        step_2:
+          contrail_node_init:
+            image:
+              list_join:
+                - ''
+                - - {get_param: ContrailRegistry}
+                  - '/'
+                  - {get_param: DockerContrailNodeInitImageName}
+                  - ':'
+                  - {get_param: ContrailImageTag}
+            environment:
+              - list_join:
+                  - ''
+                  - - 'CONTRAIL_STATUS_IMAGE='
+                    - {get_param: ContrailRegistry}
+                    - '/'
+                    - {get_param: DockerContrailStatusImageName}
+                    - ':'
+                    - {get_param: ContrailImageTag}
+            net: host
+            pid: host
+            privileged: true
+            user: root
+            volumes:
+              list_concat:
+                - *contrail_base_volumes
+                - - /usr/bin:/host/usr/bin

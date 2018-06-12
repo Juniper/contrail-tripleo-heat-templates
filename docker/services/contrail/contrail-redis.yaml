@@ -1,0 +1,24 @@
+heat_template_version: queens
+
+description: >
+  Contrail redis common service
+
+parameters:
+  DockerContrailRedisImageName:
+    description: image
+    type: string
+    default: "docker.io/redis"
+
+outputs:
+  role_data:
+    description: Role data for the Contrail Redis common part.
+    value:
+      docker_config:
+        step_4:
+          contrail_redis:
+            image: {get_param: DockerContrailRedisImageName}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always

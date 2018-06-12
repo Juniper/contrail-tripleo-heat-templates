@@ -7,7 +7,7 @@ parameters:
   DockerContrailVrouterAgentImageName:
     description: image
     type: string
-    default: "contrail-agent-vrouter"
+    default: "contrail-vrouter-agent"
   DockerContrailNovaPluginImageName:
     description: image
     type: string
@@ -77,7 +77,6 @@ resources:
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
 
-
 outputs:
   role_data:
     description: Role data for the Contrail Vrouter Dpdk service.
@@ -95,6 +94,8 @@ outputs:
           '112 contrail_vrouter_dpdk_8097':
             dport: 8097
       docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
         step_3:
           contrail_nova_plugin:
             image: &contrail_nova_plugin_image
@@ -108,6 +109,20 @@ outputs:
             volumes:
               - vrouter_port_control:/opt/plugin/bin
         step_5:
+          contrail_vrouter_agent_nodemgr:
+            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+            environment:
+              - NODE_TYPE=vrouter
+            net: host
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /var/run/docker.sock:/var/run/docker.sock
+            env_file:
+              - /etc/contrail/common_vrouter.env
           contrail_vrouter_agent:
             image: &contrail_vrouter_agent_image
               list_join:
@@ -124,12 +139,10 @@ outputs:
             restart: always
             volumes:
               list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /dev:/dev
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /dev:/dev
                   - /lib/modules:/lib/modules
                   - /var/run:/var/run
-                  - /var/log/contrail:/var/log/contrail
                   - /var/lib/contrail/ports
             env_file:
               - /etc/contrail/common_vrouter.env
@@ -140,8 +153,8 @@ outputs:
             state: directory
             recurse: yes
           with_items:
-            - /var/log/contrail
-            - /etc/contrail
+            - /var/log/containers/contrail
+            - /etc/contrail/ssl
         - name: register /etc/contrail/common_vrouter.env
           stat:
             path: /etc/contrail/common_vrouter.env

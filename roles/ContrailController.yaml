@@ -3,7 +3,7 @@
 ###############################################################################
 - name: ContrailController
   description: |
-    ContrailController role that has all the Contrail controler services loaded 
+    ContrailController role that has all the Contrail controler services loaded
     and handles config, control and webui functions
   CountDefault: 1
   tags:
@@ -13,12 +13,6 @@
     - InternalApi
     - Tenant
   HostnameFormatDefault: '%stackname%-contrailcontroller-%index%'
-  # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
-  # Set uses_deprecated_params to True if any deprecated params are used.
-  uses_deprecated_params: True
-  deprecated_param_extraconfig: 'contrailcontrollerExtraConfig'
-  deprecated_param_flavor: 'OvercloudControlFlavor'
-  deprecated_param_image: 'controllerImage'
   ServicesDefault:
     - OS::TripleO::Services::AuditD
     - OS::TripleO::Services::CACerts

@@ -76,44 +76,35 @@ outputs:
           - get_attr: [ContrailBase, role_data, config_settings]
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       docker_config:
-        step_4:
-          contrail_analytics_database_node_init:
-            image: &contrail_node_init_image
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
+        step_3:
+          contrail_analytics_zookeeper:
+            image: &contrail_analytics_zookeeper_image
               list_join:
                 - ''
                 - - {get_attr: [ContrailBase, role_data, contrail_registry]}
                   - '/'
-                  - {get_attr: [ContrailBase, role_data, contrail_node_init_image_name]}
+                  - {get_param: DockerContrailZookeeperImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              - {get_attr: [ContrailBase, role_data, contrail_status_image]}
             net: host
-            pid: host
-            privileged: true
+            privileged: false
+            detach: true
             user: root
+            restart: always
             volumes:
               list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /usr/bin:/host/usr/bin
-                  - /etc/contrail/ssl:/etc/contrail/ssl
-                  - /etc/timezone:/etc/timezone
-                  - /var/log/contrail:/var/log/contrail
-                  - /var/run/docker.sock:/var/run/docker.sock
-                  - /var/crashes:/var/crashes
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - analytics_zookeeper:/data
+                  - analytics_zookeeper:/datalog
+            environment:
+              - "NODE_TYPE=database"
             env_file:
               - /etc/contrail/common_analytics_database.env
-        step_5:
+        step_4:
           contrail_analytics_database_nodemgr:
-            image: &contrail_nodemgr_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
               list_concat:
                 - if:
@@ -130,8 +121,10 @@ outputs:
             detach: true
             user: root
             restart: always
-            volumes_from:
-              - contrail_analytics_database_node_init
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /var/run/docker.sock:/var/run/docker.sock
             env_file:
               - /etc/contrail/common_analytics_database.env
           contrail_analytics_database:
@@ -150,35 +143,8 @@ outputs:
             restart: always
             volumes:
               list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
-                  - analytics_cassandra:/var/lib/cassandra/data
-            environment:
-              - "NODE_TYPE=database"
-            env_file:
-              - /etc/contrail/common_analytics_database.env
-          contrail_analytics_zookeeper:
-            image: &contrail_analytics_zookeeper_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailZookeeperImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
-                  - analytics_zookeeper:/data
-                  - analytics_zookeeper:/datalog
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - analytics_cassandra:/var/lib/cassandra/data
             environment:
               - "NODE_TYPE=database"
             env_file:
@@ -198,10 +164,7 @@ outputs:
             user: root
             restart: always
             volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
             environment:
               - "NODE_TYPE=database"
             env_file:
@@ -213,8 +176,8 @@ outputs:
             state: directory
             recurse: yes
           with_items:
-            - /var/log/contrail
-            - /etc/contrail
+            - /var/log/containers/contrail
+            - /etc/contrail/ssl
         - name: register /etc/contrail/common_analytics_database.env
           stat:
             path: /etc/contrail/common_analytics_database.env

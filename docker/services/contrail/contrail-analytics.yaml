@@ -69,6 +69,9 @@ resources:
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
 
+  ContrailRedis:
+    type: contrail-redis.yaml
+
 outputs:
   role_data:
     description: Role data for the Contrail Analytics service.
@@ -79,53 +82,23 @@ outputs:
           - get_attr: [ContrailBase, role_data, config_settings]
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
         step_4:
-          contrail_analytics_node_init:
-            image: &contrail_node_init_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_attr: [ContrailBase, role_data, contrail_node_init_image_name]}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              - {get_attr: [ContrailBase, role_data, contrail_status_image]}
-            net: host
-            pid: host
-            privileged: true
-            detach: true
-            user: root
-            volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /usr/bin:/host/usr/bin
-                  - /etc/contrail/ssl:/etc/contrail/ssl
-                  - /etc/timezone:/etc/timezone
-                  - /var/log/contrail:/var/log/contrail
-                  - /var/run/docker.sock:/var/run/docker.sock
-                  - /var/crashes:/var/crashes
-            env_file:
-              - /etc/contrail/common_analytics.env
+          get_attr: [ContrailRedis, role_data, docker_config, step_4]
         step_5:
           contrail_analytics_nodemgr:
-            image: &contrail_nodemgr_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
               - NODE_TYPE=analytics
             net: host
             detach: true
             user: root
             restart: always
-            volumes_from:
-              - contrail_analytics_node_init
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /var/run/docker.sock:/var/run/docker.sock
             env_file:
               - /etc/contrail/common_analytics.env
           contrail_anlytics_api:
@@ -143,10 +116,7 @@ outputs:
             restart: always
             user: root
             volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
             env_file:
               - /etc/contrail/common_analytics.env
           contrail_analytics_queryengine:
@@ -164,10 +134,7 @@ outputs:
             user: root
             restart: always
             volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
             env_file:
               - /etc/contrail/common_analytics.env
           contrail_analytics_collector:
@@ -185,10 +152,7 @@ outputs:
             user: root
             restart: always
             volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
             env_file:
               - /etc/contrail/common_analytics.env
           contrail_analytics_alarmgen:
@@ -206,10 +170,7 @@ outputs:
             user: root
             restart: always
             volumes:
-              list_concat:
-                - {get_attr: [ContainersCommon, volumes]}
-                -
-                  - /var/log/contrail:/var/log/contrail
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
             env_file:
               - /etc/contrail/common_analytics.env
       host_prep_tasks:
@@ -219,8 +180,8 @@ outputs:
             state: directory
             recurse: yes
           with_items:
-            - /var/log/contrail
-            - /etc/contrail
+            - /var/log/containers/contrail
+            - /etc/contrail/ssl
         - name: register /etc/contrail/common_analytics.env
           stat:
             path: /etc/contrail/common_analytics.env
