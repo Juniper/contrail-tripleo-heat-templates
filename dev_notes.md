@@ -374,6 +374,7 @@ sudo systemctl restart docker
 ```
 contrail_tag=rhel-master-132
 cat << EOM > contrail_container_list
+DockerContrailAnalyticsAlarmGenImageName contrail-analytics-alarm-gen
 DockerContrailAnalyticsApiImageName contrail-analytics-api
 DockerContrailAnalyticsCollectorImageName contrail-analytics-collector
 DockerContrailAnalyticsQueryEngineImageName contrail-analytics-query-engine
@@ -405,7 +406,6 @@ do
   contrailImageName=`echo ${line} |awk '{print $2}'`
   echo "- imagename: ${contrail_registry}/${contrailImageName}:${contrail_tag}" >> ~/local_registry_images.yaml 
   echo "  push_destination: 192.168.24.1:8787" >> ~/local_registry_images.yaml 
-  echo "  ${thtImageName}: 192.168.24.1:8787/${contrailImageName}:${contrail_tag}" >> ~/overcloud_images.yaml
 done < <(cat contrail_container_list)
 ```
 
