@@ -87,12 +87,11 @@ outputs:
           - get_attr: [ContrailBase, role_data, config_settings]
           - contrail::vrouter::gateway: {get_param: ContrailVrouterGateway}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
-      service_config_settings:
-        tripleo.contrail_vrouter.firewall_rules:
-          '111 contrail_vrouter_8085':
-            dport: 8085
-          '112 contrail_vrouter_8097':
-            dport: 8097
+            tripleo.contrail_vrouter.firewall_rules:
+              '111 contrail_vrouter_8085_8097':
+                dport:
+                  - 8085
+                  - 8097
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]

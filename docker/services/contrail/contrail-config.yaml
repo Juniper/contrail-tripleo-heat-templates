@@ -159,7 +159,7 @@ outputs:
             privileged: false
             detach: true
             user: root
-            resatrt: always
+            restart: always
             volumes:
               get_attr: [ContrailBase, role_data, contrail_base_volumes]
             env_file:
