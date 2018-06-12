@@ -87,7 +87,7 @@ outputs:
               public_virtual_ip: "%{hiera('contrail_webui_vip')}"
               internal_ip: "%{hiera('contrail_webui_vip')}"
               service_port: 8143
-              mode: 'http'
+              mode: 'tcp'
               listen_options:
                 balance:
                   - 'source'
