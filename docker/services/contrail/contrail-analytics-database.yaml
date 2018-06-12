@@ -187,6 +187,15 @@ outputs:
             dest: /etc/contrail/common_analytics_database.env
             content: ""
           when: not p.stat.exists
+        - name: get contrail config node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_config_node_ips
+          register: contrail_config_node_ips_list
+        - name: turn contrail config ips into json
+          set_fact:
+            contrail_config_node_ips_json: "{{ contrail_config_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}"
         - name: get contrail analytics database node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_database_node_ips
           register: contrail_analytics_database_node_ips_list
@@ -196,6 +205,8 @@ outputs:
         - name: turn json into comma separated string
           set_fact:
             contrail_analytics_database_node_ips_string: "{{ contrail_analytics_database_node_ips_json | join(',') }}"
+        - name: write contrail config node ips to environment file
+          lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*CONFIG_NODES$' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
         - name: write contrail analytics db node ips to environment file
           lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='.*CASSANDRA_SEEDS$' line="CASSANDRA_SEEDS={{ contrail_analytics_database_node_ips_string }}" state=present
         - name: write contrail analytics zk node ips to environment file
