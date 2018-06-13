@@ -398,6 +398,7 @@ DockerContrailHeatPluginImageName contrail-openstack-heat-init
 DockerNeutronConfigImage contrail-openstack-neutron-init
 DockerContrailVrouterAgentImageName contrail-vrouter-agent
 DockerContrailVrouterKernelInitImageName contrail-vrouter-kernel-init
+DockerContrailStatusImageName contrail-status
 EOM
 
 while IFS= read -r line
