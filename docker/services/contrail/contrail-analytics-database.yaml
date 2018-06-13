@@ -216,6 +216,15 @@ outputs:
         - name: turn json into comma separated string
           set_fact:
             contrail_analytics_database_node_ips_string: "{{ contrail_analytics_database_node_ips_json | join(',') }}"
+        - name: get contrail analytics node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
+          register: contrail_analytics_node_ips_list
+        - name: turn contrail analytics ips into json
+          set_fact:
+            contrail_analytics_node_ips_json: "{{ contrail_analytics_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
         - name: write contrail config node ips to environment file
           lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='^CONFIG_NODES.*' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
         - name: write contrail analytics db node ips to environment file
@@ -226,6 +235,8 @@ outputs:
           lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='^ZOOKEEPER_ANALYTICS_NODES.*' line="ZOOKEEPER_ANALYTICS_NODES={{ contrail_analytics_database_node_ips_string }}" state=present
         - name: write contrail config Kafka node ips to environment file
           lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='^KAFKA_NODES.*' line="KAFKA_NODES={{ contrail_analytics_database_node_ips_string }}" state=present
+        - name: write contrail analytics node ips to environment file
+          lineinfile: dest=/etc/contrail/common_analytics_database.env regexp='^ANALYTICS_NODES.*' line="ANALYTICS_NODES={{ contrail_analytics_node_ips_string }}" state=present
         - name: write remaining contrail config env cars
           lineinfile: dest=/etc/contrail/common_analytics_database.env line="{{ item }}" state=present
           with_items:
@@ -238,5 +249,6 @@ outputs:
             - CASSANDRA_JMX_LOCAL_PORT=7200
             - ZOOKEEPER_PORTS=4888:5888
             - ZOOKEEPER_PORT=2182
+
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
