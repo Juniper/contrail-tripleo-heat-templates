@@ -171,7 +171,7 @@ outputs:
           contrail::rabbit_password: {get_param: RabbitPassword}
           contrail::rabbit_user: {get_param: RabbitUserName}
           contrail::rabbit_port: {get_param: RabbitClientPort}
-          contrail_settings: {get_param: ContrailSettings}}
+          contrail_settings: {get_param: ContrailSettings}
           contrail::vip: {get_param: ContrailVIP}
         - if:
           - contrail_config_vip_unset
