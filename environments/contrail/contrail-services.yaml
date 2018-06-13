@@ -46,3 +46,6 @@ parameter_defaults:
   ContrailRegistryInsecure: false
   ContrailRegistry: opencontrailnightly
   ContrailImageTag: latest
+  ContrailSettings:
+    KEY1: value1
+    KEY2: value2

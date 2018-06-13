@@ -156,6 +156,17 @@ outputs:
             dest: /etc/contrail/common_control.env
             content: ""
           when: not p.stat.exists
+        - name: get service_config
+          set_fact:
+            service_configs: "{{ lookup('file', '/etc/puppet/hieradata/service_configs.json') | from_json }}"
+        - name: get contrail_settings
+          set_fact:
+            contrail_settings: "{{ service_configs.contrail_settings }}"
+          when: service_configs is defined
+        - name: write contrail settings to file
+          lineinfile: dest=/etc/contrail/common_control.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
         - name: get keystone admin api vip
           shell: hiera -c /etc/puppet/hiera.yaml keystone_admin_api_vip
           register: keystone_admin_api_vip
@@ -208,17 +219,17 @@ outputs:
           set_fact:
             contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
         - name: write contrail control node ips to environment file
-          lineinfile: dest=/etc/contrail/common_control.env regexp='.*CONTROL_NODES$' line="CONTROL_NODES={{ contrail_control_node_ips_string }}" state=present
+          lineinfile: dest=/etc/contrail/common_control.env regexp='^CONTROL_NODES.*' line="CONTROL_NODES={{ contrail_control_node_ips_string }}" state=present
         - name: write contrail config node ips to environment file
-          lineinfile: dest=/etc/contrail/common_control.env regexp='.*CONFIG_NODES$' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
+          lineinfile: dest=/etc/contrail/common_control.env regexp='^CONFIG_NODES.*' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
         - name: write contrail config db node ips to environment file
-          lineinfile: dest=/etc/contrail/common_control.env regexp='.*CONFIGDB_NODES$' line="CONFIGDB_NODES={{ contrail_config_database_node_ips_string }}" state=present
+          lineinfile: dest=/etc/contrail/common_control.env regexp='^CONFIGDB_NODES.*' line="CONFIGDB_NODES={{ contrail_config_database_node_ips_string }}" state=present
         - name: write contrail config zk node ips to environment file
-          lineinfile: dest=/etc/contrail/common_control.env regexp='.*ZOOKEEPER_NODES$' line="ZOOKEEPER_NODES={{ contrail_config_database_node_ips_string }}" state=present
+          lineinfile: dest=/etc/contrail/common_control.env regexp='^ZOOKEEPER_NODES.*' line="ZOOKEEPER_NODES={{ contrail_config_database_node_ips_string }}" state=present
         - name: write contrail config rmq node ips to environment file
-          lineinfile: dest=/etc/contrail/common_control.env regexp='.*RABBITMQ_NODES$' line="RABBITMQ_NODES={{ contrail_config_database_node_ips_string }}" state=present
+          lineinfile: dest=/etc/contrail/common_control.env regexp='^RABBITMQ_NODES.*' line="RABBITMQ_NODES={{ contrail_config_database_node_ips_string }}" state=present
         - name: write contrail analytics node ips to environment file
-          lineinfile: dest=/etc/contrail/common_control.env regexp='.*ANALYTICS_NODES$' line="ANALYTICS_NODES={{ contrail_analytics_node_ips_string }}" state=present
+          lineinfile: dest=/etc/contrail/common_control.env regexp='^ANALYTICS_NODES.*' line="ANALYTICS_NODES={{ contrail_analytics_node_ips_string }}" state=present
         - name: write remaining contrail config env cars
           lineinfile: dest=/etc/contrail/common_control.env line="{{ item }}" state=present
           with_items:
