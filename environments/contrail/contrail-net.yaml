@@ -30,5 +30,5 @@ parameter_defaults:
   StorageMgmtNetworkVlanID: 740
   # Services
   EC2MetadataIp: 192.168.24.1  # Generally the IP of the Undercloud
-  DnsServers: ["10.84.5.100"]
+  DnsServers: ["172.21.200.60"]
   NtpServer: 10.0.0.1
