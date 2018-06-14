@@ -110,7 +110,8 @@ outputs:
                           - ' '
                           - - 'crl-file'
                             - {get_param: InternalTLSCRLPEMFile}
-                      - null
+                      - - 'ssl'
+                        - 'verify none'
       docker_config:
         step_4:
           get_attr: [ContrailRedis, role_data, docker_config, step_4]
