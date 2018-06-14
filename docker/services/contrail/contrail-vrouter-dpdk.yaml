@@ -12,10 +12,6 @@ parameters:
     description: image
     type: string
     default: "contrail-openstack-compute-init"
-  ContrailVrouterGateway:
-    default: '192.168.24.1'
-    description: vRouter default gateway
-    type: string
   NeutronMetadataProxySharedSecret:
     description: Metadata Secret
     type: string
@@ -85,7 +81,6 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
-          - contrail::vrouter::gateway: {get_param: ContrailVrouterGateway}
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             tripleo.contrail_vrouter.firewall_rules:
               '111 contrail_vrouter_8085_8097':
@@ -189,9 +184,6 @@ outputs:
         - name: get keystone admin tenant
           shell: hiera -c /etc/puppet/hiera.yaml contrail::admin_tenant_name
           register: keystone_admin_tenant
-        - name: get contrail vrouter gateway
-          shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::gateway
-          register: contrail_vrouter_gateway
         - name: get metadata secret
           shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::metadata_proxy_shared_secret
           register: contrail_metadata_secret
@@ -247,7 +239,7 @@ outputs:
           lineinfile: dest=/etc/contrail/common_vrouter.env line="{{ item }}" state=present
           with_items:
             - RABBITMQ_NODE_PORT=5673
-            - OPENSTACK_VERSION=ocata
+            - OPENSTACK_VERSION=queens
             - CLOUD_ORCHESTRATOR=openstack
             - AUTH_MODE=keystone
             - KEYSTONE_AUTH_HOST={{ keystone_public_api_vip.stdout }}
@@ -255,7 +247,6 @@ outputs:
             - KEYSTONE_AUTH_ADMIN_USER={{ keystone_admin_user.stdout }}
             - KEYSTONE_AUTH_ADMIN_TENANT={{ keystone_admin_tenant.stdout }}
             - KEYSTONE_AUTH_URL_VERSION=/v3
-            - VROUTER_GATEWAY={{ contrail_vrouter_gateway.stdout }}
             - METADATA_PROXY_SECRET={{ contrail_metadata_secret.stdout }}
             - AGENT_MODE=dpdk
 

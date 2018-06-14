@@ -306,7 +306,7 @@ outputs:
           lineinfile: dest=/etc/contrail/common_config.env line="{{ item }}" state=present
           with_items:
             - RABBITMQ_NODE_PORT=5673
-            - OPENSTACK_VERSION=ocata
+            - OPENSTACK_VERSION=queens
             - CLOUD_ORCHESTRATOR=openstack
             - AUTH_MODE=keystone
             - KEYSTONE_AUTH_HOST={{ keystone_admin_api_vip.stdout }}

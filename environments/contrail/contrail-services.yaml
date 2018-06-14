@@ -33,8 +33,7 @@ parameter_defaults:
   ComputeCount: 2
   ContrailDpdkCount: 0
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
-  NeutronServicePlugins: ''
-#  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
   NeutronTunnelTypes: ''
   NeutronMetadataProxySharedSecret: secret
   NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
@@ -42,10 +41,11 @@ parameter_defaults:
   NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
   NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin','/var/lib/contrail/ports']
   HeatApiOptVolumes: ['vnc_api:/usr/lib/python2.7/site-packages/vnc_api','cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common','gen_heat:/usr/lib/heat/contrail_heat']
-  ContrailVrouterGateway: 10.0.0.1
-  ContrailRegistryInsecure: false
-  ContrailRegistry: opencontrailnightly
-  ContrailImageTag: latest
-  ContrailSettings:
-    KEY1: value1
-    KEY2: value2
+#  ContrailRegistryInsecure: false
+#  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt 
+#  ContrailRegistry: opencontrailnightly
+#  ContrailImageTag: latest
+#  ContrailSettings:
+#    VROUTER_GATEWAY: 10.0.0.1
+#    KEY1: value1
+#    KEY2: value2
