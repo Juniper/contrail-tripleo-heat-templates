@@ -81,7 +81,7 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
-            contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
+          - contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             tripleo.contrail_vrouter.firewall_rules:
               '111 contrail_vrouter_8085_8097':
                 dport:
@@ -169,6 +169,7 @@ outputs:
           lineinfile: dest=/etc/contrail/common_vrouter.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
           with_dict: "{{ contrail_settings }}"
           when: contrail_settings is defined
+          ignore_errors: yes
         - name: get keystone admin api vip
           shell: hiera -c /etc/puppet/hiera.yaml keystone_admin_api_vip
           register: keystone_admin_api_vip
