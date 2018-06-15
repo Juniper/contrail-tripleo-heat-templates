@@ -21,6 +21,22 @@ parameters:
       toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
+  ContrailDpdkHugepages2MB
+    default: '2048'
+    description: Number of 2MB hugepages
+    type: string
+  ContrailDpdkHugepages1GB
+    default: ''
+    description: Number of 1GB hugepages
+    type: string
+  ContrailDpdkDriver:
+    default: 'uio_pci_generic'
+    description: DPDK Nic Driver
+    type: string
+  ContrailSriovOn:
+    description: If SR-IOV is configured
+    type: boolean
+    default: false
   ContrailRegistryCertUrl:
     default: ''
     description: URL to registry certificate
@@ -60,6 +76,14 @@ description: >
   os-net-config takes over.
 
 conditions:
+  is_host_config_required:
+    or:
+      - {equals: [{get_param: [RoleParameters, ContrailSriovOn]}, true]}
+      - {not: {equals: [{get_param: [RoleParameters, ContrailDpdkHugepages1GB]}, ""]}}
+      - {equals: [{get_param: [RoleParameters, ContrailDpdkDriver]}, "vfio-pci"]}
+  is_reboot_config_required:
+    or:
+      - is_host_config_required
   deployment_actions_empty:
     equals:
       - {get_param: deployment_actions}
@@ -73,6 +97,10 @@ resources:
       server:  {get_param: server}
       config: {get_resource: ContrailVrouterDpdkModuleConfig}
       input_values:
+        contrail_dpdk_hugepages_2mb: {get_param: ContrailDpdkHugepages2MB}
+        contrail_dpdk_hugepages_1gb: {get_param: ContrailDpdkHugepages1GB}
+        contrail_dpdk_driver: {get_param: ContrailDpdkDriver}
+        contrail_sriov_on: {get_param: ContrailSriovOn}
         contrail_registry_insecure: {get_param: ContrailRegistryInsecure}
         contrail_registry_cert_url: {get_param: ContrailRegistryCertUrl}
         contrail_registry: {get_param: ContrailRegistry}
@@ -92,6 +120,10 @@ resources:
     properties:
       group: script
       inputs:
+      - name: contrail_dpdk_hugepages_2mb
+      - name: contrail_dpdk_hugepages_1gb
+      - name: contrail_dpdk_driver
+      - name: contrail_sriov_on
       - name: contrail_registry_insecure
       - name: contrail_registry_cert_url
       - name: contrail_registry
@@ -106,6 +138,10 @@ resources:
         exec 2>&1
         echo "=================== $(date) ==================="
         set -xv
+        contrail_dpdk_hugepages_2mb=$contrail_dpdk_hugepages_2mb
+        contrail_dpdk_hugepages_1gb=$contrail_dpdk_hugepages_1gb
+        contrail_dpdk_driver=$contrail_dpdk_driver
+        contrail_sriov_on=$contrail_sriov_on
         contrail_registry_insecure=$contrail_registry_insecure
         contrail_registry_cert_url=$contrail_registry_cert_url
         contrail_registry=$contrail_registry
@@ -140,6 +176,14 @@ resources:
         ulimit -c unlimited
         echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
         sysctl -p
+        if [[ -z ${contrail_dpdk_hugepages_1gb} ]]; then
+          echo "vm.nr_hugepages = ${dpdk_hugepages}" >> /etc/sysctl.conf
+        fi
+        echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
+        echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
+        echo "net.ipv4.tcp_keepalive_probes = 5" >> /etc/sysctl.conf
+        echo "net.ipv4.tcp_keepalive_intvl = 1" >> /etc/sysctl.conf
+        /sbin/sysctl --system
         systemctl start docker
         docker run \
             --rm \
@@ -154,3 +198,105 @@ resources:
             -v /lib/modules:/lib/modules \
             -v /bin:/host/bin \
             ${contrail_registry}/${contrail_vrouter_init_image}:${contrail_imagetag}
+
+  HostParametersConfig:
+    type: OS::Heat::SoftwareConfig
+    condition: is_host_config_required
+    properties:
+      group: ansible
+      inputs:
+        - name: _CONTRAIL_DPDK_DRIVER_
+        - name: _CONTRAIL_SRIOV_ON_
+        - name: _CONTRAIL_HUGEPAGES_2MB_
+        - name: _CONTRAIL_HUGEPAGES_1GB_
+      outputs:
+        - name: result
+      config:
+        get_file: contrail_ansible_host_config.yaml
+
+  HostParametersDeployment:
+    type: OS::Heat::SoftwareDeployment
+    condition: is_host_config_required
+    properties:
+      name: HostParametersDeployment
+      server:  {get_param: server}
+      config: {get_resource: HostParametersConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
+      input_values:
+        _CONTRAIL_DPDK_DRIVER_: {get_param: [RoleParameters, ContrailDpdkDriver]}
+        _CONTRAIL_SRIOV_ON_: {get_param: [RoleParameters, ContrailSriovOn]}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_param: [RoleParameters, ContrailHugepages2MB]}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_param: [RoleParameters, ContrailHugepages1GB]}
+        
+
+  RebootConfig:
+    type: OS::Heat::SoftwareConfig
+    condition: is_reboot_config_required
+    properties:
+      group: script
+      config: |
+        #!/bin/bash
+        # Stop os-collect-config to avoid any race collecting another
+        # deployment before reboot happens
+        systemctl stop os-collect-config.service
+        /sbin/reboot
+
+  RebootDeployment:
+    type: OS::Heat::SoftwareDeployment
+    depends_on: [HostParametersDeployment, DpdkVhostGroupDeployment]
+    condition: is_reboot_config_required
+    properties:
+      name: RebootDeployment
+      server:  {get_param: server}
+      config: {get_resource: RebootConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
+      signal_transport: NO_SIGNAL
+
+  RebootEnsureConfig:
+    type: OS::Heat::SoftwareConfig
+    condition: is_reboot_config_required
+    properties:
+      group: script
+      config: |
+        #!/bin/bash
+        echo "Reboot completed"
+
+  RebootEnsureDeployment:
+    type: OS::Heat::SoftwareDeployment
+    depends_on: RebootDeployment
+    condition: is_reboot_config_required
+    properties:
+      name: RebootEnsureDeployment
+      server:  {get_param: server}
+      config: {get_resource: RebootEnsureConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
+
+outputs:
+  result:
+    condition: is_host_config_required
+    value:
+      get_attr: [HostParametersDeployment, result]
+  stdout:
+    condition: is_host_config_required
+    value:
+      get_attr: [HostParametersDeployment, deploy_stdout]
+  stderr:
+    condition: is_host_config_required
+    value:
+      get_attr: [HostParametersDeployment, deploy_stderr]
+  status_code:
+    condition: is_host_config_required
+    value:
+      get_attr: [HostParametersDeployment, deploy_status_code]
