@@ -174,7 +174,7 @@ resources:
         echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
         sysctl -p
         if [[ -z ${contrail_dpdk_hugepages_1gb} ]]; then
-          echo "vm.nr_hugepages = ${dpdk_hugepages}" >> /etc/sysctl.conf
+          echo "vm.nr_hugepages = ${contrail_dpdk_hugepages_2mb}" >> /etc/sysctl.conf
         fi
         echo "vm.max_map_count = 128960" >> /etc/sysctl.conf
         echo "net.ipv4.tcp_keepalive_time = 5" >> /etc/sysctl.conf
