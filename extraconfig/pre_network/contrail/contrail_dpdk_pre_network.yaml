@@ -81,9 +81,6 @@ conditions:
       - {equals: [{get_param: [RoleParameters, ContrailSriovOn]}, true]}
       - {not: {equals: [{get_param: [RoleParameters, ContrailDpdkHugepages1GB]}, ""]}}
       - {equals: [{get_param: [RoleParameters, ContrailDpdkDriver]}, "vfio-pci"]}
-  is_reboot_config_required:
-    or:
-      - is_host_config_required
   deployment_actions_empty:
     equals:
       - {get_param: deployment_actions}
@@ -235,7 +232,7 @@ resources:
 
   RebootConfig:
     type: OS::Heat::SoftwareConfig
-    condition: is_reboot_config_required
+    condition: is_host_config_required
     properties:
       group: script
       config: |
@@ -248,7 +245,7 @@ resources:
   RebootDeployment:
     type: OS::Heat::SoftwareDeployment
     depends_on: [HostParametersDeployment, DpdkVhostGroupDeployment]
-    condition: is_reboot_config_required
+    condition: is_host_config_required
     properties:
       name: RebootDeployment
       server:  {get_param: server}
@@ -262,7 +259,7 @@ resources:
 
   RebootEnsureConfig:
     type: OS::Heat::SoftwareConfig
-    condition: is_reboot_config_required
+    condition: is_host_config_required
     properties:
       group: script
       config: |
@@ -272,7 +269,7 @@ resources:
   RebootEnsureDeployment:
     type: OS::Heat::SoftwareDeployment
     depends_on: RebootDeployment
-    condition: is_reboot_config_required
+    condition: is_host_config_required
     properties:
       name: RebootEnsureDeployment
       server:  {get_param: server}
