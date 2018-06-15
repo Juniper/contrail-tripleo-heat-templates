@@ -21,11 +21,11 @@ parameters:
       toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
-  ContrailDpdkHugepages2MB
+  ContrailDpdkHugepages2MB:
     default: '2048'
     description: Number of 2MB hugepages
     type: string
-  ContrailDpdkHugepages1GB
+  ContrailDpdkHugepages1GB:
     default: ''
     description: Number of 1GB hugepages
     type: string
