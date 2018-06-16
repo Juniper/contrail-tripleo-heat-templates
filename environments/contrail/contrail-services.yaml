@@ -41,11 +41,19 @@ parameter_defaults:
   NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
   NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin','/var/lib/contrail/ports']
   HeatApiOptVolumes: ['vnc_api:/usr/lib/python2.7/site-packages/vnc_api','cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common','gen_heat:/usr/lib/heat/contrail_heat']
-#  ContrailRegistryInsecure: false
-#  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt 
-#  ContrailRegistry: opencontrailnightly
-#  ContrailImageTag: latest
-#  ContrailSettings:
-#    VROUTER_GATEWAY: 10.0.0.1
+# enable insecure registry
+#  ContrailRegistryInsecure: true
+#  DockerInsecureRegistryAddress: 10.87.64.32:5000,192.168.24.1:8787
+#  ContrailRegistry: 10.87.64.32:5000
+# enable private secure registry
+#  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
+#  ContrailRegistry: satellite.englab.juniper.net:5443
+# set contrail image tag
+#  ContrailImageTag: queens-master-139-rhel
+# enable 1 GB hugepages for dpdk
+#  ContrailDpdkHugepages1GB: 10
+# contrail container configuration settings
+  ContrailSettings:
+    VROUTER_GATEWAY: 10.0.0.1
 #    KEY1: value1
 #    KEY2: value2
