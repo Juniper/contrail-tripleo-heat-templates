@@ -1,0 +1,108 @@
+---
+- name: Configuration to be applied before rebooting the node
+  connection: local
+  hosts: localhost
+
+  tasks:
+    - name: setup private secure registry
+      block:
+        - name: get contrail registry name
+          set_fact:
+            registry_name: "{{ _CONTRAIL_REGISTRY_.split(':')[0] }}"
+        - name: create docker cert directory
+          file:
+            path: "/etc/docker/certs.d/{{ registry_name }}"
+            state: directory
+        - name: copy cert to docker cert directory
+          get_url:
+            url: "{{ _CONTRAIL_REGISTRY_CERT_URL_ }}"
+            dest: "/etc/docker/certs.d/{{ registry_name }}"
+        - name: copy cert to pki cert directory
+          get_url:
+            url: "{{ _CONTRAIL_REGISTRY_CERT_URL_ }}"
+            dest: "/etc/pki/ca-trust/source/anchors"
+        - name: update cert
+          shell: update-ca-trust
+      when:
+        - _CONTRAIL_REGISTRY_CERT_URL_ is defined
+        - _CONTRAIL_REGISTRY_ is defined
+        - _CONTRAIL_REGISTRY_CERT_URL_ != ''
+        - _CONTRAIL_REGISTRY_ != ''
+
+    - name: setup insecure registry
+      block:
+        - name: init existing_insecure_registries
+          set_fact:
+            existing_insecure_registries: ""
+        - name: get existing insecure registries
+          set_fact:
+            existing_insecure_registries: "{{ item }}"
+          with_lines: cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "
+        - name: set new insecure registry string
+          set_fact:
+            new_insecure_registries_string: "INSECURE_REGISTRY=\"{{ existing_insecure_registries }} --insecure-registry {{ _CONTRAIL_REGISTRY_ }}\""
+        - name: add new_insecure_registries_string to /etc/sysconfig/docker
+          lineinfile:
+            dest: /etc/sysconfig/docker
+            regexp: '^INSECURE_REGISTRY=.*'
+            line: "{{ new_insecure_registries_string }}" 
+      when:
+        - _CONTRAIL_REGISTRY_INSECURE_ is defined
+        - _CONTRAIL_REGISTRY_INSECURE_ == 'True'
+
+    - name: enable docker service
+      systemd:
+        state: restarted
+        name: docker
+        enabled: yes 
+
+    - name: create crash directory
+      file:
+        path: "/var/crashes"
+        state: directory
+        mode: 0755
+
+    - name: ulimit -c unlimited
+      shell: ulimit -c unlimited
+
+    - name: set additional kernel parameters
+      lineinfile:
+        dest: /etc/sysctl.conf
+        line: "{{ item }}"
+      with_items:
+        - "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t"
+        - "vm.max_map_count = 128960"
+        - "net.ipv4.tcp_keepalive_time = 5"
+        - "net.ipv4.tcp_keepalive_probes = 5"
+        - "net.ipv4.tcp_keepalive_intvl = 1"
+      
+    - name: set 2GB hugepages if 1GB are not defined
+      lineinfile:
+        dest: /etc/sysctl.conf
+        line: "vm.nr_hugepages = {{ _CONTRAIL_DPDK_HUGEPAGES_2MB_ }}"
+      when: _CONTRAIL_DPDK_HUGEPAGES_1GB_ is undefined and _CONTRAIL_DPDK_HUGEPAGES_2MB_ is defined
+
+    - name: apply kernel settings
+      shell: /sbin/sysctl --system
+
+    - name: start contrail dpdk init container
+      docker_container:
+        name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
+        image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+        #auto_remove: yes
+        privileged: yes
+        volumes:
+          - /dev:/dev
+          - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
+          - /lib/modules:/lib/modules
+          - /bin:/host/bin
+        env:
+          AGENT_MODE: dpdk
+          CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+          CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
+          CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
+
+    - name: pull contrail vrouter dpdk agent container
+      docker_image:
+        name: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
+        tag: "{{ _CONTRAIL_IMAGETAG_ }}"

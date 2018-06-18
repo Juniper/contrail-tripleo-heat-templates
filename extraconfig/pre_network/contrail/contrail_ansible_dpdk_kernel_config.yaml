@@ -1,0 +1,64 @@
+---
+- name: Configuration to be applied before rebooting the node
+  connection: local
+  hosts: localhost
+
+  tasks:
+    # Kernel Args Configuration
+    - name: init kernel arg list
+      set_fact:
+        kernel_arg_list: []
+    - name: set kernel iommu arg
+      set_fact:
+        kernel_arg_list: "{{ kernel_arg_list }} + [ 'iommu=pt' ]"
+      when: _CONTRAIL_DPDK_DRIVER_ == "vfio-pci"
+    - name: set kernel intel_iommu arg
+      set_fact:
+        kernel_arg_list: "{{ kernel_arg_list }} + [ 'intel_iommu=on' ]"
+      when: _CONTRAIL_DPDK_DRIVER_ == "vfio-pci" or _CONTRAIL_SRIOV_ON_ == "true"
+    - name: set kernel 1GB hugepage arg
+      set_fact:
+        kernel_arg_list: "{{ kernel_arg_list }} + [ 'default_hugepagesz=1GB hugepagesz=1G hugepages={{ _CONTRAIL_HUGEPAGES_1GB_ }}' ]"
+      when: _CONTRAIL_HUGEPAGES_1GB_ != ""
+    - name: set kernel 2MB hugepage arg
+      set_fact:
+        kernel_arg_list: "{{ kernel_arg_list }} + [ 'hugepagesz=2M hugepages={{ _CONTRAIL_HUGEPAGES_2MB_ }}' ]"
+      when: _CONTRAIL_HUGEPAGES_2MB_ != ""
+    - name: set _KERNEL_ARGS_ string
+      set_fact:
+        _KERNEL_ARGS_: "{{ kernel_arg_list | join(' ') }}"
+    - block:
+        - name: Ensure the kernel args ( {{ _KERNEL_ARGS_ }} ) is present as TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS
+          lineinfile:
+            dest: /etc/default/grub
+            regexp: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
+            insertafter: '^GRUB_CMDLINE_LINUX.*'
+            line: 'TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS=" {{ _KERNEL_ARGS_ }} "'
+        - name: Add TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS to the GRUB_CMDLINE_LINUX parameter
+          lineinfile:
+            dest: /etc/default/grub
+            line: 'GRUB_CMDLINE_LINUX="${GRUB_CMDLINE_LINUX:+$GRUB_CMDLINE_LINUX }${TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS}"'
+            insertafter: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
+        - name: Generate grub config file
+          command: grub2-mkconfig -o /boot/grub2/grub.cfg
+      become: true
+      when: _KERNEL_ARGS_|default("") != ""
+    - name: create hugepage devs
+      file:
+        path: "/dev/hugepages{{ item }}"
+        state: directory
+      with_items:
+        - "1G"
+        - "2M"
+      when: _CONTRAIL_HUGEPAGES_1GB_ != ""
+    - name: create fstab entries
+      mount:
+        path: "/dev/hugepages{{ item }}"
+        src: none
+        fstype: hugetlbfs
+        opts: "pagesize={{ item }}"
+        state: present
+      with_items:
+        - "1G"
+        - "2M"
+      when: _CONTRAIL_HUGEPAGES_1GB_ != ""

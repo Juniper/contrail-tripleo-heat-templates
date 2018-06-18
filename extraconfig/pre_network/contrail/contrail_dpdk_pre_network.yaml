@@ -21,6 +21,26 @@ parameters:
       toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
+  ContrailDpdkHugepages2MB:
+    default: '2048'
+    description: Number of 2MB hugepages
+    type: string
+  ContrailDpdkHugepages1GB:
+    default: ''
+    description: Number of 1GB hugepages
+    type: string
+  ContrailDpdkDriver:
+    default: 'uio_pci_generic'
+    description: DPDK Nic Driver
+    type: string
+  ContrailSriovOn:
+    description: If SR-IOV is configured
+    type: boolean
+    default: false
+  ContrailRegistryCertUrl:
+    default: ''
+    description: URL to registry certificate
+    type: string
   ContrailRegistryInsecure:
     default: false
     description: Contrail Registry
@@ -56,87 +76,156 @@ description: >
   os-net-config takes over.
 
 conditions:
+  is_dpdk_kernel_config_required:
+    or:
+      - {equals: [{get_param: ContrailSriovOn}, true]}
+      - {not: {equals: [{get_param: ContrailDpdkHugepages1GB}, ""]}}
+      - {equals: [{get_param: ContrailDpdkDriver}, "vfio-pci"]}
   deployment_actions_empty:
     equals:
       - {get_param: deployment_actions}
       - []
 
 resources:
-  ContrailVrouterDpdkModuleDeployment:
+  DpdkHostParametersConfig:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ansible
+      inputs:
+        - name: _CONTRAIL_REGISTRY_CERT_URL_
+        - name: _CONTRAIL_REGISTRY_
+        - name: _CONTRAIL_REGISTRY_INSECURE_
+        - name: _CONTRAIL_IMAGETAG_
+        - name: _CONTRAIL_VROUTER_INIT_IMAGE_
+        - name: _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_
+        - name: _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_
+        - name: _CONTRAIL_DPDK_HUGEPAGES_1GB_
+        - name: _CONTRAIL_DPDK_HUGEPAGES_2MB_
+      outputs:
+        - name: result
+      config:
+        get_file: contrail_ansible_dpdk_host_config.yaml
+
+  DpdkHostParametersDeployment:
     type: OS::Heat::SoftwareDeployment
     properties:
-      name: ContrailVrouterDpdkModuleDeployment
+      name: DpdkHostParametersDeployment
       server:  {get_param: server}
-      config: {get_resource: ContrailVrouterDpdkModuleConfig}
+      config: {get_resource: DpdkHostParametersConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
       input_values:
-        contrail_registry_insecure: {get_param: ContrailRegistryInsecure}
-        contrail_registry: {get_param: ContrailRegistry}
-        contrail_imagetag: {get_param: ContrailImageTag}
-        contrail_vrouter_init_image: {get_param: DockerContrailVrouterKernelInitDpdkImageName}
-        contrail_vrouter_agent_dpdk_image: {get_param: DockerContrailVrouterAgentDpdkImageName}
-        contrail_vrouter_agent_container_name: {get_param: DockerContrailVrouterAgentContainerName}
-        contrail_vrouter_agent_dpdk_container_name: {get_param: DockerContrailVrouterAgentDpdkContainerName}
+        _CONTRAIL_REGISTRY_CERT_URL_: {get_param: ContrailRegistryCertUrl}
+        _CONTRAIL_REGISTRY_: {get_param: ContrailRegistry}
+        _CONTRAIL_REGISTRY_INSECURE_: {get_param: ContrailRegistryInsecure}
+        _CONTRAIL_IMAGETAG_: {get_param: ContrailImageTag}
+        _CONTRAIL_VROUTER_INIT_IMAGE_: {get_param: DockerContrailVrouterKernelInitDpdkImageName}
+        _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_: {get_param: DockerContrailVrouterAgentDpdkContainerName}
+        _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_: {get_param: DockerContrailVrouterAgentContainerName}
+        _CONTRAIL_DPDK_HUGEPAGES_1GB_: {get_param: ContrailDpdkHugepages1GB}
+        _CONTRAIL_DPDK_HUGEPAGES_2MB_: {get_param: ContrailDpdkHugepages2MB}
+
+  DpdkKernelParametersConfig:
+    type: OS::Heat::SoftwareConfig
+    condition: is_dpdk_kernel_config_required
+    properties:
+      group: ansible
+      inputs:
+        - name: _CONTRAIL_DPDK_DRIVER_
+        - name: _CONTRAIL_SRIOV_ON_
+        - name: _CONTRAIL_HUGEPAGES_2MB_
+        - name: _CONTRAIL_HUGEPAGES_1GB_
+      outputs:
+        - name: result
+      config:
+        get_file: contrail_ansible_dpdk_kernel_config.yaml
+
+  DpdkKernelParametersDeployment:
+    type: OS::Heat::SoftwareDeployment
+    depends_on: [DpdkHostParametersDeployment]
+    condition: is_dpdk_kernel_config_required
+    properties:
+      name: DpdkKernelParametersDeployment
+      server:  {get_param: server}
+      config: {get_resource: DpdkKernelParametersConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
+      input_values:
+        _CONTRAIL_DPDK_DRIVER_: {get_param: ContrailDpdkDriver}
+        _CONTRAIL_SRIOV_ON_: {get_param: ContrailSriovOn}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailDpdkHugepages2MB}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailDpdkHugepages1GB}
+
+  RebootConfig:
+    type: OS::Heat::SoftwareConfig
+    condition: is_dpdk_kernel_config_required
+    properties:
+      group: script
+      config: |
+        #!/bin/bash
+        # Stop os-collect-config to avoid any race collecting another
+        # deployment before reboot happens
+        systemctl stop os-collect-config.service
+        /sbin/reboot
+
+  RebootDeployment:
+    type: OS::Heat::SoftwareDeployment
+    depends_on: [DpdkKernelParametersDeployment]
+    condition: is_dpdk_kernel_config_required
+    properties:
+      name: RebootDeployment
+      server:  {get_param: server}
+      config: {get_resource: RebootConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
+      signal_transport: NO_SIGNAL
+
+  RebootEnsureConfig:
+    type: OS::Heat::SoftwareConfig
+    #condition: is_dpdk_kernel_config_required
+    properties:
+      group: script
+      config: |
+        #!/bin/bash
+        echo "Reboot completed"
+
+  RebootEnsureDeployment:
+    type: OS::Heat::SoftwareDeployment
+    depends_on: RebootDeployment
+    condition: is_dpdk_kernel_config_required
+    properties:
+      name: RebootEnsureDeployment
+      server:  {get_param: server}
+      config: {get_resource: RebootEnsureConfig}
       actions:
         if:
           - deployment_actions_empty
           - []
           - ['CREATE'] # Only do this on CREATE
 
-  ContrailVrouterDpdkModuleConfig:
-    type: OS::Heat::SoftwareConfig
-    properties:
-      group: script
-      inputs:
-      - name: contrail_registry_insecure
-      - name: contrail_registry
-      - name: contrail_imagetag
-      - name: contrail_vrouter_init_image
-      - name: contrail_vrouter_agent_dpdk_image
-      - name: contrail_vrouter_agent_container_name
-      config: |
-        #!/bin/bash
-        export LOGFILE=/tmp/contrail_trace_full.txt
-        exec > >(tee -a $LOGFILE)
-        exec 2>&1
-        echo "=================== $(date) ==================="
-        set -xv
-        contrail_registry_insecure=$contrail_registry_insecure
-        contrail_registry=$contrail_registry
-        contrail_imagetag=$contrail_imagetag
-        contrail_vrouter_init_image=$contrail_vrouter_init_image
-        if [[ ${contrail_registry_insecure} == 'True' ]]; then
-          found=0
-          registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
-          for reg in $registries; do if [[ ${reg} == ${contrail_registry} ]]; then found=1; fi; done
-          if [[ ${found} -eq 0 ]]; then
-            registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
-            registry_string="${registry_string} --insecure-registry ${contrail_registry}"
-            complete_string="INSECURE_REGISTRY=\"${registry_string}\""
-            echo ${complete_string}
-            if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
-              sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
-            else
-              echo ${complete_string} >> /etc/sysconfig/docker
-            fi
-            systemctl restart docker
-          fi
-        fi
-        mkdir /var/crashes
-        chmod -R 755 /var/crashes
-        ulimit -c unlimited
-        echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
-        sysctl -p
-        systemctl start docker
-        docker run \
-            --rm \
-            --privileged \
-            -e "AGENT_MODE=dpdk" \
-            -e "CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE=${contrail_registry}/${contrail_vrouter_agent_dpdk_image}:${contrail_imagetag}" \
-            -e "CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME=${contrail_vrouter_agent_dpdk_container_name}" \
-            -e "CONTRAIL_VROUTER_AGENT_CONTAINER_NAME=${contrail_vrouter_agent_container_name}" \
-            --name $contrail_vrouter_init_image \
-            -v /dev:/dev \
-            -v /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts \
-            -v /lib/modules:/lib/modules \
-            -v /bin:/host/bin \
-            ${contrail_registry}/${contrail_vrouter_init_image}:${contrail_imagetag}
+outputs:
+  result:
+    condition: is_dpdk_kernel_config_required
+    value:
+      get_attr: [DpdkKernelParametersDeployment, result]
+  stdout:
+    condition: is_dpdk_kernel_config_required
+    value:
+      get_attr: [DpdkKernelParametersDeployment, deploy_stdout]
+  stderr:
+    condition: is_dpdk_kernel_config_required
+    value:
+      get_attr: [DpdkKernelParametersDeployment, deploy_stderr]
+  status_code:
+    condition: is_dpdk_kernel_config_required
+    value:
+      get_attr: [DpdkKernelParametersDeployment, deploy_status_code]

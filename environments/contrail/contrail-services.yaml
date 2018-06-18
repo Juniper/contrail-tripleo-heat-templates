@@ -14,6 +14,7 @@ resource_registry:
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
   OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
+  OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
 
 parameter_defaults:
   ServiceNetMap:
@@ -33,8 +34,7 @@ parameter_defaults:
   ComputeCount: 2
   ContrailDpdkCount: 0
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
-  NeutronServicePlugins: ''
-#  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
   NeutronTunnelTypes: ''
   NeutronMetadataProxySharedSecret: secret
   NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
@@ -42,10 +42,19 @@ parameter_defaults:
   NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
   NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin','/var/lib/contrail/ports']
   HeatApiOptVolumes: ['vnc_api:/usr/lib/python2.7/site-packages/vnc_api','cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common','gen_heat:/usr/lib/heat/contrail_heat']
-  ContrailVrouterGateway: 10.0.0.1
-  ContrailRegistryInsecure: false
-  ContrailRegistry: opencontrailnightly
-  ContrailImageTag: latest
+# enable insecure registry
+#  ContrailRegistryInsecure: true
+#  DockerInsecureRegistryAddress: 10.87.64.32:5000,192.168.24.1:8787
+#  ContrailRegistry: 10.87.64.32:5000
+# enable private secure registry
+#  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
+#  ContrailRegistry: satellite.englab.juniper.net:5443
+# set contrail image tag
+#  ContrailImageTag: queens-master-139-rhel
+# enable 1 GB hugepages for dpdk
+#  ContrailDpdkHugepages1GB: 10
+# contrail container configuration settings
   ContrailSettings:
-    KEY1: value1
-    KEY2: value2
+    VROUTER_GATEWAY: 10.0.0.1
+#    KEY1: value1
+#    KEY2: value2

@@ -110,7 +110,8 @@ outputs:
                           - ' '
                           - - 'crl-file'
                             - {get_param: InternalTLSCRLPEMFile}
-                      - null
+                      - - 'ssl'
+                        - 'verify none'
       docker_config:
         step_4:
           get_attr: [ContrailRedis, role_data, docker_config, step_4]
@@ -236,7 +237,7 @@ outputs:
           lineinfile: dest=/etc/contrail/common_webui.env line="{{ item }}" state=present
           with_items:
             - RABBITMQ_NODE_PORT=5673
-            - OPENSTACK_VERSION=ocata
+            - OPENSTACK_VERSION=queens
             - CLOUD_ORCHESTRATOR=openstack
             - AUTH_MODE=keystone
             - KEYSTONE_AUTH_HOST={{ keystone_public_api_vip.stdout }}
