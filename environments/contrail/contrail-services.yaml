@@ -14,6 +14,7 @@ resource_registry:
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
   OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
+  OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
 
 parameter_defaults:
   ServiceNetMap:
