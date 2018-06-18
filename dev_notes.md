@@ -297,7 +297,7 @@ openstack overcloud node introspect --all-manageable --provide
 
 ## create the flavors
 ```
-for i in contrail-controller contrail-analytics contrail-database contrail-analytics-database; do   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40;   openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="${i}" ${i}; done
+for i in compute-dpdk contrail-controller contrail-analytics contrail-database contrail-analytics-database; do   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40;   openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="${i}" ${i}; done
 ```
 
 ## create tht template copy
@@ -340,11 +340,11 @@ openstack overcloud container image upload --config-file ~/overcloud_containers.
 openstack overcloud container image prepare \
  --push-destination=192.168.24.1:8787  \
  --tag-from-label {version}-{release} \
- --output-images-file=~/local_registry_images.yaml  \
+ --output-images-file ~/local_registry_images.yaml  \
  --namespace=registry.access.redhat.com/rhosp13-beta  \
  --prefix=openstack-  \
  --tag-from-label {version}-{release}  \
- --output-env-file=~/overcloud_images.yaml
+ --output-env-file ~/overcloud_images.yaml
 ```
 
 #### Optional: adding Contrail containers to undercloud registry
