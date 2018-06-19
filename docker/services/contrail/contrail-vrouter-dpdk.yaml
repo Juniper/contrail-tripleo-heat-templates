@@ -102,6 +102,7 @@ outputs:
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             volumes:
               - vrouter_port_control:/opt/plugin/bin
+              - contrail_vif_plugin:/opt/plugin/site-packages
         step_5:
           contrail_vrouter_agent_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}

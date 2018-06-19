@@ -39,8 +39,8 @@ parameter_defaults:
   NeutronMetadataProxySharedSecret: secret
   NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
   NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
-  NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
-  NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin','/var/lib/contrail/ports']
+  NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin','PYTHONPATH=/opt/plugin/site-packages']
+  NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin','/var/lib/contrail/ports','contrail_vif_plugin:/opt/plugin/site-packages']
   HeatApiOptVolumes: ['vnc_api:/usr/lib/python2.7/site-packages/vnc_api','cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common','gen_heat:/usr/lib/heat/contrail_heat']
 # enable insecure registry
 #  ContrailRegistryInsecure: true
