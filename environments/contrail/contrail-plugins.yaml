@@ -1,0 +1,35 @@
+# A Heat environment file which can be used to enable OpenContrail
+# # extensions, configured via puppet
+resource_registry:
+  OS::TripleO::Services::ContrailConfigDatabase: ../../docker/services/contrail/contrail-config-database.yaml
+  OS::TripleO::Services::ContrailAnalyticsDatabase: ../../docker/services/contrail/contrail-analytics-database.yaml
+  OS::TripleO::Services::ContrailConfig: ../../docker/services/contrail/contrail-config.yaml
+  OS::TripleO::Services::ContrailAnalytics: ../../docker/services/contrail/contrail-analytics.yaml
+  OS::TripleO::Services::ContrailControl: ../../docker/services/contrail/contrail-control.yaml
+  OS::TripleO::Services::ContrailWebui: ../../docker/services/contrail/contrail-webui.yaml
+  OS::TripleO::Services::ContrailVrouter: ../../docker/services/contrail/contrail-vrouter.yaml
+  OS::TripleO::Services::ContrailDpdk: ../../docker/services/contrail/contrail-vrouter-dpdk.yaml
+  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
+  OS::TripleO::Services::ContrailHeatApiPlugin: ../../docker/services/contrail/contrail-heat-container-plugin.yaml
+  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
+  OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
+  OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
+  OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
+
+parameter_defaults:
+  NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
+  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+  NeutronTunnelTypes: ''
+  NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
+  NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
+  NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
+  NovaComputeOptVolumes:
+    - vrouter_port_control:/opt/plugin/bin
+    - /var/lib/contrail/ports
+    - nova_contrail_vif:/usr/lib/python2.7/site-packages/nova_contrail_vif
+    - nova_contrail_vif_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
+    - vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
+  HeatApiOptVolumes:
+   - vnc_api:/usr/lib/python2.7/site-packages/vnc_api
+   - cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common
+   - gen_heat:/usr/lib/heat/contrail_heat

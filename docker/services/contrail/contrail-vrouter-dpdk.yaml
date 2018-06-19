@@ -102,7 +102,9 @@ outputs:
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             volumes:
               - vrouter_port_control:/opt/plugin/bin
-              - contrail_vif_plugin:/opt/plugin/site-packages
+              - vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
+              - nova_contrail_vif:/usr/lib/python2.7/site-packages/nova_contrail_vif
+              - nova_contrail_vif_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
         step_5:
           contrail_vrouter_agent_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
