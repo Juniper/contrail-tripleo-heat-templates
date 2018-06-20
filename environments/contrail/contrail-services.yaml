@@ -1,21 +1,3 @@
-# A Heat environment file which can be used to enable OpenContrail
-# # extensions, configured via puppet
-resource_registry:
-  OS::TripleO::Services::ContrailConfigDatabase: ../../docker/services/contrail/contrail-config-database.yaml
-  OS::TripleO::Services::ContrailAnalyticsDatabase: ../../docker/services/contrail/contrail-analytics-database.yaml
-  OS::TripleO::Services::ContrailConfig: ../../docker/services/contrail/contrail-config.yaml
-  OS::TripleO::Services::ContrailAnalytics: ../../docker/services/contrail/contrail-analytics.yaml
-  OS::TripleO::Services::ContrailControl: ../../docker/services/contrail/contrail-control.yaml
-  OS::TripleO::Services::ContrailWebui: ../../docker/services/contrail/contrail-webui.yaml
-  OS::TripleO::Services::ContrailVrouter: ../../docker/services/contrail/contrail-vrouter.yaml
-  OS::TripleO::Services::ContrailDpdk: ../../docker/services/contrail/contrail-vrouter-dpdk.yaml
-  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
-  OS::TripleO::Services::ContrailHeatApiPlugin: ../../docker/services/contrail/contrail-heat-container-plugin.yaml
-  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
-  OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
-  OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
-  OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
-
 parameter_defaults:
   ServiceNetMap:
     ContrailDatabaseNetwork: internal_api
@@ -31,28 +13,21 @@ parameter_defaults:
   OvercloudContrailDpdkFlavor: compute-dpdk
   ControllerCount: 1
   ContrailControllerCount: 1
-  ComputeCount: 2
-  ContrailDpdkCount: 0
-  NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
-  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
-  NeutronTunnelTypes: ''
+  ComputeCount: 1
+  ContrailDpdkCount: 1
   NeutronMetadataProxySharedSecret: secret
-  NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
-  NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
-  NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
-  NovaComputeOptVolumes: ['vrouter_port_control:/opt/plugin/bin','/var/lib/contrail/ports']
-  HeatApiOptVolumes: ['vnc_api:/usr/lib/python2.7/site-packages/vnc_api','cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common','gen_heat:/usr/lib/heat/contrail_heat']
 # enable insecure registry
 #  ContrailRegistryInsecure: true
 #  DockerInsecureRegistryAddress: 10.87.64.32:5000,192.168.24.1:8787
 #  ContrailRegistry: 10.87.64.32:5000
 # enable private secure registry
-#  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
-#  ContrailRegistry: satellite.englab.juniper.net:5443
+  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
+  ContrailRegistry: satellite.englab.juniper.net:5443
 # set contrail image tag
-#  ContrailImageTag: queens-master-139-rhel
+#  ContrailImageTag: queens-master-145-rhel-queens
+  ContrailImageTag: queens-5.0-104-rhel-queens
 # enable 1 GB hugepages for dpdk
-#  ContrailDpdkHugepages1GB: 10
+  ContrailDpdkHugepages1GB: 10
 # contrail container configuration settings
   ContrailSettings:
     VROUTER_GATEWAY: 10.0.0.1
