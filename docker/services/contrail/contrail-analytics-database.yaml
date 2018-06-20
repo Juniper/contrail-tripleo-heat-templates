@@ -10,6 +10,16 @@ parameters:
                   Contrail will fail installation if disk size is not enough.
     type: string
     default: ''
+  ContrailAnalyticsDBPath:
+    description:  The path to cassandra database directory. Default
+                  will be /var/lib/docker/volumes/analytics_cassandra_data/_data.
+    type: string
+    default: 'analytics_cassandra_data'
+  ContrailAnalyticsCommitlogPath:
+    description:  The path to cassandra commitlog directory. Default
+                  will be /var/lib/docker/volumes/analytics_cassandra_commitlog/_data.
+    type: string
+    default: 'analytics_cassandra_commitlog'
   DockerContrailCassandraImageName:
     description: image
     type: string
@@ -144,7 +154,14 @@ outputs:
             volumes:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - analytics_cassandra:/var/lib/cassandra/data
+                - - list_join:
+                      - ':'
+                      - - {get_param: ContrailAnalyticsDBPath}
+                        - '/var/lib/cassandra/data'
+                  - list_join:
+                      - ':'
+                      - - {get_param: ContrailAnalyticsCommitlogPath}
+                        - '/var/lib/cassandra/commitlog'
             environment:
               - "NODE_TYPE=database"
             env_file:
