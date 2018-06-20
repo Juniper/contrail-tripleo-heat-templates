@@ -305,10 +305,8 @@ chgrp -R libvirt /var/lib/libvirt/images
 chmod g+rw /var/lib/libvirt/images
 ```
 
-### Get rhel 7.4 kvm image
-goto: https://access.redhat.com/downloads/content/69/ver=/rhel---7/7.4/x86_64/product-software
-(at the time of this writing: rhel-server-7.4-x86_64-kvm.qcow2)
-download: KVM Guest Image
+### Get rhel 7.5 kvm image
+Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal
 
 ### Create virtual switches for the undercloud VM (in case it runs on a
 different KVM host than the overcloud VMs
