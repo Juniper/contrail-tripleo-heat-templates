@@ -16,18 +16,18 @@ parameter_defaults:
   ComputeCount: 1
   ContrailDpdkCount: 1
   NeutronMetadataProxySharedSecret: secret
-# enable insecure registry
+# enable insecure registry (mutually exclusive with private secure registry)
 #  ContrailRegistryInsecure: true
 #  DockerInsecureRegistryAddress: 10.87.64.32:5000,192.168.24.1:8787
 #  ContrailRegistry: 10.87.64.32:5000
-# enable private secure registry
-  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
-  ContrailRegistry: satellite.englab.juniper.net:5443
+# enable private secure registry (mutually exclusive with insecure registry)
+#  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
+#  ContrailRegistry: satellite.englab.juniper.net:5443
 # set contrail image tag
-#  ContrailImageTag: queens-master-145-rhel-queens
-  ContrailImageTag: queens-5.0-104-rhel-queens
-# enable 1 GB hugepages for dpdk
-  ContrailDpdkHugepages1GB: 10
+#  ContrailImageTag: queens-5.0-104-rhel-queens
+# enable 1 GB hugepages (hardware has to support it, don't try on VMs)
+#  ContrailDpdkHugepages1GB: 10
+#  ContrailVrouterHugepages1GB: 10
 # contrail container configuration settings
   ContrailSettings:
     VROUTER_GATEWAY: 10.0.0.1
