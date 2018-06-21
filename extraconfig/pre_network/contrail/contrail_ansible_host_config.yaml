@@ -4,61 +4,149 @@
   hosts: localhost
 
   tasks:
-    # Kernel Args Configuration
-    - name: init kernel arg list
-      set_fact:
-        kernel_arg_list: []
-    - name: set kernel iommu arg
-      set_fact:
-        kernel_arg_list: "{{ kernel_arg_list }} + [ 'iommu=pt' ]"
-      when: _CONTRAIL_DPDK_DRIVER_ == "vfio-pci"
-    - name: set kernel intel_iommu arg
-      set_fact:
-        kernel_arg_list: "{{ kernel_arg_list }} + [ 'intel_iommu=on' ]"
-      when: _CONTRAIL_DPDK_DRIVER_ == "vfio-pci" or _CONTRAIL_SRIOV_ON_ == "true"
-    - name: set kernel 1GB hugepage arg
-      set_fact:
-        kernel_arg_list: "{{ kernel_arg_list }} + [ 'default_hugepagesz=1GB hugepagesz=1G hugepages={{ _CONTRAIL_HUGEPAGES_1GB_ }}' ]"
-      when: _CONTRAIL_HUGEPAGES_1GB_ != ""
-    - name: set kernel 2MB hugepage arg
-      set_fact:
-        kernel_arg_list: "{{ kernel_arg_list }} + [ 'hugepagesz=2M hugepages={{ _CONTRAIL_HUGEPAGES_2MB_ }}' ]"
-      when: _CONTRAIL_HUGEPAGES_2MB_ != ""
-    - name: set _KERNEL_ARGS_ string
-      set_fact:
-        _KERNEL_ARGS_: "{{ kernel_arg_list | join(' ') }}"
-    - block:
-        - name: Ensure the kernel args ( {{ _KERNEL_ARGS_ }} ) is present as TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS
-          lineinfile:
-            dest: /etc/default/grub
-            regexp: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
-            insertafter: '^GRUB_CMDLINE_LINUX.*'
-            line: 'TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS=" {{ _KERNEL_ARGS_ }} "'
-        - name: Add TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS to the GRUB_CMDLINE_LINUX parameter
-          lineinfile:
-            dest: /etc/default/grub
-            line: 'GRUB_CMDLINE_LINUX="${GRUB_CMDLINE_LINUX:+$GRUB_CMDLINE_LINUX }${TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS}"'
-            insertafter: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
-        - name: Generate grub config file
-          command: grub2-mkconfig -o /boot/grub2/grub.cfg
-      become: true
-      when: _KERNEL_ARGS_|default("") != ""
-    - name: create hugepage devs
+    - name: write policy file for ha proxy
+      blockinfile:
+        path: /tmp/contrail_haproxy.te
+        create: yes
+        block: |
+          module contrail_haproxy 1.0;
+
+          require {
+                  type ifconfig_t;
+                  type user_tmp_t;
+                  type haproxy_exec_t;
+                  type var_lib_t;
+                  type http_port_t;
+                  class process setrlimit;
+                  class capability { kill net_bind_service setgid setuid sys_resource };
+                  class tcp_socket name_bind;
+                  class sock_file { create link rename unlink setattr write };
+                  class dir { add_name mounton remove_name write };
+                  class file { create execute execute_no_trans getattr open read unlink write };
+          }
+
+          #============= ifconfig_t ==============
+          allow ifconfig_t user_tmp_t:dir mounton;
+          allow ifconfig_t haproxy_exec_t:file { execute execute_no_trans open read };
+          allow ifconfig_t http_port_t:tcp_socket name_bind;
+          allow ifconfig_t self:capability { kill net_bind_service setgid setuid sys_resource };
+          allow ifconfig_t self:process setrlimit;
+          allow ifconfig_t var_lib_t:dir { add_name remove_name write };
+          allow ifconfig_t var_lib_t:file { create getattr unlink open read write };
+          allow ifconfig_t var_lib_t:sock_file { create link rename unlink setattr write };
+
+    - name: create contrail haproxy selinux policy module
+      shell: /bin/checkmodule -M -m -o /tmp/contrail_haproxy.mod /tmp/contrail_haproxy.te
+
+    - name: create contrail haproxy selinux policy package
+      shell: /bin/semodule_package -o /tmp/contrail_haproxy.pp -m /tmp/contrail_haproxy.mod
+
+    - name: install contrail haproxy selinux policy package
+      shell: /sbin/semodule -i /tmp/contrail_haproxy.pp
+
+    - name: create policy file for dpdk
+      block:
+        - name: create policy file for dpdk
+          blockinfile:
+            path: /tmp/contrail_dpdk.te
+            create: yes
+            block: |
+              module contrail_dpdk 1.0;
+
+              require {
+                      type container_var_run_t;
+                      type svirt_t;
+                      class sock_file { create unlink };
+                      class dir { add_name remove_name write };
+              }
+
+              #============= svirt_t ==============
+              allow svirt_t container_var_run_t:dir { add_name remove_name write };
+              allow svirt_t container_var_run_t:sock_file { create unlink };
+
+        - name: create contrail dpdk selinux policy module
+          shell: /bin/checkmodule -M -m -o /tmp/contrail_dpdk.mod /tmp/contrail_dpdk.te
+
+        - name: create contrail dpdk selinux policy package
+          shell: /bin/semodule_package -o /tmp/contrail_dpdk.pp -m /tmp/contrail_dpdk.mod
+
+        - name: install contrail dpdk selinux policy package
+          shell: /sbin/semodule -i /tmp/contrail_dpdk.pp
+
+      when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
+
+    - name: enable docker service
+      systemd:
+        state: restarted
+        name: docker
+        enabled: yes 
+
+    - name: create crash directory
       file:
-        path: "/dev/hugepages{{ item }}"
+        path: "/var/crashes"
         state: directory
+        mode: 0755
+
+    - name: ulimit -c unlimited
+      shell: ulimit -c unlimited
+
+    - name: set additional kernel parameters
+      lineinfile:
+        dest: /etc/sysctl.conf
+        line: "{{ item }}"
       with_items:
-        - "1G"
-        - "2M"
-      when: _CONTRAIL_HUGEPAGES_1GB_ != ""
-    - name: create fstab entries
-      mount:
-        path: "/dev/hugepages{{ item }}"
-        src: none
-        fstype: hugetlbfs
-        opts: "pagesize={{ item }}"
-        state: present
-      with_items:
-        - "1G"
-        - "2M"
-      when: _CONTRAIL_HUGEPAGES_1GB_ != ""
+        - "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t"
+        - "vm.max_map_count = 128960"
+        - "net.ipv4.tcp_keepalive_time = 5"
+        - "net.ipv4.tcp_keepalive_probes = 5"
+        - "net.ipv4.tcp_keepalive_intvl = 1"
+      
+    - name: set 2GB hugepages if 1GB are not defined
+      lineinfile:
+        dest: /etc/sysctl.conf
+        line: "vm.nr_hugepages = {{ _CONTRAIL_HUGEPAGES_2MB_ }}"
+      when: _CONTRAIL_HUGEPAGES_1GB_ is undefined and _CONTRAIL_HUGEPAGES_2MB_ is defined
+
+    - name: apply kernel settings
+      shell: /sbin/sysctl --system
+
+    - name: start contrail dpdk init container
+      block:
+        - name: create container
+          docker_container:
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
+            image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+            auto_remove: yes
+            privileged: yes
+            volumes:
+              - /dev:/dev
+              - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
+              - /lib/modules:/lib/modules
+              - /bin:/host/bin
+            env:
+              AGENT_MODE: dpdk
+              CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+              CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
+              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
+
+        - name: pull contrail vrouter dpdk agent container
+          docker_image:
+            name: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
+            tag: "{{ _CONTRAIL_IMAGETAG_ }}"
+      when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
+
+    - name: start contrail vrouter init container
+      block:
+        - name: create container
+          docker_container:
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
+            image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+            auto_remove: yes
+            privileged: yes
+            volumes:
+              - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
+              - /lib/modules:/lib/modules
+              - /bin:/host/bin
+            env:
+              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
+      when: _IS_DPDK_ is undefined

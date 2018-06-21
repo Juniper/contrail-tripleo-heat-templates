@@ -21,21 +21,25 @@ parameters:
       toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
-  ContrailRegistryCertUrl:
-    default: ''
-    description: URL to registry certificate
-    type: string
-  ContrailRegistryInsecure:
-    default: false
-    description: Contrail Registry
-    type: boolean
   ContrailRegistry:
     default: 'michaelhenkel'
     description: Contrail Registry
     type: string
+  ContrailSriovOn:
+    description: If SR-IOV is configured
+    type: boolean
+    default: false
   ContrailImageTag:
     default: 'latest'
     description: Contrail container image tag
+    type: string
+  ContrailVrouterHugepages2MB:
+    default: '2048'
+    description: Number of 2MB hugepages
+    type: string
+  ContrailVrouterHugepages1GB:
+    default: ''
+    description: Number of 1GB hugepages
     type: string
   DockerContrailVrouterKernelInitImageName:
     description: image
@@ -52,90 +56,143 @@ description: >
   os-net-config takes over.
 
 conditions:
+  is_kernel_config_required:
+    or:
+      - {equals: [{get_param: ContrailSriovOn}, true]}
+      - {not: {equals: [{get_param: ContrailVrouterHugepages1GB}, ""]}}
   deployment_actions_empty:
     equals:
       - {get_param: deployment_actions}
       - []
 
 resources:
-  ContrailVrouterModuleDeployment:
+  VrouterHostParametersConfig:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ansible
+      inputs:
+        - name: _CONTRAIL_REGISTRY_
+        - name: _CONTRAIL_IMAGETAG_
+        - name: _CONTRAIL_VROUTER_INIT_IMAGE_
+        - name: _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_
+        - name: _CONTRAIL_HUGEPAGES_1GB_
+        - name: _CONTRAIL_HUGEPAGES_2MB_
+      outputs:
+        - name: result
+      config:
+        get_file: contrail_ansible_host_config.yaml
+
+  VrouterHostParametersDeployment:
     type: OS::Heat::SoftwareDeployment
     properties:
-      name: ContrailVrouterModuleDeployment
+      name: VrouterHostParametersDeployment
       server:  {get_param: server}
-      config: {get_resource: ContrailVrouterModuleConfig}
+      config: {get_resource: VrouterHostParametersConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
       input_values:
-        contrail_registry_insecure: {get_param: ContrailRegistryInsecure}
-        contrail_registry_cert_url: {get_param: ContrailRegistryCertUrl}
-        contrail_registry: {get_param: ContrailRegistry}
-        contrail_imagetag: {get_param: ContrailImageTag}
-        contrail_vrouter_init_image: {get_param: DockerContrailVrouterKernelInitImageName}
-        contrail_vrouter_agent_container_name: {get_param: DockerContrailVrouterAgentContainerName}
+        _CONTRAIL_REGISTRY_: {get_param: ContrailRegistry}
+        _CONTRAIL_IMAGETAG_: {get_param: ContrailImageTag}
+        _CONTRAIL_VROUTER_INIT_IMAGE_: {get_param: DockerContrailVrouterKernelInitImageName}
+        _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_: {get_param: DockerContrailVrouterAgentContainerName}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailVrouterHugepages1GB}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailVrouterHugepages2MB}
+
+  VrouterKernelParametersConfig:
+    type: OS::Heat::SoftwareConfig
+    condition: is_kernel_config_required
+    properties:
+      group: ansible
+      inputs:
+        - name: _CONTRAIL_SRIOV_ON_
+        - name: _CONTRAIL_HUGEPAGES_2MB_
+        - name: _CONTRAIL_HUGEPAGES_1GB_
+      outputs:
+        - name: result
+      config:
+        get_file: contrail_ansible_kernel_config.yaml
+
+  VrouterKernelParametersDeployment:
+    type: OS::Heat::SoftwareDeployment
+    depends_on: [VrouterHostParametersDeployment]
+    condition: is_kernel_config_required
+    properties:
+      name: VrouterKernelParametersDeployment
+      server:  {get_param: server}
+      config: {get_resource: VrouterKernelParametersConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
+      input_values:
+        _CONTRAIL_SRIOV_ON_: {get_param: ContrailSriovOn}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailVrouterHugepages2MB}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailVrouterHugepages1GB}
+
+  RebootConfig:
+    type: OS::Heat::SoftwareConfig
+    condition: is_kernel_config_required
+    properties:
+      group: script
+      config: |
+        #!/bin/bash
+        # Stop os-collect-config to avoid any race collecting another
+        # deployment before reboot happens
+        systemctl stop os-collect-config.service
+        /sbin/reboot
+
+  RebootDeployment:
+    type: OS::Heat::SoftwareDeployment
+    depends_on: [VrouterKernelParametersDeployment]
+    condition: is_kernel_config_required
+    properties:
+      name: RebootDeployment
+      server:  {get_param: server}
+      config: {get_resource: RebootConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE'] # Only do this on CREATE
+      signal_transport: NO_SIGNAL
+
+  RebootEnsureConfig:
+    type: OS::Heat::SoftwareConfig
+    #condition: is_kernel_config_required
+    properties:
+      group: script
+      config: |
+        #!/bin/bash
+        echo "Reboot completed"
+
+  RebootEnsureDeployment:
+    type: OS::Heat::SoftwareDeployment
+    depends_on: RebootDeployment
+    condition: is_kernel_config_required
+    properties:
+      name: RebootEnsureDeployment
+      server:  {get_param: server}
+      config: {get_resource: RebootEnsureConfig}
       actions:
         if:
           - deployment_actions_empty
           - []
           - ['CREATE'] # Only do this on CREATE
 
-  ContrailVrouterModuleConfig:
-    type: OS::Heat::SoftwareConfig
-    properties:
-      group: script
-      inputs:
-      - name: contrail_registry_insecure
-      - name: contrail_registry_cert_url
-      - name: contrail_registry
-      - name: contrail_imagetag
-      - name: contrail_vrouter_init_image
-      - name: contrail_vrouter_agent_container_name
-      config: |
-        #!/bin/bash
-        export LOGFILE=/tmp/contrail_trace_full.txt
-        exec > >(tee -a $LOGFILE)
-        exec 2>&1
-        echo "=================== $(date) ==================="
-        set -xv
-        contrail_registry_insecure=$contrail_registry_insecure
-        contrail_registry_cert_url=$contrail_registry_cert_url
-        contrail_registry=$contrail_registry
-        contrail_imagetag=$contrail_imagetag
-        contrail_vrouter_init_image=$contrail_vrouter_init_image
-        if [[ -n ${contrail_registry_cert_url} ]]; then
-          registry_name=(${contrail_registry//:/ })
-          mkdir -p /etc/docker/certs.d/${registry_name}
-          (cd /etc/docker/certs.d/${registry_name}; curl -O ${contrail_registry_cert_url})
-          (cd /etc/pki/ca-trust/source/anchors/; curl -O ${contrail_registry_cert_url})
-          update-ca-trust
-        fi
-        if [[ ${contrail_registry_insecure} == 'True' ]]; then
-          found=0
-          registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
-          for reg in $registries; do if [[ ${reg} == ${contrail_registry} ]]; then found=1; fi; done
-          if [[ ${found} -eq 0 ]]; then
-            registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
-            registry_string="${registry_string} --insecure-registry ${contrail_registry}"
-            complete_string="INSECURE_REGISTRY=\"${registry_string}\""
-            echo ${complete_string}
-            if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
-              sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
-            else
-              echo ${complete_string} >> /etc/sysconfig/docker
-            fi
-            systemctl restart docker
-          fi
-        fi
-        mkdir /var/crashes
-        chmod -R 755 /var/crashes
-        ulimit -c unlimited
-        echo "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t" >> /etc/sysctl.conf
-        sysctl -p
-        systemctl start docker
-        docker run \
-            --rm \
-            --privileged \
-            -e "CONTRAIL_VROUTER_AGENT_CONTAINER_NAME=${contrail_vrouter_agent_container_name}" \
-            --name $contrail_vrouter_init_image \
-            -v /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts \
-            -v /lib/modules:/lib/modules \
-            -v /bin:/host/bin \
-            ${contrail_registry}/${contrail_vrouter_init_image}:${contrail_imagetag}
+outputs:
+  result:
+    value:
+      get_attr: [VrouterHostParametersDeployment, result]
+  stdout:
+    value:
+      get_attr: [VrouterHostParametersDeployment, deploy_stdout]
+  stderr:
+    value:
+      get_attr: [VrouterHostParametersDeployment, deploy_stderr]
+  status_code:
+    value:
+      get_attr: [VrouterHostParametersDeployment, deploy_status_code]
