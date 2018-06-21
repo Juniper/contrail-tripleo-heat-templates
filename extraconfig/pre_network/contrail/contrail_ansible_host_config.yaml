@@ -149,4 +149,43 @@
               - /bin:/host/bin
             env:
               CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
-      when: _IS_DPDK_ is undefined
+      when: _IS_DPDK_ is undefined or _IS_DPDK_ == ''
+
+    - name: sriov vf handling
+      block:
+        - name: create /etc/sysconfig/allocate_vfs
+          lineinfile:
+            path: /etc/sysconfig/allocate_vfs
+            line: "#!/bin/bash"
+            mode: 0755
+            owner: root
+            group: root
+            create: yes
+        - name: add vfs to /etc/sysconfig/allocate_vfs
+          lineinfile:
+            path: /etc/sysconfig/allocate_vfs
+            line: "[ \"{{ item.split(':')[0] }}\" == \"$1\" ] && echo {{ item.split(':')[1] }} > /sys/class/net/{{ item.split(':')[0] }}/device/sriov_numvfs"
+          with_items: "{{ _CONTRAIL_SRIOV_NUM_VFS_ }}"
+        - name: create /sbin/ifup-local
+          lineinfile:
+            path: /sbin/ifup-local
+            line: "#!/bin/bash"
+            mode: 0755
+            owner: root
+            group: root
+            create: yes
+        - name: add calling vfs creation to /sbin/ifup-local
+          lineinfile:
+            path: /sbin/ifup-local
+            line: "/etc/sysconfig/allocate_vfs {{ item.split(':')[0] }}"
+          with_items: "{{ _CONTRAIL_SRIOV_NUM_VFS_ }}"
+        - name: create /etc/udev/rules.d/70-tripleo-reset-sriov.rules
+          lineinfile:
+            path: /etc/udev/rules.d/70-tripleo-reset-sriov.rules
+            line: "KERNEL==\"{{ item.split(':')[0] }}\", RUN+=\"/etc/sysconfig/allocate_vfs %k\""
+            mode: 0755
+            owner: root
+            group: root
+            create: yes
+          with_items: "{{ _CONTRAIL_SRIOV_NUM_VFS_ }}"
+      when: _CONTRAIL_SRIOV_NUM_VFS_ is defined and _CONTRAIL_SRIOV_NUM_VFS_ != ''

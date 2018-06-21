@@ -3,6 +3,7 @@ resource_registry:
   OS::TripleO::ContrailController::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config.yaml
   OS::TripleO::Compute::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-config.yaml
   OS::TripleO::ContrailDpdk::Net::SoftwareConfig: ../../network/config/contrail/contrail-dpdk-nic-config.yaml
+  OS::TripleO::ContrailSriov::Net::SoftwareConfig: ../../network/config/contrail/contrail-sriov-nic-config.yaml
 
 parameter_defaults:
   # Customize all these values to match the local environment
@@ -28,6 +29,7 @@ parameter_defaults:
   ExternalNetworkVlanID: 720
   StorageNetworkVlanID: 730
   StorageMgmtNetworkVlanID: 740
+  TenantNetworkVlanID: 3211
   # Services
   EC2MetadataIp: 192.168.24.1  # Generally the IP of the Undercloud
   DnsServers: ["172.21.200.60"]
