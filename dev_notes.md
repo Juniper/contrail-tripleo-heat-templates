@@ -140,7 +140,13 @@ NIC 1 - 3 have to be substituded with real NIC names.
 
 ### Install basic packages
 ```
-yum install -y libguestfs libguestfs-tools openvswitch virt-install kvm libvirt libvirt-python python-virtinst
+yum install -y libguestfs \
+ libguestfs-tools \
+ openvswitch \
+ virt-install \
+ kvm libvirt \
+ libvirt-python \
+ python-virtinst
 ```
 
 ### Start libvirtd & ovs
@@ -156,7 +162,7 @@ systemctl start openvswitch
 - br1    
 -- tenant network is untagged    
 
-##### Create virtual switches for the undercloud VM
+#### Create virtual switches for the undercloud VM
 ```
 ovs-vsctl add-br br0
 ovs-vsctl add-br br1
@@ -197,7 +203,7 @@ virsh net-autostart br1
 ```
 
 ### prepare virtual bmc (on all hosts hosting overcloud nodes)
-```bash
+```
 vbmc add compute_1 --port 16230 --username admin --password contrail123
 vbmc add compute_2 --port 16231 --username admin --password contrail123
 vbmc add contrail-analytics-database_1 --port 16232 --username admin --password contrail123
@@ -219,7 +225,7 @@ restrictions coming with nested HV.
 
 ```
 num=0
-for i in compute control contrail-controller 
+for i in compute control contrail-controller
 do
   num=$(expr $num + 1)
   qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
@@ -341,7 +347,7 @@ undercloud_ip=`ip addr sh dev eth0 |grep "inet " |awk '{print $2}' |awk -F"/" '{
 echo ${undercloud_ip} ${undercloud_name}.${undercloud_suffix} ${undercloud_name} >> /etc/hosts
 ```
 ### tripleo queens/current
-```json
+```
 tripeo_repos=`python -c 'import requests;r = requests.get("https://trunk.rdoproject.org/centos7-queens/current"); print r.text ' |grep python2-tripleo-repos|awk -F"href=\"" '{print $2}'|awk -F"\"" '{print $1}'`
 yum install -y https://trunk.rdoproject.org/centos7-queens/current/${tripeo_repos}
 tripleo-repos -b queens current
@@ -564,14 +570,14 @@ while IFS= read -r line
 do
   thtImageName=`echo ${line} |awk '{print $1}'`
   contrailImageName=`echo ${line} |awk '{print $2}'`
-  echo "- imagename: ${contrail_registry}/${contrailImageName}:${contrail_tag}" >> ~/local_registry_images.yaml 
-  echo "  push_destination: 192.168.24.1:8787" >> ~/local_registry_images.yaml 
+  echo "- imagename: ${contrail_registry}/${contrailImageName}:${contrail_tag}" >> ~/local_registry_images.yaml
+  echo "  push_destination: 192.168.24.1:8787" >> ~/local_registry_images.yaml
 done < <(cat contrail_container_list)
 ```
 
 #### Upload containers
 ```
-openstack overcloud container image upload --config-file ~/local_registry_images.yaml 
+openstack overcloud container image upload --config-file ~/local_registry_images.yaml
 ```
 The last command takes a while.
 
