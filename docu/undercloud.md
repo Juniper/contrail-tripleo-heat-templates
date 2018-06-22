@@ -9,21 +9,23 @@ undercloud_suffix=`hostname -d`
 hostnamectl set-hostname ${undercloud_name}.${undercloud_suffix}
 hostnamectl set-hostname --transient ${undercloud_name}.${undercloud_suffix}
 ```
-Get the undercloud ip and set the correct entries in /etc/hosts, ie (assuming the mgmt nic is eth0):
+Get the undercloud ip and set the correct entries in /etc/hosts, ie (assuming the mgmt nic is eth0):    
 ```
 undercloud_ip=`ip addr sh dev eth0 |grep "inet " |awk '{print $2}' |awk -F"/" '{print $1}'`
 echo ${undercloud_ip} ${undercloud_name}.${undercloud_suffix} ${undercloud_name} >> /etc/hosts
 ```
-### tripleo queens/current
+
+Get the repositories    
 ```
+### tripleo queens/current
 tripeo_repos=`python -c 'import requests;r = requests.get("https://trunk.rdoproject.org/centos7-queens/current"); print r.text ' |grep python2-tripleo-repos|awk -F"href=\"" '{print $2}'|awk -F"\"" '{print $1}'`
 yum install -y https://trunk.rdoproject.org/centos7-queens/current/${tripeo_repos}
 tripleo-repos -b queens current
 ```
 
+```
 ### OSP13-beta
-Register with Satellite (can be done with CDN as well)
-```css
+### Register with Satellite (can be done with CDN as well)
 satellite_fqdn=satellite.englab.juniper.net
 act_key=osp13
 org=Juniper
@@ -31,6 +33,7 @@ yum localinstall -y http://${satellite_fqdn}/pub/katello-ca-consumer-latest.noar
 subscription-manager register --activationkey=${act_key} --org=${org}
 ```
 
+Install the undercloud    
 ```
 yum install -y python-tripleoclient
 su - stack
