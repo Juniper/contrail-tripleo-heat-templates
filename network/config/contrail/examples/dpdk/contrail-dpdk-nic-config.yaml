@@ -134,18 +134,10 @@ resources:
                 use_dhcp: false
                 driver: uio_pci_generic
                 cpu_list: 0x01
-                bond_mode: 4
-                bond_policy: layer2+3
-                vlan_id:
-                  get_param: TenantNetworkVlanID
                 members:
                   -
                     type: interface
                     name: nic2
-                    use_dhcp: false
-                  -
-                    type: interface
-                    name: nic3
                     use_dhcp: false
                 addresses:
                 - ip_netmask:

@@ -33,10 +33,6 @@ parameters:
     default: 'uio_pci_generic'
     description: DPDK Nic Driver
     type: string
-  ContrailSriovOn:
-    description: If SR-IOV is configured
-    type: boolean
-    default: false
   ContrailRegistry:
     default: 'opencontrailnightly'
     description: Contrail Registry
@@ -66,7 +62,6 @@ description: >
 conditions:
   is_kernel_config_required:
     or:
-      - {equals: [{get_param: ContrailSriovOn}, true]}
       - {not: {equals: [{get_param: ContrailDpdkHugepages1GB}, ""]}}
       - {equals: [{get_param: ContrailDpdkDriver}, "vfio-pci"]}
   deployment_actions_empty:
@@ -120,7 +115,6 @@ resources:
       group: ansible
       inputs:
         - name: _CONTRAIL_DPDK_DRIVER_
-        - name: _CONTRAIL_SRIOV_ON_
         - name: _CONTRAIL_HUGEPAGES_2MB_
         - name: _CONTRAIL_HUGEPAGES_1GB_
       outputs:
@@ -143,7 +137,6 @@ resources:
           - ['CREATE'] # Only do this on CREATE
       input_values:
         _CONTRAIL_DPDK_DRIVER_: {get_param: ContrailDpdkDriver}
-        _CONTRAIL_SRIOV_ON_: {get_param: ContrailSriovOn}
         _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailDpdkHugepages2MB}
         _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailDpdkHugepages1GB}
 

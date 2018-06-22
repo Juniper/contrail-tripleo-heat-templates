@@ -11,21 +11,24 @@ parameter_defaults:
   OvercloudContrailControllerFlavor: contrail-controller
   OvercloudComputeFlavor: compute
   OvercloudContrailDpdkFlavor: compute-dpdk
+  OvercloudContrailSriovFlavor: compute-sriov
   ControllerCount: 1
   ContrailControllerCount: 1
   ComputeCount: 1
-  ContrailDpdkCount: 1
+  ContrailDpdkCount: 0
+  ContrailSriovCount: 0
   NeutronMetadataProxySharedSecret: secret
-# enable insecure registry (mutually exclusive with private secure registry)
+# enable insecure registry
 #  ContrailRegistryInsecure: true
 #  DockerInsecureRegistryAddress: 10.87.64.32:5000,192.168.24.1:8787
 #  ContrailRegistry: 10.87.64.32:5000
-# enable private secure registry (mutually exclusive with insecure registry)
-#  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
-#  ContrailRegistry: satellite.englab.juniper.net:5443
+# enable private secure registry
+  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
+  ContrailRegistry: satellite.englab.juniper.net:5443
 # set contrail image tag
-#  ContrailImageTag: queens-5.0-104-rhel-queens
-# enable 1 GB hugepages (hardware has to support it, don't try on VMs)
+#  ContrailImageTag: queens-master-145-rhel-queens
+  ContrailImageTag: queens-5.0-104-rhel-queens
+# enable 1 GB hugepages
 #  ContrailDpdkHugepages1GB: 10
 #  ContrailVrouterHugepages1GB: 10
 # contrail container configuration settings
@@ -33,3 +36,9 @@ parameter_defaults:
     VROUTER_GATEWAY: 10.0.0.1
 #    KEY1: value1
 #    KEY2: value2
+# SRIOV settings
+#  NovaPCIPassthrough:
+#    - devname: "ens2f1"
+#      physical_network: "sriov1"
+#  ContrailSriovNumVFs: ["ens2f1:7"] 
+#  ContrailSriovHugepages1GB: 10

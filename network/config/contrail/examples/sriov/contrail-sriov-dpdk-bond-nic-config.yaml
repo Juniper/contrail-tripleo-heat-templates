@@ -136,8 +136,6 @@ resources:
                 cpu_list: 0x01
                 bond_mode: 4
                 bond_policy: layer2+3
-                vlan_id:
-                  get_param: TenantNetworkVlanID
                 members:
                   -
                     type: interface
