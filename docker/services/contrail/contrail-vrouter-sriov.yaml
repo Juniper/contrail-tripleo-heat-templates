@@ -142,6 +142,7 @@ outputs:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                 - - /dev:/dev
+                  - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
                   - /lib/modules:/lib/modules
                   - /var/run:/var/run
                   - /var/lib/contrail/ports
