@@ -1,7 +1,9 @@
 [< Infrastructure](infrastructure.md).................[Overcloud>](overcloud.md)
 
 # Undercloud configuration and installation
-
+This part describes the undercloud configuration and installation.   
+Some commands are the same for OSP and Tripleo, some are different.    
+Look out for ```###Tripleo``` or ```###OSP``` tag.
 ## Undercloud installation
 ```
 undercloud_name=`hostname -s`
@@ -17,14 +19,14 @@ echo ${undercloud_ip} ${undercloud_name}.${undercloud_suffix} ${undercloud_name}
 
 Get the repositories    
 ```
-### tripleo queens/current
+### Tripleo
 tripeo_repos=`python -c 'import requests;r = requests.get("https://trunk.rdoproject.org/centos7-queens/current"); print r.text ' |grep python2-tripleo-repos|awk -F"href=\"" '{print $2}'|awk -F"\"" '{print $1}'`
 yum install -y https://trunk.rdoproject.org/centos7-queens/current/${tripeo_repos}
 tripleo-repos -b queens current
 ```
 
 ```
-### OSP13-beta
+### OSP
 ### Register with Satellite (can be done with CDN as well)
 satellite_fqdn=satellite.englab.juniper.net
 act_key=osp13
@@ -68,7 +70,7 @@ cd images
 ```
 
 ```
-### tripleo current
+### Tripleo
 curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/ironic-python-agent.tar
 curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/overcloud-full.tar
 tar xvf ironic-python-agent.tar
@@ -76,7 +78,7 @@ tar xvf overcloud-full.tar
 ```
 
 ```
-### OSP13-beta
+### OSP
 sudo yum install -y rhosp-director-images rhosp-director-images-ipa
 for i in /usr/share/rhosp-director-images/overcloud-full-latest-13.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-13.0.tar ; do tar -xvf $i; done
 ```
@@ -152,8 +154,9 @@ source stackrc
 ```
 
 ### Get and upload the containers
-#### tripleo
+
 ```
+### Tripleo
 openstack overcloud container image prepare \
   --namespace docker.io/tripleoqueens \
   --tag current-tripleo \
@@ -169,9 +172,9 @@ openstack overcloud container image prepare \
   --output-env-file=~/overcloud_images.yaml \
   --output-images-file=~/local_registry_images.yaml
 ```
-openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
-#### OSP13-beta
+
 ```
+### OSP
 openstack overcloud container image prepare \
  --push-destination=192.168.24.1:8787  \
  --tag-from-label {version}-{release} \
@@ -182,7 +185,7 @@ openstack overcloud container image prepare \
  --output-env-file ~/overcloud_images.yaml
 ```
 
-#### Optional: adding Contrail containers to undercloud registry
+### Optional: adding Contrail containers to undercloud registry
 setting Contrail container tag (default: latest)    
 ```
 contrail_tag=rhel-master-132
@@ -245,7 +248,7 @@ do
 done < <(cat contrail_container_list)
 ```
 
-#### Upload containers
+### Upload containers
 ```
 openstack overcloud container image upload --config-file ~/local_registry_images.yaml
 ```
