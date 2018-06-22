@@ -1,6 +1,6 @@
-# dpdk_bond
+# sriov_dpdk_bond
 NIC configuration:    
-~/tripleo-heat-templates/config/network/contrail/compute-nic-dpdk-bond-config.yaml   
+~/tripleo-heat-templates/config/network/contrail/compute-nic-sriov-dpdk-bond-config.yaml   
 ```
 heat_template_version: queens
 
@@ -164,7 +164,7 @@ outputs:
 ~/tripleo-heat-templates/environments/contrail/contrai-net.yaml
 ```
 resource_registry:
-  OS::TripleO::ContrailDpdk::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-dpdk-config.yaml
+  OS::TripleO::ContrailSriov::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-sriov-dpdk-config.yaml
 ```
 ~/tripleo-heat-templates/environments/contrail/contrai-services.yaml
 ```
@@ -175,4 +175,11 @@ parameter_defaults:
     VROUTER_GATEWAY: 10.0.0.1
 # enable 1 GB hugepages
   ContrailDpdkHugepages1GB: 10
+# SRIOV settings
+  ContrailSriovMode: dpdk
+  NovaPCIPassthrough:
+    - devname: "ens2f1"
+      physical_network: "sriov1"
+  ContrailSriovNumVFs: ["ens2f1:7"]
+  ContrailSriovHugepages1GB: 10
 ```

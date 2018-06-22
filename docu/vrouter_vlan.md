@@ -1,4 +1,4 @@
-# vrouter_standard
+# vrouter_vlan
 NIC configuration:    
 ~/tripleo-heat-templates/config/network/contrail/compute-nic-vlan-config.yaml   
 ```

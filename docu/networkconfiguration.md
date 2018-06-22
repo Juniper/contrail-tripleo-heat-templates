@@ -21,6 +21,6 @@ Contrail supports the following networking modes:
       4. [bond + vlan](sriov_vrouter_bond_vlan.md)
    2. dpdk mode:
       1. [standard](sriov_dpdk_standard.md)
-      2. [vlan](sriov_dpdk_vlam.md)
+      2. [vlan](sriov_dpdk_vlan.md)
       3. [bond](sriov_dpdk_bond.md)
       4. [bond + vlan](sriov_dpdk_bond_vlan.md)

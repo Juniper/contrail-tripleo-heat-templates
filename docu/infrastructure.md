@@ -1,4 +1,4 @@
-[< Introduction](introduction.md)                   [Undercloud>](undercloud.md)
+[< Introduction](introduction.md)...................[Undercloud>](undercloud.md)
 # Infrastructure considerations
 
 There are many different ways on how to create the infrastructure providing

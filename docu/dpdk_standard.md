@@ -1,4 +1,4 @@
-# vrouter_standard
+# dpdk_standard
 NIC configuration:    
 ~/tripleo-heat-templates/config/network/contrail/compute-nic-dpdk-config.yaml   
 ```
@@ -158,7 +158,7 @@ outputs:
 ~/tripleo-heat-templates/environments/contrail/contrai-net.yaml
 ```
 resource_registry:
-  OS::TripleO::Compute::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-dpdk-config.yaml
+  OS::TripleO::ContrailDpdk::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-dpdk-config.yaml
 ```
 ~/tripleo-heat-templates/environments/contrail/contrai-services.yaml
 ```

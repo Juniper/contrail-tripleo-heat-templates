@@ -1,6 +1,6 @@
-# dpdk_bond
+# sriov_vlan
 NIC configuration:    
-~/tripleo-heat-templates/config/network/contrail/compute-nic-dpdk-bond-config.yaml   
+~/tripleo-heat-templates/config/network/contrail/compute-nic-sriov-vlan-config.yaml   
 ```
 heat_template_version: queens
 
@@ -133,21 +133,21 @@ parameters:
                 addresses:
                 - ip_netmask:
                     get_param: StorageIpSubnet
-              - type: contrail_vrouter_dpdk
+              - type: vlan
+                vlan_id:
+                  get_param: TenantNetworkVlanID
+                device: nic2
+              - type: contrail_vrouter
                 name: vhost0
                 use_dhcp: false
-                driver: uio_pci_generic
-                cpu_list: 0x01
-                bond_mode: 4
-                bond_policy: layer2+3
                 members:
                   -
                     type: interface
-                    name: nic2
-                    use_dhcp: false
-                  -
-                    type: interface
-                    name: nic3
+                    name:
+                      str_replace:
+                        template: vlanVLANID
+                        params:
+                          VLANID: {get_param: TenantNetworkVlanID}
                     use_dhcp: false
                 addresses:
                 - ip_netmask:
@@ -158,13 +158,11 @@ outputs:
     description: The OsNetConfigImpl resource.
     value:
       get_resource: OsNetConfigImpl
-
-
 ```
 ~/tripleo-heat-templates/environments/contrail/contrai-net.yaml
 ```
 resource_registry:
-  OS::TripleO::ContrailDpdk::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-dpdk-config.yaml
+  OS::TripleO::ContrailSriov::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-sriov-vlan-config.yaml
 ```
 ~/tripleo-heat-templates/environments/contrail/contrai-services.yaml
 ```
@@ -173,6 +171,10 @@ parameter_defaults:
     ContrailVrouterNetwork: tenant
   ContrailSettings:
     VROUTER_GATEWAY: 10.0.0.1
-# enable 1 GB hugepages
-  ContrailDpdkHugepages1GB: 10
+# SRIOV settings
+  NovaPCIPassthrough:
+    - devname: "ens2f1"
+      physical_network: "sriov1"
+  ContrailSriovNumVFs: ["ens2f1:7"]
+  ContrailSriovHugepages1GB: 10
 ```
