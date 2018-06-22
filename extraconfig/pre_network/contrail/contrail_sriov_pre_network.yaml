@@ -35,7 +35,7 @@ parameters:
       Format "<interface_name1>:<numvfs1>,<interface_name2>:<numvfs2>"
       Example "eth1:4096,eth2:128"
     type: comma_delimited_list
-    default: ""  
+    default: ""
   ContrailDpdkDriver:
     default: 'uio_pci_generic'
     description: DPDK Nic Driver
@@ -55,10 +55,6 @@ parameters:
     description: image
     type: string
     default: "contrail-vrouter-kernel-init"
-  DockerContrailVrouterAgentContainerName:
-    description: image
-    type: string
-    default: "contrail-vrouter-agent-dpdk"
   DockerContrailVrouterKernelInitDpdkImageName:
     description: image
     type: string
