@@ -1,8 +1,8 @@
-[< Undercloud](undercloud.md).................[Overcloud>](overcloud.md)
+[< Undercloud](undercloud.md)
 # Overcloud configuration
 
 ## nic templates
-The nic templates 
+The nic templates
 ```
 tripleo-heat-templates/network/config/contrail/compute-nic-config.yaml
 tripleo-heat-templates/network/config/contrail/contrail-controller-nic-config.yaml
@@ -21,7 +21,7 @@ tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ## deploy the stack
 
 ```
-### tripleo upstream queens
+### Tripleo
 openstack overcloud deploy --templates ~/tripleo-heat-templates \
   -e ~/overcloud_images.yaml \
   -e ~/tripleo-heat-templates/environments/network-isolation.yaml \
@@ -33,7 +33,7 @@ openstack overcloud deploy --templates ~/tripleo-heat-templates \
 ```
 
 ```
-### OSP13 beta
+### OSP
 openstack overcloud deploy --templates ~/tripleo-heat-templates \
   -e ~/overcloud_images.yaml \
   -e ~/tripleo-heat-templates/environments/network-isolation.yaml \
@@ -55,4 +55,4 @@ nova boot --image cirros --flavor cirros --nic net-id=`openstack network show ne
 nova list
 ```
 
-[< Undercloud](undercloud.md).................[Overcloud>](overcloud.md)
+[< Undercloud](undercloud.md)
