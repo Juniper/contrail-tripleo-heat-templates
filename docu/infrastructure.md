@@ -20,7 +20,7 @@ are provided as Virtual Machines hosted on KVM hosts.
 - KVM x:
   Undercloud    
 
-# sample toplogy 
+# sample topology
 ## Layer 1
 ```
    +-------------------------------+                                          
@@ -308,5 +308,14 @@ virt-install --name ${undercloud_name} \
   --serial pty \
   --noautoconsole \
   --console pty,target_type=virtio
+```
+```
+virsh start ${undercloud_name}
+```
+
+## get undercloud ip and log into it
+```
+undercloud_ip=`virsh domifaddr ${undercloud_name} |grep ipv4 |awk '{print $4}' |awk -F"/" '{print $1}'`
+ssh ${undercloud_ip}
 ```
 [< Introduction](introduction.md)                   [Undercloud>](undercloud.md)
