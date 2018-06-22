@@ -588,6 +588,7 @@ tripleo-heat-templates/network/config/contrail/compute-nic-config.yaml
 tripleo-heat-templates/network/config/contrail/contrail-controller-nic-config.yaml
 tripleo-heat-templates/network/config/contrail/controller-nic-config.yaml
 ```
+[Advanced Network Configuration](docu/interfaces.md)
 ### overcloud network config
 ```
 tripleo-heat-templates/environments/contrail/contrail-net.yaml
