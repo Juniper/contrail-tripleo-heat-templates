@@ -132,23 +132,22 @@ resources:
               - type: interface
                 name: nic2
                 use_dhcp: false
-              - type: vlan
-                vlan_id:
-                  get_param: TenantNetworkVlanID
-                device: nic2
-                use_dhcp: false
               - type: contrail_vrouter
                 name: vhost0
                 use_dhcp: false
                 members:
                   -
-                    type: interface
-                    name:
-                      str_replace:
-                        template: vlanVLANID
-                        params:
-                          VLANID: {get_param: TenantNetworkVlanID}
+                    type: linux_bond
+                    name: bond0
+                    bonding_options: "mode=4 xmit_hash_policy=layer2+3"
                     use_dhcp: false
+                    members:
+                    -
+                      type: interface
+                      name: nic2
+                    -
+                      type: interface
+                      name: nic3
                 addresses:
                 - ip_netmask:
                     get_param: TenantIpSubnet

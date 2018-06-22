@@ -134,10 +134,9 @@ resources:
                 use_dhcp: false
                 members:
                   -
-                    type: vlan
-                    vlan_id:
-                      get_param: TenantNetworkVlanID
-                    device: nic2
+                    type: interface
+                    name: nic2:
+                    use_dhcp: false
                 addresses:
                 - ip_netmask:
                     get_param: TenantIpSubnet
