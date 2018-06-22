@@ -12,7 +12,7 @@ tripleo-heat-templates/network/config/contrail/controller-nic-config.yaml
 ```
 tripleo-heat-templates/environments/contrail/contrail-net.yaml
 ```
-[Advanced Network Configuration](docu/networkconfiguration.md)
+[Advanced Network Configuration](networkconfiguration.md)
 
 ### overcloud service config
 ```
