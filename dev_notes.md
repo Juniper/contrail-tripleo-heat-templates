@@ -6,7 +6,7 @@ Currently the following combinations of Operating System/OpenStack/Deployer/Cont
 | RHEL 7.5          | OSP13             | OSPd13                | Contrail 5.0.1         |
 | CentOS 7.5        | RDO queens/stable | tripleo queens/stable | Tungsten Fabric latest |
 
-# Configuration elemes
+# Configuration elements
 1. Infrastructure
 2. Undercloud
 3. Overcloud
@@ -196,7 +196,7 @@ virsh net-start br1
 virsh net-autostart br1
 ```
 
-## prepare virtual bmc (on all hosts hosting overcloud nodes)
+### prepare virtual bmc (on all hosts hosting overcloud nodes)
 ```bash
 vbmc add compute_1 --port 16230 --username admin --password contrail123
 vbmc add compute_2 --port 16231 --username admin --password contrail123
@@ -341,7 +341,7 @@ undercloud_ip=`ip addr sh dev eth0 |grep "inet " |awk '{print $2}' |awk -F"/" '{
 echo ${undercloud_ip} ${undercloud_name}.${undercloud_suffix} ${undercloud_name} >> /etc/hosts
 ```
 ### tripleo queens/current
-```
+```json
 tripeo_repos=`python -c 'import requests;r = requests.get("https://trunk.rdoproject.org/centos7-queens/current"); print r.text ' |grep python2-tripleo-repos|awk -F"href=\"" '{print $2}'|awk -F"\"" '{print $1}'`
 yum install -y https://trunk.rdoproject.org/centos7-queens/current/${tripeo_repos}
 tripleo-repos -b queens current
@@ -349,7 +349,7 @@ tripleo-repos -b queens current
 
 ### OSP13-beta
 Register with Satellite (can be done with CDN as well)
-```
+```css
 satellite_fqdn=satellite.englab.juniper.net
 act_key=osp13
 org=Juniper
