@@ -20,7 +20,7 @@ are provided as Virtual Machines hosted on KVM hosts.
 - KVM x:
   Undercloud    
 
-# sample toplogy
+# sample toplogy 
 ## Layer 1
 ```
    +-------------------------------+                                          
