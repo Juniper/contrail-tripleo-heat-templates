@@ -1,5 +1,5 @@
-#vrouter_standard
-NIC configuration:
+# vrouter_standard
+NIC configuration:    
 ~/tripleo-heat-templates/config/network/contrail/compute-nic-config.yaml   
 ```
 heat_template_version: queens
@@ -161,6 +161,6 @@ resource_registry:
 parameter_defaults:
   ServiceNetMap:
     ContrailVrouterNetwork: tenant
-    ContrailSettings:
-      VROUTER_GATEWAY: 10.0.0.1
+  ContrailSettings:
+    VROUTER_GATEWAY: 10.0.0.1
 ```
