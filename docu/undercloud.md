@@ -64,17 +64,16 @@ mkdir images
 cd images
 ```
 
-### tripleo current
-
 ```
+### tripleo current
 curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/ironic-python-agent.tar
 curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/overcloud-full.tar
 tar xvf ironic-python-agent.tar
 tar xvf overcloud-full.tar
 ```
 
-### OSP13-beta
 ```
+### OSP13-beta
 sudo yum install -y rhosp-director-images rhosp-director-images-ipa
 for i in /usr/share/rhosp-director-images/overcloud-full-latest-13.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-13.0.tar ; do tar -xvf $i; done
 ```
