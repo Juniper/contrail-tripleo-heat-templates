@@ -3,7 +3,8 @@
 # Undercloud configuration and installation
 This part describes the undercloud configuration and installation.   
 Some commands are the same for OSP and Tripleo, some are different.    
-Look out for ```###Tripleo``` or ```###OSP``` tag.
+Look out for ```### Tripleo``` or ```### OSP``` tag.
+Do NOT execute both!     
 ## Undercloud installation
 ```
 undercloud_name=`hostname -s`
