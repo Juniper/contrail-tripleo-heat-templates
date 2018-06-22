@@ -2,24 +2,24 @@
 # Overcloud configuration
 
 ## nic templates
-The nic templates
+
 ```
 tripleo-heat-templates/network/config/contrail/compute-nic-config.yaml
 tripleo-heat-templates/network/config/contrail/contrail-controller-nic-config.yaml
 tripleo-heat-templates/network/config/contrail/controller-nic-config.yaml
 ```
-[Advanced Network Configuration](docu/interfaces.md)
 ### overcloud network config
 ```
 tripleo-heat-templates/environments/contrail/contrail-net.yaml
 ```
+[Advanced Network Configuration](docu/networkconfiguration.md)
+
 ### overcloud service config
 ```
 tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ```
 
 ## deploy the stack
-
 ```
 ### Tripleo
 openstack overcloud deploy --templates ~/tripleo-heat-templates \
