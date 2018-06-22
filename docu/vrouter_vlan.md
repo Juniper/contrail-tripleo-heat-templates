@@ -1,6 +1,6 @@
 # vrouter_standard
 NIC configuration:    
-~/tripleo-heat-templates/config/network/contrail/compute-nic-config.yaml   
+~/tripleo-heat-templates/config/network/contrail/compute-nic-vlan-config.yaml   
 ```
 heat_template_version: queens
 
@@ -133,13 +133,21 @@ parameters:
                 addresses:
                 - ip_netmask:
                     get_param: StorageIpSubnet
+              - type: vlan
+                vlan_id:
+                  get_param: TenantNetworkVlanID
+                device: nic2
               - type: contrail_vrouter
                 name: vhost0
                 use_dhcp: false
                 members:
                   -
                     type: interface
-                    name: nic2
+                    name:
+                      str_replace:
+                        template: vlanVLANID
+                        params:
+                          VLANID: {get_param: TenantNetworkVlanID}
                     use_dhcp: false
                 addresses:
                 - ip_netmask:
@@ -150,13 +158,11 @@ outputs:
     description: The OsNetConfigImpl resource.
     value:
       get_resource: OsNetConfigImpl
-
-
 ```
 ~/tripleo-heat-templates/environments/contrail/contrai-net.yaml
 ```
 resource_registry:
-  OS::TripleO::Compute::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-config.yaml
+  OS::TripleO::Compute::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-vlan-config.yaml
 ```
 ~/tripleo-heat-templates/environments/contrail/contrai-services.yaml
 ```
