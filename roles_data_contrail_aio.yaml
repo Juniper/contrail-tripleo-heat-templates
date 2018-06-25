@@ -273,11 +273,6 @@
     - Tenant
     - Storage
   HostnameFormatDefault: '%stackname%-contraildpdk-%index%'
-  # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
-  # Set uses_deprecated_params to True if any deprecated params are used.
-  uses_deprecated_params: True
-  deprecated_param_metadata: 'NovaComputeServerMetadata'
-  deprecated_param_scheduler_hints: 'NovaComputeSchedulerHints'
   disable_upgrade_deployment: True
   ServicesDefault:
     - OS::TripleO::Services::Aide
@@ -329,11 +324,6 @@
     - Tenant
     - Storage
   HostnameFormatDefault: '%stackname%-contrailsriov-%index%'
-  # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
-  # Set uses_deprecated_params to True if any deprecated params are used.
-  uses_deprecated_params: True
-  deprecated_param_metadata: 'NovaComputeServerMetadata'
-  deprecated_param_scheduler_hints: 'NovaComputeSchedulerHints'
   disable_upgrade_deployment: True
   ServicesDefault:
     - OS::TripleO::Services::Aide
