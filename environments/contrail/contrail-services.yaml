@@ -7,7 +7,7 @@ parameter_defaults:
     ContrailControlNetwork: tenant
     ContrailWebuiNetwork: internal_api
     ContrailVrouterNetwork: tenant
-  OvercloudControlFlavor: control
+  OvercloudControllerFlavor: control
   OvercloudContrailControllerFlavor: contrail-controller
   OvercloudComputeFlavor: compute
   OvercloudContrailDpdkFlavor: compute-dpdk
@@ -40,5 +40,5 @@ parameter_defaults:
 #  NovaPCIPassthrough:
 #    - devname: "ens2f1"
 #      physical_network: "sriov1"
-#  ContrailSriovNumVFs: ["ens2f1:7"] 
+#  ContrailSriovNumVFs: ["ens2f1:7"]
 #  ContrailSriovHugepages1GB: 10
