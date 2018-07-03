@@ -86,10 +86,6 @@ parameters:
     default: false
     description: Keystone insecure mode
     type: boolean
-  ContrailMemcachedServer:
-    default: '127.0.0.1:12111'
-    description: Memcached server
-    type: string
   ContrailVersion:
     default: 4
     description: contrail version
@@ -216,7 +212,6 @@ outputs:
           contrail::contrail_version: {get_param: ContrailVersion }
           contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
           contrail::insecure: {get_param: ContrailInsecure}
-          contrail::memcached_server: {get_param: ContrailMemcachedServer}
           contrail::rabbit_password: {get_param: RabbitPassword}
           contrail::rabbit_user: {get_param: RabbitUserName}
           contrail::rabbit_port: {get_param: RabbitClientPort}

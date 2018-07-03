@@ -55,6 +55,13 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       EndpointMap: {get_param: EndpointMap}
 
+  ContrailMemcachedService:
+    type: ../memcached.yaml
+    properties:
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      EndpointMap: {get_param: EndpointMap}
+
 outputs:
   role_data:
     description: Role Contrail Config using composable services.
@@ -63,6 +70,7 @@ outputs:
       config_settings:
         map_merge:
         - get_attr: [ContrailBase, role_data, config_settings]
+        - get_attr: [ContrailMemcachedService, role_data, config_settings]
         - contrail::config::ifmap_password: {get_param: ContrailConfigIfmapUserPassword}
           contrail::config::ifmap_username: {get_param: ContrailConfigIfmapUserName}
           contrail::config::listen_ip_address: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
@@ -70,9 +78,15 @@ outputs:
           contrail::config::redis_server: '127.0.0.1'
           contrail::config::host_ip: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
           contrail::config::strict_compliance: {get_param: ContrailStrictCompliance}
+          memcached::listen_ip: '127.0.0.1'
+          contrail::memcached_server: '127.0.0.1:11211'
         - if:
           - contrail_configdb_min_disk_gb_unset
           - {}
           - contrail_configdb_min_disk_gb: {get_param: ContrailConfigDBMinDiskGB}
-      step_config: |
-        include ::tripleo::network::contrail::config
+      step_config:
+        list_join:
+          - "\n"
+          - - get_attr: [ContrailMemcachedService, role_data, step_config]
+            - "include ::tripleo::network::contrail::config"
+
