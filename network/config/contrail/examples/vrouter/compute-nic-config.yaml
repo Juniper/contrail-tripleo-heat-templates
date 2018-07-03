@@ -93,7 +93,7 @@ resources:
       config:
         str_replace:
           template:
-            get_file: ../../scripts/run-os-net-config.sh
+            get_file: ../../../../scripts/run-os-net-config.sh
           params:
             $network_config:
               network_config:
