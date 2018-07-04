@@ -30,14 +30,6 @@ parameters:
     description: Mapping of service endpoint -> protocol. Typically set
                  via parameter_defaults in the resource registry.
     type: json
-  AAAMode:
-    description: AAAmode can be no-auth, cloud-admin or rbac
-    type: string
-    default: 'rbac'
-  AAAModeAnalytics:
-    description: AAAmode for analytics can be no-auth, cloud-admin or rbac
-    type: string
-    default: 'no-auth'
   AdminPassword:
     description: The password for the keystone admin account, used for monitoring, querying neutron etc.
     type: string
@@ -46,41 +38,21 @@ parameters:
     description: Keystone admin tenant name
     type: string
     default: 'admin'
-  AdminToken:
-    description: The keystone auth secret and db password.
-    type: string
-    hidden: true
   AdminUser:
     description: Keystone admin user name
     type: string
     default: 'admin'
-  ContrailAuth:
-    default: 'keystone'
-    description: Keystone authentication method
-    type: string
   ContrailAnalyticsVIP:
     default: ''
     description: Contrail Analytics Api Virtual IP address
     type: string
-  ContrailConfigPort:
-    default: 8082
-    description: Contrail Config Api port
-    type: number
   ContrailConfigVIP:
     default: ''
     description: Contrail Config Virtual IP address
     type: string
-  ContrailDiscoveryPort:
-    default: 5998
-    description: Contrail Config Api  port
-    type: number
-  ContrailInsecure:
-    default: false
-    description: Keystone insecure mode
-    type: boolean
-  ContrailMemcachedServer:
-    default: '127.0.0.1:12111'
-    description: Memcached server
+  ContrailWebuiVIP:
+    default: ''
+    description: Contrail Webui Virtual IP address
     type: string
   ContrailRegistry:
     default: 'opencontrailnightly'
@@ -94,14 +66,6 @@ parameters:
     default: 'latest'
     description: Contrail container image tag
     type: string
-  ContrailVIP:
-    default: ''
-    description: Contrail VIP
-    type: string
-  ContrailWebuiVIP:
-    default: ''
-    description: Contrail Webui Virtual IP address
-    type: string
   DockerContrailNodeInitImageName:
     description: image
     type: string
@@ -114,18 +78,6 @@ parameters:
     description: image
     type: string
     default: "contrail-status"
-  RabbitPassword:
-    description: The password for RabbitMQ
-    type: string
-    hidden: true
-  RabbitUserName:
-    default: guest
-    description: The username for RabbitMQ
-    type: string
-  RabbitClientPort:
-    default: 5672
-    description: Set rabbit subscriber port, change this if using SSL
-    type: number
 
 conditions:
   contrail_config_vip_unset: {equals : [{get_param: ContrailConfigVIP}, '']}
@@ -153,26 +105,10 @@ outputs:
             - {get_param: ContrailImageTag}
       config_settings:
         map_merge:
-        - contrail::aaa_mode: {get_param: AAAMode}
-          contrail::analytics_aaa_mode: {get_param: AAAModeAnalytics}
-          contrail::admin_password: {get_param: AdminPassword}
+        - contrail::admin_password: {get_param: AdminPassword}
           contrail::admin_tenant_name: {get_param: AdminTenantName}
-          contrail::admin_token: {get_param: AdminToken}
           contrail::admin_user: {get_param: AdminUser}
-          contrail::auth: {get_param: ContrailAuth}
-          contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
-          contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
-          contrail::auth_port_public: {get_param: [EndpointMap, KeystonePublic, port] }
-          contrail::auth_protocol: {get_param: [EndpointMap, KeystonePublic, protocol] }
-          contrail::api_port: {get_param: ContrailConfigPort }
-          contrail::disc_server_port: {get_param: ContrailDiscoveryPort }
-          contrail::insecure: {get_param: ContrailInsecure}
-          contrail::memcached_server: {get_param: ContrailMemcachedServer}
-          contrail::rabbit_password: {get_param: RabbitPassword}
-          contrail::rabbit_user: {get_param: RabbitUserName}
-          contrail::rabbit_port: {get_param: RabbitClientPort}
           contrail_settings: {get_param: ContrailSettings}
-          contrail::vip: {get_param: ContrailVIP}
         - if:
           - contrail_config_vip_unset
           - {}
