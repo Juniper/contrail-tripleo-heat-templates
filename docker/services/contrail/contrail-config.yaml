@@ -128,6 +128,7 @@ outputs:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
               list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
                 - if:
                   - contrail_configdb_min_disk_gb_unset
                   - []
@@ -157,6 +158,8 @@ outputs:
                   - {get_param: DockerContrailConfigApiImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -175,6 +178,8 @@ outputs:
                   - {get_param: DockerContrailConfigSchemaImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -193,6 +198,8 @@ outputs:
                   - {get_param: DockerContrailConfigSvcmonitorImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -211,6 +218,8 @@ outputs:
                   - {get_param: DockerContrailConfigDevicemgrImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true

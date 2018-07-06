@@ -16,7 +16,12 @@ resource_registry:
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
   OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
   OS::TripleO::ContrailSriov::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_sriov_pre_network.yaml
-  OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
+  # Use Contrail specific NodeUserData to setup contrail registry only for Contrail nodes
+  # (additionally it keeps ablity for a deployer to setup generic OS::TripleO::NodeUserData)
+  OS::TripleO::ContrailController::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
+  OS::TripleO::Compute::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
+  OS::TripleO::ContrailDpdk::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
+  OS::TripleO::ContrailSriov::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
 
 parameter_defaults:
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2

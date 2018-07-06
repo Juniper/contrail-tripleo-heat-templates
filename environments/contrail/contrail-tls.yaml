@@ -1,0 +1,18 @@
+resource_registry:
+  # Use Role specific ExtraConfigPre to inject Contrail certs and keys.
+  OS::TripleO::ContrailControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-tls-inject.yaml
+  OS::TripleO::ComputeExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-tls-inject.yaml
+  OS::TripleO::ContrailDpdkExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-tls-inject.yaml
+  OS::TripleO::ContrailSriovExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-tls-inject.yaml
+
+parameter_defaults:
+  ContrailSslEnabled: true
+  ContrailServiceCertFile: '/etc/contrail/ssl/certs/server.pem'
+  ContrailServiceKeyFile: '/etc/contrail/ssl/private/server-privkey.pem'
+  ContrailCaCertFile: '/etc/contrail/ssl/certs/ca-cert.pem'
+  ContrailCaKeyFile: '/etc/contrail/ssl/private/ca-privkey.pem'
+  # CA cert and key to sign contrail services certificates
+  # ContrailCaCert: |
+  #   CA certificate content
+  # ContrailCaKey: |
+  #   CA private key content

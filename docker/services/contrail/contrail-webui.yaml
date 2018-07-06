@@ -80,7 +80,6 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
-
       service_config_settings:
         map_merge:
           - {get_attr: [ContrailBase, role_data, service_config_settings]}
@@ -128,6 +127,8 @@ outputs:
                   - {get_param: DockerContrailWebuiWebImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -146,6 +147,8 @@ outputs:
                   - {get_param: DockerContrailWebuiJobImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true

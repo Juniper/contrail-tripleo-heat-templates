@@ -73,7 +73,9 @@ outputs:
           contrail_control_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
-              - NODE_TYPE=control
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                - - NODE_TYPE=control
             net: host
             detach: true
             user: root
@@ -93,6 +95,8 @@ outputs:
                   - {get_param: DockerContrailControlControlImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -111,6 +115,8 @@ outputs:
                   - {get_param: DockerContrailControlDnsImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -129,6 +135,8 @@ outputs:
                   - {get_param: DockerContrailControlNamedImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: true
             detach: true
