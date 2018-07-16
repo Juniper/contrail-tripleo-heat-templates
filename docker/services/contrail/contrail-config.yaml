@@ -125,17 +125,7 @@ outputs:
           contrail_config_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
-              list_concat:
-                - if:
-                  - contrail_configdb_min_disk_gb_unset
-                  - []
-                  - - list_join:
-                      - ''
-                      - - 'CONFIG_NODEMGR__DEFAULTS__minimum_diskGB='
-                        - {get_param: ContrailConfigDBMinDiskGB}
-                - - NODE_TYPE=config
-                  - CASSANDRA_CQL_PORT=9041
-                  - CASSANDRA_JMX_LOCAL_PORT=7201
+              - NODE_TYPE=config
             net: host
             detach: true
             user: root
