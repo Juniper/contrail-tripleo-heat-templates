@@ -20,6 +20,14 @@ parameters:
     description: image
     type: string
     default: "contrail-analytics-alarm-gen"
+  DockerContrailAnalyticsTopologyImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-topology"
+  DockerContrailAnalyticsSnmpCollectorImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-snmp-collector"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -212,6 +220,42 @@ outputs:
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            env_file:
+              - /etc/contrail/common_analytics.env
+          contrail_analytics_topology:
+            image: &contrail_analytics_topology_image
+              list_join:
+                - ''
+                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
+                  - '/'
+                  - {get_param: DockerContrailAnalyticsTopologyImageName}
+                  - ':'
+                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            env_file:
+              - /etc/contrail/common_analytics.env
+          contrail_analytics_snmp_collector:
+            image: &contrail_analytics_snmp_collector_image
+              list_join:
+                - ''
+                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
+                  - '/'
+                  - {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
+                  - ':'
+                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             net: host
             privileged: false
             detach: true
