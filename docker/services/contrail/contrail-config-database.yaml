@@ -4,6 +4,12 @@ description: >
   Contrail containerized Config Databse service
 
 parameters:
+  ContrailConfigDBMinDiskGB:
+    description:  The min size for Contrail Config DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
   DockerContrailCassandraImageName:
     description: image
     type: string
@@ -42,6 +48,9 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
+
+conditions:
+  contrail_configdb_min_disk_gb_unset: {equals : [{get_param: ContrailConfigDBMinDiskGB}, '']}
 
 resources:
   ContainersCommon:

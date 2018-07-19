@@ -4,12 +4,6 @@ description: >
   Contrail containerized Config Config service
 
 parameters:
-  ContrailConfigDBMinDiskGB:
-    description:  The min size for Contrail Config DB.
-                  It is to check the size of the node.
-                  Contrail will fail installation if disk size is not enough.
-    type: string
-    default: ''
   DockerContrailConfigApiImageName:
     description: image
     type: string
@@ -67,7 +61,6 @@ parameters:
                  TLS is used for services in the internal network.
 
 conditions:
-  contrail_configdb_min_disk_gb_unset: {equals : [{get_param: ContrailConfigDBMinDiskGB}, '']}
   internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 resources:
