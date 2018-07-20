@@ -77,7 +77,7 @@ outputs:
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       docker_config:
         step_4:
-         contrail_config_database_nodemgr:
+          contrail_config_database_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
               list_concat:
