@@ -148,12 +148,12 @@ outputs:
           contrail::admin_tenant_name: {get_param: AdminTenantName}
           contrail::admin_user: {get_param: AdminUser}
           # ==
-          # for compatibility with old puppets, actially it is not used there but referenced
+          # for compatibility with puppets: neutron_plugin.pp and heat.pp
           contrail::admin_token: ''
-          contrail::auth_host: ''
-          contrail::auth_port: ''
-          contrail::auth_protocol: ''
-          contrail::api_port: ''
+          contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
+          contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
+          contrail::auth_protocol: {get_param: [EndpointMap, KeystonePublic, protocol] }
+          contrail::api_port: '8082'
           # ==
           contrail_settings: {get_param: ContrailSettings}
         - if:
