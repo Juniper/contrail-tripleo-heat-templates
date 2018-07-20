@@ -4,6 +4,12 @@ description: >
   Contrail containerized Config Databse service
 
 parameters:
+  ContrailConfigDBMinDiskGB:
+    description:  The min size for Contrail Config DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
   DockerContrailCassandraImageName:
     description: image
     type: string
@@ -43,6 +49,9 @@ parameters:
     description: Parameters specific to the role
     type: json
 
+conditions:
+  contrail_configdb_min_disk_gb_unset: {equals : [{get_param: ContrailConfigDBMinDiskGB}, '']}
+
 resources:
   ContainersCommon:
     type: ../containers-common.yaml
@@ -68,6 +77,30 @@ outputs:
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       docker_config:
         step_4:
+         contrail_config_database_nodemgr:
+            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+            environment:
+              list_concat:
+                - if:
+                  - contrail_configdb_min_disk_gb_unset
+                  - []
+                  - - list_join:
+                      - ''
+                      - - 'CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB='
+                        - {get_param: ContrailConfigDBMinDiskGB}
+                - - NODE_TYPE=config-database
+                  - CASSANDRA_CQL_PORT=9041
+                  - CASSANDRA_JMX_LOCAL_PORT=7201
+            net: host
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /var/run/docker.sock:/var/run/docker.sock
+            env_file:
+              - /etc/contrail/common.env
           contrail_config_database:
             image: &contrail_config_database_image
               list_join:
