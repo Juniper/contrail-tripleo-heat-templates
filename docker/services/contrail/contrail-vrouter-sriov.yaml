@@ -45,22 +45,6 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
-  EnableInternalTLS:
-    type: boolean
-    default: false
-  InternalTLSCAFile:
-    default: '/etc/ipa/ca.crt'
-    type: string
-    description: Specifies the default CA cert to use if TLS is used for
-                 services in the internal network.
-  InternalTLSCRLPEMFile:
-    default: '/etc/pki/CA/crl/overcloud-crl.pem'
-    type: string
-    description: Specifies the default CRL PEM file to use for revocation if
-                 TLS is used for services in the internal network.
-
-conditions:
-  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 resources:
   ContainersCommon:

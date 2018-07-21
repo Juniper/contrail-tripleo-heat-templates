@@ -38,22 +38,6 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
-  EnableInternalTLS:
-    type: boolean
-    default: false
-  InternalTLSCAFile:
-    default: '/etc/ipa/ca.crt'
-    type: string
-    description: Specifies the default CA cert to use if TLS is used for
-                 services in the internal network.
-  InternalTLSCRLPEMFile:
-    default: '/etc/pki/CA/crl/overcloud-crl.pem'
-    type: string
-    description: Specifies the default CRL PEM file to use for revocation if
-                 TLS is used for services in the internal network.
-
-conditions:
-  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 resources:
   ContainersCommon:
@@ -86,34 +70,12 @@ outputs:
           - haproxy:
               tripleo.contrail_webui.haproxy_endpoints:
                 contrail_webui:
-                  public_virtual_ip: "%{hiera('contrail_webui_vip')}"
-                  internal_ip: "%{hiera('contrail_webui_vip')}"
-                  service_port: 8143
-                  mode: 'tcp'
-                  listen_options:
-                    balance:
-                      - 'source'
-                    hash-type:
-                      - 'consistent'
-                  public_ssl_port: 8143
-                  service_network: {get_param: [ServiceNetMap, ContrailWebuiNetwork]}
-                  member_options:
-                    list_concat:
-                      - [ 'check', 'inter 2000', 'rise 2', 'fall 5' ]
-                      - if:
-                          - internal_tls_enabled
-                          - - 'ssl'
-                            - 'verify required'
-                            - list_join:
-                              - ' '
-                              - - 'ca-file'
-                                - {get_param: InternalTLSCAFile}
-                            - list_join:
-                              - ' '
-                              - - 'crl-file'
-                                - {get_param: InternalTLSCRLPEMFile}
-                          - - 'ssl'
-                            - 'verify none'
+                  map_merge:
+                    - public_ssl_port: 8143
+                      internal_ip: "%{hiera('contrail_webui_vip')}"
+                      service_port: 8143
+                      service_network: {get_param: [ServiceNetMap, ContrailWebuiNetwork]}
+                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings_tls]}
       docker_config:
         step_4:
           get_attr: [ContrailRedis, role_data, docker_config, step_4]
