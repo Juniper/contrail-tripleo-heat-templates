@@ -46,22 +46,6 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
-  EnableInternalTLS:
-    type: boolean
-    default: false
-  InternalTLSCAFile:
-    default: '/etc/ipa/ca.crt'
-    type: string
-    description: Specifies the default CA cert to use if TLS is used for
-                 services in the internal network.
-  InternalTLSCRLPEMFile:
-    default: '/etc/pki/CA/crl/overcloud-crl.pem'
-    type: string
-    description: Specifies the default CRL PEM file to use for revocation if
-                 TLS is used for services in the internal network.
-
-conditions:
-  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 resources:
   ContrailBase:
@@ -83,34 +67,17 @@ outputs:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
       service_config_settings:
-        haproxy:
-          tripleo.contrail_config.haproxy_endpoints:
-            contrail_config:
-              public_virtual_ip: "%{hiera('contrail_config_vip')}"
-              internal_ip: "%{hiera('contrail_config_vip')}"
-              service_port: 8082
-              mode: 'http'
-              listen_options:
-                balance:
-                  - 'source'
-              public_ssl_port: 18082
-              service_network: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
-              member_options:
-                list_concat:
-                  - [ 'check', 'inter 2000', 'rise 2', 'fall 5' ]
-                  - if:
-                      - internal_tls_enabled
-                      - - 'ssl'
-                        - 'verify required'
-                        - list_join:
-                          - ' '
-                          - - 'ca-file'
-                            - {get_param: InternalTLSCAFile}
-                        - list_join:
-                          - ' '
-                          - - 'crl-file'
-                            - {get_param: InternalTLSCRLPEMFile}
-                      - null
+        map_merge:
+          - {get_attr: [ContrailBase, role_data, service_config_settings]}
+          - haproxy:
+              tripleo.contrail_config.haproxy_endpoints:
+                contrail_config:
+                  map_merge:
+                    - public_ssl_port: 18082
+                      internal_ip: "%{hiera('contrail_config_vip')}"
+                      service_port: 8082
+                      service_network: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings]}
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -118,7 +85,9 @@ outputs:
           contrail_config_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
-              - NODE_TYPE=config
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                - - NODE_TYPE=config
             net: host
             detach: true
             user: root
@@ -138,6 +107,8 @@ outputs:
                   - {get_param: DockerContrailConfigApiImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -156,6 +127,8 @@ outputs:
                   - {get_param: DockerContrailConfigSchemaImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -174,6 +147,8 @@ outputs:
                   - {get_param: DockerContrailConfigSvcmonitorImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -192,6 +167,8 @@ outputs:
                   - {get_param: DockerContrailConfigDevicemgrImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true

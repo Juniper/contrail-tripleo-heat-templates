@@ -42,22 +42,6 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
-  EnableInternalTLS:
-    type: boolean
-    default: false
-  InternalTLSCAFile:
-    default: '/etc/ipa/ca.crt'
-    type: string
-    description: Specifies the default CA cert to use if TLS is used for
-                 services in the internal network.
-  InternalTLSCRLPEMFile:
-    default: '/etc/pki/CA/crl/overcloud-crl.pem'
-    type: string
-    description: Specifies the default CRL PEM file to use for revocation if
-                 TLS is used for services in the internal network.
-
-conditions:
-  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 resources:
   ContainersCommon:
@@ -100,13 +84,17 @@ outputs:
                   - {get_param: DockerContrailNovaPluginImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             volumes:
               - vrouter_port_control:/opt/plugin/bin
         step_5:
           contrail_vrouter_agent_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
-              - NODE_TYPE=vrouter
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                - - NODE_TYPE=vrouter
             net: host
             detach: true
             user: root
@@ -126,6 +114,8 @@ outputs:
                   - {get_param: DockerContrailVrouterAgentImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: true
             detach: true

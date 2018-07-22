@@ -78,6 +78,8 @@ outputs:
                 - {get_param: DockerContrailHeatPluginImageName}
                 - ':'
                 - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             volumes:
               - vnc_api:/opt/plugin/site-packages/vnc_api
               - cfgm_common:/opt/plugin/site-packages/cfgm_common

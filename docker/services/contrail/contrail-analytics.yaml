@@ -80,7 +80,18 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
-      service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
+      service_config_settings:
+        map_merge:
+          - {get_attr: [ContrailBase, role_data, service_config_settings]}
+          - haproxy:
+              tripleo.contrail_analytics.haproxy_endpoints:
+                contrail_analytics:
+                  map_merge:
+                    - public_ssl_port: 18081
+                      internal_ip: "%{hiera('contrail_analytics_vip')}"
+                      service_port: 8081
+                      service_network: {get_param: [ServiceNetMap, ContrailAnalyticsNetwork]}
+                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings]}
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -90,7 +101,9 @@ outputs:
           contrail_analytics_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
-              - NODE_TYPE=analytics
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                - - NODE_TYPE=analytics
             net: host
             detach: true
             user: root
@@ -110,6 +123,8 @@ outputs:
                   - {get_param: DockerContrailAnalyticsApiImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -128,6 +143,8 @@ outputs:
                   - {get_param: DockerContrailAnalyticsQueryEngineImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -146,6 +163,8 @@ outputs:
                   - {get_param: DockerContrailAnalyticsCollectorImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -164,6 +183,8 @@ outputs:
                   - {get_param: DockerContrailAnalyticsAlarmGenImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true

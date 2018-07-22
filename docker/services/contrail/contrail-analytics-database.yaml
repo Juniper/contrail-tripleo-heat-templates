@@ -117,6 +117,7 @@ outputs:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
               list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
                 - if:
                   - contrail_analyticsdb_min_disk_gb_unset
                   - []
