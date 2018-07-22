@@ -240,6 +240,34 @@ outputs:
             - /var/log/containers/contrail:/var/log/contrail
       contrail_base_env: &contrail_base_env
         list_concat:
+          - - 'CLOUD_ORCHESTRATOR=openstack'
+            - 'OPENSTACK_VERSION=queens'
+            - 'AUTH_MODE=keystone'
+            - 'KEYSTONE_AUTH_URL_VERSION=/v3'
+            - list_join:
+              - '='
+              - - 'KEYSTONE_AUTH_HOST'
+                - {get_param: [EndpointMap, KeystoneAdmin, host] }
+            - list_join:
+              - '='
+              - - 'KEYSTONE_AUTH_ADMIN_PORT'
+                - {get_param: [EndpointMap, KeystoneAdmin, port] }
+            - list_join:
+              - '='
+              - - 'KEYSTONE_AUTH_PROTO'
+                - {get_param: [EndpointMap, KeystonePublic, protocol] }
+            - list_join:
+              - '='
+              - - 'KEYSTONE_AUTH_ADMIN_PASSWORD'
+                - {get_param: AdminPassword}
+            - list_join:
+              - '='
+              - - 'KEYSTONE_AUTH_ADMIN_USER'
+                - {get_param: AdminUser}
+            - list_join:
+              - '='
+              - - 'KEYSTONE_AUTH_ADMIN_TENANT'
+                - {get_param: AdminTenantName}
           - if:
             - contrail_tls_enabled
             - - "XMPP_SSL_ENABLE=True"
@@ -268,8 +296,7 @@ outputs:
             - []
           - if:
             - internal_tls_enabled
-            - - "KEYSTONE_AUTH_INSECURE=False"
-              - "KEYSTONE_AUTH_PROTO=https"
+            - - 'KEYSTONE_AUTH_INSECURE=True'
               - list_join:
                   - '='
                   - - 'KEYSTONE_AUTH_CERTFILE'
