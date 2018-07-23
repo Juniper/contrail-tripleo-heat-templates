@@ -265,7 +265,7 @@
 - name: ContrailDpdk
   description: |
     Contrail Dpdk Node role
-  CountDefault: 1
+  CountDefault: 0
   tags:
     - contraildpdk
   networks:
@@ -316,7 +316,7 @@
 - name: ContrailSriov
   description: |
     Contrail Sriov Node role
-  CountDefault: 1
+  CountDefault: 0
   tags:
     - contrailsriov
   networks:
@@ -367,7 +367,7 @@
 - name: ContrailTsn
   description: |
     Contrail Tsn Node role
-  CountDefault: 1
+  CountDefault: 0
   tags:
     - contrailtsn
   networks:
