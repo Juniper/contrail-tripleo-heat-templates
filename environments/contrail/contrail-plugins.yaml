@@ -10,10 +10,12 @@ resource_registry:
   OS::TripleO::Services::ContrailVrouter: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Services::ContrailDpdk: ../../docker/services/contrail/contrail-vrouter-dpdk.yaml
   OS::TripleO::Services::ContrailSriov: ../../docker/services/contrail/contrail-vrouter-sriov.yaml
+  OS::TripleO::Services::ContrailTsn: ../../docker/services/contrail/contrail-vrouter-tsn.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
   OS::TripleO::Services::ContrailHeatApiPlugin: ../../docker/services/contrail/contrail-heat-container-plugin.yaml
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
+  OS::TripleO::ContrailTsn::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_tsn_pre_network.yaml
   OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
   OS::TripleO::ContrailSriov::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_sriov_pre_network.yaml
   OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
