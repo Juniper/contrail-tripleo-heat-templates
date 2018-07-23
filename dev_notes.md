@@ -353,7 +353,7 @@ yum install -y https://trunk.rdoproject.org/centos7-queens/current/${tripeo_repo
 tripleo-repos -b queens current
 ```
 
-### OSP13-beta
+### OSP13
 Register with Satellite (can be done with CDN as well)
 ```css
 satellite_fqdn=satellite.englab.juniper.net
@@ -405,7 +405,7 @@ tar xvf ironic-python-agent.tar
 tar xvf overcloud-full.tar
 ```
 
-### OSP13-beta
+### OSP13
 ```
 sudo yum install -y rhosp-director-images rhosp-director-images-ipa
 for i in /usr/share/rhosp-director-images/overcloud-full-latest-13.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-13.0.tar ; do tar -xvf $i; done
@@ -500,13 +500,13 @@ openstack overcloud container image prepare \
   --output-images-file=~/local_registry_images.yaml
 ```
 openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
-#### OSP13-beta
+#### OSP13
 ```
 openstack overcloud container image prepare \
  --push-destination=192.168.24.1:8787  \
  --tag-from-label {version}-{release} \
  --output-images-file ~/local_registry_images.yaml  \
- --namespace=registry.access.redhat.com/rhosp13-beta  \
+ --namespace=registry.access.redhat.com/rhosp13 \
  --prefix=openstack-  \
  --tag-from-label {version}-{release}  \
  --output-env-file ~/overcloud_images.yaml
@@ -609,7 +609,7 @@ openstack overcloud deploy --templates ~/tripleo-heat-templates \
   -e ~/tripleo-heat-templates/environments/contrail/contrail-net.yaml \
   --roles-file ~/tripleo-heat-templates/roles_data_contrail_aio.yaml
 ```
-### OSP13 beta
+### OSP13
 ```
 openstack overcloud deploy --templates ~/tripleo-heat-templates \
   -e ~/overcloud_images.yaml \
