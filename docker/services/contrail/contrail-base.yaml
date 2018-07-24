@@ -42,6 +42,22 @@ parameters:
     description: Keystone admin user name
     type: string
     default: 'admin'
+  KeystoneProjectDomainName:
+    type: string
+    default: 'Default'
+    description: Keystone Project Domain Name
+  KeystoneRegion:
+    type: string
+    default: 'regionOne'
+    description: Keystone region for endpoint
+  KeystoneUserDomainName:
+    type: string
+    default: 'Default'
+    description: Keystone User Domain Name
+  AAAMode:
+    description: AAAmode can be no-auth, cloud-admin or rbac
+    type: string
+    default: 'cloud-admin'
   ContrailAnalyticsVIP:
     default: ''
     description: Contrail Analytics Api Virtual IP address
@@ -163,12 +179,18 @@ outputs:
           contrail::admin_tenant_name: {get_param: AdminTenantName}
           contrail::admin_user: {get_param: AdminUser}
           # ==
-          # for compatibility with puppets: neutron_plugin.pp and heat.pp
+          # for puppets: neutron_plugin.pp and heat.pp
+          # todo: remove admin_token after puppet update
           contrail::admin_token: ''
           contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
           contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
           contrail::auth_protocol: {get_param: [EndpointMap, KeystonePublic, protocol] }
           contrail::api_port: '8082'
+          contrail::keystone_region: {get_param: KeystoneRegion}
+          contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
+          contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
+          contrail::aaa_mode: {get_param: AAAMode}
+          contrail_internal_api_ssl: {get_param: EnableInternalTLS}
           # ==
           contrail_settings: {get_param: ContrailSettings}
         - if:
@@ -246,6 +268,10 @@ outputs:
             - 'KEYSTONE_AUTH_URL_VERSION=/v3'
             - list_join:
               - '='
+              - - 'AAA_MODE'
+                - {get_param: AAAMode}
+            - list_join:
+              - '='
               - - 'KEYSTONE_AUTH_HOST'
                 - {get_param: [EndpointMap, KeystoneAdmin, host] }
             - list_join:
@@ -268,6 +294,19 @@ outputs:
               - '='
               - - 'KEYSTONE_AUTH_ADMIN_TENANT'
                 - {get_param: AdminTenantName}
+
+            - list_join:
+              - '='
+              - - 'KEYSTONE_AUTH_REGION_NAME'
+                - {get_param: KeystoneRegion}
+            - list_join:
+              - '='
+              - - 'KEYSTONE_AUTH_PROJECT_DOMAIN_NAME'
+                - {get_param: KeystoneProjectDomainName}
+            - list_join:
+              - '='
+              - - 'KEYSTONE_AUTH_USER_DOMAIN_NAME'
+                - {get_param: KeystoneUserDomainName}
           - if:
             - contrail_tls_enabled
             - - "XMPP_SSL_ENABLE=True"
