@@ -146,6 +146,7 @@ yum install -y libguestfs \
  virt-install \
  kvm libvirt \
  libvirt-python \
+ python-virtualbmc \
  python-virtinst
 ```
 
@@ -202,68 +203,68 @@ virsh net-start br1
 virsh net-autostart br1
 ```
 
-### prepare virtual bmc (on all hosts hosting overcloud nodes)
-```
-vbmc add compute_1 --port 16230 --username admin --password contrail123
-vbmc add compute_2 --port 16231 --username admin --password contrail123
-vbmc add contrail-analytics-database_1 --port 16232 --username admin --password contrail123
-vbmc add contrail-analytics_1 --port 16233 --username admin --password contrail123
-vbmc add contrail-controller_1 --port 16234 --username admin --password contrail123
-vbmc add control_1 --port 16235 --username admin --password contrail123
-
-vbmc start compute_1
-vbmc start compute_2
-vbmc start contrail-analytics-database_1
-vbmc start contrail-analytics_1
-vbmc start contrail-controller_1
-vbmc start control_1
-```
-
-### Define virtual machine templates
-For lab testing the computes can be virtualized as well, with the usual    
-restrictions coming with nested HV.    
-
+### setup vm templates, vbmc and create ironic list (on all hosts hosting overcloud nodes)
 ```
 num=0
-for i in compute control contrail-controller
-do
-  num=$(expr $num + 1)
-  qemu-img create -f qcow2 /var/lib/libvirt/images/${i}_${num}.qcow2 40G
-  virsh define /dev/stdin <<EOF
-$(virt-install --name ${i}_$num --disk /var/lib/libvirt/images/${i}_${num}.qcow2 --vcpus=4 --ram=16348 --network network=br0,model=virtio,portgroup=overcloud --network network=br1,model=virtio --virt-type kvm --import --os-variant rhel7 --serial pty --console pty,target_type=virtio --print-xml)
-EOF
-done
-```
+ipmi_user=ADMIN
+ipmi_password=ADMIN
+libvirt_path=/var/lib/libvirt/images
+port_group=overcloud
+prov_switch=br0
 
-### Get provisioning interface mac addresses for ironic PXE
-The virtual machines must be imported into ironic. There are different ways    
-to do that. One way is to create a list of all VMs in the following format:    
-MAC NODE_NAME IPMI/KVM_IP ROLE_NAME    
-```
-52:54:00:16:54:d8 control-1-at-5b3s30 10.87.64.31 control
-```
-In order to get the initial list per KVM host the following command can be run:    
-```
-for i in compute control contrail-controller
-do
-  prov_mac=`virsh domiflist ${i}|grep br_prov|awk '{print $5}'`
-  echo ${prov_mac} ${i} >> ironic_list
+# Define roles and their count
+ROLES=compute:2,contrail-controller:1,control:1
+
+/bin/rm ironic_list
+IFS=',' read -ra role_list <<< "${ROLES}"
+for role in ${role_list[@]}; do
+  role_name=`echo $role|cut -d ":" -f 1`
+  role_count=`echo $role|cut -d ":" -f 2`
+  for count in `seq 1 ${role_count}`; do
+    echo $role_name $count
+    qemu-img create -f qcow2 ${libvirt_path}/${role_name}_${count}.qcow2 99G
+    virsh define /dev/stdin <<EOF
+    $(virt-install --name ${role_name}_${count} \
+--disk ${libvirt_path}/${role_name}_${count}.qcow2 \
+--vcpus=4 \
+--ram=16348 \
+--network network=br0,model=virtio,portgroup=${port_group} \
+--network network=br1,model=virtio \
+--virt-type kvm \
+--cpu host \
+--import \
+--os-variant rhel7 \
+--serial pty \
+--console pty,target_type=virtio \
+--graphics vnc \
+--print-xml)
+EOF
+    vbmc add ${role_name}_${count} --port 1623${num} --username ${ipmi_user} --password ${ipmi_password}
+    vbmc start ${role_name}_${count}
+    prov_mac=`virsh domiflist ${role_name}_${count}|grep ${prov_switch}|awk '{print $5}'`
+    vm_name=${role_name}-${count}-`hostname -s`
+    kvm_ip=`ip route get 1  |grep src |awk '{print $7}'`
+    echo ${prov_mac} ${vm_name} ${kvm_ip} ${role_name} 1623${num}>> ironic_list
+    num=$(expr $num + 1)
+  done
 done
 ```
-The ironic_list file will contain MAC ROLE_NAME and must be manually extended    
-to MAC NODE_NAME IPMI/KVM_IP ROLE_NAME.    
+There will be one ironic_list file per KVM host. The ironic_list files of all KVM hosts    
+has to be combined on the overcloud.
 This is an example of a full list across three KVM hosts:    
 ```
-52:54:00:16:54:d8 control-1-at-5b3s30 10.87.64.31 control
-52:54:00:2a:7d:99 compute-1-at-5b3s30 10.87.64.31 compute
-52:54:00:d6:2b:03 contrail-controller-1-at-5b3s30 10.87.64.31 contrail-controller
-52:54:00:40:9e:13 control-1-at-centos 10.87.64.32 control
-52:54:00:6d:89:2d compute-2-at-centos 10.87.64.32 compute
-52:54:00:a8:46:5a contrail-controller-1-at-centos 10.87.64.32 contrail-controller
-52:54:00:1d:8c:39 control-1-at-5b3s32 10.87.64.33 control
-52:54:00:9c:4b:bf compute-1-at-5b3s32 10.87.64.33 compute
-52:54:00:1d:a9:d9 compute-2-at-5b3s32 10.87.64.33 compute
-52:54:00:cd:59:92 contrail-controller-1-at-5b3s32 10.87.64.33 contrail-controller
+52:54:00:e7:ca:9a compute-1-5b3s31 10.87.64.32 compute 16230
+52:54:00:30:6c:3f compute-2-5b3s31 10.87.64.32 compute 16231
+52:54:00:9a:0c:d5 contrail-controller-1-5b3s31 10.87.64.32 contrail-controller 16232
+52:54:00:cc:93:d4 control-1-5b3s31 10.87.64.32 control 16233
+52:54:00:28:10:d4 compute-1-5b3s30 10.87.64.31 compute 16230
+52:54:00:7f:36:e7 compute-2-5b3s30 10.87.64.31 compute 16231
+52:54:00:32:e5:3e contrail-controller-1-5b3s30 10.87.64.31 contrail-controller 16232
+52:54:00:d4:31:aa control-1-5b3s30 10.87.64.31 control 16233
+52:54:00:d1:d2:ab compute-1-5b3s32 10.87.64.33 compute 16230
+52:54:00:ad:a7:cc compute-2-5b3s32 10.87.64.33 compute 16231
+52:54:00:55:56:50 contrail-controller-1-5b3s32 10.87.64.33 contrail-controller 16232
+52:54:00:91:51:35 control-1-5b3s32 10.87.64.33 control 16233
 ```
 
 This list will be needed on the undercloud VM later on.    
