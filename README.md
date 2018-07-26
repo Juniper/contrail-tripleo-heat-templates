@@ -547,7 +547,7 @@ openstack overcloud container image prepare \
   --output-env-file=~/overcloud_images.yaml \
   --output-images-file=~/local_registry_images.yaml
 ```
-openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
+
 #### OSP13
 ```
 openstack overcloud container image prepare \
@@ -558,6 +558,11 @@ openstack overcloud container image prepare \
  --prefix=openstack-  \
  --tag-from-label {version}-{release}  \
  --output-env-file ~/overcloud_images.yaml
+```
+
+### upload the containers to local registry
+```
+openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
 ```
 
 #### Optional: adding Contrail containers to undercloud registry
