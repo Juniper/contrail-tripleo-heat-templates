@@ -562,8 +562,9 @@ openstack overcloud container image prepare \
 
 ### upload the containers to local registry
 ```
-openstack overcloud container image upload --config-file ~/overcloud_containers.yaml
+openstack overcloud container image upload --config-file ~/overcloud_images.yaml
 ```
+This will take a while     
 
 #### Optional: adding Contrail containers to undercloud registry
 setting Contrail container tag (default: latest)    
