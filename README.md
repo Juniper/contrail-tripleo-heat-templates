@@ -423,6 +423,7 @@ openstack overcloud image upload --image-path /home/stack/images/
 ## Ironic preparation
 
 ### create list with ironic nodes (adjust!!!)
+Take the ironic_node lists from the KVM hosts from above.    
 ```
 cd
 cat << EOM > ironic_list
@@ -449,25 +450,60 @@ EOM
 
 ### add overcloud nodes to ironic
 ```
-ipmi_password=contrail123
-ipmi_user=admin
-while IFS= read -r line; do      mac=`echo $line|awk '{print $1}'`;   name=`echo $line|awk '{print $2}'`;   kvm_ip=`echo $line|awk '{print $3}'`;   profile=`echo $line|awk '{print $4}'`;   ipmi_port=`echo $line|awk '{print $5}'`;   uuid=`openstack baremetal node create --driver pxe_ipmitool --property cpus=4 --property memory_mb=16348 --property local_gb=100 --property cpu_arch=x86_64 --driver-info ipmi_username=${ipmi_user}  --driver-info ipmi_address=${kvm_ip} --driver-info ipmi_password=${ipmi_password} --driver-info ipmi_port=${ipmi_port} --name=${name} --property capabilities=profile:${profile},boot_option:local -c uuid -f value`;   openstack baremetal port create --node ${uuid} ${mac}; done < <(cat ironic_list)
-openstack baremetal node list
+ipmi_password=ADMIN
+ipmi_user=ADMIN
+while IFS= read -r line; do      
+  mac=`echo $line|awk '{print $1}'`
+  name=`echo $line|awk '{print $2}'`
+  kvm_ip=`echo $line|awk '{print $3}'`
+  profile=`echo $line|awk '{print $4}'`
+  ipmi_port=`echo $line|awk '{print $5}'`
+  uuid=`openstack baremetal node create --driver ipmi \
+                                        --property cpus=4 \
+                                        --property memory_mb=16348 \
+                                        --property local_gb=100 \
+                                        --property cpu_arch=x86_64 \
+                                        --driver-info ipmi_username=${ipmi_user}  \
+                                        --driver-info ipmi_address=${kvm_ip} \
+                                        --driver-info ipmi_password=${ipmi_password} \
+                                        --driver-info ipmi_port=${ipmi_port} \
+                                        --name=${name} \
+                                        --property capabilities=profile:${profile},boot_option:local -c uuid -f value`
+  openstack baremetal port create --node ${uuid} ${mac}
+done < <(cat ironic_list)
+
 DEPLOY_KERNEL=$(openstack image show bm-deploy-kernel -f value -c id)
 DEPLOY_RAMDISK=$(openstack image show bm-deploy-ramdisk -f value -c id)
-for i in `openstack baremetal node list -c UUID -f value`; do openstack baremetal node set $i --driver-info deploy_kernel=$DEPLOY_KERNEL --driver-info deploy_ramdisk=$DEPLOY_RAMDISK; done
-for i in `openstack baremetal node list -c UUID -f value`; do openstack baremetal node show $i -c properties -f value; done
+
+for i in `openstack baremetal node list -c UUID -f value`; do 
+  openstack baremetal node set $i --driver-info deploy_kernel=$DEPLOY_KERNEL --driver-info deploy_ramdisk=$DEPLOY_RAMDISK
+done
+
+for i in `openstack baremetal node list -c UUID -f value`; do 
+  openstack baremetal node show $i -c properties -f value
+done
 ```
 
 ### introspect the nodes
 ```
-for node in $(openstack baremetal node list -c UUID -f value) ; do openstack baremetal node manage $node ; done
+for node in $(openstack baremetal node list -c UUID -f value) ; do 
+  openstack baremetal node manage $node
+done
 openstack overcloud node introspect --all-manageable --provide
 ```
 
 ## create the flavors
 ```
-for i in compute-dpdk contrail-controller contrail-analytics contrail-database contrail-analytics-database; do   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40;   openstack flavor set --property "capabilities:boot_option"="local" --property "capabilities:profile"="${i}" ${i}; done
+for i in compute-dpdk \
+compute-sriov \
+contrail-controller \
+contrail-analytics \
+contrail-database \
+contrail-analytics-database; do   
+  openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
+  openstack flavor set --property "capabilities:boot_option"="local" \
+                       --property "capabilities:profile"="${i}" ${i}
+done
 ```
 
 ## create tht template copy
