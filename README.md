@@ -279,11 +279,16 @@ zx -d images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
 cloud_image=images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2
 ```
 ### RHEL 7.5
-Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal
+
 ```
 mkdir ~/images
+```
+Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal to ~/images
+```
 cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2
 ```
+
+## customize the undercloud vm image
 ```
 undercloud_name=queensa
 undercloud_suffix=local
@@ -325,6 +330,7 @@ virt-install --name ${undercloud_name} \
   --console pty,target_type=virtio
 ```
 
+## start the undercloud
 ```
 virsh start ${undercloud_name}
 ```
@@ -468,7 +474,8 @@ while IFS= read -r line; do
                                         --driver-info ipmi_password=${ipmi_password} \
                                         --driver-info ipmi_port=${ipmi_port} \
                                         --name=${name} \
-                                        --property capabilities=profile:${profile},boot_option:local -c uuid -f value`
+                                        --property capabilities=profile:${profile},boot_option:local \
+                                        -c uuid -f value`
   openstack baremetal port create --node ${uuid} ${mac}
 done < <(cat ironic_list)
 
