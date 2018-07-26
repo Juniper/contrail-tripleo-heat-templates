@@ -307,10 +307,12 @@ virt-customize  -a /var/lib/libvirt/images/${undercloud_name}.qcow2 \
 
 ## virsh define undercloud VM
 ```
+vcpus=8
+vram=32000
 virt-install --name ${undercloud_name} \
   --disk /var/lib/libvirt/images/${undercloud_name}.qcow2 \
-  --vcpus=4 \
-  --ram=16348 \
+  --vcpus=${vcpus} \
+  --ram=${vram} \
   --network network=default,model=virtio \
   --network network=br0,model=virtio,portgroup=prov \
   --virt-type kvm \
@@ -329,6 +331,7 @@ virsh start ${undercloud_name}
 ## get undercloud ip and log into it
 ```
 undercloud_ip=`virsh domifaddr ${undercloud_name} |grep ipv4 |awk '{print $4}' |awk -F"/" '{print $1}'`
+ssh-copy-id ${undercloud_ip}
 ssh ${undercloud_ip}
 ```
 
@@ -364,7 +367,7 @@ subscription-manager register --activationkey=${act_key} --org=${org}
 ```
 
 ```
-yum install -y python-tripleoclient
+yum install -y python-tripleoclient tmux
 su - stack
 cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf
 openstack undercloud install
@@ -380,7 +383,8 @@ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 ## set overcloud nameserver
 ```
-openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dns-nameserver 8.8.8.8
+undercloud_nameserver=8.8.8.8
+openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dns-nameserver ${undercloud_nameserver}
 ```
 
 ## add an external api interface
