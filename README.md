@@ -338,7 +338,7 @@ ssh ${undercloud_ip}
 
 # on the undercloud
 
-## Undercloud installation
+## Undercloud preparation
 ```
 undercloud_name=`hostname -s`
 undercloud_suffix=`hostname -d`
@@ -366,7 +366,7 @@ org=Juniper
 yum localinstall -y http://${satellite_fqdn}/pub/katello-ca-consumer-latest.noarch.rpm
 subscription-manager register --activationkey=${act_key} --org=${org}
 ```
-
+## Install the undercloud
 ```
 yum install -y python-tripleoclient tmux
 su - stack
