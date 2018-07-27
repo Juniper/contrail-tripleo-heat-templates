@@ -14,17 +14,24 @@ resource_registry:
   OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
   OS::TripleO::Services::ContrailHeatApiPlugin: ../../docker/services/contrail/contrail-heat-container-plugin.yaml
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
+  OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
   OS::TripleO::ContrailTsn::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_tsn_pre_network.yaml
   OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
   OS::TripleO::ContrailSriov::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_sriov_pre_network.yaml
-  OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
+  OS::TripleO::ControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/controller-init.yaml
+  OS::TripleO::ContrailControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
+  OS::TripleO::ComputeExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
+  OS::TripleO::ContrailDpdkExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
+  OS::TripleO::ContrailSriovExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
 
 parameter_defaults:
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
   NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
   NeutronTunnelTypes: ''
-  NeutronApiOptVolumes: ['opt_plugin:/opt/plugin']
+  NeutronApiOptVolumes:
+    - 'opt_plugin:/opt/plugin'
+    - '/etc/contrail/ssl:/etc/contrail/ssl'
   NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
   NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
   NovaComputeOptVolumes:
@@ -34,6 +41,7 @@ parameter_defaults:
     - nova_contrail_vif_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
     - vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
   HeatApiOptVolumes:
-   - vnc_api:/usr/lib/python2.7/site-packages/vnc_api
-   - cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common
-   - gen_heat:/usr/lib/heat/contrail_heat
+    - vnc_api:/usr/lib/python2.7/site-packages/vnc_api
+    - cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common
+    - gen_heat:/usr/lib/heat/contrail_heat
+    - '/etc/contrail/ssl:/etc/contrail/ssl'

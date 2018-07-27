@@ -203,6 +203,8 @@ outputs:
                   - {get_param: DockerContrailAnalyticsTopologyImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -221,6 +223,8 @@ outputs:
                   - {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true

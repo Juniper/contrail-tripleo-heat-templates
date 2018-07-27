@@ -7,15 +7,12 @@ description:  Configures Contrail registries
 # in-tree templates add a new role.
 parameters:
   ContrailRegistryCertUrl:
-    default: ''
     description: URL to registry certificate
     type: string
   ContrailRegistryInsecure:
-    default: false
     description: Contrail Registry
     type: boolean
   ContrailRegistry:
-    default: 'opencontrailnightly'
     description: Contrail Registry
     type: string
 

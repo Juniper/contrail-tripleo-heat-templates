@@ -90,7 +90,7 @@ outputs:
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
+              get_attr: [ContrailBase, role_data, contrail_base_auth_public_env]
             net: host
             privileged: false
             detach: true
@@ -110,7 +110,7 @@ outputs:
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
+              get_attr: [ContrailBase, role_data, contrail_base_auth_public_env]
             net: host
             privileged: false
             detach: true
