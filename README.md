@@ -118,24 +118,24 @@ are provided as Virtual Machines hosted on KVM hosts
 # Infrastructure configuration
 
 ## Physical switch
-- ge0    
--- all networks (vlan700,10,20,30,40,50) are configured as trunks    
-- ge1    
--- tenant network is untagged and can be a trunk    
-- ge2    
--- provisioning network (vlan700) is the native vlan    
--- all other networks (vlan710,20,30,40,50) are configured as trunks    
-- ge3    
--- tenant network is untagged and can be trunk    
+- ge0
+-- all networks (vlan700,10,20,30,40,50) are configured as trunks
+- ge1
+-- tenant network is untagged and can be a trunk
+- ge2
+-- provisioning network (vlan700) is the native vlan
+-- all other networks (vlan710,20,30,40,50) are configured as trunks
+- ge3
+-- tenant network is untagged and can be trunk
 
 ## Control plane KVM host preparation (KVM 1-3)
 
 ### on all KVM hosts
 
-The control plane KVM hosts will host the control plane VMs. Each KVM host    
-will need virtual switches and the virtual machine definitions. The tasks    
-described must be done on each of the three hosts.    
-NIC 1 - 3 have to be substituded with real NIC names.    
+The control plane KVM hosts will host the control plane VMs. Each KVM host
+will need virtual switches and the virtual machine definitions. The tasks
+described must be done on each of the three hosts.
+NIC 1 - 3 have to be substituded with real NIC names.
 
 
 ### Install basic packages
@@ -157,11 +157,11 @@ systemctl start openvswitch
 ```
 
 #### vSwitch configuration:
-- br0    
--- provisioning network (vlan700) is the native vlan    
--- all other networks (vlan710,20,30,40,50) are configured as trunks    
-- br1    
--- tenant network is untagged    
+- br0
+-- provisioning network (vlan700) is the native vlan
+-- all other networks (vlan710,20,30,40,50) are configured as trunks
+- br1
+-- tenant network is untagged
 
 #### Create virtual switches for the undercloud VM
 ```
@@ -249,9 +249,9 @@ EOF
   done
 done
 ```
-There will be one ironic_list file per KVM host. The ironic_list files of all KVM hosts    
+There will be one ironic_list file per KVM host. The ironic_list files of all KVM hosts
 has to be combined on the overcloud.
-This is an example of a full list across three KVM hosts:    
+This is an example of a full list across three KVM hosts:
 ```
 52:54:00:e7:ca:9a compute-1-5b3s31 10.87.64.32 compute 16230
 52:54:00:30:6c:3f compute-2-5b3s31 10.87.64.32 compute 16231
@@ -267,8 +267,8 @@ This is an example of a full list across three KVM hosts:
 52:54:00:91:51:35 control-1-5b3s32 10.87.64.33 control 16233
 ```
 
-This list will be needed on the undercloud VM later on.    
-With that the control plane VM KVM host preparation is done.    
+This list will be needed on the undercloud VM later on.
+With that the control plane VM KVM host preparation is done.
 
 ## create undercloud VM on KVM host hosting the undercloud
 ### CentOS 7.5
@@ -320,7 +320,7 @@ virt-install --name ${undercloud_name} \
   --vcpus=${vcpus} \
   --ram=${vram} \
   --network network=default,model=virtio \
-  --network network=br0,model=virtio,portgroup=prov \
+  --network network=br0,model=virtio,portgroup=overcloud \
   --virt-type kvm \
   --import \
   --os-variant rhel7 \
@@ -429,7 +429,7 @@ openstack overcloud image upload --image-path /home/stack/images/
 ## Ironic preparation
 
 ### create list with ironic nodes (adjust!!!)
-Take the ironic_node lists from the KVM hosts from above.    
+Take the ironic_node lists from the KVM hosts from above.
 ```
 cd
 cat << EOM > ironic_list
@@ -458,7 +458,7 @@ EOM
 ```
 ipmi_password=ADMIN
 ipmi_user=ADMIN
-while IFS= read -r line; do      
+while IFS= read -r line; do
   mac=`echo $line|awk '{print $1}'`
   name=`echo $line|awk '{print $2}'`
   kvm_ip=`echo $line|awk '{print $3}'`
@@ -482,18 +482,18 @@ done < <(cat ironic_list)
 DEPLOY_KERNEL=$(openstack image show bm-deploy-kernel -f value -c id)
 DEPLOY_RAMDISK=$(openstack image show bm-deploy-ramdisk -f value -c id)
 
-for i in `openstack baremetal node list -c UUID -f value`; do 
+for i in `openstack baremetal node list -c UUID -f value`; do
   openstack baremetal node set $i --driver-info deploy_kernel=$DEPLOY_KERNEL --driver-info deploy_ramdisk=$DEPLOY_RAMDISK
 done
 
-for i in `openstack baremetal node list -c UUID -f value`; do 
+for i in `openstack baremetal node list -c UUID -f value`; do
   openstack baremetal node show $i -c properties -f value
 done
 ```
 
 ### introspect the nodes
 ```
-for node in $(openstack baremetal node list -c UUID -f value) ; do 
+for node in $(openstack baremetal node list -c UUID -f value) ; do
   openstack baremetal node manage $node
 done
 openstack overcloud node introspect --all-manageable --provide
@@ -506,7 +506,7 @@ compute-sriov \
 contrail-controller \
 contrail-analytics \
 contrail-database \
-contrail-analytics-database; do   
+contrail-analytics-database; do
   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
   openstack flavor set --property "capabilities:boot_option"="local" \
                        --property "capabilities:profile"="${i}" ${i}
@@ -558,76 +558,42 @@ openstack overcloud container image prepare \
  --prefix=openstack-  \
  --tag-from-label {version}-{release}  \
  --output-env-file ~/overcloud_images.yaml
-```  
-
-#### Optional: adding Contrail containers to undercloud registry
-setting Contrail container tag (default: latest)    
-```
-contrail_tag=rhel-master-132
 ```
 
-##### Adding private unsecure registry to undercloud docker client
-This step is only required if Contrail containers are not downloaded from hub.juniper.net or dockerhub but from a    
-unsecure private registry (in this example ci-repo.englab.juniper.net:5000).        
-```
-contrail_registry=ci-repo.englab.juniper.net:5000
-registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
-registry_string="${registry_string} --insecure-registry ${contrail_registry}"
-complete_string="INSECURE_REGISTRY=\"${registry_string}\""
-echo ${complete_string}
-if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
-  sudo sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
-else
-  sudo echo ${complete_string} >> /etc/sysconfig/docker
-fi
-sudo systemctl restart docker
-```
-
-##### Adding Contrail containers
-```
-contrail_tag=rhel-master-132
-cat << EOM > contrail_container_list
-DockerContrailAnalyticsAlarmGenImageName contrail-analytics-alarm-gen
-DockerContrailAnalyticsApiImageName contrail-analytics-api
-DockerContrailAnalyticsCollectorImageName contrail-analytics-collector
-DockerContrailAnalyticsQueryEngineImageName contrail-analytics-query-engine
-DockerContrailConfigApiImageName contrail-controller-config-api
-DockerContrailConfigDevicemgrImageName contrail-controller-config-devicemgr
-DockerContrailConfigSchemaImageName contrail-controller-config-schema
-DockerContrailConfigSvcmonitorImageName contrail-controller-config-svcmonitor
-DockerContrailControlControlImageName contrail-controller-control-control
-DockerContrailControlDnsImageName contrail-controller-control-dns
-DockerContrailControlNamedImageName contrail-controller-control-named
-DockerContrailWebuiJobImageName contrail-controller-webui-job
-DockerContrailWebuiWebImageName contrail-controller-webui-web
-DockerContrailCassandraImageName contrail-external-cassandra
-DockerContrailKafkaImageName contrail-external-kafka
-DockerContrailRabbitmqImageName contrail-external-rabbitmq
-DockerContrailZookeeperImageName contrail-external-zookeeper
-DockerContrailNodeInitImageName contrail-node-init
-DockerContrailNodemgrImageName contrail-nodemgr
-DockerContrailNovaPluginImageName contrail-openstack-compute-init
-DockerContrailHeatPluginImageName contrail-openstack-heat-init
-DockerNeutronConfigImage contrail-openstack-neutron-init
-DockerContrailVrouterAgentImageName contrail-vrouter-agent
-DockerContrailVrouterKernelInitImageName contrail-vrouter-kernel-init
-DockerContrailStatusImageName contrail-status
-EOM
-
-while IFS= read -r line
-do
-  thtImageName=`echo ${line} |awk '{print $1}'`
-  contrailImageName=`echo ${line} |awk '{print $2}'`
-  echo "- imagename: ${contrail_registry}/${contrailImageName}:${contrail_tag}" >> ~/local_registry_images.yaml
-  echo "  push_destination: 192.168.24.1:8787" >> ~/local_registry_images.yaml
-done < <(cat contrail_container_list)
-```
-
-#### Upload containers
+#### Upload openstack containers
 ```
 openstack overcloud container image upload --config-file ~/local_registry_images.yaml
 ```
 The last command takes a while.
+
+#### Optional: create Contrail container upload file for uploading Contrail containers to undercloud registry
+In case the Contrail containers must be stored in the undercloud registry
+```
+cd ~/tripleo-heat-templates/tools/contrail
+./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate path]
+```
+
+Examples:
+```
+Pull from password protectet public registry:
+./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -u USERNAME -p PASSWORD -t 1234
+#######################################################################
+Pull from dockerhub:
+./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -t 1234
+#######################################################################
+Pull from private secure registry:
+./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234
+#######################################################################
+Pull from private INsecure registry:
+./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -i 1 -t 1234
+#######################################################################
+```
+
+#### Optional: upload Contrail containers to undercloud registry
+```
+openstack overcloud container image upload --config-file /tmp/contrail_container
+```
+
 
 ## overcloud config files
 ### nic templates
