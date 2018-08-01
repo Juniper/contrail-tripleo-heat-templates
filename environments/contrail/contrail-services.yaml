@@ -18,6 +18,10 @@ parameter_defaults:
   ContrailDpdkCount: 0
   ContrailSriovCount: 0
   NeutronMetadataProxySharedSecret: secret
+# enable public juniper registry
+#  ContrailRegistry: hub.juniper.net
+#  ContrailRegistryUser: YOURUSER
+#  ContrailRegistryPassword: YOURPASSWORD
 # enable insecure registry
 #  ContrailRegistryInsecure: true
 #  DockerInsecureRegistryAddress: 10.87.64.32:5000,192.168.24.1:8787
