@@ -560,74 +560,40 @@ openstack overcloud container image prepare \
  --output-env-file ~/overcloud_images.yaml
 ```  
 
-#### Optional: adding Contrail containers to undercloud registry
-setting Contrail container tag (default: latest)    
-```
-contrail_tag=rhel-master-132
-```
-
-##### Adding private unsecure registry to undercloud docker client
-This step is only required if Contrail containers are not downloaded from hub.juniper.net or dockerhub but from a    
-unsecure private registry (in this example ci-repo.englab.juniper.net:5000).        
-```
-contrail_registry=ci-repo.englab.juniper.net:5000
-registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
-registry_string="${registry_string} --insecure-registry ${contrail_registry}"
-complete_string="INSECURE_REGISTRY=\"${registry_string}\""
-echo ${complete_string}
-if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
-  sudo sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
-else
-  sudo echo ${complete_string} >> /etc/sysconfig/docker
-fi
-sudo systemctl restart docker
-```
-
-##### Adding Contrail containers
-```
-contrail_tag=rhel-master-132
-cat << EOM > contrail_container_list
-DockerContrailAnalyticsAlarmGenImageName contrail-analytics-alarm-gen
-DockerContrailAnalyticsApiImageName contrail-analytics-api
-DockerContrailAnalyticsCollectorImageName contrail-analytics-collector
-DockerContrailAnalyticsQueryEngineImageName contrail-analytics-query-engine
-DockerContrailConfigApiImageName contrail-controller-config-api
-DockerContrailConfigDevicemgrImageName contrail-controller-config-devicemgr
-DockerContrailConfigSchemaImageName contrail-controller-config-schema
-DockerContrailConfigSvcmonitorImageName contrail-controller-config-svcmonitor
-DockerContrailControlControlImageName contrail-controller-control-control
-DockerContrailControlDnsImageName contrail-controller-control-dns
-DockerContrailControlNamedImageName contrail-controller-control-named
-DockerContrailWebuiJobImageName contrail-controller-webui-job
-DockerContrailWebuiWebImageName contrail-controller-webui-web
-DockerContrailCassandraImageName contrail-external-cassandra
-DockerContrailKafkaImageName contrail-external-kafka
-DockerContrailRabbitmqImageName contrail-external-rabbitmq
-DockerContrailZookeeperImageName contrail-external-zookeeper
-DockerContrailNodeInitImageName contrail-node-init
-DockerContrailNodemgrImageName contrail-nodemgr
-DockerContrailNovaPluginImageName contrail-openstack-compute-init
-DockerContrailHeatPluginImageName contrail-openstack-heat-init
-DockerNeutronConfigImage contrail-openstack-neutron-init
-DockerContrailVrouterAgentImageName contrail-vrouter-agent
-DockerContrailVrouterKernelInitImageName contrail-vrouter-kernel-init
-DockerContrailStatusImageName contrail-status
-EOM
-
-while IFS= read -r line
-do
-  thtImageName=`echo ${line} |awk '{print $1}'`
-  contrailImageName=`echo ${line} |awk '{print $2}'`
-  echo "- imagename: ${contrail_registry}/${contrailImageName}:${contrail_tag}" >> ~/local_registry_images.yaml
-  echo "  push_destination: 192.168.24.1:8787" >> ~/local_registry_images.yaml
-done < <(cat contrail_container_list)
-```
-
-#### Upload containers
+#### Upload openstack containers
 ```
 openstack overcloud container image upload --config-file ~/local_registry_images.yaml
 ```
 The last command takes a while.
+
+#### Optional: create Contrail container upload file for uploading Contrail containers to undercloud registry
+In case the Contrail containers must be stored in the undercloud registry
+```
+cd ~/tripleo-heat-templates/tools/contrail
+./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate path]
+```
+
+Examples:
+```
+Pull from password protectet public registry:
+./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -u USERNAME -p PASSWORD -t 1234
+#######################################################################
+Pull from dockerhub:
+./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -t 1234
+#######################################################################
+Pull from private secure registry:
+./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234
+#######################################################################
+Pull from private INsecure registry:
+./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -i 1 -t 1234
+#######################################################################
+```
+
+#### Optional: upload Contrail containers to undercloud registry
+```
+openstack overcloud container image upload --config-file /tmp/contrail_container
+```
+
 
 ## overcloud config files
 ### nic templates
