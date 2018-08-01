@@ -320,7 +320,7 @@ virt-install --name ${undercloud_name} \
   --vcpus=${vcpus} \
   --ram=${vram} \
   --network network=default,model=virtio \
-  --network network=br0,model=virtio,portgroup=prov \
+  --network network=br0,model=virtio,portgroup=overcloud \
   --virt-type kvm \
   --import \
   --os-variant rhel7 \
