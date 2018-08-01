@@ -9,20 +9,6 @@ description: >
 # in the resource_registry instead, if you want to override the default
 # and/or share values with other templates in the tree.
 parameters:
-  RoleParameters:
-    type: json
-    description: Role Specific parameters
-    default: {}
-  ServiceNames:
-    type: comma_delimited_list
-    default: []
-  deployment_actions:
-    default: ['CREATE', 'UPDATE']
-    type: comma_delimited_list
-    description: >
-      List of stack actions that will trigger any deployments in this
-      templates. The actions will be an empty list of the server is in the
-      toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
   ContrailServiceCertFile:

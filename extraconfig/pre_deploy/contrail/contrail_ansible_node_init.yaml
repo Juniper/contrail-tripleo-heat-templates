@@ -1,0 +1,89 @@
+---
+- name: Configuration to be applied puppet configuration started
+  connection: local
+  hosts: localhost
+  tasks:
+    - name: create container
+      docker_container:
+        name: "{{ _CONTRAIL_NODE_INIT_IMAGE_ }}"
+        image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_NODE_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+        auto_remove: yes
+        privileged: yes
+        network_mode: host
+        pid_mode: host
+        user: root
+        volumes:
+          - /dev:/dev
+          - /usr/bin:/host/usr/bin
+          - /etc/contrail/ssl:/etc/contrail/ssl
+          - /var/crashes:/var/crashes
+          - /var/log/containers/contrail:/var/log/contrail
+          - /var/run:/var/run
+          - /tmp/:/tmp/
+        env:
+          INSTALL_PUPPET: "{{ _INSTALL_PUPPET_ }}"
+          CONTRAIL_STATUS_IMAGE: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_STATUS_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+          SSL_ENABLE: "{{ _SSL_ENABLE_ }}"
+          SERVER_KEYFILE: "{{ _SERVER_KEYFILE_ }}"
+          SERVER_CERTFILE: "{{ _SERVER_CERTFILE_ }}"
+          SERVER_CA_CERTFILE: "{{ _SERVER_CA_CERTFILE_ }}"
+          SERVER_CA_KEYFILE: "{{ _SERVER_CA_KEYFILE_ }}"
+
+    - set_fact:
+        install_puppet: "{{ _INSTALL_PUPPET_ }} | bool"
+
+    - name: Setup Contrail Tripleo Puppet
+      block:
+        - name: sleep for 5 sec (looks like a race condition between docker execution and next ansible step)
+          shell: "sleep 5"
+
+        - name: Lookup Contrail RPM files
+          find:
+            paths: "/tmp"
+            patterns: "contrail-tripleo-puppet*.rpm"
+          register: rpm_files
+
+        - name: debug rpm files
+          debug:
+            msg: "{{ rpm_files.files }}"
+
+        - set_fact:
+            rpm_list: "{{ rpm_files.files | map(attribute='path') | list}}"
+
+        - name: debug rpm list
+          debug:
+            msg: "{{ rpm_list }}"
+
+        - name: Installing the rpm files
+          yum:
+            name: "{{ rpm_list }}"
+            state: present
+
+        - set_fact:
+            puppet_module_dir: "/usr/share/openstack-puppet/modules/tripleo/"
+
+        - set_fact:
+            contrail_module_dir: "{{ puppet_module_dir }}/manifests/network/contrail"
+
+        - set_fact:
+            contrail_puppet_setup_dir: "/usr/share/contrail-tripleo-puppet"
+
+        - name: Check contrail tripleo puppet module exists.
+          stat:
+            path: "{{ contrail_module_dir }}"
+          register: file_details
+
+        - name: Rename old contrail-tripleo-puppet module in tripleo
+          shell: "mv {{ contrail_module_dir }} {{ contrail_module_dir }}.org"
+          when: file_details.stat.exists
+
+        - name: Check contrail tripleo puppet module was installed.
+          stat:
+            path: "{{ contrail_puppet_setup_dir }}"
+          register: file_details
+
+        - name: Sync contrail-tripleo-puppet module into tripleo
+          shell: "rsync -a {{ contrail_puppet_setup_dir }}/ {{ puppet_module_dir }}"
+          when: file_details.stat.exists
+
+      when: install_puppet
