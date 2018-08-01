@@ -299,19 +299,19 @@ outputs:
           - '='
           - - 'KEYSTONE_AUTH_PROTO'
             - {get_param: [EndpointMap, KeystoneAdmin, protocol] }
-      contrail_auth_public_env: &contrail_auth_public_env
+      contrail_auth_internal_env: &contrail_auth_internal_env
         - list_join:
           - '='
           - - 'KEYSTONE_AUTH_HOST'
-            - {get_param: [EndpointMap, KeystonePublic, host] }
+            - {get_param: [EndpointMap, KeystoneInternal, host] }
         - list_join:
           - '='
           - - 'KEYSTONE_AUTH_ADMIN_PORT'
-            - {get_param: [EndpointMap, KeystonePublic, port] }
+            - {get_param: [EndpointMap, KeystoneInternal, port] }
         - list_join:
           - '='
           - - 'KEYSTONE_AUTH_PROTO'
-            - {get_param: [EndpointMap, KeystonePublic, protocol] }
+            - {get_param: [EndpointMap, KeystoneInternal, protocol] }
       contrail_tls_env: &contrail_tls_env
         if:
           - contrail_tls_enabled
@@ -339,22 +339,9 @@ outputs:
                 - - 'SERVER_CA_KEYFILE'
                   - {get_param: ContrailCaKeyFile}
           - []
-      contrail_admin_auth_tls_env: &contrail_admin_auth_tls_env
+      contrail_auth_tls_env: &contrail_auth_tls_env
         if:
           - internal_tls_enabled
-          - - 'KEYSTONE_AUTH_INSECURE=True'
-            - list_join:
-                - '='
-                - - 'KEYSTONE_AUTH_CERTFILE'
-                  - {get_param: ContrailServiceCertFile}
-            - list_join:
-                - '='
-                - - 'KEYSTONE_AUTH_KEYFILE'
-                  - {get_param: ContrailServiceKeyFile}
-          - []
-      contrail_public_auth_tls_env: &contrail_public_auth_tls_env
-        if:
-          - public_tls_enabled
           - - 'KEYSTONE_AUTH_INSECURE=True'
             - list_join:
                 - '='
@@ -371,13 +358,13 @@ outputs:
           - *contrail_auth_base_env
           - *contrail_auth_admin_env
           - *contrail_tls_env
-          - *contrail_admin_auth_tls_env
-      contrail_base_auth_public_env: &contrail_base_auth_public_env
+          - *contrail_auth_tls_env
+      contrail_base_auth_internal_env: &contrail_base_auth_internal_env
         list_concat:
           - *contrail_general_base_env
           - *contrail_auth_base_env
-          - *contrail_auth_public_env
+          - *contrail_auth_internal_env
           - *contrail_tls_env
-          - *contrail_public_auth_tls_env
+          - *contrail_auth_tls_env
       docker_config:
         step_2: {}
