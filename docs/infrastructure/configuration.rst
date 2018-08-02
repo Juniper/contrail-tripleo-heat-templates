@@ -130,7 +130,7 @@ Create Undercloud VM definition on the Undercloud KVM host
       .. admonition:: CentOS
          :class: centos
 
-         code:: bash
+         ::
 
              curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz \ 
                -o CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
@@ -140,7 +140,7 @@ Create Undercloud VM definition on the Undercloud KVM host
       .. admonition:: RHEL
          :class: rhel
 
-         code:: bash
+         ::
      
            Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal to ~/images
            cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2

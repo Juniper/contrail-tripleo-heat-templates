@@ -373,24 +373,19 @@ In case of RHEL the system must be subscriped.</p>
 using different methods:</p>
 <div class="centos admonition">
 <p class="first admonition-title">CentOS</p>
-<p>code:: bash</p>
-<blockquote class="last">
-<div><dl class="docutils">
-<dt>curl <a class="reference external" href="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz">https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz</a> </dt>
-<dd><p class="first last">-o CentOS-7-x86_64-GenericCloud-1802.qcow2.xz</p>
-</dd>
-</dl>
-<p>zx -d images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
-cloud_image=~/images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2</p>
-</div></blockquote>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">cloud</span><span class="o">.</span><span class="n">centos</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">centos</span><span class="o">/</span><span class="mi">7</span><span class="o">/</span><span class="n">images</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mf">1802.</span><span class="n">qcow2</span><span class="o">.</span><span class="n">xz</span> \
+  <span class="o">-</span><span class="n">o</span> <span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mf">1802.</span><span class="n">qcow2</span><span class="o">.</span><span class="n">xz</span>
+<span class="n">zx</span> <span class="o">-</span><span class="n">d</span> <span class="n">images</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mf">1802.</span><span class="n">qcow2</span><span class="o">.</span><span class="n">xz</span>
+<span class="n">cloud_image</span><span class="o">=~/</span><span class="n">images</span><span class="o">/</span><span class="n">CentOS</span><span class="o">-</span><span class="mi">7</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">GenericCloud</span><span class="o">-</span><span class="mi">1804</span><span class="n">_02</span><span class="o">.</span><span class="n">qcow2</span>
+</pre></div>
+</div>
 </div>
 <div class="rhel last admonition">
 <p class="first admonition-title">RHEL</p>
-<p>code:: bash</p>
-<blockquote class="last">
-<div><p>Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal to ~/images
-cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2</p>
-</div></blockquote>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Download</span> <span class="n">rhel</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="mf">7.5</span><span class="o">-</span><span class="n">update</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">kvm</span><span class="o">.</span><span class="n">qcow2</span> <span class="kn">from</span> <span class="nn">RedHat</span> <span class="n">portal</span> <span class="n">to</span> <span class="o">~/</span><span class="n">images</span>
+<span class="n">cloud_image</span><span class="o">=~/</span><span class="n">images</span><span class="o">/</span><span class="n">rhel</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="mf">7.5</span><span class="o">-</span><span class="n">update</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">x86_64</span><span class="o">-</span><span class="n">kvm</span><span class="o">.</span><span class="n">qcow2</span>
+</pre></div>
+</div>
 </div>
 </div>
 </li>
