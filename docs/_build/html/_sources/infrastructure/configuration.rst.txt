@@ -114,17 +114,17 @@ Create Undercloud VM definition on the Undercloud KVM host
 
 .. note:: This has to be done on the Undercloud KVM host only
 
-#. Create images directory
+1. Create images directory
 
 .. code:: bash
 
   mkdir ~/images
   cd images
 
-#. Get images
+#. Getting the images
 
    .. note::
-      Dependings on  the operating system the image must be retrieved
+      Depending on the operating system the image must be retrieved
       using different methods:
 
       .. admonition:: CentOS
