@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="../undercloud/configuration.html" />
+    <link rel="next" title="Configuration" href="../undercloud/configuration.html" />
     <link rel="prev" title="Overview" href="overview.html" /> 
 
   
@@ -100,6 +100,14 @@
 </li>
 </ul>
 </li>
+</ul>
+<p class="caption"><span class="caption-text">Undercloud</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../undercloud/configuration.html">Configuration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Overcloud</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../overcloud/configuration.html">Configuration</a></li>
 </ul>
 
             
@@ -360,18 +368,28 @@ In case of RHEL the system must be subscriped.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">This has to be done on each of the Overcloud KVM hosts</p>
 </div>
-<ol class="arabic simple">
-<li>setup vm templates, vbmc and create ironic inpute list</li>
-</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<dl class="docutils">
+<dt>Define the roles and the number of that roles per Overcloud KVM host.</dt>
+<dd><dl class="first last docutils">
+<dt>This example defines:</dt>
+<dd>2x compute nodes
+1x cotrail controller node
+1x openstack controller node</dd>
+</dl>
+</dd>
+</dl>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ROLES</span><span class="o">=</span><span class="n">compute</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">contrail</span><span class="o">-</span><span class="n">controller</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="n">control</span><span class="p">:</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>num=0
 ipmi_user=ADMIN
 ipmi_password=ADMIN
 libvirt_path=/var/lib/libvirt/images
 port_group=overcloud
 prov_switch=br0
-
-# Define roles and their count
-ROLES=compute:2,contrail-controller:1,control:1
 
 /bin/rm ironic_list
 IFS=&#39;,&#39; read -ra role_list &lt;&lt;&lt; &quot;${ROLES}&quot;
@@ -538,7 +556,7 @@ ssh-copy-id ${undercloud_ip}
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../undercloud/configuration.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../undercloud/configuration.html" class="btn btn-neutral float-right" title="Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="overview.html" class="btn btn-neutral" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

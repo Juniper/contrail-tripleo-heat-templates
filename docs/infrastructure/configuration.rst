@@ -114,7 +114,14 @@ Create Overcloud VM definitions on the Overcloud KVM hosts (KVM2-4)
 
 .. note:: This has to be done on each of the Overcloud KVM hosts
 
-1. setup vm templates, vbmc and create ironic inpute list
+.. note:: Define the roles and the number of that roles per Overcloud KVM host.
+          This example defines:
+            2x compute nodes
+            1x cotrail controller node
+            1x openstack controller node
+  ::
+
+    ROLES=compute:2,contrail-controller:1,control:1
 
 .. code:: bash
 
@@ -124,9 +131,6 @@ Create Overcloud VM definitions on the Overcloud KVM hosts (KVM2-4)
   libvirt_path=/var/lib/libvirt/images
   port_group=overcloud
   prov_switch=br0
-  
-  # Define roles and their count
-  ROLES=compute:2,contrail-controller:1,control:1
 
   /bin/rm ironic_list
   IFS=',' read -ra role_list <<< "${ROLES}"

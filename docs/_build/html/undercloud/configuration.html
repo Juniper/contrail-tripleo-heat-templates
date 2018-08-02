@@ -96,7 +96,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#setup-repositories">Setup repositories</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#install-the-undercloud">Install the Undercloud</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configure-forwarding">Configure forwarding</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#configure-nameserver-for-overcloud-nodes">Configure nameserver for Overcloud nodes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-external-api-interface">Add external api interface</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-stack-user-to-docker-group">Add stack user to docker group</a></li>
 </ul>
@@ -183,9 +182,8 @@
 <li><a class="reference internal" href="#setup-repositories" id="id5">Setup repositories</a></li>
 <li><a class="reference internal" href="#install-the-undercloud" id="id6">Install the Undercloud</a></li>
 <li><a class="reference internal" href="#configure-forwarding" id="id7">Configure forwarding</a></li>
-<li><a class="reference internal" href="#configure-nameserver-for-overcloud-nodes" id="id8">Configure nameserver for Overcloud nodes</a></li>
-<li><a class="reference internal" href="#add-external-api-interface" id="id9">Add external api interface</a></li>
-<li><a class="reference internal" href="#add-stack-user-to-docker-group" id="id10">Add stack user to docker group</a></li>
+<li><a class="reference internal" href="#add-external-api-interface" id="id8">Add external api interface</a></li>
+<li><a class="reference internal" href="#add-stack-user-to-docker-group" id="id9">Add stack user to docker group</a></li>
 </ul>
 </li>
 </ul>
@@ -267,15 +265,8 @@ subscription-manager register --activationkey=${act_key} --org=${org}
 </pre></div>
 </div>
 </div>
-<div class="section" id="configure-nameserver-for-overcloud-nodes">
-<h3><a class="toc-backref" href="#id8">Configure nameserver for Overcloud nodes</a><a class="headerlink" href="#configure-nameserver-for-overcloud-nodes" title="Permalink to this headline">¶</a></h3>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>undercloud_nameserver=8.8.8.8
-openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dns-nameserver ${undercloud_nameserver}
-</pre></div>
-</div>
-</div>
 <div class="section" id="add-external-api-interface">
-<h3><a class="toc-backref" href="#id9">Add external api interface</a><a class="headerlink" href="#add-external-api-interface" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">Add external api interface</a><a class="headerlink" href="#add-external-api-interface" title="Permalink to this headline">¶</a></h3>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">add</span> <span class="n">name</span> <span class="n">vlan720</span> <span class="n">link</span> <span class="n">br</span><span class="o">-</span><span class="n">ctlplane</span> <span class="nb">type</span> <span class="n">vlan</span> <span class="nb">id</span> <span class="mi">720</span>
 <span class="n">sudo</span> <span class="n">ip</span> <span class="n">addr</span> <span class="n">add</span> <span class="mf">10.2</span><span class="o">.</span><span class="mf">0.254</span><span class="o">/</span><span class="mi">24</span> <span class="n">dev</span> <span class="n">vlan720</span>
 <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="nb">set</span> <span class="n">dev</span> <span class="n">vlan720</span> <span class="n">up</span>
@@ -283,7 +274,7 @@ openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dn
 </div>
 </div>
 <div class="section" id="add-stack-user-to-docker-group">
-<h3><a class="toc-backref" href="#id10">Add stack user to docker group</a><a class="headerlink" href="#add-stack-user-to-docker-group" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">Add stack user to docker group</a><a class="headerlink" href="#add-stack-user-to-docker-group" title="Permalink to this headline">¶</a></h3>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">newgrp</span> <span class="n">docker</span>
 <span class="n">exit</span>
 <span class="n">su</span> <span class="o">-</span> <span class="n">stack</span>

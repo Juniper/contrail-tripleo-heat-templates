@@ -79,14 +79,6 @@ Configure forwarding
   sudo iptables -A FORWARD -i eth0 -o br-ctlplane -m state --state RELATED,ESTABLISHED -j ACCEPT
   sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
-Configure nameserver for Overcloud nodes
-----------------------------------------
-
-.. code:: bash
-
-  undercloud_nameserver=8.8.8.8
-  openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dns-nameserver ${undercloud_nameserver}
-
 Add external api interface
 --------------------------
 
