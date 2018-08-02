@@ -266,12 +266,12 @@ Get and upload containers
 
 3. Create Contrail container file
 
-.. note:: this step is optional, If not done, Contrail containers can be downloaded from external registries.
+.. note:: this step is optional. If not done, Contrail containers can be downloaded from external registries.
 
 .. code:: bash
 
   cd ~/tripleo-heat-templates/tools/contrail
-./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate pat
+  ./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate pat
 h]
 
 .. note:: Examples:

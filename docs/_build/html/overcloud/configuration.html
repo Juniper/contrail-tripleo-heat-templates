@@ -450,13 +450,13 @@ openstack overcloud container image prepare \
 </ol>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">this step is optional, If not done, Contrail containers can be downloaded from external registries.</p>
+<p class="last">this step is optional. If not done, Contrail containers can be downloaded from external registries.</p>
 </div>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">tripleo</span><span class="o">-</span><span class="n">heat</span><span class="o">-</span><span class="n">templates</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">contrail</span>
+<span class="o">./</span><span class="n">import_contrail_container</span><span class="o">.</span><span class="n">sh</span> <span class="o">-</span><span class="n">f</span> <span class="n">container_outputfile</span> <span class="o">-</span><span class="n">r</span> <span class="n">registry</span> <span class="o">-</span><span class="n">t</span> <span class="n">tag</span> <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="n">insecure</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">u</span> <span class="n">username</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">password</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span> <span class="n">certificate</span> <span class="n">pat</span>
 </pre></div>
 </div>
-<p>./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate pat
-h]</p>
+<p>h]</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Examples:</p>
