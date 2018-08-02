@@ -91,6 +91,8 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#undercloud-preparation">Undercloud preparation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#undercloud-installation-configuration">Undercloud installation &amp; configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overcloud-image-preparation">Overcloud image preparation</a></li>
 </ul>
 </li>
 </ul>
@@ -164,6 +166,8 @@
 <ul class="simple">
 <li><a class="reference internal" href="#configuration" id="id1">Configuration</a><ul>
 <li><a class="reference internal" href="#undercloud-preparation" id="id2">Undercloud preparation</a></li>
+<li><a class="reference internal" href="#undercloud-installation-configuration" id="id3">Undercloud installation &amp; configuration</a></li>
+<li><a class="reference internal" href="#overcloud-image-preparation" id="id4">Overcloud image preparation</a></li>
 </ul>
 </li>
 </ul>
@@ -191,6 +195,94 @@ hostnamectl set-hostname --transient ${undercloud_name}.${undercloud_suffix}
 echo ${undercloud_ip} ${undercloud_name}.${undercloud_suffix} ${undercloud_name} &gt;&gt; /etc/hosts`
 </pre></div>
 </div>
+</li>
+<li><p class="first">Setup repositories</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Repositoriy setup is different for CentOS and RHEL.</p>
+<div class="centos admonition">
+<p class="first admonition-title">CentOS</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>tripeo_repos=`python -c &#39;import requests;r = requests.get(&quot;https://trunk.rdoproject.org/centos7-queens/current&quot;); print r.text &#39; |grep
+python2-tripleo-repos|awk -F&quot;href=\&quot;&quot; &#39;{print $2}&#39;|awk -F&quot;\&quot;&quot; &#39;{print $1}&#39;`
+yum install -y https://trunk.rdoproject.org/centos7-queens/current/${tripeo_repos}
+tripleo-repos -b queens current
+</pre></div>
+</div>
+</div>
+<div class="rhel last admonition">
+<p class="first admonition-title">RHEL</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>#Register with Satellite (can be done with CDN as well)
+satellite_fqdn=satellite.englab.juniper.net
+act_key=osp13
+org=Juniper
+yum localinstall -y http://${satellite_fqdn}/pub/katello-ca-consumer-latest.noarch.rpm
+subscription-manager register --activationkey=${act_key} --org=${org}
+</pre></div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="undercloud-installation-configuration">
+<h2><a class="toc-backref" href="#id3">Undercloud installation &amp; configuration</a><a class="headerlink" href="#undercloud-installation-configuration" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>install the Undercloud</li>
+</ol>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">python</span><span class="o">-</span><span class="n">tripleoclient</span> <span class="n">tmux</span>
+<span class="n">su</span> <span class="o">-</span> <span class="n">stack</span>
+<span class="n">cp</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">instack</span><span class="o">-</span><span class="n">undercloud</span><span class="o">/</span><span class="n">undercloud</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">sample</span> <span class="o">~/</span><span class="n">undercloud</span><span class="o">.</span><span class="n">conf</span>
+<span class="n">openstack</span> <span class="n">undercloud</span> <span class="n">install</span>
+<span class="n">source</span> <span class="n">stackrc</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>configure forwarding</li>
+</ol>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">FORWARD</span> <span class="o">-</span><span class="n">i</span> <span class="n">br</span><span class="o">-</span><span class="n">ctlplane</span> <span class="o">-</span><span class="n">o</span> <span class="n">eth0</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+<span class="n">sudo</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">FORWARD</span> <span class="o">-</span><span class="n">i</span> <span class="n">eth0</span> <span class="o">-</span><span class="n">o</span> <span class="n">br</span><span class="o">-</span><span class="n">ctlplane</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">RELATED</span><span class="p">,</span><span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
+<span class="n">sudo</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">t</span> <span class="n">nat</span> <span class="o">-</span><span class="n">A</span> <span class="n">POSTROUTING</span> <span class="o">-</span><span class="n">o</span> <span class="n">eth0</span> <span class="o">-</span><span class="n">j</span> <span class="n">MASQUERADE</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>Configure nameserver for Overcloud nodes</li>
+</ol>
+<ol class="arabic simple" start="4">
+<li>Add external api interface</li>
+</ol>
+</div>
+<div class="section" id="overcloud-image-preparation">
+<h2><a class="toc-backref" href="#id4">Overcloud image preparation</a><a class="headerlink" href="#overcloud-image-preparation" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Create image directory</li>
+</ol>
+<ol class="arabic" start="2">
+<li><p class="first">Get images</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<div class="tripleo admonition">
+<p class="first admonition-title">tripleo</p>
+<blockquote class="last">
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">images</span><span class="o">.</span><span class="n">rdoproject</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">queens</span><span class="o">/</span><span class="n">rdo_trunk</span><span class="o">/</span><span class="n">current</span><span class="o">-</span><span class="n">tripleo</span><span class="o">-</span><span class="n">rdo</span><span class="o">/</span><span class="n">ironic</span><span class="o">-</span><span class="n">python</span><span class="o">-</span><span class="n">agent</span><span class="o">.</span><span class="n">tar</span>
+<span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">images</span><span class="o">.</span><span class="n">rdoproject</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">queens</span><span class="o">/</span><span class="n">rdo_trunk</span><span class="o">/</span><span class="n">current</span><span class="o">-</span><span class="n">tripleo</span><span class="o">-</span><span class="n">rdo</span><span class="o">/</span><span class="n">overcloud</span><span class="o">-</span><span class="n">full</span><span class="o">.</span><span class="n">tar</span>
+<span class="n">tar</span> <span class="n">xvf</span> <span class="n">ironic</span><span class="o">-</span><span class="n">python</span><span class="o">-</span><span class="n">agent</span><span class="o">.</span><span class="n">tar</span>
+<span class="n">tar</span> <span class="n">xvf</span> <span class="n">overcloud</span><span class="o">-</span><span class="n">full</span><span class="o">.</span><span class="n">tar</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="osp13 last admonition">
+<p class="first admonition-title">OSP13</p>
+<blockquote class="last">
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sudo yum install -y rhosp-director-images rhosp-director-images-ipa
+for i in /usr/share/rhosp-director-images/overcloud-full-latest-13.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-13.0.tar ; do tar -xvf $i; done
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</li>
+<li><p class="first">Upload images</p>
 </li>
 </ol>
 </div>
