@@ -4,14 +4,13 @@ Introduction
 
 .. contents:: Table of Contents
 
-This guide will explain the deployment of Contrail/Tungsten Fabric with RHOSP/RDO using Triple
-o/RHOSPd.
+This guide will explain the deployment of Contrail/Tungsten Fabric with RHOSP/RDO using Tripleo/RHOSPd.
+
 
 Supported combinations
 ======================
 
-Currently the following combinations of Operating System/OpenStack/Deployer/Contrail are suppo
-rted:
+Currently the following combinations of Operating System/OpenStack/Deployer/Contrail are supported:
 
 +-------------------+-------------------+-----------------------+------------------------+
 | Operating System  | OpenStack         | Deployer              | Contrail               |

@@ -1,6 +1,6 @@
-##############
-Infrastructure
-##############
+########
+Overview
+########
 
 .. contents:: Table of Contents
 
@@ -8,20 +8,20 @@ There are many different ways on how to create the infrastructure providing
 the control plane elements. In this example all control plane functions
 are provided as Virtual Machines hosted on KVM hosts
 
-- KVM 1:
-  Undercloud
-
-- KVM 2:
-  OpenStack Controller 1
-  Contrail Controller 1
-
-- KVM 3:
-  OpenStack Controller 2
-  Contrail Controller 2
-
-- KVM 4:
-  OpenStack Controller 3
-  Contrail Controller 3
++----------+------------------------+
+| KVM Host | Virtual Machines       |
++==========+========================+
+| KVM1     | Undercloud             |
++----------+------------------------+
+| KVM2     | OpenStack Controller 1,|
+|          | Contrail Contoller 1   |
++----------+------------------------+
+| KVM3     | OpenStack Controller 2,|
+|          | Contrail Contoller 2   |
++----------+------------------------+
+| KVM4     | OpenStack Controller 2,|
+|          | Contrail Contoller 2   |
++----------+------------------------+
 
 Sample topology
 ===============

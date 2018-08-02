@@ -110,6 +110,16 @@ Create bridges
   virsh net-autostart br1
 
 Create Undercloud VM definition on the Undercloud KVM host
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------------------------
 
 .. note:: This has to be done on the Undercloud KVM host only
+
+      .. admonition:: CentOS
+         :class: centos
+
+         ::
+
+             mkdir images
+             curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz -o images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
+             zx -d images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
+             cloud_image=images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2
