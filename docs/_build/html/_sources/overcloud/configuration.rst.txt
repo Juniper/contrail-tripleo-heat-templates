@@ -274,7 +274,7 @@ Get and upload containers
 ./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate pat
 h]
 
-.. node:: Examples:
+.. note:: Examples:
 
    .. admonition:: OSP13
             :class: osp13
