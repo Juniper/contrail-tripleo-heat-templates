@@ -276,19 +276,21 @@ h]
 
 .. node:: Examples:
 
-  .. code:: bash
+   .. admonition:: OSP13
+            :class: osp13
 
-      # Pull from password protectet public registry:
-      ./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -u USERNAME -p PASSWORD -t 1234
+         ::
+           # Pull from password protectet public registry:
+          ./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -u USERNAME -p PASSWORD -t 1234
 
-      # Pull from dockerhub:
-      ./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -t 1234
+          # Pull from dockerhub:
+          ./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -t 1234
 
-      # Pull from private secure registry:
-      ./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234
+          # Pull from private secure registry:
+          ./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234
 
-      # Pull from private INsecure registry:
-      ./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -i 1 -t 1234
+          # Pull from private INsecure registry:
+          ./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -i 1 -t 1234
 
 
 4. Upload Contrail containers to Undercloud registry
