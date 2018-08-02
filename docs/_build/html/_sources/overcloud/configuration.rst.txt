@@ -232,8 +232,11 @@ Add stack user to docker group
 Get and upload containers
 =========================
 
+OpenStack containers
+--------------------
+
 Create OpenStack container file
--------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    .. note::
 
@@ -272,16 +275,19 @@ Create OpenStack container file
                               --output-env-file ~/overcloud_images.yaml
 
 Upload OpenStack containers
----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
   openstack overcloud container image upload --config-file ~/local_registry_images.yaml
 
-Create Contrail container file
-------------------------------
+Contrail containers
+-------------------
 
 .. note:: this step is optional. If not done, Contrail containers can be downloaded from external registries.
+
+Create Contrail container file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: bash
 
@@ -317,7 +323,7 @@ Create Contrail container file
 
 
 Upload Contrail containers to Undercloud registry
--------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. note:: this step is optional, If not done, Contrail containers can be downloaded from external registries.
 

@@ -118,10 +118,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#create-tripleo-heat-template-copy">Create Tripleo-Heat-Template copy</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#add-stack-user-to-docker-group">Add stack user to docker group</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#get-and-upload-containers">Get and upload containers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#create-openstack-container-file">Create OpenStack container file</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#upload-openstack-containers">Upload OpenStack containers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#create-contrail-container-file">Create Contrail container file</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#upload-contrail-containers-to-undercloud-registry">Upload Contrail containers to Undercloud registry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#openstack-containers">OpenStack containers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-openstack-container-file">Create OpenStack container file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#upload-openstack-containers">Upload OpenStack containers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#contrail-containers">Contrail containers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-contrail-container-file">Create Contrail container file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#upload-contrail-containers-to-undercloud-registry">Upload Contrail containers to Undercloud registry</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -224,10 +230,16 @@
 <li><a class="reference internal" href="#create-tripleo-heat-template-copy" id="id19">Create Tripleo-Heat-Template copy</a></li>
 <li><a class="reference internal" href="#add-stack-user-to-docker-group" id="id20">Add stack user to docker group</a></li>
 <li><a class="reference internal" href="#get-and-upload-containers" id="id21">Get and upload containers</a><ul>
-<li><a class="reference internal" href="#create-openstack-container-file" id="id22">Create OpenStack container file</a></li>
-<li><a class="reference internal" href="#upload-openstack-containers" id="id23">Upload OpenStack containers</a></li>
-<li><a class="reference internal" href="#create-contrail-container-file" id="id24">Create Contrail container file</a></li>
-<li><a class="reference internal" href="#upload-contrail-containers-to-undercloud-registry" id="id25">Upload Contrail containers to Undercloud registry</a></li>
+<li><a class="reference internal" href="#openstack-containers" id="id22">OpenStack containers</a><ul>
+<li><a class="reference internal" href="#create-openstack-container-file" id="id23">Create OpenStack container file</a></li>
+<li><a class="reference internal" href="#upload-openstack-containers" id="id24">Upload OpenStack containers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contrail-containers" id="id25">Contrail containers</a><ul>
+<li><a class="reference internal" href="#create-contrail-container-file" id="id26">Create Contrail container file</a></li>
+<li><a class="reference internal" href="#upload-contrail-containers-to-undercloud-registry" id="id27">Upload Contrail containers to Undercloud registry</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -461,8 +473,10 @@ done
 </div>
 <div class="section" id="get-and-upload-containers">
 <h2><a class="toc-backref" href="#id21">Get and upload containers</a><a class="headerlink" href="#get-and-upload-containers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="openstack-containers">
+<h3><a class="toc-backref" href="#id22">OpenStack containers</a><a class="headerlink" href="#openstack-containers" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="create-openstack-container-file">
-<h3><a class="toc-backref" href="#id22">Create OpenStack container file</a><a class="headerlink" href="#create-openstack-container-file" title="Permalink to this headline">¶</a></h3>
+<h4><a class="toc-backref" href="#id23">Create OpenStack container file</a><a class="headerlink" href="#create-openstack-container-file" title="Permalink to this headline">¶</a></h4>
 <blockquote>
 <div><div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -506,17 +520,20 @@ openstack overcloud container image prepare \
 </div></blockquote>
 </div>
 <div class="section" id="upload-openstack-containers">
-<h3><a class="toc-backref" href="#id23">Upload OpenStack containers</a><a class="headerlink" href="#upload-openstack-containers" title="Permalink to this headline">¶</a></h3>
+<h4><a class="toc-backref" href="#id24">Upload OpenStack containers</a><a class="headerlink" href="#upload-openstack-containers" title="Permalink to this headline">¶</a></h4>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openstack</span> <span class="n">overcloud</span> <span class="n">container</span> <span class="n">image</span> <span class="n">upload</span> <span class="o">--</span><span class="n">config</span><span class="o">-</span><span class="n">file</span> <span class="o">~/</span><span class="n">local_registry_images</span><span class="o">.</span><span class="n">yaml</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="create-contrail-container-file">
-<h3><a class="toc-backref" href="#id24">Create Contrail container file</a><a class="headerlink" href="#create-contrail-container-file" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="contrail-containers">
+<h3><a class="toc-backref" href="#id25">Contrail containers</a><a class="headerlink" href="#contrail-containers" title="Permalink to this headline">¶</a></h3>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">this step is optional. If not done, Contrail containers can be downloaded from external registries.</p>
 </div>
+<div class="section" id="create-contrail-container-file">
+<h4><a class="toc-backref" href="#id26">Create Contrail container file</a><a class="headerlink" href="#create-contrail-container-file" title="Permalink to this headline">¶</a></h4>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~/</span><span class="n">tripleo</span><span class="o">-</span><span class="n">heat</span><span class="o">-</span><span class="n">templates</span><span class="o">/</span><span class="n">tools</span><span class="o">/</span><span class="n">contrail</span>
 <span class="o">./</span><span class="n">import_contrail_container</span><span class="o">.</span><span class="n">sh</span> <span class="o">-</span><span class="n">f</span> <span class="n">container_outputfile</span> <span class="o">-</span><span class="n">r</span> <span class="n">registry</span> <span class="o">-</span><span class="n">t</span> <span class="n">tag</span> <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="n">insecure</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">u</span> <span class="n">username</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">password</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">c</span> <span class="n">certificate</span> <span class="n">pat</span>
 </pre></div>
@@ -551,13 +568,14 @@ openstack overcloud container image prepare \
 </div>
 </div>
 <div class="section" id="upload-contrail-containers-to-undercloud-registry">
-<h3><a class="toc-backref" href="#id25">Upload Contrail containers to Undercloud registry</a><a class="headerlink" href="#upload-contrail-containers-to-undercloud-registry" title="Permalink to this headline">¶</a></h3>
+<h4><a class="toc-backref" href="#id27">Upload Contrail containers to Undercloud registry</a><a class="headerlink" href="#upload-contrail-containers-to-undercloud-registry" title="Permalink to this headline">¶</a></h4>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">this step is optional, If not done, Contrail containers can be downloaded from external registries.</p>
 </div>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">openstack</span> <span class="n">overcloud</span> <span class="n">container</span> <span class="n">image</span> <span class="n">upload</span> <span class="o">--</span><span class="n">config</span><span class="o">-</span><span class="n">file</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">contrail_container</span>
 </pre></div>
+</div>
 </div>
 </div>
 </div>
