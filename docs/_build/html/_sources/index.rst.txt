@@ -12,6 +12,27 @@ Welcome to Contrail Tripleo's documentation!
 
    introduction
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Infrastructure
+
+   infrastructure/overview
+   infrastructure/configuration
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Undercloud
+
+   undercloud/configuration
+   undercloud/installation
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Overcloud
+
+   overcloud/configuration
+   overcloud/installation
+
 
 
 Indices and tables
