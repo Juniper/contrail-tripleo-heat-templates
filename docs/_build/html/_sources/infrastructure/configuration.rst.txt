@@ -114,12 +114,28 @@ Create Undercloud VM definition on the Undercloud KVM host
 
 .. note:: This has to be done on the Undercloud KVM host only
 
-      .. admonition:: CentOS
-         :class: centos
+Create images directory
+^^^^^^^^^^^^^^^^^^^^^^^
 
-         ::
+.. code:: bash
 
-             mkdir images
-             curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz -o images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
-             zx -d images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
-             cloud_image=images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2
+  mkdir ~/images
+  cd images
+
+.. admonition:: CentOS
+   :class: centos
+
+   code:: bash
+
+       curl https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz \ 
+         -o CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
+       zx -d images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
+       cloud_image=~/images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2
+
+.. admonition:: RHEL
+   :class: rhel
+
+   code:: bash
+     
+     Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal to ~/images
+     cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2
