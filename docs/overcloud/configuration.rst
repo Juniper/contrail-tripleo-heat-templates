@@ -276,10 +276,7 @@ h]
 
 .. note:: Examples:
 
-   .. admonition:: OSP13
-            :class: osp13
-
-         ::
+         code:: bash
            # Pull from password protectet public registry:
           ./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -u USERNAME -p PASSWORD -t 1234
 
