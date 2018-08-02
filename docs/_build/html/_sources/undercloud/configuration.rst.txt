@@ -4,8 +4,8 @@ Configuration
 
 .. contents:: Table of Contents
 
-Undercloud preparation
-======================
+Undercloud installation & configuration
+=======================================
 
 Login to the Undercloud VM (from the Undercloud KVM host)
 ---------------------------------------------------------
@@ -58,8 +58,6 @@ Setup repositories
            yum localinstall -y http://${satellite_fqdn}/pub/katello-ca-consumer-latest.noarch.rpm
            subscription-manager register --activationkey=${act_key} --org=${org}
 
-Undercloud installation & configuration
-=======================================
 
 Install the Undercloud
 ----------------------
@@ -99,7 +97,7 @@ Add external api interface
   sudo ip link set dev vlan720 up
 
 Add stack user to docker group
-==============================
+------------------------------
 
 .. code:: bash
 

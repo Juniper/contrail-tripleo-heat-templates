@@ -90,20 +90,17 @@
 <p class="caption"><span class="caption-text">Undercloud</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#undercloud-preparation">Undercloud preparation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#undercloud-installation-configuration">Undercloud installation &amp; configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#login-to-the-undercloud-vm-from-the-undercloud-kvm-host">Login to the Undercloud VM (from the Undercloud KVM host)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#hostname-configuration">Hostname configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#setup-repositories">Setup repositories</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#undercloud-installation-configuration">Undercloud installation &amp; configuration</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#install-the-undercloud">Install the Undercloud</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configure-forwarding">Configure forwarding</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configure-nameserver-for-overcloud-nodes">Configure nameserver for Overcloud nodes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#add-external-api-interface">Add external api interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#add-stack-user-to-docker-group">Add stack user to docker group</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#add-stack-user-to-docker-group">Add stack user to docker group</a></li>
 </ul>
 </li>
 </ul>
@@ -180,26 +177,23 @@
 <p class="topic-title first">Table of Contents</p>
 <ul class="simple">
 <li><a class="reference internal" href="#configuration" id="id1">Configuration</a><ul>
-<li><a class="reference internal" href="#undercloud-preparation" id="id2">Undercloud preparation</a><ul>
+<li><a class="reference internal" href="#undercloud-installation-configuration" id="id2">Undercloud installation &amp; configuration</a><ul>
 <li><a class="reference internal" href="#login-to-the-undercloud-vm-from-the-undercloud-kvm-host" id="id3">Login to the Undercloud VM (from the Undercloud KVM host)</a></li>
 <li><a class="reference internal" href="#hostname-configuration" id="id4">Hostname configuration</a></li>
 <li><a class="reference internal" href="#setup-repositories" id="id5">Setup repositories</a></li>
+<li><a class="reference internal" href="#install-the-undercloud" id="id6">Install the Undercloud</a></li>
+<li><a class="reference internal" href="#configure-forwarding" id="id7">Configure forwarding</a></li>
+<li><a class="reference internal" href="#configure-nameserver-for-overcloud-nodes" id="id8">Configure nameserver for Overcloud nodes</a></li>
+<li><a class="reference internal" href="#add-external-api-interface" id="id9">Add external api interface</a></li>
+<li><a class="reference internal" href="#add-stack-user-to-docker-group" id="id10">Add stack user to docker group</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#undercloud-installation-configuration" id="id6">Undercloud installation &amp; configuration</a><ul>
-<li><a class="reference internal" href="#install-the-undercloud" id="id7">Install the Undercloud</a></li>
-<li><a class="reference internal" href="#configure-forwarding" id="id8">Configure forwarding</a></li>
-<li><a class="reference internal" href="#configure-nameserver-for-overcloud-nodes" id="id9">Configure nameserver for Overcloud nodes</a></li>
-<li><a class="reference internal" href="#add-external-api-interface" id="id10">Add external api interface</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#add-stack-user-to-docker-group" id="id11">Add stack user to docker group</a></li>
 </ul>
 </li>
 </ul>
 </div>
-<div class="section" id="undercloud-preparation">
-<h2><a class="toc-backref" href="#id2">Undercloud preparation</a><a class="headerlink" href="#undercloud-preparation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="undercloud-installation-configuration">
+<h2><a class="toc-backref" href="#id2">Undercloud installation &amp; configuration</a><a class="headerlink" href="#undercloud-installation-configuration" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="login-to-the-undercloud-vm-from-the-undercloud-kvm-host">
 <h3><a class="toc-backref" href="#id3">Login to the Undercloud VM (from the Undercloud KVM host)</a><a class="headerlink" href="#login-to-the-undercloud-vm-from-the-undercloud-kvm-host" title="Permalink to this headline">¶</a></h3>
 <blockquote>
@@ -255,11 +249,8 @@ subscription-manager register --activationkey=${act_key} --org=${org}
 </div>
 </div></blockquote>
 </div>
-</div>
-<div class="section" id="undercloud-installation-configuration">
-<h2><a class="toc-backref" href="#id6">Undercloud installation &amp; configuration</a><a class="headerlink" href="#undercloud-installation-configuration" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="install-the-undercloud">
-<h3><a class="toc-backref" href="#id7">Install the Undercloud</a><a class="headerlink" href="#install-the-undercloud" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">Install the Undercloud</a><a class="headerlink" href="#install-the-undercloud" title="Permalink to this headline">¶</a></h3>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yum</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">python</span><span class="o">-</span><span class="n">tripleoclient</span> <span class="n">tmux</span>
 <span class="n">su</span> <span class="o">-</span> <span class="n">stack</span>
 <span class="n">cp</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">instack</span><span class="o">-</span><span class="n">undercloud</span><span class="o">/</span><span class="n">undercloud</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">sample</span> <span class="o">~/</span><span class="n">undercloud</span><span class="o">.</span><span class="n">conf</span>
@@ -269,7 +260,7 @@ subscription-manager register --activationkey=${act_key} --org=${org}
 </div>
 </div>
 <div class="section" id="configure-forwarding">
-<h3><a class="toc-backref" href="#id8">Configure forwarding</a><a class="headerlink" href="#configure-forwarding" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">Configure forwarding</a><a class="headerlink" href="#configure-forwarding" title="Permalink to this headline">¶</a></h3>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">FORWARD</span> <span class="o">-</span><span class="n">i</span> <span class="n">br</span><span class="o">-</span><span class="n">ctlplane</span> <span class="o">-</span><span class="n">o</span> <span class="n">eth0</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
 <span class="n">sudo</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">A</span> <span class="n">FORWARD</span> <span class="o">-</span><span class="n">i</span> <span class="n">eth0</span> <span class="o">-</span><span class="n">o</span> <span class="n">br</span><span class="o">-</span><span class="n">ctlplane</span> <span class="o">-</span><span class="n">m</span> <span class="n">state</span> <span class="o">--</span><span class="n">state</span> <span class="n">RELATED</span><span class="p">,</span><span class="n">ESTABLISHED</span> <span class="o">-</span><span class="n">j</span> <span class="n">ACCEPT</span>
 <span class="n">sudo</span> <span class="n">iptables</span> <span class="o">-</span><span class="n">t</span> <span class="n">nat</span> <span class="o">-</span><span class="n">A</span> <span class="n">POSTROUTING</span> <span class="o">-</span><span class="n">o</span> <span class="n">eth0</span> <span class="o">-</span><span class="n">j</span> <span class="n">MASQUERADE</span>
@@ -277,28 +268,28 @@ subscription-manager register --activationkey=${act_key} --org=${org}
 </div>
 </div>
 <div class="section" id="configure-nameserver-for-overcloud-nodes">
-<h3><a class="toc-backref" href="#id9">Configure nameserver for Overcloud nodes</a><a class="headerlink" href="#configure-nameserver-for-overcloud-nodes" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">Configure nameserver for Overcloud nodes</a><a class="headerlink" href="#configure-nameserver-for-overcloud-nodes" title="Permalink to this headline">¶</a></h3>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>undercloud_nameserver=8.8.8.8
 openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dns-nameserver ${undercloud_nameserver}
 </pre></div>
 </div>
 </div>
 <div class="section" id="add-external-api-interface">
-<h3><a class="toc-backref" href="#id10">Add external api interface</a><a class="headerlink" href="#add-external-api-interface" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id9">Add external api interface</a><a class="headerlink" href="#add-external-api-interface" title="Permalink to this headline">¶</a></h3>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="n">add</span> <span class="n">name</span> <span class="n">vlan720</span> <span class="n">link</span> <span class="n">br</span><span class="o">-</span><span class="n">ctlplane</span> <span class="nb">type</span> <span class="n">vlan</span> <span class="nb">id</span> <span class="mi">720</span>
 <span class="n">sudo</span> <span class="n">ip</span> <span class="n">addr</span> <span class="n">add</span> <span class="mf">10.2</span><span class="o">.</span><span class="mf">0.254</span><span class="o">/</span><span class="mi">24</span> <span class="n">dev</span> <span class="n">vlan720</span>
 <span class="n">sudo</span> <span class="n">ip</span> <span class="n">link</span> <span class="nb">set</span> <span class="n">dev</span> <span class="n">vlan720</span> <span class="n">up</span>
 </pre></div>
 </div>
 </div>
-</div>
 <div class="section" id="add-stack-user-to-docker-group">
-<h2><a class="toc-backref" href="#id11">Add stack user to docker group</a><a class="headerlink" href="#add-stack-user-to-docker-group" title="Permalink to this headline">¶</a></h2>
+<h3><a class="toc-backref" href="#id10">Add stack user to docker group</a><a class="headerlink" href="#add-stack-user-to-docker-group" title="Permalink to this headline">¶</a></h3>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">newgrp</span> <span class="n">docker</span>
 <span class="n">exit</span>
 <span class="n">su</span> <span class="o">-</span> <span class="n">stack</span>
 <span class="n">source</span> <span class="n">stackrc</span>
 </pre></div>
+</div>
 </div>
 </div>
 </div>
