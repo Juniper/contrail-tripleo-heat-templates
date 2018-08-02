@@ -7,13 +7,15 @@ Configuration
 Undercloud preparation
 ======================
 
-1. Login to the Undercloud VM (from the Undercloud KVM host)
+Login to the Undercloud VM (from the Undercloud KVM host)
+---------------------------------------------------------
 
    .. code:: bash
 
      ssh ${undercloud_ip}
 
-2. Hostname configuration
+Hostname configuration
+----------------------
 
    .. code:: bash
 
@@ -29,7 +31,8 @@ Undercloud preparation
       undercloud_ip=`ip addr sh dev eth0 |grep "inet " |awk '{print $2}' |awk -F"/" '{print $1}'`
       echo ${undercloud_ip} ${undercloud_name}.${undercloud_suffix} ${undercloud_name} >> /etc/hosts`
 
-3. Setup repositories
+Setup repositories
+------------------
 
    .. note::
       Repositoriy setup is different for CentOS and RHEL.
@@ -58,7 +61,8 @@ Undercloud preparation
 Undercloud installation & configuration
 =======================================
 
-1. install the Undercloud
+Install the Undercloud
+----------------------
 
 .. code:: bash
 
@@ -68,7 +72,8 @@ Undercloud installation & configuration
   openstack undercloud install
   source stackrc
 
-2. configure forwarding
+Configure forwarding
+--------------------
 
 .. code:: bash
 
@@ -76,14 +81,16 @@ Undercloud installation & configuration
   sudo iptables -A FORWARD -i eth0 -o br-ctlplane -m state --state RELATED,ESTABLISHED -j ACCEPT
   sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
-3. Configure nameserver for Overcloud nodes
+Configure nameserver for Overcloud nodes
+----------------------------------------
 
 .. code:: bash
 
   undercloud_nameserver=8.8.8.8
   openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dns-nameserver ${undercloud_nameserver}
 
-4. Add external api interface
+Add external api interface
+--------------------------
 
 .. code:: bash
 
@@ -94,14 +101,16 @@ Undercloud installation & configuration
 Overcloud image preparation
 ===========================
 
-1. Create image directory
+Create image directory
+----------------------
 
 .. code:: bash
 
   mkdir images
   cd images
 
-2. Get images
+Get Overcloud images
+--------------------
 
    .. note::
 
@@ -123,7 +132,8 @@ Overcloud image preparation
                              sudo yum install -y rhosp-director-images rhosp-director-images-ipa
                              for i in /usr/share/rhosp-director-images/overcloud-full-latest-13.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-13.0.tar ; do tar -xvf $i; done
 
-3. Upload images
+Upload Overcloud images
+-----------------------
 
 .. code:: bash
 
@@ -133,9 +143,10 @@ Overcloud image preparation
 Ironic perparation
 ==================
 
-1. Get the ironic_list files from the three Overcloud KVM hosts and combine it
+.. note:: Get the ironic_list files from the three Overcloud KVM hosts and combine it
 
-2. Add the Overcloud VMs to Ironic
+Add the Overcloud VMs to Ironic
+-------------------------------
 
 .. code:: bash
 
@@ -173,7 +184,8 @@ Ironic perparation
     openstack baremetal node show $i -c properties -f value
   done
 
-3. Overcloud node introspection
+Overcloud node introspection
+----------------------------
 
 .. code:: bash
 
@@ -220,7 +232,8 @@ Add stack user to docker group
 Get and upload containers
 =========================
 
-1. Create OpenStack container file
+Create OpenStack container file
+-------------------------------
 
    .. note::
 
@@ -258,13 +271,15 @@ Get and upload containers
                               --tag-from-label {version}-{release}  \
                               --output-env-file ~/overcloud_images.yaml
 
-2. Upload OpenStack containers
+Upload OpenStack containers
+---------------------------
 
 .. code:: bash
 
   openstack overcloud container image upload --config-file ~/local_registry_images.yaml
 
-3. Create Contrail container file
+Create Contrail container file
+------------------------------
 
 .. note:: this step is optional. If not done, Contrail containers can be downloaded from external registries.
 
@@ -301,7 +316,8 @@ Get and upload containers
 
 
 
-4. Upload Contrail containers to Undercloud registry
+Upload Contrail containers to Undercloud registry
+-------------------------------------------------
 
 .. note:: this step is optional, If not done, Contrail containers can be downloaded from external registries.
 
