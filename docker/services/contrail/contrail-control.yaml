@@ -122,8 +122,11 @@ outputs:
             detach: true
             user: root
             restart: always
+            pid: host
             volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+              list_concat:
+                - get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                - - contrail_control_dns:/etc/contrail/dns
             env_file:
               - /etc/contrail/common_control.env
           contrail_control_named:
@@ -142,6 +145,7 @@ outputs:
             detach: true
             user: root
             restart: always
+            pid: host
             volumes_from:
               - contrail_control_dns
             env_file:
