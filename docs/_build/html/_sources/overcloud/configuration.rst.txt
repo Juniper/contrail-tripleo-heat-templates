@@ -272,22 +272,33 @@ Get and upload containers
 
   cd ~/tripleo-heat-templates/tools/contrail
   ./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate pat
-h]
 
 .. note:: Examples:
 
-         code:: bash
-           # Pull from password protectet public registry:
-          ./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -u USERNAME -p PASSWORD -t 1234
+  .. admonition:: Pull from password protectet public registry:
 
-          # Pull from dockerhub:
-          ./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -t 1234
+    ::
+                          
+       ./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -u USERNAME -p PASSWORD -t 1234
 
-          # Pull from private secure registry:
-          ./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234
+  .. admonition:: Pull from dockerhub:
 
-          # Pull from private INsecure registry:
-          ./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -i 1 -t 1234
+    ::
+                          
+       ./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -t 1234
+
+  .. admonition:: Pull from private secure registry:
+
+    ::
+                          
+       ./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234
+
+  .. admonition:: Pull from private insecure registry:
+
+    ::
+                          
+       ./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -i 1 -t 1234
+
 
 
 4. Upload Contrail containers to Undercloud registry
