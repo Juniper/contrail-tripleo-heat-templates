@@ -94,10 +94,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#create-bridges">Create bridges</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#create-undercloud-vm-definition-on-the-undercloud-kvm-host">Create Undercloud VM definition on the Undercloud KVM host</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#create-images-directory">Create images directory</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="#create-undercloud-vm-definition-on-the-undercloud-kvm-host">Create Undercloud VM definition on the Undercloud KVM host</a></li>
 </ul>
 </li>
 </ul>
@@ -180,10 +177,7 @@
 <li><a class="reference internal" href="#create-bridges" id="id7">Create bridges</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#create-undercloud-vm-definition-on-the-undercloud-kvm-host" id="id8">Create Undercloud VM definition on the Undercloud KVM host</a><ul>
-<li><a class="reference internal" href="#create-images-directory" id="id9">Create images directory</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#create-undercloud-vm-definition-on-the-undercloud-kvm-host" id="id8">Create Undercloud VM definition on the Undercloud KVM host</a></li>
 </ul>
 </li>
 </ul>
@@ -364,32 +358,43 @@ In case of RHEL the system must be subscriped.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">This has to be done on the Undercloud KVM host only</p>
 </div>
-<div class="section" id="create-images-directory">
-<h4><a class="toc-backref" href="#id9">Create images directory</a><a class="headerlink" href="#create-images-directory" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li>Create images directory</li>
+</ol>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mkdir</span> <span class="o">~/</span><span class="n">images</span>
 <span class="n">cd</span> <span class="n">images</span>
 </pre></div>
 </div>
+<ol class="arabic">
+<li><p class="first">Get images</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Dependings on  the operating system the image must be retrieved
+using different methods:</p>
 <div class="centos admonition">
 <p class="first admonition-title">CentOS</p>
 <p>code:: bash</p>
 <blockquote class="last">
 <div><dl class="docutils">
 <dt>curl <a class="reference external" href="https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz">https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz</a> </dt>
-<dd>-o CentOS-7-x86_64-GenericCloud-1802.qcow2.xz</dd>
+<dd><p class="first last">-o CentOS-7-x86_64-GenericCloud-1802.qcow2.xz</p>
+</dd>
 </dl>
 <p>zx -d images/CentOS-7-x86_64-GenericCloud-1802.qcow2.xz
 cloud_image=~/images/CentOS-7-x86_64-GenericCloud-1804_02.qcow2</p>
 </div></blockquote>
 </div>
-<div class="rhel admonition">
+<div class="rhel last admonition">
 <p class="first admonition-title">RHEL</p>
 <p>code:: bash</p>
 <blockquote class="last">
-<div>Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal to ~/images
-cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2</div></blockquote>
+<div><p>Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal to ~/images
+cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2</p>
+</div></blockquote>
 </div>
 </div>
+</li>
+</ol>
 </div>
 </div>
 </div>
