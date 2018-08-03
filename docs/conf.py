@@ -29,6 +29,8 @@ version = u''
 release = u'queens'
 
 
+def setup(app):
+  app.add_stylesheet( "_custom/custom.css" )
 # -- General configuration ---------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
