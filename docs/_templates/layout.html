@@ -1,6 +1,11 @@
 {% extends "!layout.html" %}
 
+{% set script_files = script_files + ["_static/cookies.js"] %}
+{% set script_files = script_files + ["_static/expandable.js"] %}
 {% set script_files = script_files + ["_static/admonition_selector.js"] %}
+{% set script_files = script_files + ["_static/jquery.scrollTo.js"] %}
+{% set script_files = script_files + ["_static/jquery.nav.js"] %}
+{% set script_files = script_files + ["_static/menu.js"] %}
 
 {% set css_files = css_files + ['_static/custom.css'] %}
 
