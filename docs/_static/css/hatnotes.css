@@ -22,4 +22,4 @@
   padding: 0.5em 1em 0.75em 1em;
   margin-bottom: 24px;
 }
-.admonition-red { background: #fee ; color: #ded ; }
+.admonition-red { background: #fee; background-color: #e8e8e8; color: #000000 ; }
