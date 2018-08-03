@@ -147,3 +147,6 @@ The networks must be activated per role in the roles_data file:
           - InternalApi
           - Tenant
           - Storage
+
+Network interface configuration
+-------------------------------

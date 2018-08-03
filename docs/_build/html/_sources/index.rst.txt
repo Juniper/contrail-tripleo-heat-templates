@@ -31,6 +31,7 @@ Welcome to Contrail Tripleo's documentation!
    :caption: Overcloud
 
    overcloud/configuration
+   overcloud/templates
    overcloud/installation
 
 
