@@ -205,7 +205,7 @@ Create Undercloud VM definition on the Undercloud KVM host (KVM1)
       using different methods:
 
       .. admonition:: CentOS
-         :class: portal
+         :class: centos
 
          ::
 
