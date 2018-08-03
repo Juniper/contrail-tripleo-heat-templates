@@ -150,3 +150,11 @@ The networks must be activated per role in the roles_data file:
 
 Network interface configuration
 -------------------------------
+
+There are NIC configuration files per role.
+
+.. note:: vi ~/tripleo-heat-templates/network/config/contrail
+
+  .. admonition:: OpenStack Controller
+
+    :doc:`nics/controller-nic-config.rst`
