@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="installation.html" />
+    <link rel="next" title="Templates" href="templates.html" />
     <link rel="prev" title="&lt;no title&gt;" href="../undercloud/installation.html" /> 
 
   
@@ -123,6 +123,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="templates.html">Templates</a></li>
 </ul>
 
             
@@ -243,30 +244,7 @@ openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dn
 <div class="section" id="get-overcloud-images">
 <h3><a class="toc-backref" href="#id5">Get Overcloud images</a><a class="headerlink" href="#get-overcloud-images" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><div class="admonition note">
-<p class="first admonition-title">Note</p>
-<div class="tripleo admonition">
-<p class="first admonition-title">tripleo</p>
-<blockquote class="last">
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">images</span><span class="o">.</span><span class="n">rdoproject</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">queens</span><span class="o">/</span><span class="n">rdo_trunk</span><span class="o">/</span><span class="n">current</span><span class="o">-</span><span class="n">tripleo</span><span class="o">-</span><span class="n">rdo</span><span class="o">/</span><span class="n">ironic</span><span class="o">-</span><span class="n">python</span><span class="o">-</span><span class="n">agent</span><span class="o">.</span><span class="n">tar</span>
-<span class="n">curl</span> <span class="o">-</span><span class="n">O</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">images</span><span class="o">.</span><span class="n">rdoproject</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">queens</span><span class="o">/</span><span class="n">rdo_trunk</span><span class="o">/</span><span class="n">current</span><span class="o">-</span><span class="n">tripleo</span><span class="o">-</span><span class="n">rdo</span><span class="o">/</span><span class="n">overcloud</span><span class="o">-</span><span class="n">full</span><span class="o">.</span><span class="n">tar</span>
-<span class="n">tar</span> <span class="n">xvf</span> <span class="n">ironic</span><span class="o">-</span><span class="n">python</span><span class="o">-</span><span class="n">agent</span><span class="o">.</span><span class="n">tar</span>
-<span class="n">tar</span> <span class="n">xvf</span> <span class="n">overcloud</span><span class="o">-</span><span class="n">full</span><span class="o">.</span><span class="n">tar</span>
-</pre></div>
-</div>
-</div></blockquote>
-</div>
-<div class="osp13 last admonition">
-<p class="first admonition-title">OSP13</p>
-<blockquote class="last">
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sudo yum install -y rhosp-director-images rhosp-director-images-ipa
-for i in /usr/share/rhosp-director-images/overcloud-full-latest-13.0.tar /usr/share/rhosp-director-images/ironic-python-agent-latest-13.0.tar ; do tar -xvf $i; done
-</pre></div>
-</div>
-</div></blockquote>
-</div>
-</div>
-</div></blockquote>
+<div></div></blockquote>
 </div>
 <div class="section" id="upload-overcloud-images">
 <h3><a class="toc-backref" href="#id6">Upload Overcloud images</a><a class="headerlink" href="#upload-overcloud-images" title="Permalink to this headline">¶</a></h3>
@@ -467,7 +445,7 @@ openstack overcloud container image prepare \
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="installation.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="templates.html" class="btn btn-neutral float-right" title="Templates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../undercloud/installation.html" class="btn btn-neutral" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

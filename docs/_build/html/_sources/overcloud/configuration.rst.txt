@@ -28,6 +28,7 @@ Get Overcloud images
 --------------------
 
    .. note::
+      :caption: test
 
             .. admonition:: tripleo
                      :class: tripleo
