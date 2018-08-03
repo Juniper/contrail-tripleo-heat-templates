@@ -27,8 +27,7 @@ Create image directory
 Get Overcloud images
 --------------------
 
-   .. admonition::
-      :class: test
+   .. admonition:: Overcloud images
 
             .. admonition:: tripleo
                      :class: tripleo
