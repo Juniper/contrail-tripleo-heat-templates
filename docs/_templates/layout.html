@@ -1,13 +1,13 @@
 {% extends "!layout.html" %}
 
-{% set script_files = script_files + ["_static/cookies.js"] %}
-{% set script_files = script_files + ["_static/expandable.js"] %}
-{% set script_files = script_files + ["_static/admonition_selector.js"] %}
-{% set script_files = script_files + ["_static/jquery.scrollTo.js"] %}
-{% set script_files = script_files + ["_static/jquery.nav.js"] %}
-{% set script_files = script_files + ["_static/menu.js"] %}
+{% set script_files = script_files + ["_custom/cookies.js"] %}
+{% set script_files = script_files + ["_custom/expandable.js"] %}
+{% set script_files = script_files + ["_custom/admonition_selector.js"] %}
+{% set script_files = script_files + ["_custom/jquery.scrollTo.js"] %}
+{% set script_files = script_files + ["_custom/jquery.nav.js"] %}
+{% set script_files = script_files + ["_custom/menu.js"] %}
 
-{% set css_files = css_files + ['_static/custom.css'] %}
+{% set css_files = css_files + ['_custom/custom.css'] %}
 
 {% block sidebarsearch %}
   <div id="admonition_selector">
