@@ -22,5 +22,4 @@
   padding: 0.5em 1em 0.75em 1em;
   margin-bottom: 24px;
 }
-
-.admonition-red { background-color: #ffe8e8 ; color: #000000 ; }
+.admonition-red { background: #ffe8e8 ; color: #000000 ; }
