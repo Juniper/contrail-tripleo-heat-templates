@@ -11,6 +11,7 @@ Welcome to Contrail Tripleo's documentation!
    :caption: Contents:
 
    introduction
+   test
 
 .. toctree::
    :maxdepth: 2
