@@ -1,0 +1,109 @@
+heat_template_version: ocata
+
+description: >
+  Contrail TSN Service
+
+parameters:
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  NeutronMetadataProxySharedSecret:
+    description: Metadata Secret
+    type: string
+    hidden: true
+  ContrailVrouterPhysicalInterface:
+    default: 'eth0'
+    description: vRouter physical interface
+    type: string
+  ContrailVrouterGateway:
+    default: '192.168.24.1'
+    description: vRouter default gateway
+    type: string
+  ContrailVrouterNetmask:
+    default: '255.255.255.0'
+    description: vRouter netmask
+    type: string
+  ContrailVrouterTSNEVPNMode:
+    default: false
+    description: TSN EVPN Mode
+    type: boolean
+  ContrailVrouterControlNodeIps:
+    description: List of Contrail Node IPs
+    type: comma_delimited_list
+    default: ''
+  ContrailVrouterAnalyticsNodeIps:
+    description: List of Contrail Analytics IPs
+    type: comma_delimited_list
+    default: ''
+  ContrailSriovOn:
+    description: If SR-IOV is configured
+    type: boolean
+    default: false
+  NeutronSriovNumVFs:
+    description: >
+      Provide the list of VFs to be reserved for each SR-IOV interface.
+      Format "<interface_name1>:<numvfs1>,<interface_name2>:<numvfs2>"
+      Example "eth1:4096,eth2:128"
+    type: comma_delimited_list
+    default: ""
+
+resources:
+  ContrailBase:
+    type: ./contrail-base.yaml
+    properties:
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      EndpointMap: {get_param: EndpointMap}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+outputs:
+  role_data:
+    description: Role data for the Contrail TSN Service
+    value:
+      service_name: contrail_tsn
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - contrail::vrouter::host_ip: {get_param: [ServiceNetMap, ContrailVrouterNetwork]}
+            contrail::vrouter::physical_interface: {get_param: ContrailVrouterPhysicalInterface}
+            contrail::vrouter::gateway: {get_param: ContrailVrouterGateway}
+            contrail::vrouter::netmask: {get_param: ContrailVrouterNetmask}
+            contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
+            contrail::vrouter::is_tsn: 'true'
+            contrail::vrouter::tsn_evpn_mode: {get_param: ContrailVrouterTSNEVPNMode}
+            contrail::vrouter::control_node_ips: {get_param: ContrailVrouterControlNodeIps}
+            contrail::vrouter::analytics_node_ips: {get_param: ContrailVrouterAnalyticsNodeIps}
+            contrail::vrouter::sriov_on: {get_param: ContrailSriovOn}
+            tripleo::host::sriov::number_of_vfs: {get_param: NeutronSriovNumVFs}
+            tripleo.contrail_tsn.firewall_rules:
+              '111 contrail_tsn_8085':
+                dport: 8085
+              '112 contrail_tsn_8097':
+                dport: 8097
+      step_config: |
+        include ::tripleo::network::contrail::vrouter
