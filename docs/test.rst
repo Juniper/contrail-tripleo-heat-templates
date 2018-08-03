@@ -3,7 +3,7 @@ test
 ====
 
 
-.. container:: hatnote hatnote-gray
+.. container:: hatnote hatnote-red
 
    This article is a stub. Please improve the docs by expanding it.
 

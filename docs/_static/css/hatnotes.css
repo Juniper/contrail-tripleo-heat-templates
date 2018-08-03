@@ -22,4 +22,25 @@
   padding: 0.5em 1em 0.75em 1em;
   margin-bottom: 24px;
 }
+
+.admonition p {
+  font-size: inherit;
+}
+
+.admonition p.last {
+  margin-bottom: 0;
+}
+
+.admonition p.first.admonition-title {
+  display: inline;
+  background: none;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* notes */
+.rst-content .note {
+  background: rgb(240, 240, 240);
+}
+
 .admonition-red { background: #fee; background-color: #e8e8e8; color: #000000 ; }
