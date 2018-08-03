@@ -27,7 +27,7 @@
 
   <meta name="viewport" content="width=device-width">
   
-  <title>tripleo-docs/custom.css at master · ccamacho/tripleo-docs · GitHub</title>
+  <title>tripleo-docs/doc/source/_custom/custom.css at master · ccamacho/tripleo-docs · GitHub</title>
     <meta name="description" content="Documentation for TripleO">
     <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub">
   <link rel="fluid-icon" href="https://github.com/fluidicon.png" title="GitHub">
@@ -40,7 +40,7 @@
   
   <meta name="pjax-timeout" content="1000">
   
-  <meta name="request-id" content="E739:06A7:1832F3:2F8367:5B64129C" data-pjax-transient>
+  <meta name="request-id" content="859F:06AA:40D578:733F3A:5B6414C0" data-pjax-transient>
 
 
   
@@ -52,8 +52,8 @@
   <meta name="google-site-verification" content="GXs5KoUUkNCoaAZn7wPN-t01Pywp9M3sEjnt_3_ZWPc">
     <meta name="google-analytics" content="UA-3769691-2">
 
-<meta name="octolytics-host" content="collector.githubapp.com" /><meta name="octolytics-app-id" content="github" /><meta name="octolytics-event-url" content="https://collector.githubapp.com/github-external/browser_event" /><meta name="octolytics-dimension-request_id" content="E739:06A7:1832F3:2F8367:5B64129C" /><meta name="octolytics-dimension-region_edge" content="iad" /><meta name="octolytics-dimension-region_render" content="iad" />
-<meta name="analytics-location" content="/&lt;user-name&gt;/&lt;repo-name&gt;/blob/show" data-pjax-transient="true" />
+<meta name="octolytics-host" content="collector.githubapp.com" /><meta name="octolytics-app-id" content="github" /><meta name="octolytics-event-url" content="https://collector.githubapp.com/github-external/browser_event" /><meta name="octolytics-dimension-request_id" content="859F:06AA:40D578:733F3A:5B6414C0" /><meta name="octolytics-dimension-region_edge" content="iad" /><meta name="octolytics-dimension-region_render" content="iad" />
+<meta name="analytics-location" content="/&lt;user-name&gt;/&lt;repo-name&gt;/blob/blame" data-pjax-transient="true" />
 
 
 
@@ -67,11 +67,11 @@
     <meta name="user-login" content="">
 
       <meta name="expected-hostname" content="github.com">
-    <meta name="js-proxy-site-detection-payload" content="OWIxOWQ4MTkxN2I0YjY5YzYwMDEzYTJmZDM0MzVkMjljMjFkNTVhOWM1MDRiM2ZhODFmNDhhNzg4MWM3MGE4Ynx7InJlbW90ZV9hZGRyZXNzIjoiMTkzLjExMC41NS4xMCIsInJlcXVlc3RfaWQiOiJFNzM5OjA2QTc6MTgzMkYzOjJGODM2Nzo1QjY0MTI5QyIsInRpbWVzdGFtcCI6MTUzMzI4NTAyMCwiaG9zdCI6ImdpdGh1Yi5jb20ifQ==">
+    <meta name="js-proxy-site-detection-payload" content="M2FmMDg2NGViZjlkN2RlNjg2NmYxYjUzY2M0NDllNTAzZjE4ZjJmMzM4Njg4NTBlZDNlNGExYzg3MjMxOGNiOXx7InJlbW90ZV9hZGRyZXNzIjoiMTkzLjExMC41NS4xMCIsInJlcXVlc3RfaWQiOiI4NTlGOjA2QUE6NDBENTc4OjczM0YzQTo1QjY0MTRDMCIsInRpbWVzdGFtcCI6MTUzMzI4NTU2OCwiaG9zdCI6ImdpdGh1Yi5jb20ifQ==">
 
     <meta name="enabled-features" content="DASHBOARD_V2_LAYOUT_OPT_IN,EXPLORE_DISCOVER_REPOSITORIES,UNIVERSE_BANNER,FREE_TRIALS,MARKETPLACE_INSIGHTS,MARKETPLACE_PLAN_RESTRICTION_EDITOR,MARKETPLACE_SEARCH,MARKETPLACE_INSIGHTS_CONVERSION_PERCENTAGES">
 
-  <meta name="html-safe-nonce" content="b257aab4c1fdb8619f1d6333a022237250b0ec5f">
+  <meta name="html-safe-nonce" content="20debf3cb16f1d965c6ae8f339f83bd911661f36">
 
   <meta http-equiv="x-pjax-version" content="bd07d8f74cd963f34fa7e8a35a7c98b3">
   
@@ -83,7 +83,6 @@
   <meta name="octolytics-dimension-user_id" content="17335512" /><meta name="octolytics-dimension-user_login" content="ccamacho" /><meta name="octolytics-dimension-repository_id" content="57431993" /><meta name="octolytics-dimension-repository_nwo" content="ccamacho/tripleo-docs" /><meta name="octolytics-dimension-repository_public" content="true" /><meta name="octolytics-dimension-repository_is_fork" content="true" /><meta name="octolytics-dimension-repository_parent_id" content="42115647" /><meta name="octolytics-dimension-repository_parent_nwo" content="openstack/tripleo-docs" /><meta name="octolytics-dimension-repository_network_root_id" content="42115647" /><meta name="octolytics-dimension-repository_network_root_nwo" content="openstack/tripleo-docs" /><meta name="octolytics-dimension-repository_explore_github_marketplace_ci_cta_shown" content="false" />
 
 
-    <link rel="canonical" href="https://github.com/ccamacho/tripleo-docs/blob/master/doc/source/_custom/custom.css" data-pjax-transient>
 
 
   <meta name="browser-stats-url" content="https://api.github.com/_private/browser/stats">
@@ -101,7 +100,7 @@
 
   </head>
 
-  <body class="logged-out env-production page-blob">
+  <body class="logged-out env-production full-width">
     
 
   <div class="position-relative js-header-wrapper ">
@@ -177,7 +176,7 @@
           autocapitalize="off"
           aria-autocomplete="list"
           aria-controls="jump-to-results"
-          data-jump-to-suggestions-path="/_graphql/GetSuggestedNavigationDestinations#csrf-token=lIQYIp1UOZcl2NIp6egqkAqq38fmoNNTVgOPxeBvEw3GYmW/pW54XHF4W3bYxgefio0H7+RemaaeiaQDEpIPRQ=="
+          data-jump-to-suggestions-path="/_graphql/GetSuggestedNavigationDestinations#csrf-token=sxbFgMd3JgY37NT8t7Bj75GRp2GWJlKENBOJV/qHj80Hh12GZHDON5IvFduXJr12pVUr3RVGDDMqI33zx0ZeSw=="
           spellcheck="false"
           autocomplete="off"
           >
@@ -234,7 +233,7 @@
 
           <span class="d-inline-block">
               <div class="HeaderNavlink px-0 py-2 m-0">
-                <a class="text-bold text-white no-underline" href="/login?return_to=%2Fccamacho%2Ftripleo-docs%2Fblob%2Fmaster%2Fdoc%2Fsource%2F_custom%2Fcustom.css" data-ga-click="(Logged out) Header, clicked Sign in, text:sign-in; experiment:site_header_dropdowns; group:control">Sign in</a>
+                <a class="text-bold text-white no-underline" href="/login?return_to=%2Fccamacho%2Ftripleo-docs%2Fblame%2Fmaster%2Fdoc%2Fsource%2F_custom%2Fcustom.css" data-ga-click="(Logged out) Header, clicked Sign in, text:sign-in; experiment:site_header_dropdowns; group:control">Sign in</a>
                   <span class="text-gray">or</span>
                   <a class="text-bold text-white no-underline" href="/join?source=header-repo" data-ga-click="(Logged out) Header, clicked Sign up, text:sign-up; experiment:site_header_dropdowns; group:control">Sign up</a>
               </div>
@@ -259,7 +258,6 @@
         <div itemscope itemtype="http://schema.org/SoftwareSourceCode" class="">
     <div id="js-repo-pjax-container" data-pjax-container >
       
-
 
 
 
@@ -370,965 +368,1240 @@
   <div class="repository-content ">
 
     
-  <a class="d-none js-permalink-shortcut" data-hotkey="y" href="/ccamacho/tripleo-docs/blob/e5afab31ba21803d0f16e62daaf4ee30cbbd204d/doc/source/_custom/custom.css">Permalink</a>
 
-  <!-- blob contrib key: blob_contributors:v21:e23f3a24622517eba7266c3638dd3125 -->
+  <div class="wants-full-width-container"></div>
 
-      <div class="signup-prompt-bg rounded-1">
-      <div class="signup-prompt p-4 text-center mb-4 rounded-1">
-        <div class="position-relative">
-          <!-- '"` --><!-- </textarea></xmp> --></option></form><form action="/site/dismiss_signup_prompt" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="UxafUeS/WVf998BT9gSzsIE/3nGSeRD2ZJBwcSgrHXvw9D8bXeu5jMUhaQXy98bE6HH2wJ0BawUzo1OUXl2n/g==" />
-            <button type="submit" class="position-absolute top-0 right-0 btn-link link-gray" data-ga-click="(Logged out) Sign up prompt, clicked Dismiss, text:dismiss">
-              Dismiss
-            </button>
-</form>          <h3 class="pt-2">Join GitHub today</h3>
-          <p class="col-6 mx-auto">GitHub is home to over 28 million developers working together to host and review code, manage projects, and build software together.</p>
-          <a class="btn btn-primary" href="/join?source=prompt-blob-show" data-ga-click="(Logged out) Sign up prompt, clicked Sign up, text:sign-up">Sign up</a>
-        </div>
-      </div>
-    </div>
+  <a class="d-none js-permalink-shortcut" data-hotkey="y" href="/ccamacho/tripleo-docs/blame/e5afab31ba21803d0f16e62daaf4ee30cbbd204d/doc/source/_custom/custom.css">Permalink</a>
 
-
-  <div class="file-navigation">
-    
-<div class="select-menu branch-select-menu js-menu-container js-select-menu float-left">
-  <button class=" btn btn-sm select-menu-button js-menu-target css-truncate" data-hotkey="w"
-    
-    type="button" aria-label="Switch branches or tags" aria-expanded="false" aria-haspopup="true">
-      <i>Branch:</i>
-      <span class="js-select-button css-truncate-target">master</span>
-  </button>
-
-  <div class="select-menu-modal-holder js-menu-content js-navigation-container" data-pjax>
-
-    <div class="select-menu-modal">
-      <div class="select-menu-header">
-        <svg class="octicon octicon-x js-menu-close" role="img" aria-label="Close" viewBox="0 0 12 16" version="1.1" width="12" height="16"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48L7.48 8z"/></svg>
-        <span class="select-menu-title">Switch branches/tags</span>
-      </div>
-
-      <div class="select-menu-filters">
-        <div class="select-menu-text-filter">
-          <input type="text" aria-label="Filter branches/tags" id="context-commitish-filter-field" class="form-control js-filterable-field js-navigation-enable" placeholder="Filter branches/tags">
-        </div>
-        <div class="select-menu-tabs">
-          <ul>
-            <li class="select-menu-tab">
-              <a href="#" data-tab-filter="branches" data-filter-placeholder="Filter branches/tags" class="js-select-menu-tab" role="tab">Branches</a>
-            </li>
-            <li class="select-menu-tab">
-              <a href="#" data-tab-filter="tags" data-filter-placeholder="Find a tag…" class="js-select-menu-tab" role="tab">Tags</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="select-menu-list select-menu-tab-bucket js-select-menu-tab-bucket" data-tab-filter="branches" role="menu">
-
-        <div data-filterable-for="context-commitish-filter-field" data-filterable-type="substring">
-
-
-            <a class="select-menu-item js-navigation-item js-navigation-open selected"
-               href="/ccamacho/tripleo-docs/blob/master/doc/source/_custom/custom.css"
-               data-name="master"
-               data-skip-pjax="true"
-               rel="nofollow">
-              <svg class="octicon octicon-check select-menu-item-icon" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"/></svg>
-              <span class="select-menu-item-text css-truncate-target js-select-menu-filter-text">
-                master
-              </span>
-            </a>
-        </div>
-
-          <div class="select-menu-no-results">Nothing to show</div>
-      </div>
-
-      <div class="select-menu-list select-menu-tab-bucket js-select-menu-tab-bucket" data-tab-filter="tags">
-        <div data-filterable-for="context-commitish-filter-field" data-filterable-type="substring">
-
-
-        </div>
-
-        <div class="select-menu-no-results">Nothing to show</div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-    <div class="BtnGroup float-right">
-      <a href="/ccamacho/tripleo-docs/find/master"
-            class="js-pjax-capture-input btn btn-sm BtnGroup-item"
-            data-pjax
-            data-hotkey="t">
-        Find file
-      </a>
-      <clipboard-copy for="blob-path" class="btn btn-sm BtnGroup-item">
-        Copy path
-      </clipboard-copy>
-    </div>
-    <div id="blob-path" class="breadcrumb">
-      <span class="repo-root js-repo-root"><span class="js-path-segment"><a data-pjax="true" href="/ccamacho/tripleo-docs"><span>tripleo-docs</span></a></span></span><span class="separator">/</span><span class="js-path-segment"><a data-pjax="true" href="/ccamacho/tripleo-docs/tree/master/doc"><span>doc</span></a></span><span class="separator">/</span><span class="js-path-segment"><a data-pjax="true" href="/ccamacho/tripleo-docs/tree/master/doc/source"><span>source</span></a></span><span class="separator">/</span><span class="js-path-segment"><a data-pjax="true" href="/ccamacho/tripleo-docs/tree/master/doc/source/_custom"><span>_custom</span></a></span><span class="separator">/</span><strong class="final-path">custom.css</strong>
-    </div>
+  <div class="breadcrumb css-truncate blame-breadcrumb">
+    <span id="blob-path" class="css-truncate-target"><span class="repo-root js-repo-root"><span class="js-path-segment"><a data-pjax="true" href="/ccamacho/tripleo-docs"><span>tripleo-docs</span></a></span></span><span class="separator">/</span><span class="js-path-segment"><a data-pjax="true" href="/ccamacho/tripleo-docs/tree/master/doc"><span>doc</span></a></span><span class="separator">/</span><span class="js-path-segment"><a data-pjax="true" href="/ccamacho/tripleo-docs/tree/master/doc/source"><span>source</span></a></span><span class="separator">/</span><span class="js-path-segment"><a data-pjax="true" href="/ccamacho/tripleo-docs/tree/master/doc/source/_custom"><span>_custom</span></a></span><span class="separator">/</span><strong class="final-path">custom.css</strong></span>
+    <clipboard-copy for="blob-path" aria-label="Copy file path to clipboard" class="btn btn-sm">
+      <svg class="octicon octicon-clippy" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M2 13h4v1H2v-1zm5-6H2v1h5V7zm2 3V8l-3 3 3 3v-2h5v-2H9zM4.5 9H2v1h2.5V9zM2 12h2.5v-1H2v1zm9 1h1v2c-.02.28-.11.52-.3.7-.19.18-.42.28-.7.3H1c-.55 0-1-.45-1-1V4c0-.55.45-1 1-1h3c0-1.11.89-2 2-2 1.11 0 2 .89 2 2h3c.55 0 1 .45 1 1v5h-1V6H1v9h10v-2zM2 5h8c0-.55-.45-1-1-1H8c-.55 0-1-.45-1-1s-.45-1-1-1-1 .45-1 1-.45 1-1 1H3c-.55 0-1 .45-1 1z"/></svg>
+    </clipboard-copy>
   </div>
 
+  <div class="line-age-legend float-right mt-n4 f6">
+    <span>Newer</span>
+    <ol class="d-inline-block mx-1 list-style-none">
+        <li class="heat d-inline-block" data-heat="1"></li>
+        <li class="heat d-inline-block" data-heat="2"></li>
+        <li class="heat d-inline-block" data-heat="3"></li>
+        <li class="heat d-inline-block" data-heat="4"></li>
+        <li class="heat d-inline-block" data-heat="5"></li>
+        <li class="heat d-inline-block" data-heat="6"></li>
+        <li class="heat d-inline-block" data-heat="7"></li>
+        <li class="heat d-inline-block" data-heat="8"></li>
+        <li class="heat d-inline-block" data-heat="9"></li>
+        <li class="heat d-inline-block" data-heat="10"></li>
+    </ol>
+    <span>Older</span>
+  </div>
+
+  <div class="file">
+    <div class="file-header">
+      <div class="file-actions">
+        <div class="BtnGroup">
+          <a id="raw-url" class="btn btn-sm BtnGroup-item" href="/ccamacho/tripleo-docs/raw/master/doc/source/_custom/custom.css">Raw</a>
+          <a class="btn btn-sm js-update-url-with-hash BtnGroup-item" href="/ccamacho/tripleo-docs/blob/master/doc/source/_custom/custom.css">Normal view</a>
+          <a rel="nofollow" class="btn btn-sm BtnGroup-item" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css">History</a>
+        </div>
+      </div>
 
   
-  <div class="commit-tease">
-      <span class="float-right">
-        <a class="commit-tease-sha" href="/ccamacho/tripleo-docs/commit/9b04f1e5503d6db6770eb83bb06e85ad827c8880" data-pjax>
-          9b04f1e
-        </a>
-        <relative-time datetime="2016-01-25T15:22:08Z">Jan 25, 2016</relative-time>
-      </span>
-      <div>
-        <a rel="contributor" data-skip-pjax="true" data-hovercard-user-id="627341" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cybertron"><img class="avatar" src="https://avatars0.githubusercontent.com/u/627341?s=40&amp;v=4" width="20" height="20" alt="@cybertron" /></a>
-        <a class="user-mention" rel="contributor" data-hovercard-user-id="627341" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cybertron">cybertron</a>
-          <a data-pjax="true" title="Document deploying the overcloud with ssl
+
+      <div class="file-info">
+        <svg class="octicon octicon-file" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M6 5H2V4h4v1zM2 8h7V7H2v1zm0 2h7V9H2v1zm0 2h7v-1H2v1zm10-7.5V14c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1V2c0-.55.45-1 1-1h7.5L12 4.5zM11 5L8 2H1v12h10V5z"/></svg>
+        <span class="file-mode" title="File Mode">100644</span>
+        <span class="file-info-divider"></span>
+          134 lines (112 sloc)
+          <span class="file-info-divider"></span>
+        2.41 KB
+      </div>
+    </div>
+
+    <div class="blob-wrapper">
+      <div class="blame-container authors-3 highlight data js-file-line-container tab-size" data-tab-size="8">
+
+          <div class="blame-hunk d-flex border-gray-light border-bottom">
+
+            <div class="blame-commit flex-self-stretch mr-1" data-heat="10">
+              <div class="blame-commit-info pl-1 pr-2">
+
+                <div class="no-wrap d-flex flex-items-start">
+                  
+<div class="AvatarStack flex-self-start AvatarStack--three-plus">
+  <div class="AvatarStack-body" aria-label="slagle, infraredgirl, cybertron, bcrochet, cwolferh, dsneddon, dkranz, derekhiggins, dsavineau, dtantsur, d0ugal, fcharlier, gfidente, ifarkas, jprovaznik, jcoufal, jdob, jpeeler, jistr, jtomasek, trown, regebro, umago, aufi, rlandy, achuzhoy, hardys, zaneb, and marios">
+
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="403255" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/slagle">
+          <img height="20" width="20" alt="@slagle" src="https://avatars0.githubusercontent.com/u/403255?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1786860" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/infraredgirl">
+          <img height="20" width="20" alt="@infraredgirl" src="https://avatars2.githubusercontent.com/u/1786860?s=60&amp;v=4" />
+</a>        <div class="avatar-more avatar"></div>
+
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="627341" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cybertron">
+          <img height="20" width="20" alt="@cybertron" src="https://avatars3.githubusercontent.com/u/627341?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="262079" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/bcrochet">
+          <img height="20" width="20" alt="@bcrochet" src="https://avatars1.githubusercontent.com/u/262079?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1229568" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cwolferh">
+          <img height="20" width="20" alt="@cwolferh" src="https://avatars1.githubusercontent.com/u/1229568?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="8195056" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dsneddon">
+          <img height="20" width="20" alt="@dsneddon" src="https://avatars2.githubusercontent.com/u/8195056?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="6247639" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dkranz">
+          <img height="20" width="20" alt="@dkranz" src="https://avatars2.githubusercontent.com/u/6247639?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="883848" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/derekhiggins">
+          <img height="20" width="20" alt="@derekhiggins" src="https://avatars3.githubusercontent.com/u/883848?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="3716865" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dsavineau">
+          <img height="20" width="20" alt="@dsavineau" src="https://avatars1.githubusercontent.com/u/3716865?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="531923" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dtantsur">
+          <img height="20" width="20" alt="@dtantsur" src="https://avatars2.githubusercontent.com/u/531923?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="48211" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/d0ugal">
+          <img height="20" width="20" alt="@d0ugal" src="https://avatars1.githubusercontent.com/u/48211?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="165673" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/fcharlier">
+          <img height="20" width="20" alt="@fcharlier" src="https://avatars1.githubusercontent.com/u/165673?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1452348" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/gfidente">
+          <img height="20" width="20" alt="@gfidente" src="https://avatars1.githubusercontent.com/u/1452348?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="235211" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ifarkas">
+          <img height="20" width="20" alt="@ifarkas" src="https://avatars0.githubusercontent.com/u/235211?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1028233" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jprovaznik">
+          <img height="20" width="20" alt="@jprovaznik" src="https://avatars3.githubusercontent.com/u/1028233?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="2088245" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jcoufal">
+          <img height="20" width="20" alt="@jcoufal" src="https://avatars2.githubusercontent.com/u/2088245?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="128268" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jdob">
+          <img height="20" width="20" alt="@jdob" src="https://avatars0.githubusercontent.com/u/128268?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="834161" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jpeeler">
+          <img height="20" width="20" alt="@jpeeler" src="https://avatars0.githubusercontent.com/u/834161?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="331840" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jistr">
+          <img height="20" width="20" alt="@jistr" src="https://avatars3.githubusercontent.com/u/331840?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1121740" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jtomasek">
+          <img height="20" width="20" alt="@jtomasek" src="https://avatars3.githubusercontent.com/u/1121740?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="10535841" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/trown">
+          <img height="20" width="20" alt="@trown" src="https://avatars0.githubusercontent.com/u/10535841?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="820596" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/regebro">
+          <img height="20" width="20" alt="@regebro" src="https://avatars0.githubusercontent.com/u/820596?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="390096" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/umago">
+          <img height="20" width="20" alt="@umago" src="https://avatars3.githubusercontent.com/u/390096?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="555381" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/aufi">
+          <img height="20" width="20" alt="@aufi" src="https://avatars2.githubusercontent.com/u/555381?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1529351" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/rlandy">
+          <img height="20" width="20" alt="@rlandy" src="https://avatars0.githubusercontent.com/u/1529351?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1218513" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/achuzhoy">
+          <img height="20" width="20" alt="@achuzhoy" src="https://avatars3.githubusercontent.com/u/1218513?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1325867" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/hardys">
+          <img height="20" width="20" alt="@hardys" src="https://avatars1.githubusercontent.com/u/1325867?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="842470" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/zaneb">
+          <img height="20" width="20" alt="@zaneb" src="https://avatars3.githubusercontent.com/u/842470?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="244496" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/marios">
+          <img height="20" width="20" alt="@marios" src="https://avatars1.githubusercontent.com/u/244496?s=60&amp;v=4" />
+</a>  </div>
+</div>
+
+                  <div class="blame-commit-content d-flex no-wrap flex-items-center">
+                    <div class="blame-commit-message overflow-hidden pt-1 f6">
+                        <a title="Initial import of TripleO docs
+
+Co-Authored-By: Ana Krivokapic &lt;akrivoka@redhat.com&gt;
+Co-Authored-By: Ben Nemec &lt;bnemec@redhat.com&gt;
+Co-Authored-By: Ben Nemec &lt;cybertron@nemebean.com&gt;
+Co-Authored-By: Brad P. Crochet &lt;brad@redhat.com&gt;
+Co-Authored-By: Crag Wolfe &lt;cwolfe@redhat.com&gt;
+Co-Authored-By: Dan Sneddon &lt;dsneddon@redhat.com&gt;
+Co-Authored-By: David Kranz &lt;dkranz@redhat.com&gt;
+Co-Authored-By: Derek Higgins &lt;derekh@redhat.com&gt;
+Co-Authored-By: Dimitri Savineau &lt;dsavinea@redhat.com&gt;
+Co-Authored-By: Dmitry Tantsur &lt;divius.inside@gmail.com&gt;
+Co-Authored-By: Dmitry Tantsur &lt;dtantsur@redhat.com&gt;
+Co-Authored-By: Dougal Matthews &lt;dougal@redhat.com&gt;
+Co-Authored-By: François Charlier &lt;francois.charlier@redhat.com&gt;
+Co-Authored-By: Giulio Fidente &lt;gfidente@redhat.com&gt;
+Co-Authored-By: Imre Farkas &lt;ifarkas@redhat.com&gt;
+Co-Authored-By: James Slagle &lt;jslagle@redhat.com&gt;
+Co-Authored-By: Jan Provaznik &lt;jprovazn@redhat.com&gt;
+Co-Authored-By: Jaromir Coufal &lt;jcoufal@redhat.com&gt;
+Co-Authored-By: Jay Dobies &lt;jason.dobies@redhat.com&gt;
+Co-Authored-By: Jeff Peeler &lt;jpeeler@redhat.com&gt;
+Co-Authored-By: Jiri Stransky &lt;jistr@redhat.com&gt;
+Co-Authored-By: Jiri Tomasek &lt;jtomasek@redhat.com&gt;
+Co-Authored-By: John Trowbridge &lt;trown@redhat.com&gt;
+Co-Authored-By: Lennart Regebro &lt;regebro@gmail.com&gt;
+Co-Authored-By: Lucas Alvares Gomes &lt;lucasagomes@gmail.com&gt;
+Co-Authored-By: Marek Aufart &lt;maufart@redhat.com&gt;
+Co-Authored-By: Ronelle Landy &lt;rlandy@redhat.com&gt;
+Co-Authored-By: Sasha Chuzhoy &lt;sasha@redhat.com&gt;
+Co-Authored-By: Sasha Chuzhoy &lt;sashac88@hotmail.com&gt;
+Co-Authored-By: Steven Hardy &lt;shardy@redhat.com&gt;
+Co-Authored-By: Zane Bitter &lt;zbitter@redhat.com&gt;
+Co-Authored-By: marios &lt;marios@redhat.com&gt;" data-pjax="true" class="message f6 text-gray-dark" href="/ccamacho/tripleo-docs/commit/8ec4cae9209e80ee161a33c17b3c3fc38a118199">Initial import of TripleO docs</a>
+                    </div>
+                  </div>
+                  <div class="blame-commit-date ml-3" data-heat="10"><time-ago datetime="2015-09-01T19:13:26Z">Sep 1, 2015</time-ago></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="blob-reblame pl-1 pr-1">
+            </div>
+
+            <div class="width-full">
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L1">1</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC1"><span class="pl-c"><span class="pl-c">/*</span> CUSTOM CSS OVERRIDES GO HERE <span class="pl-c">*/</span></span></div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L2">2</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC2"><span class="pl-c"><span class="pl-c">/*</span> ============================ <span class="pl-c">*/</span></span></div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L3">3</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC3">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L4">4</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC4"><span class="pl-c"><span class="pl-c">/*</span> remove backgrounds <span class="pl-c">*/</span></span></div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L5">5</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC5"><span class="pl-e">#admonition_selector</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L6">6</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC6">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">none</span> <span class="pl-k">!important</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L7">7</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC7">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">black</span> <span class="pl-k">!important</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L8">8</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC8">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L9">9</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC9">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L10">10</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC10"><span class="pl-c"><span class="pl-c">/*</span> admonition selector <span class="pl-c">*/</span></span></div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L11">11</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC11"><span class="pl-e">#admonition_selector</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L12">12</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC12">  <span class="pl-c1"><span class="pl-c1">border-top</span></span>: <span class="pl-c1">0</span> <span class="pl-c1">none</span> <span class="pl-k">!important</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L13">13</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC13">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L14">14</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC14">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L15">15</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC15"><span class="pl-e">#admonition_selector</span> <span class="pl-e">.title</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L16">16</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC16">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.6</span>) <span class="pl-k">!important</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L17">17</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC17">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L18">18</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC18">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L19">19</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC19"><span class="pl-e">.trigger</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L20">20</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC20">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.7</span>) <span class="pl-k">!important</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L21">21</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC21">  <span class="pl-c1"><span class="pl-c1">border-top</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.2</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L22">22</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC22">  <span class="pl-c1"><span class="pl-c1">border-bottom</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.2</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L23">23</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC23">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.05</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L24">24</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC24">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L25">25</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC25">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L26">26</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC26"><span class="pl-e">.trigger</span><span class="pl-e">:hover</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L27">27</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC27">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.9</span>) <span class="pl-k">!important</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L28">28</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC28">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L29">29</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC29">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L30">30</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC30"><span class="pl-c"><span class="pl-c">/*</span> NOTES, ADMONITTIONS AND TAGS <span class="pl-c">*/</span></span></div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L31">31</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC31"><span class="pl-e">.admonition</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L32">32</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC32">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">85<span class="pl-k">%</span></span>; <span class="pl-c"><span class="pl-c">/*</span> match code size <span class="pl-c">*/</span></span></div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L33">33</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC33">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">rgb</span>(<span class="pl-c1">240</span>, <span class="pl-c1">240</span>, <span class="pl-c1">240</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L34">34</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC34">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.55</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L35">35</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC35">  <span class="pl-c1"><span class="pl-c1">border</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.1</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L36">36</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC36">  <span class="pl-c1"><span class="pl-c1">padding</span></span>: <span class="pl-c1">0.5<span class="pl-k">em</span></span> <span class="pl-c1">1<span class="pl-k">em</span></span> <span class="pl-c1">0.75<span class="pl-k">em</span></span> <span class="pl-c1">1<span class="pl-k">em</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L37">37</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC37">  <span class="pl-c1"><span class="pl-c1">margin-bottom</span></span>: <span class="pl-c1">24<span class="pl-k">px</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L38">38</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC38">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L39">39</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC39">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L40">40</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC40"><span class="pl-e">.admonition</span> <span class="pl-ent">p</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L41">41</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC41">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">inherit</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L42">42</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC42">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L43">43</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC43">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L44">44</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC44"><span class="pl-e">.admonition</span> <span class="pl-ent">p</span><span class="pl-e">.last</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L45">45</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC45">  <span class="pl-c1"><span class="pl-c1">margin-bottom</span></span>: <span class="pl-c1">0</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L46">46</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC46">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L47">47</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC47">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L48">48</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC48"><span class="pl-e">.admonition</span> <span class="pl-ent">p</span><span class="pl-e">.first.admonition-title</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L49">49</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC49">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">inline</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L50">50</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC50">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">none</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L51">51</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC51">  <span class="pl-c1"><span class="pl-c1">font-weight</span></span>: <span class="pl-c1">bold</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L52">52</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC52">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.75</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L53">53</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC53">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L54">54</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC54">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L55">55</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC55"><span class="pl-c"><span class="pl-c">/*</span> notes <span class="pl-c">*/</span></span></div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L56">56</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC56"><span class="pl-e">.rst-content</span> <span class="pl-e">.note</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L57">57</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC57">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">rgb</span>(<span class="pl-c1">240</span>, <span class="pl-c1">240</span>, <span class="pl-c1">240</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L58">58</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC58">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L59">59</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC59">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L60">60</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC60"><span class="pl-c"><span class="pl-c">/*</span> tags <span class="pl-c">*/</span></span></div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L61">61</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC61"><span class="pl-e">.rhel</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#fee</span>;}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L62">62</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC62"><span class="pl-e">.portal</span> {<span class="pl-c1"><span class="pl-c1">background-color</span></span>: <span class="pl-c1">#ded</span>;}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L63">63</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC63"><span class="pl-e">.satellite</span> {<span class="pl-c1"><span class="pl-c1">background-color</span></span>: <span class="pl-c1">#dee</span>;}</div>
+                </div>
+            </div>
+          </div>
+
+          <div class="blame-hunk d-flex border-gray-light border-bottom">
+
+            <div class="blame-commit flex-self-stretch mr-1" data-heat="10">
+              <div class="blame-commit-info pl-1 pr-2">
+
+                <div class="no-wrap d-flex flex-items-start">
+                  
+<div class="AvatarStack flex-self-start AvatarStack--two">
+  <div class="AvatarStack-body" aria-label="hardys and gfidente (non-author committer)">
+
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1325867" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/hardys">
+          <img height="20" width="20" alt="@hardys" src="https://avatars1.githubusercontent.com/u/1325867?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1452348" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/gfidente">
+          <img height="20" width="20" alt="@gfidente" src="https://avatars1.githubusercontent.com/u/1452348?s=60&amp;v=4" />
+</a>  </div>
+</div>
+
+                  <div class="blame-commit-content d-flex no-wrap flex-items-center">
+                    <div class="blame-commit-message overflow-hidden pt-1 f6">
+                        <a title="Initial instructrions for stable/liberty repos
+
+The new stable/liberty repos should now be built via the RDO
+centos7-liberty delorean repos, so document using these to enable
+deploying the current stable branches.
+
+Change-Id: Id1f7f3c121a17c31a0009ea71bccda18b12ca03f" data-pjax="true" class="message f6 text-gray-dark" href="/ccamacho/tripleo-docs/commit/53bf3f28c1b5c2e18259214028edacbc7f521726">Initial instructrions for stable/liberty repos</a>
+                    </div>
+                  </div>
+                  <div class="blame-commit-date ml-3" data-heat="10"><time-ago datetime="2015-10-22T16:09:33Z">Oct 22, 2015</time-ago></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="blob-reblame pl-1 pr-1">
+                <a href="/ccamacho/tripleo-docs/blame/44f81e99f4339ad477ea4c458852f33fe73b6bf4/doc/source/_custom/custom.css"
+                  aria-label="View blame prior to this change" class="reblame-link link-hover-blue no-underline tooltipped tooltipped-e d-inline-block pr-1">
+                  <svg class="octicon octicon-versions" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M13 3H7c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1h6c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-1 8H8V5h4v6zM4 4h1v1H4v6h1v1H4c-.55 0-1-.45-1-1V5c0-.55.45-1 1-1zM1 5h1v1H1v4h1v1H1c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1z"/></svg>
+                </a>
+            </div>
+
+            <div class="width-full">
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L64">64</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC64"><span class="pl-e">.stable</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#eed</span>;}</div>
+                </div>
+            </div>
+          </div>
+
+          <div class="blame-hunk d-flex border-gray-light border-bottom">
+
+            <div class="blame-commit flex-self-stretch mr-1" data-heat="10">
+              <div class="blame-commit-info pl-1 pr-2">
+
+                <div class="no-wrap d-flex flex-items-start">
+                  
+<div class="AvatarStack flex-self-start AvatarStack--three-plus">
+  <div class="AvatarStack-body" aria-label="slagle, infraredgirl, cybertron, bcrochet, cwolferh, dsneddon, dkranz, derekhiggins, dsavineau, dtantsur, d0ugal, fcharlier, gfidente, ifarkas, jprovaznik, jcoufal, jdob, jpeeler, jistr, jtomasek, trown, regebro, umago, aufi, rlandy, achuzhoy, hardys, zaneb, and marios">
+
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="403255" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/slagle">
+          <img height="20" width="20" alt="@slagle" src="https://avatars0.githubusercontent.com/u/403255?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1786860" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/infraredgirl">
+          <img height="20" width="20" alt="@infraredgirl" src="https://avatars2.githubusercontent.com/u/1786860?s=60&amp;v=4" />
+</a>        <div class="avatar-more avatar"></div>
+
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="627341" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cybertron">
+          <img height="20" width="20" alt="@cybertron" src="https://avatars3.githubusercontent.com/u/627341?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="262079" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/bcrochet">
+          <img height="20" width="20" alt="@bcrochet" src="https://avatars1.githubusercontent.com/u/262079?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1229568" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cwolferh">
+          <img height="20" width="20" alt="@cwolferh" src="https://avatars1.githubusercontent.com/u/1229568?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="8195056" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dsneddon">
+          <img height="20" width="20" alt="@dsneddon" src="https://avatars2.githubusercontent.com/u/8195056?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="6247639" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dkranz">
+          <img height="20" width="20" alt="@dkranz" src="https://avatars2.githubusercontent.com/u/6247639?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="883848" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/derekhiggins">
+          <img height="20" width="20" alt="@derekhiggins" src="https://avatars3.githubusercontent.com/u/883848?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="3716865" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dsavineau">
+          <img height="20" width="20" alt="@dsavineau" src="https://avatars1.githubusercontent.com/u/3716865?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="531923" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dtantsur">
+          <img height="20" width="20" alt="@dtantsur" src="https://avatars2.githubusercontent.com/u/531923?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="48211" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/d0ugal">
+          <img height="20" width="20" alt="@d0ugal" src="https://avatars1.githubusercontent.com/u/48211?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="165673" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/fcharlier">
+          <img height="20" width="20" alt="@fcharlier" src="https://avatars1.githubusercontent.com/u/165673?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1452348" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/gfidente">
+          <img height="20" width="20" alt="@gfidente" src="https://avatars1.githubusercontent.com/u/1452348?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="235211" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ifarkas">
+          <img height="20" width="20" alt="@ifarkas" src="https://avatars0.githubusercontent.com/u/235211?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1028233" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jprovaznik">
+          <img height="20" width="20" alt="@jprovaznik" src="https://avatars3.githubusercontent.com/u/1028233?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="2088245" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jcoufal">
+          <img height="20" width="20" alt="@jcoufal" src="https://avatars2.githubusercontent.com/u/2088245?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="128268" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jdob">
+          <img height="20" width="20" alt="@jdob" src="https://avatars0.githubusercontent.com/u/128268?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="834161" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jpeeler">
+          <img height="20" width="20" alt="@jpeeler" src="https://avatars0.githubusercontent.com/u/834161?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="331840" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jistr">
+          <img height="20" width="20" alt="@jistr" src="https://avatars3.githubusercontent.com/u/331840?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1121740" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jtomasek">
+          <img height="20" width="20" alt="@jtomasek" src="https://avatars3.githubusercontent.com/u/1121740?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="10535841" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/trown">
+          <img height="20" width="20" alt="@trown" src="https://avatars0.githubusercontent.com/u/10535841?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="820596" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/regebro">
+          <img height="20" width="20" alt="@regebro" src="https://avatars0.githubusercontent.com/u/820596?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="390096" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/umago">
+          <img height="20" width="20" alt="@umago" src="https://avatars3.githubusercontent.com/u/390096?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="555381" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/aufi">
+          <img height="20" width="20" alt="@aufi" src="https://avatars2.githubusercontent.com/u/555381?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1529351" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/rlandy">
+          <img height="20" width="20" alt="@rlandy" src="https://avatars0.githubusercontent.com/u/1529351?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1218513" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/achuzhoy">
+          <img height="20" width="20" alt="@achuzhoy" src="https://avatars3.githubusercontent.com/u/1218513?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1325867" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/hardys">
+          <img height="20" width="20" alt="@hardys" src="https://avatars1.githubusercontent.com/u/1325867?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="842470" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/zaneb">
+          <img height="20" width="20" alt="@zaneb" src="https://avatars3.githubusercontent.com/u/842470?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="244496" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/marios">
+          <img height="20" width="20" alt="@marios" src="https://avatars1.githubusercontent.com/u/244496?s=60&amp;v=4" />
+</a>  </div>
+</div>
+
+                  <div class="blame-commit-content d-flex no-wrap flex-items-center">
+                    <div class="blame-commit-message overflow-hidden pt-1 f6">
+                        <a title="Initial import of TripleO docs
+
+Co-Authored-By: Ana Krivokapic &lt;akrivoka@redhat.com&gt;
+Co-Authored-By: Ben Nemec &lt;bnemec@redhat.com&gt;
+Co-Authored-By: Ben Nemec &lt;cybertron@nemebean.com&gt;
+Co-Authored-By: Brad P. Crochet &lt;brad@redhat.com&gt;
+Co-Authored-By: Crag Wolfe &lt;cwolfe@redhat.com&gt;
+Co-Authored-By: Dan Sneddon &lt;dsneddon@redhat.com&gt;
+Co-Authored-By: David Kranz &lt;dkranz@redhat.com&gt;
+Co-Authored-By: Derek Higgins &lt;derekh@redhat.com&gt;
+Co-Authored-By: Dimitri Savineau &lt;dsavinea@redhat.com&gt;
+Co-Authored-By: Dmitry Tantsur &lt;divius.inside@gmail.com&gt;
+Co-Authored-By: Dmitry Tantsur &lt;dtantsur@redhat.com&gt;
+Co-Authored-By: Dougal Matthews &lt;dougal@redhat.com&gt;
+Co-Authored-By: François Charlier &lt;francois.charlier@redhat.com&gt;
+Co-Authored-By: Giulio Fidente &lt;gfidente@redhat.com&gt;
+Co-Authored-By: Imre Farkas &lt;ifarkas@redhat.com&gt;
+Co-Authored-By: James Slagle &lt;jslagle@redhat.com&gt;
+Co-Authored-By: Jan Provaznik &lt;jprovazn@redhat.com&gt;
+Co-Authored-By: Jaromir Coufal &lt;jcoufal@redhat.com&gt;
+Co-Authored-By: Jay Dobies &lt;jason.dobies@redhat.com&gt;
+Co-Authored-By: Jeff Peeler &lt;jpeeler@redhat.com&gt;
+Co-Authored-By: Jiri Stransky &lt;jistr@redhat.com&gt;
+Co-Authored-By: Jiri Tomasek &lt;jtomasek@redhat.com&gt;
+Co-Authored-By: John Trowbridge &lt;trown@redhat.com&gt;
+Co-Authored-By: Lennart Regebro &lt;regebro@gmail.com&gt;
+Co-Authored-By: Lucas Alvares Gomes &lt;lucasagomes@gmail.com&gt;
+Co-Authored-By: Marek Aufart &lt;maufart@redhat.com&gt;
+Co-Authored-By: Ronelle Landy &lt;rlandy@redhat.com&gt;
+Co-Authored-By: Sasha Chuzhoy &lt;sasha@redhat.com&gt;
+Co-Authored-By: Sasha Chuzhoy &lt;sashac88@hotmail.com&gt;
+Co-Authored-By: Steven Hardy &lt;shardy@redhat.com&gt;
+Co-Authored-By: Zane Bitter &lt;zbitter@redhat.com&gt;
+Co-Authored-By: marios &lt;marios@redhat.com&gt;" data-pjax="true" class="message f6 text-gray-dark" href="/ccamacho/tripleo-docs/commit/8ec4cae9209e80ee161a33c17b3c3fc38a118199">Initial import of TripleO docs</a>
+                    </div>
+                  </div>
+                  <div class="blame-commit-date ml-3" data-heat="10"><time-ago datetime="2015-09-01T19:13:26Z">Sep 1, 2015</time-ago></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="blob-reblame pl-1 pr-1">
+            </div>
+
+            <div class="width-full">
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L65">65</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC65"><span class="pl-e">.centos</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#fef</span>;}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L66">66</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC66"><span class="pl-e">.baremetal</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#eef</span>;}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L67">67</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC67"><span class="pl-e">.virtual</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#efe</span>;}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L68">68</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC68"><span class="pl-e">.ceph</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#eff</span>;}</div>
+                </div>
+            </div>
+          </div>
+
+          <div class="blame-hunk d-flex border-gray-light border-bottom">
+
+            <div class="blame-commit flex-self-stretch mr-1" data-heat="10">
+              <div class="blame-commit-info pl-1 pr-2">
+
+                <div class="no-wrap d-flex flex-items-start">
+                  
+<div class="AvatarStack flex-self-start ">
+  <div class="AvatarStack-body" aria-label="slagle">
+
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="403255" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/slagle">
+          <img height="20" width="20" alt="@slagle" src="https://avatars0.githubusercontent.com/u/403255?s=60&amp;v=4" />
+</a>  </div>
+</div>
+
+                  <div class="blame-commit-content d-flex no-wrap flex-items-center">
+                    <div class="blame-commit-message overflow-hidden pt-1 f6">
+                        <a title="Add source admonition
+
+Using puppet modules from source is no longer required. However, it&#39;s
+still useful to document how to do so for those that want to. This
+creates a new source admonition that can be used to document such
+things.
+
+Change-Id: I5393bbfca51ebe97065995123a3d59a8719aaa81" data-pjax="true" class="message f6 text-gray-dark" href="/ccamacho/tripleo-docs/commit/500c14a965ba9a99f4c06ed579fd9049e6a6e48c">Add source admonition</a>
+                    </div>
+                  </div>
+                  <div class="blame-commit-date ml-3" data-heat="10"><time-ago datetime="2015-09-22T19:57:48Z">Sep 22, 2015</time-ago></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="blob-reblame pl-1 pr-1">
+                <a href="/ccamacho/tripleo-docs/blame/5dc7ea10cb13e475966d5ec5b2c13b8313b9abdd/doc/source/_custom/custom.css"
+                  aria-label="View blame prior to this change" class="reblame-link link-hover-blue no-underline tooltipped tooltipped-e d-inline-block pr-1">
+                  <svg class="octicon octicon-versions" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M13 3H7c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1h6c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-1 8H8V5h4v6zM4 4h1v1H4v6h1v1H4c-.55 0-1-.45-1-1V5c0-.55.45-1 1-1zM1 5h1v1H1v4h1v1H1c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1z"/></svg>
+                </a>
+            </div>
+
+            <div class="width-full">
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L69">69</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC69"><span class="pl-e">.source</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#bbb</span>;}</div>
+                </div>
+            </div>
+          </div>
+
+          <div class="blame-hunk d-flex border-gray-light border-bottom">
+
+            <div class="blame-commit flex-self-stretch mr-1" data-heat="10">
+              <div class="blame-commit-info pl-1 pr-2">
+
+                <div class="no-wrap d-flex flex-items-start">
+                  
+<div class="AvatarStack flex-self-start ">
+  <div class="AvatarStack-body" aria-label="cybertron">
+
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="627341" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cybertron">
+          <img height="20" width="20" alt="@cybertron" src="https://avatars3.githubusercontent.com/u/627341?s=60&amp;v=4" />
+</a>  </div>
+</div>
+
+                  <div class="blame-commit-content d-flex no-wrap flex-items-center">
+                    <div class="blame-commit-message overflow-hidden pt-1 f6">
+                        <a title="Document installing the undercloud with SSL endpoints
+
+Adds a new admonition that covers how to install the undercloud
+with ssl endpoints.  I would anticipate the admonition being
+reused for the overcloud when that is documented.
+
+Also covers how to generate a self-signed certificate appropriate
+for use with HAProxy.
+
+Change-Id: Iec58f79b83db6cbb684ff309b818d1a8f437dfa1" data-pjax="true" class="message f6 text-gray-dark" href="/ccamacho/tripleo-docs/commit/e1bf51e6a7d212b7c901e57bb103fdc82ddf7720">Document installing the undercloud with SSL endpoints</a>
+                    </div>
+                  </div>
+                  <div class="blame-commit-date ml-3" data-heat="10"><time-ago datetime="2015-07-07T22:11:58Z">Jul 8, 2015</time-ago></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="blob-reblame pl-1 pr-1">
+                <a href="/ccamacho/tripleo-docs/blame/23cf7e72dd72a3da306ccf53202a8f48d371f0e3/doc/source/_custom/custom.css"
+                  aria-label="View blame prior to this change" class="reblame-link link-hover-blue no-underline tooltipped tooltipped-e d-inline-block pr-1">
+                  <svg class="octicon octicon-versions" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M13 3H7c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1h6c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-1 8H8V5h4v6zM4 4h1v1H4v6h1v1H4c-.55 0-1-.45-1-1V5c0-.55.45-1 1-1zM1 5h1v1H1v4h1v1H1c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1z"/></svg>
+                </a>
+            </div>
+
+            <div class="width-full">
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L70">70</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC70"><span class="pl-e">.ssl</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#ffe</span>;}</div>
+                </div>
+            </div>
+          </div>
+
+          <div class="blame-hunk d-flex border-gray-light border-bottom">
+
+            <div class="blame-commit flex-self-stretch mr-1" data-heat="10">
+              <div class="blame-commit-info pl-1 pr-2">
+
+                <div class="no-wrap d-flex flex-items-start">
+                  
+<div class="AvatarStack flex-self-start ">
+  <div class="AvatarStack-body" aria-label="cybertron">
+
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="627341" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cybertron">
+          <img height="20" width="20" alt="@cybertron" src="https://avatars3.githubusercontent.com/u/627341?s=60&amp;v=4" />
+</a>  </div>
+</div>
+
+                  <div class="blame-commit-content d-flex no-wrap flex-items-center">
+                    <div class="blame-commit-message overflow-hidden pt-1 f6">
+                        <a title="Document deploying the overcloud with ssl
 
 Documents the steps needed to deploy an overcloud with the public
 API endpoints using SSL.
 
-Change-Id: I5b6b313d277b3fb57a12ec4f74d5c1ffc2946c84" class="message" href="/ccamacho/tripleo-docs/commit/9b04f1e5503d6db6770eb83bb06e85ad827c8880">Document deploying the overcloud with ssl</a>
-      </div>
+Change-Id: I5b6b313d277b3fb57a12ec4f74d5c1ffc2946c84" data-pjax="true" class="message f6 text-gray-dark" href="/ccamacho/tripleo-docs/commit/9b04f1e5503d6db6770eb83bb06e85ad827c8880">Document deploying the overcloud with ssl</a>
+                    </div>
+                  </div>
+                  <div class="blame-commit-date ml-3" data-heat="10"><time-ago datetime="2016-01-07T23:12:27Z">Jan 8, 2016</time-ago></div>
+                </div>
+              </div>
+            </div>
 
-    <div class="commit-tease-contributors">
-      
-<details class="details-reset details-overlay details-overlay-dark lh-default text-gray-dark float-left mr-2" id="blob_contributors_box">
-  <summary class="btn-link" aria-haspopup="dialog" >
-    
-    <span><strong>32</strong> contributors</span>
-  </summary>
-  <details-dialog class="Box Box--overlay d-flex flex-column anim-fade-in fast " aria-label="Users who have contributed to this file">
-    <div class="Box-header">
-      <button class="Box-btn-octicon btn-octicon float-right" type="button" aria-label="Close dialog" data-close-dialog>
-        <svg class="octicon octicon-x" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48L7.48 8z"/></svg>
-      </button>
-      <h3 class="Box-title">Users who have contributed to this file</h3>
-    </div>
-    
-        <ul class="list-style-none overflow-auto">
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/cybertron">
-                <img class="avatar mr-2" alt="" src="https://avatars0.githubusercontent.com/u/627341?s=40&amp;v=4" width="20" height="20" />
-                cybertron
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/slagle">
-                <img class="avatar mr-2" alt="" src="https://avatars3.githubusercontent.com/u/403255?s=40&amp;v=4" width="20" height="20" />
-                slagle
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/hardys">
-                <img class="avatar mr-2" alt="" src="https://avatars2.githubusercontent.com/u/1325867?s=40&amp;v=4" width="20" height="20" />
-                hardys
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/achuzhoy">
-                <img class="avatar mr-2" alt="" src="https://avatars0.githubusercontent.com/u/1218513?s=40&amp;v=4" width="20" height="20" />
-                achuzhoy
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/dtantsur">
-                <img class="avatar mr-2" alt="" src="https://avatars1.githubusercontent.com/u/531923?s=40&amp;v=4" width="20" height="20" />
-                dtantsur
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/zaneb">
-                <img class="avatar mr-2" alt="" src="https://avatars0.githubusercontent.com/u/842470?s=40&amp;v=4" width="20" height="20" />
-                zaneb
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/trown">
-                <img class="avatar mr-2" alt="" src="https://avatars3.githubusercontent.com/u/10535841?s=40&amp;v=4" width="20" height="20" />
-                trown
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/rlandy">
-                <img class="avatar mr-2" alt="" src="https://avatars3.githubusercontent.com/u/1529351?s=40&amp;v=4" width="20" height="20" />
-                rlandy
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/regebro">
-                <img class="avatar mr-2" alt="" src="https://avatars3.githubusercontent.com/u/820596?s=40&amp;v=4" width="20" height="20" />
-                regebro
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/aufi">
-                <img class="avatar mr-2" alt="" src="https://avatars1.githubusercontent.com/u/555381?s=40&amp;v=4" width="20" height="20" />
-                aufi
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/marios">
-                <img class="avatar mr-2" alt="" src="https://avatars2.githubusercontent.com/u/244496?s=40&amp;v=4" width="20" height="20" />
-                marios
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/umago">
-                <img class="avatar mr-2" alt="" src="https://avatars0.githubusercontent.com/u/390096?s=40&amp;v=4" width="20" height="20" />
-                umago
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/jtomasek">
-                <img class="avatar mr-2" alt="" src="https://avatars0.githubusercontent.com/u/1121740?s=40&amp;v=4" width="20" height="20" />
-                jtomasek
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/jprovaznik">
-                <img class="avatar mr-2" alt="" src="https://avatars0.githubusercontent.com/u/1028233?s=40&amp;v=4" width="20" height="20" />
-                jprovaznik
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/jpeeler">
-                <img class="avatar mr-2" alt="" src="https://avatars3.githubusercontent.com/u/834161?s=40&amp;v=4" width="20" height="20" />
-                jpeeler
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/jistr">
-                <img class="avatar mr-2" alt="" src="https://avatars0.githubusercontent.com/u/331840?s=40&amp;v=4" width="20" height="20" />
-                jistr
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/jcoufal">
-                <img class="avatar mr-2" alt="" src="https://avatars1.githubusercontent.com/u/2088245?s=40&amp;v=4" width="20" height="20" />
-                jcoufal
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/jdob">
-                <img class="avatar mr-2" alt="" src="https://avatars3.githubusercontent.com/u/128268?s=40&amp;v=4" width="20" height="20" />
-                jdob
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/ifarkas">
-                <img class="avatar mr-2" alt="" src="https://avatars3.githubusercontent.com/u/235211?s=40&amp;v=4" width="20" height="20" />
-                ifarkas
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/gfidente">
-                <img class="avatar mr-2" alt="" src="https://avatars2.githubusercontent.com/u/1452348?s=40&amp;v=4" width="20" height="20" />
-                gfidente
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/fcharlier">
-                <img class="avatar mr-2" alt="" src="https://avatars2.githubusercontent.com/u/165673?s=40&amp;v=4" width="20" height="20" />
-                fcharlier
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/dsneddon">
-                <img class="avatar mr-2" alt="" src="https://avatars1.githubusercontent.com/u/8195056?s=40&amp;v=4" width="20" height="20" />
-                dsneddon
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/dsavineau">
-                <img class="avatar mr-2" alt="" src="https://avatars2.githubusercontent.com/u/3716865?s=40&amp;v=4" width="20" height="20" />
-                dsavineau
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/d0ugal">
-                <img class="avatar mr-2" alt="" src="https://avatars2.githubusercontent.com/u/48211?s=40&amp;v=4" width="20" height="20" />
-                d0ugal
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/dkranz">
-                <img class="avatar mr-2" alt="" src="https://avatars1.githubusercontent.com/u/6247639?s=40&amp;v=4" width="20" height="20" />
-                dkranz
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/derekhiggins">
-                <img class="avatar mr-2" alt="" src="https://avatars0.githubusercontent.com/u/883848?s=40&amp;v=4" width="20" height="20" />
-                derekhiggins
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/cwolferh">
-                <img class="avatar mr-2" alt="" src="https://avatars2.githubusercontent.com/u/1229568?s=40&amp;v=4" width="20" height="20" />
-                cwolferh
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/bcrochet">
-                <img class="avatar mr-2" alt="" src="https://avatars2.githubusercontent.com/u/262079?s=40&amp;v=4" width="20" height="20" />
-                bcrochet
-</a>            </li>
-            <li class="Box-row">
-              <a class="link-gray-dark no-underline" href="/infraredgirl">
-                <img class="avatar mr-2" alt="" src="https://avatars1.githubusercontent.com/u/1786860?s=40&amp;v=4" width="20" height="20" />
-                infraredgirl
-</a>            </li>
-        </ul>
+            <div class="blob-reblame pl-1 pr-1">
+                <a href="/ccamacho/tripleo-docs/blame/f45f2c66f201e483a0626cd0cb0d76c115552220/doc/source/_custom/custom.css"
+                  aria-label="View blame prior to this change" class="reblame-link link-hover-blue no-underline tooltipped tooltipped-e d-inline-block pr-1">
+                  <svg class="octicon octicon-versions" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M13 3H7c-.55 0-1 .45-1 1v8c0 .55.45 1 1 1h6c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zm-1 8H8V5h4v6zM4 4h1v1H4v6h1v1H4c-.55 0-1-.45-1-1V5c0-.55.45-1 1-1zM1 5h1v1H1v4h1v1H1c-.55 0-1-.45-1-1V6c0-.55.45-1 1-1z"/></svg>
+                </a>
+            </div>
 
-  </details-dialog>
-</details>
-          <a class="avatar-link" data-hovercard-user-id="627341" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=cybertron">
-      <img class="avatar" src="https://avatars0.githubusercontent.com/u/627341?s=40&amp;v=4" width="20" height="20" alt="@cybertron" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="403255" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=slagle">
-      <img class="avatar" src="https://avatars3.githubusercontent.com/u/403255?s=40&amp;v=4" width="20" height="20" alt="@slagle" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="1325867" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=hardys">
-      <img class="avatar" src="https://avatars2.githubusercontent.com/u/1325867?s=40&amp;v=4" width="20" height="20" alt="@hardys" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="1218513" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=achuzhoy">
-      <img class="avatar" src="https://avatars0.githubusercontent.com/u/1218513?s=40&amp;v=4" width="20" height="20" alt="@achuzhoy" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="531923" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=dtantsur">
-      <img class="avatar" src="https://avatars1.githubusercontent.com/u/531923?s=40&amp;v=4" width="20" height="20" alt="@dtantsur" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="842470" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=zaneb">
-      <img class="avatar" src="https://avatars0.githubusercontent.com/u/842470?s=40&amp;v=4" width="20" height="20" alt="@zaneb" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="10535841" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=trown">
-      <img class="avatar" src="https://avatars3.githubusercontent.com/u/10535841?s=40&amp;v=4" width="20" height="20" alt="@trown" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="1529351" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=rlandy">
-      <img class="avatar" src="https://avatars3.githubusercontent.com/u/1529351?s=40&amp;v=4" width="20" height="20" alt="@rlandy" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="820596" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=regebro">
-      <img class="avatar" src="https://avatars3.githubusercontent.com/u/820596?s=40&amp;v=4" width="20" height="20" alt="@regebro" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="555381" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=aufi">
-      <img class="avatar" src="https://avatars1.githubusercontent.com/u/555381?s=40&amp;v=4" width="20" height="20" alt="@aufi" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="244496" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=marios">
-      <img class="avatar" src="https://avatars2.githubusercontent.com/u/244496?s=40&amp;v=4" width="20" height="20" alt="@marios" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="390096" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=umago">
-      <img class="avatar" src="https://avatars0.githubusercontent.com/u/390096?s=40&amp;v=4" width="20" height="20" alt="@umago" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="1121740" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=jtomasek">
-      <img class="avatar" src="https://avatars0.githubusercontent.com/u/1121740?s=40&amp;v=4" width="20" height="20" alt="@jtomasek" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="1028233" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=jprovaznik">
-      <img class="avatar" src="https://avatars0.githubusercontent.com/u/1028233?s=40&amp;v=4" width="20" height="20" alt="@jprovaznik" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="834161" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=jpeeler">
-      <img class="avatar" src="https://avatars3.githubusercontent.com/u/834161?s=40&amp;v=4" width="20" height="20" alt="@jpeeler" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="331840" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=jistr">
-      <img class="avatar" src="https://avatars0.githubusercontent.com/u/331840?s=40&amp;v=4" width="20" height="20" alt="@jistr" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="2088245" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=jcoufal">
-      <img class="avatar" src="https://avatars1.githubusercontent.com/u/2088245?s=40&amp;v=4" width="20" height="20" alt="@jcoufal" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="128268" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=jdob">
-      <img class="avatar" src="https://avatars3.githubusercontent.com/u/128268?s=40&amp;v=4" width="20" height="20" alt="@jdob" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="235211" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=ifarkas">
-      <img class="avatar" src="https://avatars3.githubusercontent.com/u/235211?s=40&amp;v=4" width="20" height="20" alt="@ifarkas" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="1452348" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=gfidente">
-      <img class="avatar" src="https://avatars2.githubusercontent.com/u/1452348?s=40&amp;v=4" width="20" height="20" alt="@gfidente" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="165673" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=fcharlier">
-      <img class="avatar" src="https://avatars2.githubusercontent.com/u/165673?s=40&amp;v=4" width="20" height="20" alt="@fcharlier" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="8195056" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=dsneddon">
-      <img class="avatar" src="https://avatars1.githubusercontent.com/u/8195056?s=40&amp;v=4" width="20" height="20" alt="@dsneddon" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="3716865" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=dsavineau">
-      <img class="avatar" src="https://avatars2.githubusercontent.com/u/3716865?s=40&amp;v=4" width="20" height="20" alt="@dsavineau" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="48211" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=d0ugal">
-      <img class="avatar" src="https://avatars2.githubusercontent.com/u/48211?s=40&amp;v=4" width="20" height="20" alt="@d0ugal" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="6247639" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=dkranz">
-      <img class="avatar" src="https://avatars1.githubusercontent.com/u/6247639?s=40&amp;v=4" width="20" height="20" alt="@dkranz" /> 
-</a>    <a class="avatar-link" data-hovercard-user-id="883848" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css?author=derekhiggins">
-      <img class="avatar" src="https://avatars0.githubusercontent.com/u/883848?s=40&amp;v=4" width="20" height="20" alt="@derekhiggins" /> 
+            <div class="width-full">
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L71">71</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC71"><span class="pl-e">.selfsigned</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#ffd</span>;}</div>
+                </div>
+            </div>
+          </div>
+
+          <div class="blame-hunk d-flex border-gray-light border-bottom">
+
+            <div class="blame-commit flex-self-stretch mr-1" data-heat="10">
+              <div class="blame-commit-info pl-1 pr-2">
+
+                <div class="no-wrap d-flex flex-items-start">
+                  
+<div class="AvatarStack flex-self-start AvatarStack--three-plus">
+  <div class="AvatarStack-body" aria-label="slagle, infraredgirl, cybertron, bcrochet, cwolferh, dsneddon, dkranz, derekhiggins, dsavineau, dtantsur, d0ugal, fcharlier, gfidente, ifarkas, jprovaznik, jcoufal, jdob, jpeeler, jistr, jtomasek, trown, regebro, umago, aufi, rlandy, achuzhoy, hardys, zaneb, and marios">
+
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="403255" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/slagle">
+          <img height="20" width="20" alt="@slagle" src="https://avatars0.githubusercontent.com/u/403255?s=60&amp;v=4" />
 </a>
-    <button type="button" class="btn-link" data-toggle-for="blob_contributors_box">and others</button>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1786860" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/infraredgirl">
+          <img height="20" width="20" alt="@infraredgirl" src="https://avatars2.githubusercontent.com/u/1786860?s=60&amp;v=4" />
+</a>        <div class="avatar-more avatar"></div>
 
-    </div>
-  </div>
-
-
-
-  <div class="file">
-    <div class="file-header">
-  <div class="file-actions">
-
-    <div class="BtnGroup">
-      <a id="raw-url" class="btn btn-sm BtnGroup-item" href="/ccamacho/tripleo-docs/raw/master/doc/source/_custom/custom.css">Raw</a>
-        <a class="btn btn-sm js-update-url-with-hash BtnGroup-item" data-hotkey="b" href="/ccamacho/tripleo-docs/blame/master/doc/source/_custom/custom.css">Blame</a>
-      <a rel="nofollow" class="btn btn-sm BtnGroup-item" href="/ccamacho/tripleo-docs/commits/master/doc/source/_custom/custom.css">History</a>
-    </div>
-
-
-        <button type="button" class="btn-octicon disabled tooltipped tooltipped-nw"
-          aria-label="You must be signed in to make or propose changes">
-          <svg class="octicon octicon-pencil" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M0 12v3h3l8-8-3-3-8 8zm3 2H1v-2h1v1h1v1zm10.3-9.3L12 6 9 3l1.3-1.3a.996.996 0 0 1 1.41 0l1.59 1.59c.39.39.39 1.02 0 1.41z"/></svg>
-        </button>
-        <button type="button" class="btn-octicon btn-octicon-danger disabled tooltipped tooltipped-nw"
-          aria-label="You must be signed in to make or propose changes">
-          <svg class="octicon octicon-trashcan" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M11 2H9c0-.55-.45-1-1-1H5c-.55 0-1 .45-1 1H2c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1v9c0 .55.45 1 1 1h7c.55 0 1-.45 1-1V5c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1zm-1 12H3V5h1v8h1V5h1v8h1V5h1v8h1V5h1v9zm1-10H2V3h9v1z"/></svg>
-        </button>
-  </div>
-
-  <div class="file-info">
-      134 lines (112 sloc)
-      <span class="file-info-divider"></span>
-    2.41 KB
-  </div>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="627341" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cybertron">
+          <img height="20" width="20" alt="@cybertron" src="https://avatars3.githubusercontent.com/u/627341?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="262079" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/bcrochet">
+          <img height="20" width="20" alt="@bcrochet" src="https://avatars1.githubusercontent.com/u/262079?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1229568" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/cwolferh">
+          <img height="20" width="20" alt="@cwolferh" src="https://avatars1.githubusercontent.com/u/1229568?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="8195056" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dsneddon">
+          <img height="20" width="20" alt="@dsneddon" src="https://avatars2.githubusercontent.com/u/8195056?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="6247639" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dkranz">
+          <img height="20" width="20" alt="@dkranz" src="https://avatars2.githubusercontent.com/u/6247639?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="883848" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/derekhiggins">
+          <img height="20" width="20" alt="@derekhiggins" src="https://avatars3.githubusercontent.com/u/883848?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="3716865" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dsavineau">
+          <img height="20" width="20" alt="@dsavineau" src="https://avatars1.githubusercontent.com/u/3716865?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="531923" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/dtantsur">
+          <img height="20" width="20" alt="@dtantsur" src="https://avatars2.githubusercontent.com/u/531923?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="48211" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/d0ugal">
+          <img height="20" width="20" alt="@d0ugal" src="https://avatars1.githubusercontent.com/u/48211?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="165673" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/fcharlier">
+          <img height="20" width="20" alt="@fcharlier" src="https://avatars1.githubusercontent.com/u/165673?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1452348" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/gfidente">
+          <img height="20" width="20" alt="@gfidente" src="https://avatars1.githubusercontent.com/u/1452348?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="235211" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/ifarkas">
+          <img height="20" width="20" alt="@ifarkas" src="https://avatars0.githubusercontent.com/u/235211?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1028233" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jprovaznik">
+          <img height="20" width="20" alt="@jprovaznik" src="https://avatars3.githubusercontent.com/u/1028233?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="2088245" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jcoufal">
+          <img height="20" width="20" alt="@jcoufal" src="https://avatars2.githubusercontent.com/u/2088245?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="128268" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jdob">
+          <img height="20" width="20" alt="@jdob" src="https://avatars0.githubusercontent.com/u/128268?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="834161" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jpeeler">
+          <img height="20" width="20" alt="@jpeeler" src="https://avatars0.githubusercontent.com/u/834161?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="331840" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jistr">
+          <img height="20" width="20" alt="@jistr" src="https://avatars3.githubusercontent.com/u/331840?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1121740" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/jtomasek">
+          <img height="20" width="20" alt="@jtomasek" src="https://avatars3.githubusercontent.com/u/1121740?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="10535841" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/trown">
+          <img height="20" width="20" alt="@trown" src="https://avatars0.githubusercontent.com/u/10535841?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="820596" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/regebro">
+          <img height="20" width="20" alt="@regebro" src="https://avatars0.githubusercontent.com/u/820596?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="390096" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/umago">
+          <img height="20" width="20" alt="@umago" src="https://avatars3.githubusercontent.com/u/390096?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="555381" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/aufi">
+          <img height="20" width="20" alt="@aufi" src="https://avatars2.githubusercontent.com/u/555381?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1529351" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/rlandy">
+          <img height="20" width="20" alt="@rlandy" src="https://avatars0.githubusercontent.com/u/1529351?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1218513" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/achuzhoy">
+          <img height="20" width="20" alt="@achuzhoy" src="https://avatars3.githubusercontent.com/u/1218513?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="1325867" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/hardys">
+          <img height="20" width="20" alt="@hardys" src="https://avatars1.githubusercontent.com/u/1325867?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="842470" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/zaneb">
+          <img height="20" width="20" alt="@zaneb" src="https://avatars3.githubusercontent.com/u/842470?s=60&amp;v=4" />
+</a>
+        <a class="avatar" data-skip-pjax="true" data-hovercard-user-id="244496" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="/marios">
+          <img height="20" width="20" alt="@marios" src="https://avatars1.githubusercontent.com/u/244496?s=60&amp;v=4" />
+</a>  </div>
 </div>
 
-    
+                  <div class="blame-commit-content d-flex no-wrap flex-items-center">
+                    <div class="blame-commit-message overflow-hidden pt-1 f6">
+                        <a title="Initial import of TripleO docs
 
-  <div itemprop="text" class="blob-wrapper data type-css">
-      <table class="highlight tab-size js-file-line-container" data-tab-size="8">
-      <tr>
-        <td id="L1" class="blob-num js-line-number" data-line-number="1"></td>
-        <td id="LC1" class="blob-code blob-code-inner js-file-line"><span class="pl-c"><span class="pl-c">/*</span> CUSTOM CSS OVERRIDES GO HERE <span class="pl-c">*/</span></span></td>
-      </tr>
-      <tr>
-        <td id="L2" class="blob-num js-line-number" data-line-number="2"></td>
-        <td id="LC2" class="blob-code blob-code-inner js-file-line"><span class="pl-c"><span class="pl-c">/*</span> ============================ <span class="pl-c">*/</span></span></td>
-      </tr>
-      <tr>
-        <td id="L3" class="blob-num js-line-number" data-line-number="3"></td>
-        <td id="LC3" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L4" class="blob-num js-line-number" data-line-number="4"></td>
-        <td id="LC4" class="blob-code blob-code-inner js-file-line"><span class="pl-c"><span class="pl-c">/*</span> remove backgrounds <span class="pl-c">*/</span></span></td>
-      </tr>
-      <tr>
-        <td id="L5" class="blob-num js-line-number" data-line-number="5"></td>
-        <td id="LC5" class="blob-code blob-code-inner js-file-line"><span class="pl-e">#admonition_selector</span> {</td>
-      </tr>
-      <tr>
-        <td id="L6" class="blob-num js-line-number" data-line-number="6"></td>
-        <td id="LC6" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">none</span> <span class="pl-k">!important</span>;</td>
-      </tr>
-      <tr>
-        <td id="L7" class="blob-num js-line-number" data-line-number="7"></td>
-        <td id="LC7" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">black</span> <span class="pl-k">!important</span>;</td>
-      </tr>
-      <tr>
-        <td id="L8" class="blob-num js-line-number" data-line-number="8"></td>
-        <td id="LC8" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L9" class="blob-num js-line-number" data-line-number="9"></td>
-        <td id="LC9" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L10" class="blob-num js-line-number" data-line-number="10"></td>
-        <td id="LC10" class="blob-code blob-code-inner js-file-line"><span class="pl-c"><span class="pl-c">/*</span> admonition selector <span class="pl-c">*/</span></span></td>
-      </tr>
-      <tr>
-        <td id="L11" class="blob-num js-line-number" data-line-number="11"></td>
-        <td id="LC11" class="blob-code blob-code-inner js-file-line"><span class="pl-e">#admonition_selector</span> {</td>
-      </tr>
-      <tr>
-        <td id="L12" class="blob-num js-line-number" data-line-number="12"></td>
-        <td id="LC12" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">border-top</span></span>: <span class="pl-c1">0</span> <span class="pl-c1">none</span> <span class="pl-k">!important</span>;</td>
-      </tr>
-      <tr>
-        <td id="L13" class="blob-num js-line-number" data-line-number="13"></td>
-        <td id="LC13" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L14" class="blob-num js-line-number" data-line-number="14"></td>
-        <td id="LC14" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L15" class="blob-num js-line-number" data-line-number="15"></td>
-        <td id="LC15" class="blob-code blob-code-inner js-file-line"><span class="pl-e">#admonition_selector</span> <span class="pl-e">.title</span> {</td>
-      </tr>
-      <tr>
-        <td id="L16" class="blob-num js-line-number" data-line-number="16"></td>
-        <td id="LC16" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.6</span>) <span class="pl-k">!important</span>;</td>
-      </tr>
-      <tr>
-        <td id="L17" class="blob-num js-line-number" data-line-number="17"></td>
-        <td id="LC17" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L18" class="blob-num js-line-number" data-line-number="18"></td>
-        <td id="LC18" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L19" class="blob-num js-line-number" data-line-number="19"></td>
-        <td id="LC19" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.trigger</span> {</td>
-      </tr>
-      <tr>
-        <td id="L20" class="blob-num js-line-number" data-line-number="20"></td>
-        <td id="LC20" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.7</span>) <span class="pl-k">!important</span>;</td>
-      </tr>
-      <tr>
-        <td id="L21" class="blob-num js-line-number" data-line-number="21"></td>
-        <td id="LC21" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">border-top</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.2</span>);</td>
-      </tr>
-      <tr>
-        <td id="L22" class="blob-num js-line-number" data-line-number="22"></td>
-        <td id="LC22" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">border-bottom</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.2</span>);</td>
-      </tr>
-      <tr>
-        <td id="L23" class="blob-num js-line-number" data-line-number="23"></td>
-        <td id="LC23" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.05</span>);</td>
-      </tr>
-      <tr>
-        <td id="L24" class="blob-num js-line-number" data-line-number="24"></td>
-        <td id="LC24" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L25" class="blob-num js-line-number" data-line-number="25"></td>
-        <td id="LC25" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L26" class="blob-num js-line-number" data-line-number="26"></td>
-        <td id="LC26" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.trigger</span><span class="pl-e">:hover</span> {</td>
-      </tr>
-      <tr>
-        <td id="L27" class="blob-num js-line-number" data-line-number="27"></td>
-        <td id="LC27" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.9</span>) <span class="pl-k">!important</span>;</td>
-      </tr>
-      <tr>
-        <td id="L28" class="blob-num js-line-number" data-line-number="28"></td>
-        <td id="LC28" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L29" class="blob-num js-line-number" data-line-number="29"></td>
-        <td id="LC29" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L30" class="blob-num js-line-number" data-line-number="30"></td>
-        <td id="LC30" class="blob-code blob-code-inner js-file-line"><span class="pl-c"><span class="pl-c">/*</span> NOTES, ADMONITTIONS AND TAGS <span class="pl-c">*/</span></span></td>
-      </tr>
-      <tr>
-        <td id="L31" class="blob-num js-line-number" data-line-number="31"></td>
-        <td id="LC31" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.admonition</span> {</td>
-      </tr>
-      <tr>
-        <td id="L32" class="blob-num js-line-number" data-line-number="32"></td>
-        <td id="LC32" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">85<span class="pl-k">%</span></span>; <span class="pl-c"><span class="pl-c">/*</span> match code size <span class="pl-c">*/</span></span></td>
-      </tr>
-      <tr>
-        <td id="L33" class="blob-num js-line-number" data-line-number="33"></td>
-        <td id="LC33" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">rgb</span>(<span class="pl-c1">240</span>, <span class="pl-c1">240</span>, <span class="pl-c1">240</span>);</td>
-      </tr>
-      <tr>
-        <td id="L34" class="blob-num js-line-number" data-line-number="34"></td>
-        <td id="LC34" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.55</span>);</td>
-      </tr>
-      <tr>
-        <td id="L35" class="blob-num js-line-number" data-line-number="35"></td>
-        <td id="LC35" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">border</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.1</span>);</td>
-      </tr>
-      <tr>
-        <td id="L36" class="blob-num js-line-number" data-line-number="36"></td>
-        <td id="LC36" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">padding</span></span>: <span class="pl-c1">0.5<span class="pl-k">em</span></span> <span class="pl-c1">1<span class="pl-k">em</span></span> <span class="pl-c1">0.75<span class="pl-k">em</span></span> <span class="pl-c1">1<span class="pl-k">em</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L37" class="blob-num js-line-number" data-line-number="37"></td>
-        <td id="LC37" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">margin-bottom</span></span>: <span class="pl-c1">24<span class="pl-k">px</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L38" class="blob-num js-line-number" data-line-number="38"></td>
-        <td id="LC38" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L39" class="blob-num js-line-number" data-line-number="39"></td>
-        <td id="LC39" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L40" class="blob-num js-line-number" data-line-number="40"></td>
-        <td id="LC40" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.admonition</span> <span class="pl-ent">p</span> {</td>
-      </tr>
-      <tr>
-        <td id="L41" class="blob-num js-line-number" data-line-number="41"></td>
-        <td id="LC41" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">inherit</span>;</td>
-      </tr>
-      <tr>
-        <td id="L42" class="blob-num js-line-number" data-line-number="42"></td>
-        <td id="LC42" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L43" class="blob-num js-line-number" data-line-number="43"></td>
-        <td id="LC43" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L44" class="blob-num js-line-number" data-line-number="44"></td>
-        <td id="LC44" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.admonition</span> <span class="pl-ent">p</span><span class="pl-e">.last</span> {</td>
-      </tr>
-      <tr>
-        <td id="L45" class="blob-num js-line-number" data-line-number="45"></td>
-        <td id="LC45" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">margin-bottom</span></span>: <span class="pl-c1">0</span>;</td>
-      </tr>
-      <tr>
-        <td id="L46" class="blob-num js-line-number" data-line-number="46"></td>
-        <td id="LC46" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L47" class="blob-num js-line-number" data-line-number="47"></td>
-        <td id="LC47" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L48" class="blob-num js-line-number" data-line-number="48"></td>
-        <td id="LC48" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.admonition</span> <span class="pl-ent">p</span><span class="pl-e">.first.admonition-title</span> {</td>
-      </tr>
-      <tr>
-        <td id="L49" class="blob-num js-line-number" data-line-number="49"></td>
-        <td id="LC49" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">inline</span>;</td>
-      </tr>
-      <tr>
-        <td id="L50" class="blob-num js-line-number" data-line-number="50"></td>
-        <td id="LC50" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">none</span>;</td>
-      </tr>
-      <tr>
-        <td id="L51" class="blob-num js-line-number" data-line-number="51"></td>
-        <td id="LC51" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">font-weight</span></span>: <span class="pl-c1">bold</span>;</td>
-      </tr>
-      <tr>
-        <td id="L52" class="blob-num js-line-number" data-line-number="52"></td>
-        <td id="LC52" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0</span>, <span class="pl-c1">0.75</span>);</td>
-      </tr>
-      <tr>
-        <td id="L53" class="blob-num js-line-number" data-line-number="53"></td>
-        <td id="LC53" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L54" class="blob-num js-line-number" data-line-number="54"></td>
-        <td id="LC54" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L55" class="blob-num js-line-number" data-line-number="55"></td>
-        <td id="LC55" class="blob-code blob-code-inner js-file-line"><span class="pl-c"><span class="pl-c">/*</span> notes <span class="pl-c">*/</span></span></td>
-      </tr>
-      <tr>
-        <td id="L56" class="blob-num js-line-number" data-line-number="56"></td>
-        <td id="LC56" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.rst-content</span> <span class="pl-e">.note</span> {</td>
-      </tr>
-      <tr>
-        <td id="L57" class="blob-num js-line-number" data-line-number="57"></td>
-        <td id="LC57" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">rgb</span>(<span class="pl-c1">240</span>, <span class="pl-c1">240</span>, <span class="pl-c1">240</span>);</td>
-      </tr>
-      <tr>
-        <td id="L58" class="blob-num js-line-number" data-line-number="58"></td>
-        <td id="LC58" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L59" class="blob-num js-line-number" data-line-number="59"></td>
-        <td id="LC59" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L60" class="blob-num js-line-number" data-line-number="60"></td>
-        <td id="LC60" class="blob-code blob-code-inner js-file-line"><span class="pl-c"><span class="pl-c">/*</span> tags <span class="pl-c">*/</span></span></td>
-      </tr>
-      <tr>
-        <td id="L61" class="blob-num js-line-number" data-line-number="61"></td>
-        <td id="LC61" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.rhel</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#fee</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L62" class="blob-num js-line-number" data-line-number="62"></td>
-        <td id="LC62" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.portal</span> {<span class="pl-c1"><span class="pl-c1">background-color</span></span>: <span class="pl-c1">#ded</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L63" class="blob-num js-line-number" data-line-number="63"></td>
-        <td id="LC63" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.satellite</span> {<span class="pl-c1"><span class="pl-c1">background-color</span></span>: <span class="pl-c1">#dee</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L64" class="blob-num js-line-number" data-line-number="64"></td>
-        <td id="LC64" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.stable</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#eed</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L65" class="blob-num js-line-number" data-line-number="65"></td>
-        <td id="LC65" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.centos</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#fef</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L66" class="blob-num js-line-number" data-line-number="66"></td>
-        <td id="LC66" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.baremetal</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#eef</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L67" class="blob-num js-line-number" data-line-number="67"></td>
-        <td id="LC67" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.virtual</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#efe</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L68" class="blob-num js-line-number" data-line-number="68"></td>
-        <td id="LC68" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.ceph</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#eff</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L69" class="blob-num js-line-number" data-line-number="69"></td>
-        <td id="LC69" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.source</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#bbb</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L70" class="blob-num js-line-number" data-line-number="70"></td>
-        <td id="LC70" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.ssl</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#ffe</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L71" class="blob-num js-line-number" data-line-number="71"></td>
-        <td id="LC71" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.selfsigned</span> {<span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#ffd</span>;}</td>
-      </tr>
-      <tr>
-        <td id="L72" class="blob-num js-line-number" data-line-number="72"></td>
-        <td id="LC72" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L73" class="blob-num js-line-number" data-line-number="73"></td>
-        <td id="LC73" class="blob-code blob-code-inner js-file-line"><span class="pl-c"><span class="pl-c">/*</span> admonition selector <span class="pl-c">*/</span></span></td>
-      </tr>
-      <tr>
-        <td id="L74" class="blob-num js-line-number" data-line-number="74"></td>
-        <td id="LC74" class="blob-code blob-code-inner js-file-line"><span class="pl-e">#admonition_selector</span> {</td>
-      </tr>
-      <tr>
-        <td id="L75" class="blob-num js-line-number" data-line-number="75"></td>
-        <td id="LC75" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">white</span>;</td>
-      </tr>
-      <tr>
-        <td id="L76" class="blob-num js-line-number" data-line-number="76"></td>
-        <td id="LC76" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">85<span class="pl-k">%</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L77" class="blob-num js-line-number" data-line-number="77"></td>
-        <td id="LC77" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">line-height</span></span>: <span class="pl-c1">1.4</span>;</td>
-      </tr>
-      <tr>
-        <td id="L78" class="blob-num js-line-number" data-line-number="78"></td>
-        <td id="LC78" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#2980b9</span>;</td>
-      </tr>
-      <tr>
-        <td id="L79" class="blob-num js-line-number" data-line-number="79"></td>
-        <td id="LC79" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">border-top</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.4</span>);</td>
-      </tr>
-      <tr>
-        <td id="L80" class="blob-num js-line-number" data-line-number="80"></td>
-        <td id="LC80" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L81" class="blob-num js-line-number" data-line-number="81"></td>
-        <td id="LC81" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L82" class="blob-num js-line-number" data-line-number="82"></td>
-        <td id="LC82" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.trigger</span> {</td>
-      </tr>
-      <tr>
-        <td id="L83" class="blob-num js-line-number" data-line-number="83"></td>
-        <td id="LC83" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">block</span>;</td>
-      </tr>
-      <tr>
-        <td id="L84" class="blob-num js-line-number" data-line-number="84"></td>
-        <td id="LC84" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">110<span class="pl-k">%</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L85" class="blob-num js-line-number" data-line-number="85"></td>
-        <td id="LC85" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.75</span>);</td>
-      </tr>
-      <tr>
-        <td id="L86" class="blob-num js-line-number" data-line-number="86"></td>
-        <td id="LC86" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">line-height</span></span>: <span class="pl-c1">2.5</span>;</td>
-      </tr>
-      <tr>
-        <td id="L87" class="blob-num js-line-number" data-line-number="87"></td>
-        <td id="LC87" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">position</span></span>: <span class="pl-c1">relative</span>;</td>
-      </tr>
-      <tr>
-        <td id="L88" class="blob-num js-line-number" data-line-number="88"></td>
-        <td id="LC88" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">cursor</span></span>: <span class="pl-c1">pointer</span>;</td>
-      </tr>
-      <tr>
-        <td id="L89" class="blob-num js-line-number" data-line-number="89"></td>
-        <td id="LC89" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">padding</span></span>: <span class="pl-c1">0</span> <span class="pl-c1">1.618<span class="pl-k">em</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L90" class="blob-num js-line-number" data-line-number="90"></td>
-        <td id="LC90" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L91" class="blob-num js-line-number" data-line-number="91"></td>
-        <td id="LC91" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L92" class="blob-num js-line-number" data-line-number="92"></td>
-        <td id="LC92" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.trigger</span><span class="pl-e">:after</span> {</td>
-      </tr>
-      <tr>
-        <td id="L93" class="blob-num js-line-number" data-line-number="93"></td>
-        <td id="LC93" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">content</span></span>: <span class="pl-s"><span class="pl-pds">&#39;</span>▾<span class="pl-pds">&#39;</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L94" class="blob-num js-line-number" data-line-number="94"></td>
-        <td id="LC94" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">block</span>;</td>
-      </tr>
-      <tr>
-        <td id="L95" class="blob-num js-line-number" data-line-number="95"></td>
-        <td id="LC95" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">font-family</span></span>: FontAwesome;</td>
-      </tr>
-      <tr>
-        <td id="L96" class="blob-num js-line-number" data-line-number="96"></td>
-        <td id="LC96" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">70<span class="pl-k">%</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L97" class="blob-num js-line-number" data-line-number="97"></td>
-        <td id="LC97" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">position</span></span>: <span class="pl-c1">absolute</span>;</td>
-      </tr>
-      <tr>
-        <td id="L98" class="blob-num js-line-number" data-line-number="98"></td>
-        <td id="LC98" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">right</span></span>: <span class="pl-c1">1.618<span class="pl-k">em</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L99" class="blob-num js-line-number" data-line-number="99"></td>
-        <td id="LC99" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">top</span></span>: <span class="pl-c1">6<span class="pl-k">px</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L100" class="blob-num js-line-number" data-line-number="100"></td>
-        <td id="LC100" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L101" class="blob-num js-line-number" data-line-number="101"></td>
-        <td id="LC101" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L102" class="blob-num js-line-number" data-line-number="102"></td>
-        <td id="LC102" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.trigger</span><span class="pl-e">:hover</span> {</td>
-      </tr>
-      <tr>
-        <td id="L103" class="blob-num js-line-number" data-line-number="103"></td>
-        <td id="LC103" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">white</span>;</td>
-      </tr>
-      <tr>
-        <td id="L104" class="blob-num js-line-number" data-line-number="104"></td>
-        <td id="LC104" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L105" class="blob-num js-line-number" data-line-number="105"></td>
-        <td id="LC105" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L106" class="blob-num js-line-number" data-line-number="106"></td>
-        <td id="LC106" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.content</span> {</td>
-      </tr>
-      <tr>
-        <td id="L107" class="blob-num js-line-number" data-line-number="107"></td>
-        <td id="LC107" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">none</span>;</td>
-      </tr>
-      <tr>
-        <td id="L108" class="blob-num js-line-number" data-line-number="108"></td>
-        <td id="LC108" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">border-top</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.1</span>);</td>
-      </tr>
-      <tr>
-        <td id="L109" class="blob-num js-line-number" data-line-number="109"></td>
-        <td id="LC109" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.1</span>);</td>
-      </tr>
-      <tr>
-        <td id="L110" class="blob-num js-line-number" data-line-number="110"></td>
-        <td id="LC110" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">padding</span></span>: <span class="pl-c1">0.5<span class="pl-k">em</span></span> <span class="pl-c1">1.618<span class="pl-k">em</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L111" class="blob-num js-line-number" data-line-number="111"></td>
-        <td id="LC111" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L112" class="blob-num js-line-number" data-line-number="112"></td>
-        <td id="LC112" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L113" class="blob-num js-line-number" data-line-number="113"></td>
-        <td id="LC113" class="blob-code blob-code-inner js-file-line"><span class="pl-e">.displayed</span> <span class="pl-e">.trigger</span><span class="pl-e">:after</span> {</td>
-      </tr>
-      <tr>
-        <td id="L114" class="blob-num js-line-number" data-line-number="114"></td>
-        <td id="LC114" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">content</span></span>: <span class="pl-s"><span class="pl-pds">&#39;</span>▴<span class="pl-pds">&#39;</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L115" class="blob-num js-line-number" data-line-number="115"></td>
-        <td id="LC115" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L116" class="blob-num js-line-number" data-line-number="116"></td>
-        <td id="LC116" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L117" class="blob-num js-line-number" data-line-number="117"></td>
-        <td id="LC117" class="blob-code blob-code-inner js-file-line"><span class="pl-e">#admonition_selector</span> <span class="pl-e">.title</span> {</td>
-      </tr>
-      <tr>
-        <td id="L118" class="blob-num js-line-number" data-line-number="118"></td>
-        <td id="LC118" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.45</span>);</td>
-      </tr>
-      <tr>
-        <td id="L119" class="blob-num js-line-number" data-line-number="119"></td>
-        <td id="LC119" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L120" class="blob-num js-line-number" data-line-number="120"></td>
-        <td id="LC120" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L121" class="blob-num js-line-number" data-line-number="121"></td>
-        <td id="LC121" class="blob-code blob-code-inner js-file-line"><span class="pl-e">#admonition_selector</span> <span class="pl-ent">ul</span> {</td>
-      </tr>
-      <tr>
-        <td id="L122" class="blob-num js-line-number" data-line-number="122"></td>
-        <td id="LC122" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">margin-bottom</span></span>: <span class="pl-c1">0.75<span class="pl-k">em</span></span>;</td>
-      </tr>
-      <tr>
-        <td id="L123" class="blob-num js-line-number" data-line-number="123"></td>
-        <td id="LC123" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L124" class="blob-num js-line-number" data-line-number="124"></td>
-        <td id="LC124" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L125" class="blob-num js-line-number" data-line-number="125"></td>
-        <td id="LC125" class="blob-code blob-code-inner js-file-line"><span class="pl-e">#admonition_selector</span> <span class="pl-ent">ul</span> <span class="pl-ent">li</span> {</td>
-      </tr>
-      <tr>
-        <td id="L126" class="blob-num js-line-number" data-line-number="126"></td>
-        <td id="LC126" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">block</span>;</td>
-      </tr>
-      <tr>
-        <td id="L127" class="blob-num js-line-number" data-line-number="127"></td>
-        <td id="LC127" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-      <tr>
-        <td id="L128" class="blob-num js-line-number" data-line-number="128"></td>
-        <td id="LC128" class="blob-code blob-code-inner js-file-line">
-</td>
-      </tr>
-      <tr>
-        <td id="L129" class="blob-num js-line-number" data-line-number="129"></td>
-        <td id="LC129" class="blob-code blob-code-inner js-file-line"><span class="pl-e">#admonition_selector</span> <span class="pl-ent">label</span> {</td>
-      </tr>
-      <tr>
-        <td id="L130" class="blob-num js-line-number" data-line-number="130"></td>
-        <td id="LC130" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">inline</span>;</td>
-      </tr>
-      <tr>
-        <td id="L131" class="blob-num js-line-number" data-line-number="131"></td>
-        <td id="LC131" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">inherit</span>;</td>
-      </tr>
-      <tr>
-        <td id="L132" class="blob-num js-line-number" data-line-number="132"></td>
-        <td id="LC132" class="blob-code blob-code-inner js-file-line">  <span class="pl-c1"><span class="pl-c1">text-decoration</span></span>: <span class="pl-c1">underline</span> <span class="pl-c1">dotted</span>;</td>
-      </tr>
-      <tr>
-        <td id="L133" class="blob-num js-line-number" data-line-number="133"></td>
-        <td id="LC133" class="blob-code blob-code-inner js-file-line">}</td>
-      </tr>
-</table>
+Co-Authored-By: Ana Krivokapic &lt;akrivoka@redhat.com&gt;
+Co-Authored-By: Ben Nemec &lt;bnemec@redhat.com&gt;
+Co-Authored-By: Ben Nemec &lt;cybertron@nemebean.com&gt;
+Co-Authored-By: Brad P. Crochet &lt;brad@redhat.com&gt;
+Co-Authored-By: Crag Wolfe &lt;cwolfe@redhat.com&gt;
+Co-Authored-By: Dan Sneddon &lt;dsneddon@redhat.com&gt;
+Co-Authored-By: David Kranz &lt;dkranz@redhat.com&gt;
+Co-Authored-By: Derek Higgins &lt;derekh@redhat.com&gt;
+Co-Authored-By: Dimitri Savineau &lt;dsavinea@redhat.com&gt;
+Co-Authored-By: Dmitry Tantsur &lt;divius.inside@gmail.com&gt;
+Co-Authored-By: Dmitry Tantsur &lt;dtantsur@redhat.com&gt;
+Co-Authored-By: Dougal Matthews &lt;dougal@redhat.com&gt;
+Co-Authored-By: François Charlier &lt;francois.charlier@redhat.com&gt;
+Co-Authored-By: Giulio Fidente &lt;gfidente@redhat.com&gt;
+Co-Authored-By: Imre Farkas &lt;ifarkas@redhat.com&gt;
+Co-Authored-By: James Slagle &lt;jslagle@redhat.com&gt;
+Co-Authored-By: Jan Provaznik &lt;jprovazn@redhat.com&gt;
+Co-Authored-By: Jaromir Coufal &lt;jcoufal@redhat.com&gt;
+Co-Authored-By: Jay Dobies &lt;jason.dobies@redhat.com&gt;
+Co-Authored-By: Jeff Peeler &lt;jpeeler@redhat.com&gt;
+Co-Authored-By: Jiri Stransky &lt;jistr@redhat.com&gt;
+Co-Authored-By: Jiri Tomasek &lt;jtomasek@redhat.com&gt;
+Co-Authored-By: John Trowbridge &lt;trown@redhat.com&gt;
+Co-Authored-By: Lennart Regebro &lt;regebro@gmail.com&gt;
+Co-Authored-By: Lucas Alvares Gomes &lt;lucasagomes@gmail.com&gt;
+Co-Authored-By: Marek Aufart &lt;maufart@redhat.com&gt;
+Co-Authored-By: Ronelle Landy &lt;rlandy@redhat.com&gt;
+Co-Authored-By: Sasha Chuzhoy &lt;sasha@redhat.com&gt;
+Co-Authored-By: Sasha Chuzhoy &lt;sashac88@hotmail.com&gt;
+Co-Authored-By: Steven Hardy &lt;shardy@redhat.com&gt;
+Co-Authored-By: Zane Bitter &lt;zbitter@redhat.com&gt;
+Co-Authored-By: marios &lt;marios@redhat.com&gt;" data-pjax="true" class="message f6 text-gray-dark" href="/ccamacho/tripleo-docs/commit/8ec4cae9209e80ee161a33c17b3c3fc38a118199">Initial import of TripleO docs</a>
+                    </div>
+                  </div>
+                  <div class="blame-commit-date ml-3" data-heat="10"><time-ago datetime="2015-09-01T19:13:26Z">Sep 1, 2015</time-ago></div>
+                </div>
+              </div>
+            </div>
 
-  <details class="details-reset details-overlay BlobToolbar position-absolute js-file-line-actions dropdown d-none" aria-hidden="true">
-    <summary class="btn-octicon ml-0 px-2 p-0 bg-white border border-gray-dark rounded-1" aria-label="Inline file action toolbar">
-      <svg class="octicon octicon-kebab-horizontal" viewBox="0 0 13 16" version="1.1" width="13" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M1.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm5 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM13 7.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/></svg>
-    </summary>
-    <details-menu>
-      <ul class="BlobToolbar-dropdown dropdown-menu dropdown-menu-se mt-2">
-        <li><clipboard-copy role="menuitem" class="dropdown-item" id="js-copy-lines" style="cursor:pointer;" data-original-text="Copy lines">Copy lines</clipboard-copy></li>
-        <li><clipboard-copy role="menuitem" class="dropdown-item" id="js-copy-permalink" style="cursor:pointer;" data-original-text="Copy permalink">Copy permalink</clipboard-copy></li>
-        <li><a class="dropdown-item js-update-url-with-hash" id="js-view-git-blame" role="menuitem" href="/ccamacho/tripleo-docs/blame/e5afab31ba21803d0f16e62daaf4ee30cbbd204d/doc/source/_custom/custom.css">View git blame</a></li>
-      </ul>
-    </details-menu>
-  </details>
+            <div class="blob-reblame pl-1 pr-1">
+            </div>
+
+            <div class="width-full">
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L72">72</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC72">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L73">73</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC73"><span class="pl-c"><span class="pl-c">/*</span> admonition selector <span class="pl-c">*/</span></span></div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L74">74</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC74"><span class="pl-e">#admonition_selector</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L75">75</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC75">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">white</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L76">76</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC76">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">85<span class="pl-k">%</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L77">77</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC77">  <span class="pl-c1"><span class="pl-c1">line-height</span></span>: <span class="pl-c1">1.4</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L78">78</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC78">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">#2980b9</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L79">79</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC79">  <span class="pl-c1"><span class="pl-c1">border-top</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.4</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L80">80</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC80">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L81">81</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC81">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L82">82</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC82"><span class="pl-e">.trigger</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L83">83</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC83">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">block</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L84">84</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC84">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">110<span class="pl-k">%</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L85">85</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC85">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.75</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L86">86</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC86">  <span class="pl-c1"><span class="pl-c1">line-height</span></span>: <span class="pl-c1">2.5</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L87">87</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC87">  <span class="pl-c1"><span class="pl-c1">position</span></span>: <span class="pl-c1">relative</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L88">88</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC88">  <span class="pl-c1"><span class="pl-c1">cursor</span></span>: <span class="pl-c1">pointer</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L89">89</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC89">  <span class="pl-c1"><span class="pl-c1">padding</span></span>: <span class="pl-c1">0</span> <span class="pl-c1">1.618<span class="pl-k">em</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L90">90</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC90">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L91">91</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC91">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L92">92</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC92"><span class="pl-e">.trigger</span><span class="pl-e">:after</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L93">93</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC93">  <span class="pl-c1"><span class="pl-c1">content</span></span>: <span class="pl-s"><span class="pl-pds">&#39;</span>▾<span class="pl-pds">&#39;</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L94">94</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC94">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">block</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L95">95</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC95">  <span class="pl-c1"><span class="pl-c1">font-family</span></span>: FontAwesome;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L96">96</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC96">  <span class="pl-c1"><span class="pl-c1">font-size</span></span>: <span class="pl-c1">70<span class="pl-k">%</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L97">97</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC97">  <span class="pl-c1"><span class="pl-c1">position</span></span>: <span class="pl-c1">absolute</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L98">98</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC98">  <span class="pl-c1"><span class="pl-c1">right</span></span>: <span class="pl-c1">1.618<span class="pl-k">em</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L99">99</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC99">  <span class="pl-c1"><span class="pl-c1">top</span></span>: <span class="pl-c1">6<span class="pl-k">px</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L100">100</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC100">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L101">101</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC101">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L102">102</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC102"><span class="pl-e">.trigger</span><span class="pl-e">:hover</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L103">103</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC103">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">white</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L104">104</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC104">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L105">105</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC105">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L106">106</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC106"><span class="pl-e">.content</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L107">107</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC107">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">none</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L108">108</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC108">  <span class="pl-c1"><span class="pl-c1">border-top</span></span>: <span class="pl-c1">1<span class="pl-k">px</span></span> <span class="pl-c1">solid</span> <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.1</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L109">109</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC109">  <span class="pl-c1"><span class="pl-c1">background</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.1</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L110">110</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC110">  <span class="pl-c1"><span class="pl-c1">padding</span></span>: <span class="pl-c1">0.5<span class="pl-k">em</span></span> <span class="pl-c1">1.618<span class="pl-k">em</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L111">111</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC111">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L112">112</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC112">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L113">113</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC113"><span class="pl-e">.displayed</span> <span class="pl-e">.trigger</span><span class="pl-e">:after</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L114">114</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC114">  <span class="pl-c1"><span class="pl-c1">content</span></span>: <span class="pl-s"><span class="pl-pds">&#39;</span>▴<span class="pl-pds">&#39;</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L115">115</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC115">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L116">116</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC116">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L117">117</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC117"><span class="pl-e">#admonition_selector</span> <span class="pl-e">.title</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L118">118</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC118">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">rgba</span>(<span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">255</span>, <span class="pl-c1">0.45</span>);</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L119">119</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC119">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L120">120</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC120">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L121">121</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC121"><span class="pl-e">#admonition_selector</span> <span class="pl-ent">ul</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L122">122</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC122">  <span class="pl-c1"><span class="pl-c1">margin-bottom</span></span>: <span class="pl-c1">0.75<span class="pl-k">em</span></span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L123">123</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC123">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L124">124</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC124">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L125">125</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC125"><span class="pl-e">#admonition_selector</span> <span class="pl-ent">ul</span> <span class="pl-ent">li</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L126">126</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC126">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">block</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L127">127</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC127">}</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L128">128</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC128">
+</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L129">129</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC129"><span class="pl-e">#admonition_selector</span> <span class="pl-ent">label</span> {</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L130">130</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC130">  <span class="pl-c1"><span class="pl-c1">display</span></span>: <span class="pl-c1">inline</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L131">131</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC131">  <span class="pl-c1"><span class="pl-c1">color</span></span>: <span class="pl-c1">inherit</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L132">132</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC132">  <span class="pl-c1"><span class="pl-c1">text-decoration</span></span>: <span class="pl-c1">underline</span> <span class="pl-c1">dotted</span>;</div>
+                </div>
+                <div class="d-flex flex-justify-start flex-items-start">
+                  <div class="blob-num blame-blob-num bg-gray-light js-line-number" id="L133">133</div>
+                  <div class="blob-code blob-code-inner js-file-line" id="LC133">}</div>
+                </div>
+            </div>
+          </div>
+      </div>
+    </div>
 
   </div>
-
-  </div>
-
-  <details class="details-reset details-overlay details-overlay-dark">
-    <summary data-hotkey="l" aria-label="Jump to line"></summary>
-    <details-dialog class="Box Box--overlay d-flex flex-column anim-fade-in fast linejump" aria-label="Jump to line">
-      <!-- '"` --><!-- </textarea></xmp> --></option></form><form class="js-jump-to-line-form Box-body d-flex" action="" accept-charset="UTF-8" method="get"><input name="utf8" type="hidden" value="&#x2713;" />
-        <input class="form-control flex-auto mr-3 linejump-input js-jump-to-line-field" type="text" placeholder="Jump to line&hellip;" aria-label="Jump to line" autofocus>
-        <button type="submit" class="btn" data-close-dialog>Go</button>
-</form>    </details-dialog>
-  </details>
 
 
   </div>
@@ -1344,7 +1617,7 @@ Change-Id: I5b6b313d277b3fb57a12ec4f74d5c1ffc2946c84" class="message" href="/cca
 <div class="footer container-lg px-3" role="contentinfo">
   <div class="position-relative d-flex flex-justify-between pt-6 pb-2 mt-6 f6 text-gray border-top border-gray-light ">
     <ul class="list-style-none d-flex flex-wrap ">
-      <li class="mr-3">&copy; 2018 <span title="0.15467s from unicorn-c8cb4c6f6-2mtrf">GitHub</span>, Inc.</li>
+      <li class="mr-3">&copy; 2018 <span title="0.11942s from unicorn-85bcc764f6-j7qv5">GitHub</span>, Inc.</li>
         <li class="mr-3"><a data-ga-click="Footer, go to terms, text:terms" href="https://github.com/site/terms">Terms</a></li>
         <li class="mr-3"><a data-ga-click="Footer, go to privacy, text:privacy" href="https://github.com/site/privacy">Privacy</a></li>
         <li class="mr-3"><a href="https://help.github.com/articles/github-security/" data-ga-click="Footer, go to security, text:security">Security</a></li>
