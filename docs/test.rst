@@ -7,8 +7,12 @@ test
 
    This article is a stub. Please improve the docs by expanding it.
 
+.. container:: admonition admonition-red
+
+   blabla
+
 .. admonition:: RHEL
-   :class: rhel
+   :class: admonition-red
 
    Step that should only be run when using RHEL
 
