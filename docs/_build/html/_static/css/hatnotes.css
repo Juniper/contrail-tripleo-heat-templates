@@ -15,11 +15,11 @@
 .hatnote-icon { height: 16px ; width: 16px ; }
 
 .admonition {
-  font-size: 85%; /* match code size */
+  font-size: 100%; /* match code size */
   background: rgb(240, 240, 240);
   color: rgba(0, 0, 0, 0.55);
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 0.5em 1em 0.75em 1em;
   margin-bottom: 24px;
 }
-.admonition-red { background: #ffe8e8 ; color: #000000 ; }
+.admonition-red { background: #fee ; color: #ded ; }
