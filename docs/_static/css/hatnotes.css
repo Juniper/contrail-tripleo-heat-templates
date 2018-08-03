@@ -14,6 +14,32 @@
 .hatnote-red { background-color: #ffe8e8 ; color: #000000 ; }
 .hatnote-icon { height: 16px ; width: 16px ; }
 
+/* remove backgrounds */
+#admonition_selector {
+  background: none !important;
+  color: black !important;
+}
+
+/* admonition selector */
+#admonition_selector {
+  border-top: 0 none !important;
+}
+
+#admonition_selector .title {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.trigger {
+  color: rgba(0, 0, 0, 0.7) !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.trigger:hover {
+  color: rgba(0, 0, 0, 0.9) !important;
+}
+
 .admonition {
   font-size: 100%; /* match code size */
   background: rgb(240, 240, 240);
