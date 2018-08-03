@@ -20,3 +20,5 @@ test
 
 .. admonition:: CentOS
    :class: centos
+
+   blabla
