@@ -3,6 +3,10 @@ test
 ====
 
 
+.. container:: hatnote hatnote-gray
+
+   |stub| This article is a stub. Please improve the docs by expanding it.
+
 .. admonition:: RHEL
    :class: rhel
 
