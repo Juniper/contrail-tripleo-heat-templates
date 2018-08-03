@@ -206,7 +206,7 @@ way of customizing the network. In this example the following networks are used:
 </tr>
 <tr class="row-odd"><td>storage</td>
 <td>740</td>
-<td>OpenStack CTRL</td>
+<td>OpenStack CTRL, Computes</td>
 </tr>
 <tr class="row-even"><td>storage_mgmt</td>
 <td>750</td>
@@ -226,10 +226,10 @@ way of customizing the network. In this example the following networks are used:
 <p>The networks must be activated per role in the roles_data file:</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<div class="admonition-openstack-controller last admonition">
+<p>vi ~/tripleo-heat-templates/roles_data_contrail_aio.yaml</p>
+<div class="admonition-openstack-controller admonition">
 <p class="first admonition-title">OpenStack Controller</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">vi</span> <span class="o">~/</span><span class="n">tripleo</span><span class="o">-</span><span class="n">heat</span><span class="o">-</span><span class="n">templates</span>
-<span class="c1">###############################################################################</span>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">###############################################################################</span>
 <span class="c1"># Role: Controller                                                            #</span>
 <span class="c1">###############################################################################</span>
 <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">Controller</span>
@@ -245,6 +245,95 @@ way of customizing the network. In this example the following networks are used:
     <span class="o">-</span> <span class="n">InternalApi</span>
     <span class="o">-</span> <span class="n">Storage</span>
     <span class="o">-</span> <span class="n">StorageMgmt</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-compute admonition">
+<p class="first admonition-title">Compute</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">###############################################################################</span>
+<span class="c1"># Role: Compute                                                               #</span>
+<span class="c1">###############################################################################</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">Compute</span>
+  <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+    <span class="n">Basic</span> <span class="n">Compute</span> <span class="n">Node</span> <span class="n">role</span>
+  <span class="n">CountDefault</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="n">networks</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">InternalApi</span>
+    <span class="o">-</span> <span class="n">Tenant</span>
+    <span class="o">-</span> <span class="n">Storage</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-contrail-controller admonition">
+<p class="first admonition-title">Contrail Controller</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">###############################################################################</span>
+<span class="c1"># Role: ContrailController                                                    #</span>
+<span class="c1">###############################################################################</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ContrailController</span>
+  <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+    <span class="n">ContrailController</span> <span class="n">role</span> <span class="n">that</span> <span class="n">has</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">Contrail</span> <span class="n">controler</span> <span class="n">services</span> <span class="n">loaded</span>
+    <span class="ow">and</span> <span class="n">handles</span> <span class="n">config</span><span class="p">,</span> <span class="n">control</span> <span class="ow">and</span> <span class="n">webui</span> <span class="n">functions</span>
+  <span class="n">CountDefault</span><span class="p">:</span> <span class="mi">1</span>
+  <span class="n">tags</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">primary</span>
+    <span class="o">-</span> <span class="n">contrailcontroller</span>
+  <span class="n">networks</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">InternalApi</span>
+    <span class="o">-</span> <span class="n">Tenant</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-contrail-dpdk admonition">
+<p class="first admonition-title">Contrail DPDK</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">###############################################################################</span>
+<span class="c1"># Role: ContrailDpdk                                                          #</span>
+<span class="c1">###############################################################################</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ContrailDpdk</span>
+  <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+    <span class="n">Contrail</span> <span class="n">Dpdk</span> <span class="n">Node</span> <span class="n">role</span>
+  <span class="n">CountDefault</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="n">tags</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">contraildpdk</span>
+  <span class="n">networks</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">InternalApi</span>
+    <span class="o">-</span> <span class="n">Tenant</span>
+    <span class="o">-</span> <span class="n">Storage</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-contrail-sriov admonition">
+<p class="first admonition-title">Contrail SRIOV</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">###############################################################################</span>
+<span class="c1"># Role: ContrailSriov</span>
+<span class="c1">###############################################################################</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ContrailSriov</span>
+  <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+    <span class="n">Contrail</span> <span class="n">Sriov</span> <span class="n">Node</span> <span class="n">role</span>
+  <span class="n">CountDefault</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="n">tags</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">contrailsriov</span>
+  <span class="n">networks</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">InternalApi</span>
+    <span class="o">-</span> <span class="n">Tenant</span>
+    <span class="o">-</span> <span class="n">Storage</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition-contrail-tsn last admonition">
+<p class="first admonition-title">Contrail TSN</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">###############################################################################</span>
+<span class="c1"># Role: ContrailTsn</span>
+<span class="c1">###############################################################################</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">ContrailTsn</span>
+  <span class="n">description</span><span class="p">:</span> <span class="o">|</span>
+    <span class="n">Contrail</span> <span class="n">Tsn</span> <span class="n">Node</span> <span class="n">role</span>
+  <span class="n">CountDefault</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="n">tags</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">contrailtsn</span>
+  <span class="n">networks</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">InternalApi</span>
+    <span class="o">-</span> <span class="n">Tenant</span>
+    <span class="o">-</span> <span class="n">Storage</span>
 </pre></div>
 </div>
 </div>

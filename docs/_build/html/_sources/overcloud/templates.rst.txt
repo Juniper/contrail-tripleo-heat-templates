@@ -22,7 +22,7 @@ way of customizing the network. In this example the following networks are used:
 +--------------+------+-------------------------+
 | external_api | 720  | OpenStack CTRL          |
 +--------------+------+-------------------------+
-| storage      | 740  | OpenStack CTRL          |
+| storage      | 740  | OpenStack CTRL, Computes|
 +--------------+------+-------------------------+
 | storage_mgmt | 750  | OpenStack CTRL          |
 +--------------+------+-------------------------+
@@ -34,13 +34,12 @@ Network activation in roles_data
 
 The networks must be activated per role in the roles_data file:
 
-.. note::
+.. note:: vi ~/tripleo-heat-templates/roles_data_contrail_aio.yaml
 
   .. admonition:: OpenStack Controller
 
     ::
 
-      vi ~/tripleo-heat-templates
       ###############################################################################
       # Role: Controller                                                            #
       ###############################################################################
@@ -57,3 +56,94 @@ The networks must be activated per role in the roles_data file:
           - InternalApi
           - Storage
           - StorageMgmt
+
+
+  .. admonition:: Compute
+
+    ::
+
+      ###############################################################################
+      # Role: Compute                                                               #
+      ###############################################################################
+      - name: Compute
+        description: |
+          Basic Compute Node role
+        CountDefault: 1
+        networks:
+          - InternalApi
+          - Tenant
+          - Storage
+
+
+  .. admonition:: Contrail Controller
+
+    ::
+
+      ###############################################################################
+      # Role: ContrailController                                                    #
+      ###############################################################################
+      - name: ContrailController
+        description: |
+          ContrailController role that has all the Contrail controler services loaded
+          and handles config, control and webui functions
+        CountDefault: 1
+        tags:
+          - primary
+          - contrailcontroller
+        networks:
+          - InternalApi
+          - Tenant
+
+  .. admonition:: Contrail DPDK
+
+    ::
+
+      ###############################################################################
+      # Role: ContrailDpdk                                                          #
+      ###############################################################################
+      - name: ContrailDpdk
+        description: |
+          Contrail Dpdk Node role
+        CountDefault: 0
+        tags:
+          - contraildpdk
+        networks:
+          - InternalApi
+          - Tenant
+          - Storage
+
+  .. admonition:: Contrail SRIOV
+
+    ::
+
+      ###############################################################################
+      # Role: ContrailSriov
+      ###############################################################################
+      - name: ContrailSriov
+        description: |
+          Contrail Sriov Node role
+        CountDefault: 0
+        tags:
+          - contrailsriov
+        networks:
+          - InternalApi
+          - Tenant
+          - Storage
+
+  .. admonition:: Contrail TSN
+
+    ::
+
+      ###############################################################################
+      # Role: ContrailTsn
+      ###############################################################################
+      - name: ContrailTsn
+        description: |
+          Contrail Tsn Node role
+        CountDefault: 0
+        tags:
+          - contrailtsn
+        networks:
+          - InternalApi
+          - Tenant
+          - Storage
