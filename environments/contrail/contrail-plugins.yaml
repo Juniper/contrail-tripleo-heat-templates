@@ -6,6 +6,7 @@ resource_registry:
   OS::TripleO::Services::ContrailConfig: ../../docker/services/contrail/contrail-config.yaml
   OS::TripleO::Services::ContrailAnalytics: ../../docker/services/contrail/contrail-analytics.yaml
   OS::TripleO::Services::ContrailControl: ../../docker/services/contrail/contrail-control.yaml
+  OS::TripleO::Services::ContrailControlOnly: ../../docker/services/contrail/contrail-control-only.yaml
   OS::TripleO::Services::ContrailWebui: ../../docker/services/contrail/contrail-webui.yaml
   OS::TripleO::Services::ContrailVrouter: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Services::ContrailDpdk: ../../docker/services/contrail/contrail-vrouter-dpdk.yaml
