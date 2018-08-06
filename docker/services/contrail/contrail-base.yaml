@@ -129,6 +129,10 @@ parameters:
     default: ''
     description: Path to CA private key
     type: string
+  NodeDataLookup:
+    type: json
+    default: {}
+    description: json containing per-node configuration map
 
 conditions:
   contrail_config_vip_unset: {equals : [{get_param: ContrailConfigVIP}, '']}
@@ -185,6 +189,7 @@ outputs:
           contrail_internal_api_ssl: {get_param: EnableInternalTLS}
           # ==
           contrail_settings: {get_param: ContrailSettings}
+          node_data_lookup: {get_param: NodeDataLookup}
         - if:
           - contrail_config_vip_unset
           - contrail_config_vip: "%{hiera('internal_api_virtual_ip')}"
