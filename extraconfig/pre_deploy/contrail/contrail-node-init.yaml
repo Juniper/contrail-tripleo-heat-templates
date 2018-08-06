@@ -43,6 +43,10 @@ parameters:
   install_contrail_puppet:
     type: boolean
     default: false
+  NodeDataLookup:
+    type: json
+    default: {}
+    description: json string containing per-node configuration map
 
 resources:
   ContrailNodeInitConfig:
@@ -59,6 +63,7 @@ resources:
         - name: _SERVER_CERTFILE_
         - name: _SERVER_KEYFILE_
         - name: _INSTALL_PUPPET_
+        - name: _NODEDATA_
       outputs:
         - name: result
       config:
@@ -81,6 +86,7 @@ resources:
         _SERVER_KEYFILE_: {get_param: ContrailServiceKeyFile}
         _SSL_ENABLE_: {get_param: ContrailSslEnabled}
         _INSTALL_PUPPET_: {get_param: install_contrail_puppet}
+        _NODEDATA_: {get_param: NodeDataLookup}
 
 outputs:
   result:
