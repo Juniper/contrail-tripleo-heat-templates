@@ -42,6 +42,22 @@ parameters:
     description: Keystone admin user name
     type: string
     default: 'admin'
+  KeystoneProjectDomainName:
+    type: string
+    default: 'Default'
+    description: Keystone Project Domain Name
+  KeystoneRegion:
+    type: string
+    default: 'regionOne'
+    description: Keystone region for endpoint
+  KeystoneUserDomainName:
+    type: string
+    default: 'Default'
+    description: Keystone User Domain Name
+  AAAMode:
+    description: AAAmode can be no-auth, cloud-admin or rbac
+    type: string
+    default: 'cloud-admin'
   ContrailAnalyticsVIP:
     default: ''
     description: Contrail Analytics Api Virtual IP address
@@ -66,18 +82,10 @@ parameters:
     default: 'latest'
     description: Contrail container image tag
     type: string
-  DockerContrailNodeInitImageName:
-    description: image
-    type: string
-    default: "contrail-node-init"
   DockerContrailNodemgrImageName:
     description: image
     type: string
     default: "contrail-nodemgr"
-  DockerContrailStatusImageName:
-    description: image
-    type: string
-    default: "contrail-status"
   SSLCertificate:
     default: ''
     description: >
@@ -163,12 +171,18 @@ outputs:
           contrail::admin_tenant_name: {get_param: AdminTenantName}
           contrail::admin_user: {get_param: AdminUser}
           # ==
-          # for compatibility with puppets: neutron_plugin.pp and heat.pp
+          # for puppets: neutron_plugin.pp and heat.pp
+          # todo: remove admin_token after puppet update
           contrail::admin_token: ''
           contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
           contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
-          contrail::auth_protocol: {get_param: [EndpointMap, KeystonePublic, protocol] }
+          contrail::auth_protocol: {get_param: [EndpointMap, KeystoneAdmin, protocol] }
           contrail::api_port: '8082'
+          contrail::keystone_region: {get_param: KeystoneRegion}
+          contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
+          contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
+          contrail::aaa_mode: {get_param: AAAMode}
+          contrail_internal_api_ssl: {get_param: EnableInternalTLS}
           # ==
           contrail_settings: {get_param: ContrailSettings}
         - if:
@@ -238,74 +252,119 @@ outputs:
           - - /etc/contrail/ssl:/etc/contrail/ssl
             - /var/crashes:/var/crashes
             - /var/log/containers/contrail:/var/log/contrail
+      contrail_general_base_env: &contrail_general_base_env
+        - 'CLOUD_ORCHESTRATOR=openstack'
+        - 'OPENSTACK_VERSION=queens'
+        - list_join:
+          - '='
+          - - 'AAA_MODE'
+            - {get_param: AAAMode}
+      contrail_auth_base_env: &contrail_auth_base_env
+        - 'AUTH_MODE=keystone'
+        - 'KEYSTONE_AUTH_URL_VERSION=/v3'
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_ADMIN_PASSWORD'
+            - {get_param: AdminPassword}
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_ADMIN_USER'
+            - {get_param: AdminUser}
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_ADMIN_TENANT'
+            - {get_param: AdminTenantName}
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_REGION_NAME'
+            - {get_param: KeystoneRegion}
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_PROJECT_DOMAIN_NAME'
+            - {get_param: KeystoneProjectDomainName}
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_USER_DOMAIN_NAME'
+            - {get_param: KeystoneUserDomainName}
+      contrail_auth_admin_env: &contrail_auth_admin_env
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_HOST'
+            - {get_param: [EndpointMap, KeystoneAdmin, host] }
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_ADMIN_PORT'
+            - {get_param: [EndpointMap, KeystoneAdmin, port] }
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_PROTO'
+            - {get_param: [EndpointMap, KeystoneAdmin, protocol] }
+      contrail_auth_internal_env: &contrail_auth_internal_env
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_HOST'
+            - {get_param: [EndpointMap, KeystoneInternal, host] }
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_ADMIN_PORT'
+            - {get_param: [EndpointMap, KeystoneInternal, port] }
+        - list_join:
+          - '='
+          - - 'KEYSTONE_AUTH_PROTO'
+            - {get_param: [EndpointMap, KeystoneInternal, protocol] }
+      contrail_tls_env: &contrail_tls_env
+        if:
+          - contrail_tls_enabled
+          - - "XMPP_SSL_ENABLE=True"
+            - "SANDESH_SSL_ENABLE=True"
+            - "INTROSPECT_SSL_ENABLE=True"
+            - if:
+              - contrail_tls_insecure
+              - 'INTROSPECT_SSL_INSECURE=True'
+              - 'INTROSPECT_SSL_INSECURE=False'
+            - list_join:
+                - '='
+                - - 'SERVER_CERTFILE'
+                  - {get_param: ContrailServiceCertFile}
+            - list_join:
+                - '='
+                - - 'SERVER_KEYFILE'
+                  - {get_param: ContrailServiceKeyFile}
+            - list_join:
+                - '='
+                - - 'SERVER_CA_CERTFILE'
+                  - {get_param: ContrailCaCertFile}
+            - list_join:
+                - '='
+                - - 'SERVER_CA_KEYFILE'
+                  - {get_param: ContrailCaKeyFile}
+          - []
+      contrail_auth_tls_env: &contrail_auth_tls_env
+        if:
+          - internal_tls_enabled
+          - - 'KEYSTONE_AUTH_INSECURE=True'
+            - list_join:
+                - '='
+                - - 'KEYSTONE_AUTH_CERTFILE'
+                  - {get_param: ContrailServiceCertFile}
+            - list_join:
+                - '='
+                - - 'KEYSTONE_AUTH_KEYFILE'
+                  - {get_param: ContrailServiceKeyFile}
+          - []
       contrail_base_env: &contrail_base_env
         list_concat:
-          - if:
-            - contrail_tls_enabled
-            - - "XMPP_SSL_ENABLE=True"
-              - "SANDESH_SSL_ENABLE=True"
-              - "INTROSPECT_SSL_ENABLE=True"
-              - if:
-                - contrail_tls_insecure
-                - 'INTROSPECT_SSL_INSECURE=True'
-                - 'INTROSPECT_SSL_INSECURE=False'
-              - list_join:
-                  - '='
-                  - - 'SERVER_CERTFILE'
-                    - {get_param: ContrailServiceCertFile}
-              - list_join:
-                  - '='
-                  - - 'SERVER_KEYFILE'
-                    - {get_param: ContrailServiceKeyFile}
-              - list_join:
-                  - '='
-                  - - 'SERVER_CA_CERTFILE'
-                    - {get_param: ContrailCaCertFile}
-              - list_join:
-                  - '='
-                  - - 'SERVER_CA_KEYFILE'
-                    - {get_param: ContrailCaKeyFile}
-            - []
-          - if:
-            - internal_tls_enabled
-            - - "KEYSTONE_AUTH_INSECURE=False"
-              - "KEYSTONE_AUTH_PROTO=https"
-              - list_join:
-                  - '='
-                  - - 'KEYSTONE_AUTH_CERTFILE'
-                    - {get_param: ContrailServiceCertFile}
-              - list_join:
-                  - '='
-                  - - 'KEYSTONE_AUTH_KEYFILE'
-                    - {get_param: ContrailServiceKeyFile}
-            - []
+          - *contrail_general_base_env
+          - *contrail_auth_base_env
+          - *contrail_auth_admin_env
+          - *contrail_tls_env
+          - *contrail_auth_tls_env
+      contrail_base_auth_internal_env: &contrail_base_auth_internal_env
+        list_concat:
+          - *contrail_general_base_env
+          - *contrail_auth_base_env
+          - *contrail_auth_internal_env
+          - *contrail_tls_env
+          - *contrail_auth_tls_env
       docker_config:
-        step_2:
-          contrail_node_init:
-            image:
-              list_join:
-                - ''
-                - - {get_param: ContrailRegistry}
-                  - '/'
-                  - {get_param: DockerContrailNodeInitImageName}
-                  - ':'
-                  - {get_param: ContrailImageTag}
-            environment:
-              list_concat:
-                - *contrail_base_env
-                - - list_join:
-                      - ''
-                      - - 'CONTRAIL_STATUS_IMAGE='
-                        - {get_param: ContrailRegistry}
-                        - '/'
-                        - {get_param: DockerContrailStatusImageName}
-                        - ':'
-                        - {get_param: ContrailImageTag}
-            net: host
-            pid: host
-            privileged: true
-            user: root
-            volumes:
-              list_concat:
-                - *contrail_base_volumes
-                - - /usr/bin:/host/usr/bin
+        step_2: {}
