@@ -9,7 +9,7 @@ parameter_defaults:
     ContrailVrouterNetwork: tenant
   OvercloudControllerFlavor: control
   OvercloudContrailControllerFlavor: contrail-controller
-  OvercloudContrailControlOnlyFlavor: contrail-controller
+  OvercloudContrailControlOnlyFlavor: control-only
   OvercloudComputeFlavor: compute
   OvercloudContrailDpdkFlavor: compute-dpdk
   OvercloudContrailSriovFlavor: compute-sriov
