@@ -3,7 +3,14 @@ function show_help {
   echo ""
   echo ""
   echo "Usage:"
-  echo "./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate path]"
+  echo "./import_contrail_container.sh -f container_outputfile \ "
+  echo "  -r registry \ "
+  echo "  -t tag \ "
+  echo "  [-l local_registry (default: 192.168.24.1:8787)] \ "
+  echo "  [-i insecure] \ "
+  echo "  [-u username] \ "
+  echo "  [-p password] \ "
+  echo "  [-c certificate path]"
   echo ""
   echo "Examples:"
   echo "Pull from password protectet public registry:"
@@ -33,8 +40,9 @@ registry=""
 tag=""
 user=""
 password=""
+local_registry="192.168.24.1:8787"
 
-while getopts "h?vf:i:r:t:c:u:p:" opt; do
+while getopts "h?vf:i:r:l:t:c:u:p:" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -47,6 +55,8 @@ while getopts "h?vf:i:r:t:c:u:p:" opt; do
     i)  insecure=1
         ;;
     r)  registry=$OPTARG
+        ;;
+    l)  local_registry=$OPTARG
         ;;
     t)  tag=$OPTARG
         ;;
@@ -63,13 +73,6 @@ shift $((OPTIND-1))
 
 [ "${1:-}" = "--" ] && shift
 
-#echo "verbose=$verbose, output_file='$output_file', Leftovers: $@"
-#echo "outfile: $output_file"
-#echo "insecure: $insecure"
-#echo "registry: $registry"
-#echo "tag: $tag"
-#echo "user: $user"
-#echo "password: $password"
 missing=""
 if [[ -z ${output_file} ]]; then
   missing+=" output_file (-f),"
@@ -87,7 +90,6 @@ if [[ -n ${missing} ]]; then
   echo ${missing} is missing
   exit 1
 fi
-
 
 CONTAINER_MAP=(
 DockerContrailAnalyticsAlarmGenImageName:contrail-analytics-alarm-gen
@@ -155,7 +157,7 @@ do
   thtImageName=`echo ${line} |awk -F":" '{print $1}'`
   contrailImageName=`echo ${line} |awk -F":" '{print $2}'`
   echo "- imagename: ${registry}/${contrailImageName}:${tag}" >> ${output_file}
-  echo "  push_destination: 192.168.24.1:8787" >> ${output_file}
+  echo "  push_destination: ${local_registry}" >> ${output_file}
 done
 
 #redis special
