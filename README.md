@@ -118,24 +118,24 @@ are provided as Virtual Machines hosted on KVM hosts
 # Infrastructure configuration
 
 ## Physical switch
-- ge0    
--- all networks (vlan700,10,20,30,40,50) are configured as trunks    
-- ge1    
--- tenant network is untagged and can be a trunk    
-- ge2    
--- provisioning network (vlan700) is the native vlan    
--- all other networks (vlan710,20,30,40,50) are configured as trunks    
-- ge3    
--- tenant network is untagged and can be trunk    
+- ge0
+-- all networks (vlan700,10,20,30,40,50) are configured as trunks
+- ge1
+-- tenant network is untagged and can be a trunk
+- ge2
+-- provisioning network (vlan700) is the native vlan
+-- all other networks (vlan710,20,30,40,50) are configured as trunks
+- ge3
+-- tenant network is untagged and can be trunk
 
 ## Control plane KVM host preparation (KVM 1-3)
 
 ### on all KVM hosts
 
-The control plane KVM hosts will host the control plane VMs. Each KVM host    
-will need virtual switches and the virtual machine definitions. The tasks    
-described must be done on each of the three hosts.    
-NIC 1 - 3 have to be substituded with real NIC names.    
+The control plane KVM hosts will host the control plane VMs. Each KVM host
+will need virtual switches and the virtual machine definitions. The tasks
+described must be done on each of the three hosts.
+NIC 1 - 3 have to be substituded with real NIC names.
 
 
 ### Install basic packages
@@ -157,11 +157,11 @@ systemctl start openvswitch
 ```
 
 #### vSwitch configuration:
-- br0    
--- provisioning network (vlan700) is the native vlan    
--- all other networks (vlan710,20,30,40,50) are configured as trunks    
-- br1    
--- tenant network is untagged    
+- br0
+-- provisioning network (vlan700) is the native vlan
+-- all other networks (vlan710,20,30,40,50) are configured as trunks
+- br1
+-- tenant network is untagged
 
 #### Create virtual switches for the undercloud VM
 ```
@@ -249,9 +249,9 @@ EOF
   done
 done
 ```
-There will be one ironic_list file per KVM host. The ironic_list files of all KVM hosts    
+There will be one ironic_list file per KVM host. The ironic_list files of all KVM hosts
 has to be combined on the overcloud.
-This is an example of a full list across three KVM hosts:    
+This is an example of a full list across three KVM hosts:
 ```
 52:54:00:e7:ca:9a compute-1-5b3s31 10.87.64.32 compute 16230
 52:54:00:30:6c:3f compute-2-5b3s31 10.87.64.32 compute 16231
@@ -267,8 +267,8 @@ This is an example of a full list across three KVM hosts:
 52:54:00:91:51:35 control-1-5b3s32 10.87.64.33 control 16233
 ```
 
-This list will be needed on the undercloud VM later on.    
-With that the control plane VM KVM host preparation is done.    
+This list will be needed on the undercloud VM later on.
+With that the control plane VM KVM host preparation is done.
 
 ## create undercloud VM on KVM host hosting the undercloud
 ### CentOS 7.5
@@ -429,7 +429,7 @@ openstack overcloud image upload --image-path /home/stack/images/
 ## Ironic preparation
 
 ### create list with ironic nodes (adjust!!!)
-Take the ironic_node lists from the KVM hosts from above.    
+Take the ironic_node lists from the KVM hosts from above.
 ```
 cd
 cat << EOM > ironic_list
@@ -458,7 +458,7 @@ EOM
 ```
 ipmi_password=ADMIN
 ipmi_user=ADMIN
-while IFS= read -r line; do      
+while IFS= read -r line; do
   mac=`echo $line|awk '{print $1}'`
   name=`echo $line|awk '{print $2}'`
   kvm_ip=`echo $line|awk '{print $3}'`
@@ -482,18 +482,18 @@ done < <(cat ironic_list)
 DEPLOY_KERNEL=$(openstack image show bm-deploy-kernel -f value -c id)
 DEPLOY_RAMDISK=$(openstack image show bm-deploy-ramdisk -f value -c id)
 
-for i in `openstack baremetal node list -c UUID -f value`; do 
+for i in `openstack baremetal node list -c UUID -f value`; do
   openstack baremetal node set $i --driver-info deploy_kernel=$DEPLOY_KERNEL --driver-info deploy_ramdisk=$DEPLOY_RAMDISK
 done
 
-for i in `openstack baremetal node list -c UUID -f value`; do 
+for i in `openstack baremetal node list -c UUID -f value`; do
   openstack baremetal node show $i -c properties -f value
 done
 ```
 
 ### introspect the nodes
 ```
-for node in $(openstack baremetal node list -c UUID -f value) ; do 
+for node in $(openstack baremetal node list -c UUID -f value) ; do
   openstack baremetal node manage $node
 done
 openstack overcloud node introspect --all-manageable --provide
@@ -506,7 +506,7 @@ compute-sriov \
 contrail-controller \
 contrail-analytics \
 contrail-database \
-contrail-analytics-database; do   
+contrail-analytics-database; do
   openstack flavor create $i --ram 4096 --vcpus 1 --disk 40
   openstack flavor set --property "capabilities:boot_option"="local" \
                        --property "capabilities:profile"="${i}" ${i}
@@ -558,7 +558,7 @@ openstack overcloud container image prepare \
  --prefix=openstack-  \
  --tag-from-label {version}-{release}  \
  --output-env-file ~/overcloud_images.yaml
-```  
+```
 
 #### Upload openstack containers
 ```
