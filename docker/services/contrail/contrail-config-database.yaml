@@ -185,17 +185,6 @@ outputs:
             dest: /etc/contrail/common.env
             content: ""
           when: not p.stat.exists
-        - name: get service_config
-          set_fact:
-            service_configs: "{{ lookup('file', '/etc/puppet/hieradata/service_configs.json') | from_json }}"
-        - name: get contrail_settings
-          set_fact:
-            contrail_settings: "{{ service_configs.contrail_settings }}"
-          when: service_configs is defined
-        - name: write contrail settings to file
-          lineinfile: dest=/etc/contrail/common.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
-          with_dict: "{{ contrail_settings }}"
-          when: contrail_settings is defined
         - name: get contrail config database node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
           register: contrail_config_database_node_ips_list
@@ -225,5 +214,32 @@ outputs:
             - ZOOKEEPER_PORT=2181
             - RABBITMQ_ERLANG_COOKIE=abcdefg
             - RABBITMQ_NODE_PORT=5673
+
+        - name: get dmi
+          shell: |
+                 #!/bin/sh
+                 dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
+          register: dmi
+
+        - name: set dmi fact
+          set_fact:
+            dmi_uuid: "{{ dmi.stdout }}"
+
+        - name: get contrail_settings
+          shell: "hiera -c /etc/puppet/hiera.yaml contrail_settings ::uuid={{ dmi_uuid }} | sed 's/=>/:/g'"
+          register: contrail_settings_string
+
+        - name: turn contrail_settings into json
+          set_fact:
+            contrail_settings: "{{ contrail_settings_string.stdout | from_json }}"
+          when:
+          - contrail_settings_string.stdout is defined
+          - contrail_settings_string.stdout != "nil"
+
+        - name: write contrail settings to file
+          lineinfile: dest=/etc/contrail/common.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
+
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
