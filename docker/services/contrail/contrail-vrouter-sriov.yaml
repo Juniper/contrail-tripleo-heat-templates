@@ -156,18 +156,6 @@ outputs:
             dest: /etc/contrail/common_vrouter.env
             content: ""
           when: not p.stat.exists
-        - name: get service_config
-          set_fact:
-            service_configs: "{{ lookup('file', '/etc/puppet/hieradata/service_configs.json') | from_json }}"
-        - name: get contrail_settings
-          set_fact:
-            contrail_settings: "{{ service_configs.contrail_settings }}"
-          when: service_configs is defined
-        - name: write contrail settings to file
-          lineinfile: dest=/etc/contrail/common_vrouter.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
-          with_dict: "{{ contrail_settings }}"
-          when: contrail_settings is defined
-          ignore_errors: yes
         - name: get metadata secret
           shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::metadata_proxy_shared_secret
           register: contrail_metadata_secret
@@ -228,6 +216,18 @@ outputs:
             - RABBITMQ_NODE_PORT=5673
             - METADATA_PROXY_SECRET={{ contrail_metadata_secret.stdout }}
             - AGENT_MODE={{ contrail_sriov_mode.stdout }}
+        - name: get service_config
+          set_fact:
+            service_configs: "{{ lookup('file', '/etc/puppet/hieradata/service_configs.json') | from_json }}"
+        - name: get contrail_settings
+          set_fact:
+            contrail_settings: "{{ service_configs.contrail_settings }}"
+          when: service_configs is defined
+        - name: write contrail settings to file
+          lineinfile: dest=/etc/contrail/common_vrouter.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
+          ignore_errors: yes
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]

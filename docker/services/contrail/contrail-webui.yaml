@@ -138,17 +138,6 @@ outputs:
             dest: /etc/contrail/common_webui.env
             content: ""
           when: not p.stat.exists
-        - name: get service_config
-          set_fact:
-            service_configs: "{{ lookup('file', '/etc/puppet/hieradata/service_configs.json') | from_json }}"
-        - name: get contrail_settings
-          set_fact:
-            contrail_settings: "{{ service_configs.contrail_settings }}"
-          when: service_configs is defined
-        - name: write contrail settings to file
-          lineinfile: dest=/etc/contrail/common_webui.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
-          with_dict: "{{ contrail_settings }}"
-          when: contrail_settings is defined
         - name: get contrail config database node ips
           shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
           register: contrail_config_database_node_ips_list
@@ -190,6 +179,17 @@ outputs:
           lineinfile: dest=/etc/contrail/common_webui.env line="{{ item }}" state=present
           with_items:
             - RABBITMQ_NODE_PORT=5673
+        - name: get service_config
+          set_fact:
+            service_configs: "{{ lookup('file', '/etc/puppet/hieradata/service_configs.json') | from_json }}"
+        - name: get contrail_settings
+          set_fact:
+            contrail_settings: "{{ service_configs.contrail_settings }}"
+          when: service_configs is defined
+        - name: write contrail settings to file
+          lineinfile: dest=/etc/contrail/common_webui.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
