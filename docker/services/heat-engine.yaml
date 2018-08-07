@@ -1,0 +1,184 @@
+heat_template_version: queens
+
+description: >
+  OpenStack containerized Heat Engine service
+
+parameters:
+  DockerHeatEngineImage:
+    description: image
+    type: string
+  DockerHeatConfigImage:
+    description: The container image to use for the heat config_volume
+    type: string
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  HeatEngineOptVolumes:
+    default: []
+    description: list of optional volumes to be mounted
+    type: comma_delimited_list
+  HeatEngineOptEnvVars:
+    default: []
+    description: list of optional environment variables
+    type: comma_delimited_list
+
+resources:
+
+  ContainersCommon:
+    type: ./containers-common.yaml
+
+  MySQLClient:
+    type: ../../puppet/services/database/mysql-client.yaml
+
+  HeatBase:
+    type: ../../puppet/services/heat-engine.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+  HeatEngineLogging:
+    type: OS::TripleO::Services::Logging::HeatEngine
+
+outputs:
+  role_data:
+    description: Role data for the Heat Engine role.
+    value:
+      service_name: {get_attr: [HeatBase, role_data, service_name]}
+      config_settings:
+        map_merge:
+          - get_attr: [HeatBase, role_data, config_settings]
+          - apache::default_vhost: false
+      logging_source: {get_attr: [HeatBase, role_data, logging_source]}
+      logging_groups: {get_attr: [HeatBase, role_data, logging_groups]}
+      service_config_settings: {get_attr: [HeatBase, role_data, service_config_settings]}
+      # BEGIN DOCKER SETTINGS
+      puppet_config:
+        config_volume: heat
+        puppet_tags: heat_config,file,concat,file_line
+        step_config:
+          list_join:
+            - "\n"
+            - - {get_attr: [HeatBase, role_data, step_config]}
+              - {get_attr: [MySQLClient, role_data, step_config]}
+        config_image: {get_param: DockerHeatConfigImage}
+      kolla_config:
+        /var/lib/kolla/config_files/heat_engine.json:
+          command:
+            list_join:
+            - ' '
+            - - /usr/bin/heat-engine --config-file /usr/share/heat/heat-dist.conf --config-file /etc/heat/heat.conf
+              - get_attr: [HeatEngineLogging, cmd_extra_args]
+          config_files:
+            - source: "/var/lib/kolla/config_files/src/*"
+              dest: "/"
+              merge: true
+              preserve_properties: true
+          permissions:
+            - path: /var/log/heat
+              owner: heat:heat
+              recurse: true
+      docker_config:
+        # db sync runs before permissions set by kolla_config
+        step_2:
+          get_attr: [HeatEngineLogging, docker_config, step_2]
+        step_3:
+          heat_engine_db_sync:
+            image: &heat_engine_image {get_param: DockerHeatEngineImage}
+            net: host
+            privileged: false
+            detach: false
+            user: root
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                - {get_attr: [HeatEngineLogging, volumes]}
+                -
+                  - /var/lib/config-data/heat/etc/my.cnf.d/tripleo.cnf:/etc/my.cnf.d/tripleo.cnf:ro
+                  - /var/lib/config-data/heat/etc/heat/:/etc/heat/:ro
+            command: "/usr/bin/bootstrap_host_exec heat_engine su heat -s /bin/bash -c 'heat-manage db_sync'"
+        step_4:
+          heat_engine:
+            image: *heat_engine_image
+            net: host
+            privileged: false
+            restart: always
+            healthcheck:
+              test: /openstack/healthcheck
+            volumes:
+              list_concat:
+                - {get_attr: [ContainersCommon, volumes]}
+                - {get_attr: [HeatEngineLogging, volumes]}
+                - {get_param: HeatEngineOptVolumes}
+                -
+                  - /var/lib/kolla/config_files/heat_engine.json:/var/lib/kolla/config_files/config.json:ro
+                  - /var/lib/config-data/puppet-generated/heat/:/var/lib/kolla/config_files/src:ro
+            environment:
+              list_concat:
+                - {get_param: HeatEngineOptEnvVars}
+                -
+                  - KOLLA_CONFIG_STRATEGY=COPY_ALWAYS
+      host_prep_tasks: {get_attr: [HeatEngineLogging, host_prep_tasks]}
+      upgrade_tasks:
+        - name: Check if heat_engine is deployed
+          command: systemctl is-enabled --quiet openstack-heat-engine
+          tags: common
+          ignore_errors: True
+          register: heat_engine_enabled
+        - name: "PreUpgrade step0,validation: Check service openstack-heat-engine is running"
+          command: systemctl is-active --quiet openstack-heat-engine
+          when:
+            - step|int == 0
+            - heat_engine_enabled.rc == 0
+          tags: validation
+        - name: Stop and disable heat_engine service
+          when:
+            - step|int == 2
+            - heat_engine_enabled.rc == 0
+          service: name=openstack-heat-engine state=stopped enabled=no
+      fast_forward_upgrade_tasks:
+        - name: FFU check if openstack-heat-engine is enabled
+          command: systemctl is-enabled --quiet openstack-heat-engine
+          ignore_errors: True
+          register: heat_engine_enabled_result
+          when:
+            - step|int == 0
+            - release == 'ocata'
+        - name: Set fact heat_engine_enabled
+          set_fact:
+            heat_engine_enabled: "{{ heat_engine_enabled_result.rc == 0 }}"
+          when:
+            - step|int == 0
+            - release == 'ocata'
+        - name: FFU stop and disable openstack-heat-engine service
+          when:
+            - step|int == 1
+            - release == 'ocata'
+            - heat_engine_enabled|bool
+          service: name=openstack-heat-engine state=stopped enabled=no
