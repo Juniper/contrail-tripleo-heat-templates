@@ -114,7 +114,7 @@ outputs:
                 - - /var/run/docker.sock:/var/run/docker.sock
             env_file:
               - /etc/contrail/common_analytics.env
-          contrail_anlytics_api:
+          contrail_analytics_api:
             image: &contrail_analytics_api_image
               list_join:
                 - ''
