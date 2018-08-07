@@ -22,6 +22,7 @@ resource_registry:
   OS::TripleO::ContrailSriov::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_sriov_pre_network.yaml
   OS::TripleO::ControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/controller-init.yaml
   OS::TripleO::ContrailControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
+  OS::TripleO::ContrailControlOnlyExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ComputeExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailDpdkExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailSriovExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
