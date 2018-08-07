@@ -19,7 +19,7 @@ parameters:
                  via parameter_defaults in the resource registry.  This
                  mapping overrides those in ServiceNetMapDefaults.
     type: json
-  DockerHeatApiConfigImage:
+  DockerHeatConfigImage:
     description: The container image to use for the heat config_volume
     type: string
   DockerContrailHeatPluginImageName:
@@ -36,6 +36,9 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
+  HeatEngineOptVolumes:
+    description: list of optional volumes to be mounted
+    type: comma_delimited_list
 
 resources:
   ContainersCommon:
@@ -59,13 +62,14 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
+          - contrail_heat_plugin_dirs: '/opt/plugin/site-packages/vnc_api/gen/heat/resources,/opt/plugin/site-packages/contrail_heat/resources'
       # BEGIN DOCKER SETTINGS
       puppet_config:
-        config_volume: heat_api
+        config_volume: heat
         puppet_tags: heat_plugin_opencontrail,ini_setting,create_ini_settings,inifile,heat_config,file,concat,file_line
         step_config:
           include ::tripleo::network::contrail::heat
-        config_image: {get_param: DockerHeatApiConfigImage}
+        config_image: {get_param: DockerHeatConfigImage}
       kolla_config: {}
       docker_config:
         step_3:
@@ -81,6 +85,4 @@ outputs:
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             volumes:
-              - vnc_api:/opt/plugin/site-packages/vnc_api
-              - cfgm_common:/opt/plugin/site-packages/cfgm_common
-              - gen_heat:/opt/plugin/site-packages/vnc_api/gen/heat
+              {get_param: HeatEngineOptVolumes}
