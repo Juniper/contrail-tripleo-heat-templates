@@ -13,7 +13,7 @@ resource_registry:
   OS::TripleO::Services::ContrailSriov: ../../docker/services/contrail/contrail-vrouter-sriov.yaml
   OS::TripleO::Services::ContrailTsn: ../../docker/services/contrail/contrail-vrouter-tsn.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
-  OS::TripleO::Services::ContrailHeatApiPlugin: ../../docker/services/contrail/contrail-heat-container-plugin.yaml
+  OS::TripleO::Services::ContrailHeatPlugin: ../../docker/services/contrail/contrail-heat-container-plugin.yaml
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
@@ -41,8 +41,11 @@ parameter_defaults:
     - nova_contrail_vif:/usr/lib/python2.7/site-packages/nova_contrail_vif
     - nova_contrail_vif_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
     - vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
-  HeatApiOptVolumes:
-    - vnc_api:/usr/lib/python2.7/site-packages/vnc_api
-    - cfgm_common:/usr/lib/python2.7/site-packages/cfgm_common
-    - gen_heat:/usr/lib/heat/contrail_heat
+  HeatEngineOptVolumes:
     - '/etc/contrail/ssl:/etc/contrail/ssl'
+    - 'contrail_heat_opt_plugin:/opt/plugin'
+  HeatEngineOptEnvVars:
+    - 'PYTHONPATH=/opt/plugin/site-packages'
+  HeatEnginePluginDirs:
+    - '/opt/plugin/site-packages/vnc_api/gen/heat/resources'
+    - '/opt/plugin/site-packages/contrail_heat/resources'
