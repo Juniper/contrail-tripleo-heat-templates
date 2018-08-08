@@ -76,6 +76,52 @@ outputs:
           - get_attr: [ContrailBase, role_data, config_settings]
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
+        step_3:
+          contrail_config_rabbitmq:
+            image: &contrail_config_rabbitmq_image
+              list_join:
+                - ''
+                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
+                  - '/'
+                  - {get_param: DockerContrailRabbitmqImageName}
+                  - ':'
+                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            env_file:
+              - /etc/contrail/common.env
+            environment:
+              - "NODE_TYPE=config-database"
+          contrail_config_zookeeper:
+            image: &contrail_config_zookeeper_image
+              list_join:
+                - ''
+                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
+                  - '/'
+                  - {get_param: DockerContrailZookeeperImageName}
+                  - ':'
+                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - config_zookeeper:/data
+                  - config_zookeeper:/datalog
+            env_file:
+              - /etc/contrail/common.env
+            environment:
+              - "NODE_TYPE=config-database"
         step_4:
           contrail_config_database_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
@@ -124,49 +170,6 @@ outputs:
               - "NODE_TYPE=config-database"
             env_file:
               - /etc/contrail/common.env
-          contrail_config_zookeeper:
-            image: &contrail_config_zookeeper_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailZookeeperImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - config_zookeeper:/data
-                  - config_zookeeper:/datalog
-            env_file:
-              - /etc/contrail/common.env
-            environment:
-              - "NODE_TYPE=config-database"
-          contrail_config_rabbitmq:
-            image: &contrail_config_rabbitmq_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailRabbitmqImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            env_file:
-              - /etc/contrail/common.env
-            environment:
-              - "NODE_TYPE=config-database"
       host_prep_tasks:
         - name: create contrail directories
           file:

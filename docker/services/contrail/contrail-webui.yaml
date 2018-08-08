@@ -77,6 +77,8 @@ outputs:
                       service_network: {get_param: [ServiceNetMap, ContrailWebuiNetwork]}
                     - {get_attr: [ContrailBase, role_data, haproxy_config_settings_tls]}
       docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
         step_4:
           get_attr: [ContrailRedis, role_data, docker_config, step_4]
         step_5:
