@@ -3,20 +3,20 @@ function show_help {
   echo ""
   echo ""
   echo "Usage:"
-  echo "./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate path]"
+  echo "./import_contrail_container.sh -f container_outputfile -r registry -d push_destination -t tag [-i insecure] [-u username] [-p password] [-c certificate path]"
   echo ""
   echo "Examples:"
   echo "Pull from password protectet public registry:"
-  echo "./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -u USERNAME -p PASSWORD -t 1234"
+  echo "./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -d 192.168.24.1:8787 -u USERNAME -p PASSWORD -t 1234"
   echo "#######################################################################"
   echo "Pull from dockerhub:"
-  echo "./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -t 1234"
+  echo "./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -d 192.168.24.1:8787 -t 1234"
   echo "#######################################################################"
   echo "Pull from private secure registry:"
-  echo "./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234"
+  echo "./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -d 192.168.24.1:8787 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234"
   echo "#######################################################################"
   echo "Pull from private INsecure registry:"
-  echo "./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -i 1 -t 1234"
+  echo "./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -d 192.168.24.1:8787 -i 1 -t 1234"
   echo "#######################################################################"
   echo ""
   echo "Any of the commands will create /tmp/contrail_container which will be used for importing the contrail containers:"
@@ -34,7 +34,7 @@ tag=""
 user=""
 password=""
 
-while getopts "h?vf:i:r:t:c:u:p:" opt; do
+while getopts "h?vf:i:r:d:t:c:u:p:" opt; do
     case "$opt" in
     h|\?)
         show_help
@@ -47,6 +47,8 @@ while getopts "h?vf:i:r:t:c:u:p:" opt; do
     i)  insecure=1
         ;;
     r)  registry=$OPTARG
+        ;;
+    d)  destination=$OPTARG
         ;;
     t)  tag=$OPTARG
         ;;
@@ -67,6 +69,7 @@ shift $((OPTIND-1))
 #echo "outfile: $output_file"
 #echo "insecure: $insecure"
 #echo "registry: $registry"
+#echo "destination: $destination"
 #echo "tag: $tag"
 #echo "user: $user"
 #echo "password: $password"
@@ -77,6 +80,10 @@ fi
 
 if [[ -z ${registry} ]]; then
   missing+=" registry (-r),"
+fi
+
+if [[ -z ${destination} ]]; then
+  missing+=" destination (-d),"
 fi
 
 if [[ -z ${tag} ]]; then
@@ -155,12 +162,12 @@ do
   thtImageName=`echo ${line} |awk -F":" '{print $1}'`
   contrailImageName=`echo ${line} |awk -F":" '{print $2}'`
   echo "- imagename: ${registry}/${contrailImageName}:${tag}" >> ${output_file}
-  echo "  push_destination: 192.168.24.1:8787" >> ${output_file}
+  echo "  push_destination: ${destination}" >> ${output_file}
 done
 
 #redis special
 echo "- imagename: docker.io/redis" >> ${output_file}
-echo "  push_destination: 192.168.24.1:8787" >> ${output_file}
+echo "  push_destination: ${destination}" >> ${output_file}
 
 echo "Written ${output_file}"
 echo "Upload with:"
