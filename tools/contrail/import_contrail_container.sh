@@ -3,7 +3,7 @@ function show_help {
   echo ""
   echo ""
   echo "Usage:"
-  echo "./import_contrail_container.sh -f container_outputfile -r registry -d push_destination -t tag [-i insecure] [-u username] [-p password] [-c certificate path]"
+  echo "./import_contrail_container.sh -f container_outputfile -r registry -d destination -t tag [-i insecure] [-u username] [-p password] [-c certificate path]"
   echo ""
   echo "Examples:"
   echo "Pull from password protectet public registry:"
