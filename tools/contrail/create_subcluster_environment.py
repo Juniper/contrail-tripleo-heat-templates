@@ -158,7 +158,7 @@ class ContrailStaticIp(object):
                 newCapabilitiesList.append(capabilityItemString)
         if not nodeExists:
             newCapabilitiesList.append('node:' + nodeName)
-        newCapabilitiesListString = ','.join(newCapabilitiesList)    
+        newCapabilitiesListString = ','.join(newCapabilitiesList)
         newCapabilitiesListString="capabilities=" + newCapabilitiesListString
         check_output(["openstack","baremetal","node","set",uuid,'--property',newCapabilitiesListString])
 
@@ -181,7 +181,7 @@ class ContrailStaticIp(object):
             for node in subcluster[nodeType]:
                 nodeName = subclusterHostname + '-' + str(count)
                 self.setProperties(node['uuid'],nodeName)
-                count = count + 1 
+                count = count + 1
                 if 'ipaddress' in node:
                     subclusterIpList.append(node['ipaddress'])
             if len(subclusterIpList) > 0:
@@ -315,7 +315,7 @@ class ContrailPlugin(object):
             self.resourceRegistry[subclusterExtraConfigPre] = '../../extraconfig/pre_deploy/contrail/contrail-init.yaml'
             if preNetwork:
                 self.resourceRegistry[subclusterPreNetworkConfig] = preNetwork
-                    
+
 
 class ContrailRole(object):
     def __init__(self, subcluster_yaml, roleTypeList):
@@ -334,7 +334,7 @@ class ContrailRole(object):
         if 'sriov' in roleTypeList:
             subclusterString += self.createRole(contrailComputeRole, SRIOV_HOSTNAME_PREFIX, SRIOV_ROLE_PREFIX)
         self.subclusterString = subclusterString
-     
+
     def createRole(self, roleTemplate, hostnamePrefix, rolePrefix):
         roleFile = yaml.load(open(ROLES_FILE))
         subcluster_dict = self.subcluster_yaml
@@ -437,7 +437,7 @@ def main(argv):
        print "-i is missing"
        print 'subcluster.py -i <inputfile>'
        sys.exit()
-     
+
     subcluster_yaml = yaml.load(open(inputfile))
 
     roleTypeList = []
@@ -455,8 +455,8 @@ def main(argv):
         if 'sriov_nodes' in subcluster:
             roleTypeList.append('sriov')
 
- #   contrailSubcluster = ContrailSubcluster(subcluster_yaml)
- #   writeYaml(CONTRAIL_SUBCLUSTER,contrailSubcluster.subcluster)
+    contrailSubcluster = ContrailSubcluster(subcluster_yaml)
+    writeYaml(CONTRAIL_SUBCLUSTER,contrailSubcluster.subcluster)
 
     contrailRole = ContrailRole(subcluster_yaml,roleTypeList)
     writeFile(ROLES_FILE,contrailRole.subclusterString)
