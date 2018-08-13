@@ -62,12 +62,13 @@ resources:
               systemctl restart docker
             fi
             if [[ ${contrail_registry_insecure} == 'True' ]]; then
+              registry_name=(${contrail_registry//\// })
               found=0
               registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
               for reg in $registries; do if [[ ${reg} == ${contrail_registry} ]]; then found=1; fi; done
               if [[ ${found} -eq 0 ]]; then
                 registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
-                registry_string="${registry_string} --insecure-registry ${contrail_registry}"
+                registry_string="${registry_string} --insecure-registry ${registry_name}"
                 complete_string="INSECURE_REGISTRY=\"${registry_string}\""
                 echo ${complete_string}
                 if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then

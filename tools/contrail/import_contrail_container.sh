@@ -138,8 +138,9 @@ if [[ -n ${cert} ]]; then
 fi
 
 if [[ ${insecure} -eq 1 ]];then
+  registry_name=(${registry//\// })
   registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
-  registry_string="${registry_string} --insecure-registry ${registry}"
+  registry_string="${registry_string} --insecure-registry ${registry_name}"
   complete_string="INSECURE_REGISTRY=\"${registry_string}\""
   if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
     sudo sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
