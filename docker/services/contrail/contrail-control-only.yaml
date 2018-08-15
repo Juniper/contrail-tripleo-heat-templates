@@ -153,7 +153,7 @@ outputs:
           set_fact:
             contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
         - name: write contrail dns node ips to environment file
-          lineinfile: dest=/etc/contrail/common_vrouter.env regexp='^DNS_NODES.*' line="DNS_NODES={{ contrail_control_node_ips_string }}" state=present
+          lineinfile: dest=/etc/contrail/common_control.env regexp='^DNS_NODES.*' line="DNS_NODES={{ contrail_control_node_ips_string }}" state=present
         - name: write contrail control node ips to environment file
           lineinfile: dest=/etc/contrail/common_control.env regexp='^CONTROL_NODES.*' line="CONTROL_NODES={{ contrail_control_node_ips_string }}" state=present
         - name: write contrail config node ips to environment file
