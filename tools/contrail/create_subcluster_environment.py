@@ -61,6 +61,7 @@ CONTROL_ONLY_ROLE='''###########################################################
     - OS::TripleO::Services::Sshd
     - OS::TripleO::Services::Timezone
     - OS::TripleO::Services::TripleoPackages
+    - OS::TripleO::Services::TripleoFirewall
     - OS::TripleO::Services::$ROLE_NAME'''
 COMPUTE_ROLE='''###############################################################################
 # Role: $ROLE_NAME #
