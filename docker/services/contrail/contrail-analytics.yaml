@@ -80,6 +80,20 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
+          - tripleo.contrail_analytics.firewall_rules:
+              '117 contrail_analytics':
+                dport:
+                  - 3514
+                  - 5920
+                  - 5921
+                  - 5995
+                  - 8081
+                  - 8086
+                  - 8089
+                  - 8090
+                  - 8091
+                  - 8181
+                  - 8104
       service_config_settings:
         map_merge:
           - {get_attr: [ContrailBase, role_data, service_config_settings]}
