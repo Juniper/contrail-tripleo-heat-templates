@@ -70,8 +70,8 @@ outputs:
           - get_attr: [ContrailBase, role_data, config_settings]
           - contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             contrail_sriov_mode: {get_param: ContrailSriovMode}
-            tripleo.contrail_vrouter.firewall_rules:
-              '111 contrail_vrouter_8085_8097':
+            tripleo.contrail_vrouter_sriov.firewall_rules:
+              '111 contrail_vrouter_sriov_8085_8097':
                 dport:
                   - 8085
                   - 8097
