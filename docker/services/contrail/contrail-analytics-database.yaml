@@ -84,6 +84,18 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
+          - tripleo.contrail_analytics_database.firewall_rules:
+              '115 contrail_analytics_database':
+                dport:
+                  - 2182
+                  - '4888-5888'
+                  - 7010
+                  - 7011
+                  - 7200
+                  - 8103
+                  - 9042
+                  - 9092
+                  - 9160
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       docker_config:
         step_2:

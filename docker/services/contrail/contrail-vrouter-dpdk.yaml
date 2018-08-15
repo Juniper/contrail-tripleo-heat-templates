@@ -71,6 +71,8 @@ outputs:
                 dport:
                   - 8085
                   - 8097
+                  - 8102
+                  - 9091
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
