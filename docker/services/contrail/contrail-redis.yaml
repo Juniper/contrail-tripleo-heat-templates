@@ -8,17 +8,33 @@ parameters:
     description: image
     type: string
     default: "docker.io/redis"
+  env_file_name:
+    type: string
+    default: ""
+
+conditions:
+  env_file_unset: {equals : [{get_param: env_file_name}, '']}
+
+resources:
+  ContrailBase:
+    type: contrail-base.yaml
 
 outputs:
   role_data:
     description: Role data for the Contrail Redis common part.
     value:
+      service_name: contrail_redis
       docker_config:
         step_4:
           contrail_redis:
-            image: {get_param: DockerContrailRedisImageName}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
+            map_merge:
+              - image: {get_param: DockerContrailRedisImageName}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+              - if:
+                - env_file_unset
+                - {}
+                - env_file: {get_param: env_file_name}
