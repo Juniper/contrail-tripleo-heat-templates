@@ -66,8 +66,8 @@ outputs:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
           - contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
-            tripleo.contrail_vrouter.firewall_rules:
-              '111 contrail_vrouter_8085_8097':
+            tripleo.contrail_vrouter_dpdk.firewall_rules:
+              '111 contrail_vrouter_dpdk_8085_8097':
                 dport:
                   - 8085
                   - 8097
