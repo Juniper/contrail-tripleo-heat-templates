@@ -570,22 +570,22 @@ The last command takes a while.
 In case the Contrail containers must be stored in the undercloud registry
 ```
 cd ~/tripleo-heat-templates/tools/contrail
-./import_contrail_container.sh -f container_outputfile -r registry -t tag [-i insecure] [-u username] [-p password] [-c certificate path]
+./import_contrail_container.sh -f container_outputfile -r registry -d destination -t tag [-i insecure] [-u username] [-p password] [-c certificate path]
 ```
 
 Examples:
 ```
 Pull from password protectet public registry:
-./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -u USERNAME -p PASSWORD -t 1234
+./import_contrail_container.sh -f /tmp/contrail_container -r hub.juniper.net/contrail -d 192.168.24.1:8787 -u USERNAME -p PASSWORD -t 1234
 #######################################################################
 Pull from dockerhub:
-./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -t 1234
+./import_contrail_container.sh -f /tmp/contrail_container -r docker.io/opencontrailnightly -d 192.168.24.1:8787 -t 1234
 #######################################################################
 Pull from private secure registry:
-./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234
+./import_contrail_container.sh -f /tmp/contrail_container -r satellite.englab.juniper.net:5443 -d 192.168.24.1:8787 -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt -t 1234
 #######################################################################
 Pull from private INsecure registry:
-./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -i 1 -t 1234
+./import_contrail_container.sh -f /tmp/contrail_container -r 10.0.0.1:5443 -d 192.168.24.1:8787 -i 1 -t 1234
 #######################################################################
 ```
 
