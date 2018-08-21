@@ -194,12 +194,34 @@ outputs:
         - name: turn json into comma separated string
           set_fact:
             contrail_config_database_node_ips_string: "{{ contrail_config_database_node_ips_json | join(',') }}"
+        - name: get contrail analytics node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
+          register: contrail_analytics_node_ips_list
+        - name: turn contrail analytics ips into json
+          set_fact:
+            contrail_analytics_node_ips_json: "{{ contrail_analytics_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
+        - name: get contrail config node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_config_node_ips
+          register: contrail_config_node_ips_list
+        - name: turn contrail config ips into json
+          set_fact:
+            contrail_config_node_ips_json: "{{ contrail_config_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}"
+        - name: write contrail config node ips to environment file
+          lineinfile: dest=/etc/contrail/common.env regexp='^CONFIG_NODES.*' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
         - name: write contrail config db node ips to environment file
           lineinfile: dest=/etc/contrail/common.env regexp='^CASSANDRA_SEEDS.*' line="CASSANDRA_SEEDS={{ contrail_config_database_node_ips_string }}" state=present
         - name: write contrail config zk node ips to environment file
           lineinfile: dest=/etc/contrail/common.env regexp='^ZOOKEEPER_NODES.*' line="ZOOKEEPER_NODES={{ contrail_config_database_node_ips_string }}" state=present
         - name: write contrail config RMQ node ips to environment file
           lineinfile: dest=/etc/contrail/common.env regexp='^RABBITMQ_NODES.*' line="RABBITMQ_NODES={{ contrail_config_database_node_ips_string }}" state=present
+        - name: write contrail analytics node ips to environment file
+          lineinfile: dest=/etc/contrail/common.env regexp='^ANALYTICS_NODES.*' line="ANALYTICS_NODES={{ contrail_analytics_node_ips_string }}" state=present
         - name: write remaining contrail config env cars
           lineinfile: dest=/etc/contrail/common.env line="{{ item }}" state=present
           with_items:
