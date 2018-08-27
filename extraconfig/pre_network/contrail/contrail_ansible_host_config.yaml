@@ -79,7 +79,7 @@
       systemd:
         state: restarted
         name: docker
-        enabled: yes 
+        enabled: yes
 
     - name: create crash directory
       file:
@@ -100,7 +100,7 @@
         - "net.ipv4.tcp_keepalive_time = 5"
         - "net.ipv4.tcp_keepalive_probes = 5"
         - "net.ipv4.tcp_keepalive_intvl = 1"
-      
+
     - name: set 2GB hugepages if 1GB are not defined
       lineinfile:
         dest: /etc/sysctl.conf
@@ -109,6 +109,14 @@
 
     - name: apply kernel settings
       shell: /sbin/sysctl --system
+
+    - name: prepare /etc/modprobe.d/vrouter.conf
+      lineinfile:
+        dest: /etc/modprobe.d/vrouter.conf
+        regexp: "^options vrouter"
+        line: "options vrouter {{ _CONTRAIL_VROUTER_MODULE_OPTS_ }}"
+        create: yes
+      when: _CONTRAIL_VROUTER_MODULE_OPTS_ is defined and _CONTRAIL_VROUTER_MODULE_OPTS_ != ''
 
     - name: start contrail dpdk init container
       block:

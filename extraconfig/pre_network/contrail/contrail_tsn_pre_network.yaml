@@ -37,6 +37,16 @@ parameters:
     default: ''
     description: Number of 1GB hugepages
     type: string
+  ContrailVrouterModuleOptions:
+    default: ''
+    description: >
+      Vrouter kernel module options.
+      This string is passed to agent container as env variable VROUTER_MODULE_OPTIONS
+      (by a chance if vrouter module is loaded by container) and
+      it is saved as options in /etc/modprobe.d/vrouter.conf for a case
+      when vrouter is loaded by ifup scripts called by os-collect-config from host.
+      E.g. vr_mpls_labels=196000 vr_nexthops=521000 vr_vrfs=65536 vr_bridge_entries=1000000
+    type: string
   DockerContrailVrouterKernelInitImageName:
     description: image
     type: string
@@ -70,6 +80,7 @@ resources:
         - name: _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_
         - name: _CONTRAIL_HUGEPAGES_1GB_
         - name: _CONTRAIL_HUGEPAGES_2MB_
+        - name: _CONTRAIL_VROUTER_MODULE_OPTS_
       outputs:
         - name: result
       config:
@@ -93,6 +104,7 @@ resources:
         _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_: {get_param: DockerContrailVrouterAgentContainerName}
         _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailVrouterHugepages1GB}
         _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailVrouterHugepages2MB}
+        _CONTRAIL_VROUTER_MODULE_OPTS_: {get_param: ContrailVrouterModuleOptions}
 
   VrouterKernelParametersConfig:
     type: OS::Heat::SoftwareConfig

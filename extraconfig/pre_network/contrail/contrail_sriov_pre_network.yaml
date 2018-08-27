@@ -29,6 +29,16 @@ parameters:
     default: ''
     description: Number of 1GB hugepages
     type: string
+  ContrailVrouterModuleOptions:
+    default: ''
+    description: >
+      Vrouter kernel module options.
+      This string is passed to agent container as env variable VROUTER_MODULE_OPTIONS
+      (by a chance if vrouter module is loaded by container) and
+      it is saved as options in /etc/modprobe.d/vrouter.conf for a case
+      when vrouter is loaded by ifup scripts called by os-collect-config from host.
+      E.g. vr_mpls_labels=196000 vr_nexthops=521000 vr_vrfs=65536 vr_bridge_entries=1000000
+    type: string
   ContrailSriovNumVFs:
     description: >
       Provide the list of VFs to be reserved for each SR-IOV interface.
@@ -92,6 +102,7 @@ resources:
         - name: _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_
         - name: _CONTRAIL_HUGEPAGES_1GB_
         - name: _CONTRAIL_HUGEPAGES_2MB_
+        - name: _CONTRAIL_VROUTER_MODULE_OPTS_
         - name: _CONTRAIL_SRIOV_MODE_
         - name: _CONTRAIL_SRIOV_NUM_VFS_
         - name: _IS_DPDK_
@@ -119,6 +130,7 @@ resources:
         _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_: {get_param: DockerContrailVrouterAgentContainerName}
         _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailSriovHugepages1GB}
         _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailSriovHugepages2MB}
+        _CONTRAIL_VROUTER_MODULE_OPTS_: {get_param: ContrailVrouterModuleOptions}
         _CONTRAIL_SRIOV_MODE_: {get_param: ContrailSriovMode}
         _CONTRAIL_SRIOV_NUM_VFS_: {get_param: ContrailSriovNumVFs}
         _IS_DPDK_: {if:[{equals: [{get_param: ContrailSriovMode}, 'vrouter']}, '', 'True']}
