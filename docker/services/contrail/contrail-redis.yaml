@@ -4,10 +4,18 @@ description: >
   Contrail redis common service
 
 parameters:
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
   DockerContrailRedisImageName:
     description: image
     type: string
-    default: "docker.io/redis"
+    default: "contrail-external-redis"
   env_file_name:
     type: string
     default: ""
@@ -24,16 +32,26 @@ outputs:
     description: Role data for the Contrail Redis common part.
     value:
       service_name: contrail_redis
+      contrail_redis_image_name: &contrail_redis_image_name
+        list_join:
+          - ''
+          - - {get_param: ContrailRegistry}
+            - '/'
+            - {get_param: DockerContrailRedisImageName}
+            - ':'
+            - {get_param: ContrailImageTag}
       docker_config:
         step_4:
           contrail_redis:
             map_merge:
-              - image: {get_param: DockerContrailRedisImageName}
+              - image: *contrail_redis_image_name
                 net: host
                 privileged: false
                 detach: true
                 user: root
                 restart: always
+                environment:
+                  - 'NODE_TYPE=redis'
               - if:
                 - env_file_unset
                 - {}

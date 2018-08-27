@@ -119,9 +119,7 @@ outputs:
           contrail_analytics_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
             environment:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                - - NODE_TYPE=analytics
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             detach: true
             user: root
@@ -322,6 +320,7 @@ outputs:
           lineinfile: dest=/etc/contrail/common_analytics.env line="{{ item }}" state=present
           with_items:
             - RABBITMQ_NODE_PORT=5673
+            - NODE_TYPE=analytics
 
         - name: get dmi
           shell: |
