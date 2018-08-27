@@ -120,8 +120,6 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                 - - analytics_zookeeper:/data
                   - analytics_zookeeper:/datalog
-            environment:
-              - "NODE_TYPE=database"
             env_file:
               - /etc/contrail/common_analytics_database.env
         step_4:
@@ -137,8 +135,7 @@ outputs:
                       - ''
                       - - 'DATABASE_NODEMGR__DEFAULTS__minimum_diskGB='
                         - {get_param: ContrailAnalyticsDBMinDiskGB}
-                - - NODE_TYPE=database
-                  - CASSANDRA_CQL_PORT=9042
+                - - CASSANDRA_CQL_PORT=9042
                   - CASSANDRA_JMX_LOCAL_PORT=7200
             net: host
             detach: true
@@ -175,8 +172,6 @@ outputs:
                       - ':'
                       - - {get_param: ContrailAnalyticsCommitlogPath}
                         - '/var/lib/cassandra/commitlog'
-            environment:
-              - "NODE_TYPE=database"
             env_file:
               - /etc/contrail/common_analytics_database.env
           contrail_analytics_kafka:
@@ -195,8 +190,6 @@ outputs:
             restart: always
             volumes:
               get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              - "NODE_TYPE=database"
             env_file:
               - /etc/contrail/common_analytics_database.env
       host_prep_tasks:
@@ -268,6 +261,8 @@ outputs:
             - CASSANDRA_JMX_LOCAL_PORT=7200
             - ZOOKEEPER_PORTS=4888:5888
             - ZOOKEEPER_PORT=2182
+            - NODE_TYPE=database
+
         - name: get dmi
           shell: |
                  #!/bin/sh
