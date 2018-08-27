@@ -55,7 +55,7 @@ while getopts "h?vf:i:r:t:c:u:p:" opt; do
     u)  user=$OPTARG
         ;;
     p)  password=$OPTARG
-        ;; 
+        ;;
     esac
 done
 
@@ -158,10 +158,6 @@ do
   echo "- imagename: ${registry}/${contrailImageName}:${tag}" >> ${output_file}
   echo "  push_destination: 192.168.24.1:8787" >> ${output_file}
 done
-
-#redis special
-echo "- imagename: docker.io/redis" >> ${output_file}
-echo "  push_destination: 192.168.24.1:8787" >> ${output_file}
 
 echo "Written ${output_file}"
 echo "Upload with:"
