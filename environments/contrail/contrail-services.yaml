@@ -34,17 +34,23 @@ parameter_defaults:
 # set contrail image tag
 #  ContrailImageTag: queens-master-145-rhel-queens
   ContrailImageTag: queens-5.0-104-rhel-queens
-# enable 1 GB hugepages
+# Enable 1 GB hugepages
 #  ContrailDpdkHugepages1GB: 10
 #  ContrailVrouterHugepages1GB: 10
-# contrail container configuration settings
+#
+# Custome Contrail container configuration settings
   ContrailSettings:
     VROUTER_GATEWAY: 10.0.0.1
 #    KEY1: value1
 #    KEY2: value2
+#
 # SRIOV settings
 #  NovaPCIPassthrough:
 #    - devname: "ens2f1"
 #      physical_network: "sriov1"
 #  ContrailSriovNumVFs: ["ens2f1:7"]
 #  ContrailSriovHugepages1GB: 10
+#
+# Mellanox
+#  DockerContrailVrouterPluginInitImageName: contrail-vrouter-plugin-mellanox-init-redhat
+#  ContrailDpdkDriver: mlnx

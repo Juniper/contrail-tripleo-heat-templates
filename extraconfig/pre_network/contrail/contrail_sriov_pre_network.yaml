@@ -77,6 +77,15 @@ parameters:
     description: image
     type: string
     default: "contrail-vrouter-agent"
+  DockerContrailVrouterPluginInitImageName:
+    description: >
+      Vrouter plugin init container image name.
+      It is a name of the vrouter plugin init image. It is
+      for cases when third-party HW requires specific drivers to be installed.
+      E.g. Mellanox requries some drivers on host to be installed.
+      For Mellanox the image name is contrail-vrouter-plugin-mellanox-init-redhat
+    type: string
+    default: ''
 
 description: >
   This template installs the Contrail dpdk packages in order
@@ -103,6 +112,7 @@ resources:
         - name: _CONTRAIL_HUGEPAGES_1GB_
         - name: _CONTRAIL_HUGEPAGES_2MB_
         - name: _CONTRAIL_VROUTER_MODULE_OPTS_
+        - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_
         - name: _CONTRAIL_SRIOV_MODE_
         - name: _CONTRAIL_SRIOV_NUM_VFS_
         - name: _IS_DPDK_
@@ -131,6 +141,7 @@ resources:
         _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailSriovHugepages1GB}
         _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailSriovHugepages2MB}
         _CONTRAIL_VROUTER_MODULE_OPTS_: {get_param: ContrailVrouterModuleOptions}
+        _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_param: DockerContrailVrouterPluginInitImageName}
         _CONTRAIL_SRIOV_MODE_: {get_param: ContrailSriovMode}
         _CONTRAIL_SRIOV_NUM_VFS_: {get_param: ContrailSriovNumVFs}
         _IS_DPDK_: {if:[{equals: [{get_param: ContrailSriovMode}, 'vrouter']}, '', 'True']}
