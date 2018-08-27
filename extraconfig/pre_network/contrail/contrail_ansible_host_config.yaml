@@ -118,9 +118,20 @@
         create: yes
       when: _CONTRAIL_VROUTER_MODULE_OPTS_ is defined and _CONTRAIL_VROUTER_MODULE_OPTS_ != ''
 
+    - name: create contrail vrouter plugin init container
+      docker_container:
+        name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}"
+        image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+        auto_remove: yes
+        privileged: yes
+        volumes:
+          - /lib/modules:/lib/modules
+          - /usr/src:/usr/src
+      when: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ is defined and _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ != ''
+
     - name: start contrail dpdk init container
       block:
-        - name: create container
+        - name: create contrail dpdk init container
           docker_container:
             name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
             image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
