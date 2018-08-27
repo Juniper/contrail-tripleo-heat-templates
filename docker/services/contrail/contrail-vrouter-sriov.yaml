@@ -16,6 +16,16 @@ parameters:
     description: Metadata Secret
     type: string
     hidden: true
+  ContrailVrouterModuleOptions:
+    default: ''
+    description: >
+      Vrouter kernel module options.
+      This string is passed to agent container as env variable VROUTER_MODULE_OPTIONS
+      (by a chance if vrouter module is loaded by container) and
+      it is saved as options in /etc/modprobe.d/vrouter.conf for a case
+      when vrouter is loaded by ifup scripts called by os-collect-config from host.
+      E.g. vr_mpls_labels=196000 vr_nexthops=521000 vr_vrfs=65536 vr_bridge_entries=1000000
+    type: string
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -124,7 +134,12 @@ outputs:
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
             environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                - - list_join:
+                      - '='
+                      - - VROUTER_MODULE_OPTIONS
+                        - {get_param: ContrailVrouterModuleOptions}
             net: host
             privileged: true
             detach: true
