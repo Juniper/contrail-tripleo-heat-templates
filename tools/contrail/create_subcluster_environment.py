@@ -166,6 +166,8 @@ class ContrailStaticIp(object):
     def createContrailStaticIp(self,ROLE_PREFIX, HOSTNAME_PREFIX, nodeType):
         subcluster_dict = self.subcluster_yaml
         for subcluster in subcluster_dict:
+            if nodeType not in subcluster:
+                continue
             subclusterRoleName = subcluster['subcluster']
             subclusterRoleName = subclusterRoleName.capitalize()
             subclusterRoleName = ROLE_PREFIX + subclusterRoleName
@@ -262,9 +264,9 @@ class ContrailServices(object):
         if 'vrouter' in roleTypeList:
             self.createContrailServices(COMPUTE_ROLE_PREFIX, 'compute_nodes')
         if 'dpdk' in roleTypeList:
-            self.createContrailServices(DPDK_ROLE_PREFIX, 'dpdp_nodes')
+            self.createContrailServices(DPDK_ROLE_PREFIX, 'dpdk_nodes')
         if 'sriov' in roleTypeList:
-            self.createContrailServices(DPDK_ROLE_PREFIX, 'sriov_nodes')
+            self.createContrailServices(SRIOV_ROLE_PREFIX, 'sriov_nodes')
         self.parameterDefaults['ServiceNetMap'] = self.contrailServiceNetMap
         contrailServicesFile['parameter_defaults'] = self.parameterDefaults
         self.contrailServices = contrailServicesFile
@@ -272,6 +274,8 @@ class ContrailServices(object):
     def createContrailServices(self, ROLE_PREFIX, roleType):
         subcluster_dict = self.subcluster_yaml
         for subcluster in subcluster_dict:
+            if roleType not in subcluster:
+                continue
             subclusterRoleName = subcluster['subcluster']
             subclusterRoleName = subclusterRoleName.capitalize()
             subclusterRoleName = ROLE_PREFIX + subclusterRoleName
