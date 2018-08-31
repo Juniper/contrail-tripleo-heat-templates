@@ -51,6 +51,12 @@ parameter_defaults:
 #  ContrailSriovNumVFs: ["ens2f1:7"]
 #  ContrailSriovHugepages1GB: 10
 #
-# Mellanox
-#  DockerContrailVrouterPluginInitImageName: contrail-vrouter-plugin-mellanox-init-redhat
+# Mellanox with kernel node doesnt requre any additions.
+# TODO: in further as soon as Mellanox supports full-offload
+# feature the following parmater will be needed to enable fresh drivers:
+# (for now it is not needed)
+# DockerContrailVrouterPluginInitImageName: contrail-vrouter-plugin-mellanox-init-redhat
+#
+# Mellanox with DPDK mode requries the paramter to be set:
 #  ContrailDpdkDriver: mlnx
+#

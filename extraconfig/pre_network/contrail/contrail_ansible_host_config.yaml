@@ -131,6 +131,11 @@
 
     - name: start contrail dpdk init container
       block:
+        - name: pull contrail vrouter dpdk agent container
+          docker_image:
+            name: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
+            tag: "{{ _CONTRAIL_IMAGETAG_ }}"
+
         - name: create contrail dpdk init container
           docker_container:
             name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
@@ -148,10 +153,6 @@
               CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
               CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
 
-        - name: pull contrail vrouter dpdk agent container
-          docker_image:
-            name: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
-            tag: "{{ _CONTRAIL_IMAGETAG_ }}"
       when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
 
     - name: start contrail vrouter init container

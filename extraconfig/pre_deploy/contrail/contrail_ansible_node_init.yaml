@@ -3,6 +3,12 @@
   connection: local
   hosts: localhost
   tasks:
+    - name: Ensure docker service is run
+      systemd:
+        state: started
+        name: docker
+        enabled: yes
+
     - name: create container
       docker_container:
         name: "{{ _CONTRAIL_NODE_INIT_IMAGE_ }}"
