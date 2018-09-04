@@ -50,6 +50,8 @@ outputs:
                 detach: true
                 user: root
                 restart: always
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
               - if:
                 - env_file_unset
                 - {}
