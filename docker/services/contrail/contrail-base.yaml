@@ -129,6 +129,10 @@ parameters:
     default: ''
     description: Path to CA private key
     type: string
+  ContrailRedisPort:
+    default: 6379
+    description: Contrail Redis port
+    type: number
   NodeDataLookup:
     type: json
     default: {}
@@ -264,6 +268,10 @@ outputs:
           - '='
           - - 'AAA_MODE'
             - {get_param: AAAMode}
+        - list_join:
+          - '='
+          - - 'REDIS_SERVER_PORT'
+            - {get_param: ContrailRedisPort}
       contrail_auth_base_env: &contrail_auth_base_env
         - 'AUTH_MODE=keystone'
         - 'KEYSTONE_AUTH_URL_VERSION=/v3'

@@ -68,11 +68,12 @@ outputs:
           - tripleo.contrail_webui.firewall_rules:
               '116 contrail_webui':
                 dport:
-                  - 3000
-                  - 3002
-                  - 6379
-                  - 8143
-                  - 8180
+                  list_concat:
+                    - - 3000
+                      - 3002
+                      - 8143
+                      - 8180
+                    - {get_attr: [ContrailRedis, role_data, contrail_redis_ports]}
       service_config_settings:
         map_merge:
           - {get_attr: [ContrailBase, role_data, service_config_settings]}
