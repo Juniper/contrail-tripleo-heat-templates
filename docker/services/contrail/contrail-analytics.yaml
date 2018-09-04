@@ -86,18 +86,19 @@ outputs:
           - tripleo.contrail_analytics.firewall_rules:
               '117 contrail_analytics':
                 dport:
-                  - 3514
-                  - 5920
-                  - 5921
-                  - 5995
-                  - 6379
-                  - 8081
-                  - 8086
-                  - 8089
-                  - 8090
-                  - 8091
-                  - 8181
-                  - 8104
+                  list_concat:
+                    - - 3514
+                      - 5920
+                      - 5921
+                      - 5995
+                      - 8081
+                      - 8086
+                      - 8089
+                      - 8090
+                      - 8091
+                      - 8181
+                      - 8104
+                    - {get_attr: [ContrailRedis, role_data, contrail_redis_ports]}
       service_config_settings:
         map_merge:
           - {get_attr: [ContrailBase, role_data, service_config_settings]}

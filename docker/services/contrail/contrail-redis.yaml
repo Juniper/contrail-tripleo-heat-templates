@@ -16,6 +16,10 @@ parameters:
     description: image
     type: string
     default: "contrail-external-redis"
+  ContrailRedisPort:
+    default: 6379
+    description: Contrail Redis port
+    type: number
   env_file_name:
     type: string
     default: ""
@@ -40,6 +44,8 @@ outputs:
             - {get_param: DockerContrailRedisImageName}
             - ':'
             - {get_param: ContrailImageTag}
+      contrail_redis_ports:
+        - {get_param: ContrailRedisPort}
       docker_config:
         step_4:
           contrail_redis:
@@ -50,6 +56,8 @@ outputs:
                 detach: true
                 user: root
                 restart: always
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
               - if:
                 - env_file_unset
                 - {}
