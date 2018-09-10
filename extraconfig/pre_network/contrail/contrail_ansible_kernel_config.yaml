@@ -62,3 +62,16 @@
         - "1G"
         - "2M"
       when: _CONTRAIL_HUGEPAGES_1GB_ != ""
+    # Tune-d Configuration
+    - block:
+        - name: Tune-d Configuration
+          lineinfile:
+            dest: /etc/tuned/{{ _TUNED_PROFILE_NAME_ }}-variables.conf
+            regexp: '^isolated_cores=.*'
+            line: 'isolated_cores={{ _TUNED_CORES_ }}'
+          when: _TUNED_CORES_|default("") != ""
+
+        - name: Tune-d profile activation
+          shell: tuned-adm profile {{ _TUNED_PROFILE_NAME_ }}
+      become: true
+      when: _TUNED_PROFILE_NAME_|default("") != ""
