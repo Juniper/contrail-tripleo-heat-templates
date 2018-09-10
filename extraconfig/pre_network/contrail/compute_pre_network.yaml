@@ -21,6 +21,21 @@ parameters:
       toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
+  TunedProfileName:
+    default: ""
+    type: string
+    description: Tuned Profile to apply to the host
+    tags:
+      - role_specific
+  IsolCpusList:
+    default: ""
+    type: string
+    description: >
+      List of logical CPU ids whic need to be isolated from the host processes.
+      This input is provided to the tuned profile cpu-partitioning to configure
+      systemd and repin interrupts (IRQ repinning).
+    tags:
+      - role_specific
   ContrailRegistry:
     default: 'michaelhenkel'
     description: Contrail Registry
@@ -71,7 +86,11 @@ description: >
   os-net-config takes over.
 
 conditions:
-  is_kernel_config_required: {not: {equals: [{get_param: ContrailVrouterHugepages1GB}, ""]}}
+  is_kernel_config_required:
+    or:
+      - {not: {equals: [{get_param: ContrailVrouterHugepages1GB}, ""]}}
+      - {not: {equals: [{get_param: [RoleParameters, TunedProfileName]}, ""]}}
+      - {not: {equals: [{get_param: [RoleParameters, IsolCpusList]}, ""]}}
   deployment_actions_empty:
     equals:
       - {get_param: deployment_actions}
@@ -125,6 +144,8 @@ resources:
       inputs:
         - name: _CONTRAIL_HUGEPAGES_2MB_
         - name: _CONTRAIL_HUGEPAGES_1GB_
+        - name: _TUNED_PROFILE_NAME_
+        - name: _TUNED_CORES_
       outputs:
         - name: result
       config:
@@ -146,6 +167,8 @@ resources:
       input_values:
         _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailVrouterHugepages2MB}
         _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailVrouterHugepages1GB}
+        _TUNED_PROFILE_NAME_: {get_param: [RoleParameters, TunedProfileName]}
+        _TUNED_CORES_: {get_param: [RoleParameters, IsolCpusList]}
 
   RebootConfig:
     type: OS::Heat::SoftwareConfig

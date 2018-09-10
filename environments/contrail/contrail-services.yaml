@@ -60,3 +60,18 @@ parameter_defaults:
 # Mellanox with DPDK mode requries the paramter to be set:
 #  ContrailDpdkDriver: mlnx
 #
+# Tuned-d profile configuration
+#   TunedProfileName -  Name of tuned profile
+#   IsolCpusList     -  Logical CPUs list to be isolated from the host process (applied via cpu-partitioning tuned).
+#                       It is mandatory to provide isolated cpus for tuned to achive optimal performance.
+#                       Example: "3-8,12-15,18"
+# These paramters are to be set per a role, e.g.:
+#  ComputeParameters:
+#    TunedProfileName: "cpu-partitioning"
+#    IsolCpusList: "3-8,12-15,20"
+#  ContrailDpdkParameters:
+#    TunedProfileName: "cpu-partitioning"
+#    IsolCpusList: "3-20"
+#  ContrailSriovParameters:
+#    TunedProfileName: "cpu-partitioning"
+#    IsolCpusList: "3-20"
