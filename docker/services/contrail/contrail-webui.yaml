@@ -177,6 +177,15 @@ outputs:
         - name: turn json into comma separated string
           set_fact:
             contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
+        - name: get contrail webui node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_webui_node_ips
+          register: contrail_webui_node_ips_list
+        - name: turn contrail webui ips into json
+          set_fact:
+            contrail_webui_node_ips_json: "{{ contrail_webui_node_ips_list.stdout | from_json }}"
+        - name: turn json into comma separated string
+          set_fact:
+            contrail_webui_node_ips_string: "{{ contrail_webui_node_ips_json | join(',') }}"
         - name: write contrail config node ips to environment file
           lineinfile: dest=/etc/contrail/common_webui.env regexp='^CONFIG_NODES.*' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
         - name: write contrail config db node ips to environment file
@@ -187,6 +196,8 @@ outputs:
           lineinfile: dest=/etc/contrail/common_webui.env regexp='^RABBITMQ_NODES.*' line="RABBITMQ_NODES={{ contrail_config_database_node_ips_string }}" state=present
         - name: write contrail analytics node ips to environment file
           lineinfile: dest=/etc/contrail/common_webui.env regexp='^ANALYTICS_NODES.*' line="ANALYTICS_NODES={{ contrail_analytics_node_ips_string }}" state=present
+        - name: write contrail webui node ips to environment file
+          lineinfile: dest=/etc/contrail/common_webui.env regexp='^WEBUI_NODES.*' line="WEBUI_NODES={{ contrail_webui_node_ips_string }}" state=present
         - name: write remaining contrail config env cars
           lineinfile: dest=/etc/contrail/common_webui.env line="{{ item }}" state=present
           with_items:
