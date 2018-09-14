@@ -250,7 +250,9 @@ outputs:
           - map_merge:
               - *haproxy_config_settings
               - member_options:
-                  - 'ssl verify none'
+                  list_concat:
+                    - *haproxy_config_settings_member_options
+                    - - 'ssl verify none'
           - public_virtual_ip: "%{hiera('public_virtual_ip')}"
             mode: 'tcp'
             listen_options: *haproxy_config_settings_listen_options
