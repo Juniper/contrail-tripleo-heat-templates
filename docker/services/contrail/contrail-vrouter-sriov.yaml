@@ -45,7 +45,7 @@ parameters:
     default: {}
     type: json
   ContrailSriovMode:
-    default: 'vrouter'
+    default: 'kernel'
     type: string
   RoleName:
     default: ''
