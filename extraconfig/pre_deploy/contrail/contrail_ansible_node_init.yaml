@@ -22,6 +22,7 @@
           - /dev:/dev
           - /usr/bin:/host/usr/bin
           - /etc/contrail/ssl:/etc/contrail/ssl
+          - /etc/sysctl.conf:/etc/sysctl.conf
           - /var/crashes:/var/crashes
           - /var/log/containers/contrail:/var/log/contrail
           - /var/run:/var/run

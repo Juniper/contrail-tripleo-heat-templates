@@ -95,7 +95,6 @@
         dest: /etc/sysctl.conf
         line: "{{ item }}"
       with_items:
-        - "kernel.core_pattern = /var/crashes/core.%e.%p.%h.%t"
         - "vm.max_map_count = 128960"
         - "net.ipv4.tcp_keepalive_time = 5"
         - "net.ipv4.tcp_keepalive_probes = 5"
