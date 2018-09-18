@@ -176,6 +176,7 @@
     - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::Timezone
     - OS::TripleO::Services::Snmp
+    - OS::TripleO::Services::TripleoFirewall
     - OS::TripleO::Services::TripleoPackages
     - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::FluentdClient
@@ -189,6 +190,7 @@
     - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::Timezone
     - OS::TripleO::Services::Snmp
+    - OS::TripleO::Services::TripleoFirewall
     - OS::TripleO::Services::TripleoPackages
     - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::FluentdClient
@@ -202,6 +204,7 @@
     - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::Timezone
     - OS::TripleO::Services::Snmp
+    - OS::TripleO::Services::TripleoFirewall
     - OS::TripleO::Services::TripleoPackages
     - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::FluentdClient
