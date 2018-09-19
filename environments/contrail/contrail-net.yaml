@@ -46,5 +46,5 @@ parameter_defaults:
 # BondTsnPolicy: 1
 ## dpdk parameter
 # ContrailDpdkHugePages: 2048
-# ContrailDpdkCoremask: 0xf
+# ContrailDpdkCoremask: '0xf'
 # ContrailDpdkDriver: uio_pci_generic
