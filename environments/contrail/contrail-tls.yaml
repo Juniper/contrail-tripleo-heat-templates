@@ -3,7 +3,7 @@ parameter_defaults:
   ContrailServiceCertFile: '/etc/contrail/ssl/certs/server.pem'
   ContrailServiceKeyFile: '/etc/contrail/ssl/private/server-privkey.pem'
   ContrailCaCertFile: '/etc/contrail/ssl/certs/ca-cert.pem'
-  ContrailCaKeyFile: '/etc/contrail/ssl/private/ca-privkey.pem'
+  ContrailCaKeyFile: '/etc/contrail/ssl/private/ca-key.pem'
   # CA cert and key to sign contrail services certificates
   # ContrailCaCert: |
   #   CA certificate content
