@@ -1,0 +1,29 @@
+---
+- name: baremetal nodes list
+  shell: "openstack baremetal node list -f value -c UUID"
+  register: baremetal_nodes
+
+- name: baremetal_nodes list
+  set_fact:
+    baremetal_nodes_list: "{{ baremetal_nodes.stdout_lines }}"
+
+- name: baremetal_nodes
+  debug:
+    msg: "{{ baremetal_nodes_list }}"
+
+- name: manage baremetal node
+  shell: "openstack baremetal node manage {{ item }} --wait"
+  with_items: "{{ baremetal_nodes_list }}"
+
+- include: set_node_physical_network_ports.yml
+  with_items: "{{ baremetal_nodes_list }}"
+  loop_control:
+    loop_var: node
+
+- include: set_subcluster_nodes_capabilities.yml
+  with_dict: "{{ overcloud.subclusters }}"
+  loop_control:
+    loop_var: subcluster
+
+- name: provide baremetal node
+  shell: "openstack overcloud node provide --all-manageable"

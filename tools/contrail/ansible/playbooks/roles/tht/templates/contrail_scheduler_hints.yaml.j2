@@ -1,0 +1,11 @@
+# Generated file. Dont edit manually.
+parameter_defaults:
+{% for subcluster, value in subclusters.iteritems() %}
+{% set subcluster_name = subcluster.capitalize() %}
+{% set scheduler_hint = subcluster_name + "SchedulerHints" %}
+{% for type, role in subcluster_roles.iteritems() %}
+  {% set node_capability = node_capability_template.replace('%subcluster_name%', subcluster.lower()).replace('%role_name%', type.lower()) %}
+  {{ role.name }}{{ scheduler_hint }}:
+    'capabilities:node': '{{ node_capability }}'
+{% endfor %}
+{% endfor %}

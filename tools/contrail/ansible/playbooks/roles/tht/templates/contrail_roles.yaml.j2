@@ -1,0 +1,19 @@
+# Generated file. Dont edit manually.
+{% for subcluster, value in subclusters.iteritems() %}
+{% if value.local %}
+{% set net_index="" %}
+{% else %}
+{% set net_index=subcluster[-1] %}
+{% endif %}
+
+{% include "{{ tht.templates_dir }}/{{ tht.role_file }}" ignore missing %}
+
+{% include "control_only.yaml.j2" %}
+
+{% include "compute.yaml.j2" %}
+
+{% include "contrail_dpdk.yaml.j2" %}
+
+{% include "contrail_sriov.yaml.j2" %}
+
+{% endfor %}

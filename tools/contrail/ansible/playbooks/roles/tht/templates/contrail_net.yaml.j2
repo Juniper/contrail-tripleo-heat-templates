@@ -1,0 +1,61 @@
+# Generated file. Dont edit manually.
+{% set ns = namespace(local_subnet='', ips=[], nodes=dict()) %}
+{% for subcluster, value in subclusters.iteritems() %}
+{% if value.local %}
+{% set ns.local_subnet = subcluster %}
+{% endif %}
+{% endfor %}
+
+parameter_defaults:
+  ControlPlaneSubnet: {{ ns.local_subnet }}
+  ControllerControlPlaneSubnet: {{ ns.local_subnet }}
+  ContrailControllerControlPlaneSubnet: {{ ns.local_subnet }}
+
+{% for subcluster, value in overcloud.subclusters.iteritems() %}
+{% set subcluster_name = subcluster.capitalize() %}
+{% set ns.nodes = dict() %}
+  # =====
+  # {{ subcluster_name }}
+  # ControlPlaneSubnet
+{% for type, role in subcluster_roles.iteritems() %}
+  {{ role.name }}{{ subcluster_name }}ControlPlaneSubnet: {{ subcluster | lower }}
+{% if type in value.nodes %}
+{% do ns.nodes.update({type: value.nodes[type]}) %}
+{% endif %}
+{% endfor %}
+{% for nt, nodes in ns.nodes.iteritems() %}
+  {%- set ns.ips = [] %}
+  {%- for node in nodes %}
+    {%- if node.ipaddress is defined %}
+      {%- do ns.ips.append(node.ipaddress) %}
+    {%- endif %}
+  {%- endfor %}
+  {%- if ns.ips | length > 0 %}
+  # IPs
+  {{ subcluster_roles[nt].name }}{{ subcluster_name }}IPs:
+    InternalApi:
+{% for ip in ns.ips %}
+      - {{ ip }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+resource_registry:
+{% for subcluster, value in overcloud.subclusters.iteritems() %}
+{% set subcluster_name = subcluster.capitalize() %}
+  # =====
+  # {{ subcluster_name }}
+  # Net::SoftwareConfig
+{% for type, role in subcluster_roles.iteritems() %}
+{% if role.network_config_template is defined %}
+  OS::TripleO::{{ role.name }}{{ subcluster_name }}::Net::SoftwareConfig: {{ role.network_config }}
+{% else %}
+  OS::TripleO::{{ role.name }}{{ subcluster_name }}::Net::SoftwareConfig: {{ tht.templates_dir }}/network/config/contrail/{{ role.network_config }}
+{% endif %}
+{% endfor %}
+  # Ports::InternalApiPort
+  OS::TripleO::ContrailControlOnly{{ subcluster_name }}::Ports::InternalApiPort: {{ tht.templates_dir }}/network/ports/internal_api_from_pool.yaml
+  OS::TripleO::ContrailControlOnly{{ subcluster_name }}::Ports::InternalApiPort: {{ tht.templates_dir }}/network/ports/internal_api_from_pool.yaml
+{% endfor %}
+

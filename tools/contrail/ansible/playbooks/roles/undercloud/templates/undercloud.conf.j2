@@ -1,0 +1,23 @@
+[DEFAULT]
+{% if subclusters | length > 1 %}
+{% set subnets = [] %}
+{% set ns = namespace(local_subnet='') %}
+{%- for subcluster, value in subclusters.iteritems() %}
+  {%- do subnets.append(subcluster) %}
+  {%- if value.local %}
+    {%- set ns.local_subnet = subcluster %}
+  {%- endif %}
+{%- endfor %}
+enable_routed_networks = true
+local_subnet = {{ ns.local_subnet }}
+subnets = {{ subnets | join(',') }}
+{% for subcluster, value in subclusters.iteritems() %}
+[{{ subcluster }}]
+cidr = {{ value.cidr }}
+dhcp_start = {{ value.dhcp_start}}
+dhcp_end = {{ value.dhcp_end }}
+inspection_iprange = {{ value.inspection_iprange }}
+gateway = {{ value.gateway }}
+masquerade = {{ value.masquerade }}
+{% endfor %}
+{% endif %}

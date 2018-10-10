@@ -1,0 +1,50 @@
+---
+- name: node_capability
+  set_fact:
+    node_capability: "node:{{ node_capability_template | replace('%subcluster_name%', subcluster_name) | replace('%role_name%', node.key) }}"
+
+- name: current node {{ node.value.uuid }} properties
+  shell: "openstack baremetal node show {{ node.value.uuid }} -c properties -f json"
+  register: node_properties
+
+- name: node_properties_json
+  set_fact:
+    node_propertie_json: "{{ node_properties.stdout | from_json }}"
+
+- name: node capabilities
+  set_fact:
+    node_capabilities: ""
+
+- name: node capabilities if set
+  set_fact:
+    node_capabilities: "{{ node_properties_json.properties.capabilities | default('') }}"
+  when: node_properties_json.properties is defined
+
+- name: node capabilities list
+  set_fact:
+    node_capabilities_list: "{{ node_capabilities.split(',') }}"
+
+- name: node new capabilities list
+  set_fact:
+    node_new_capabilities_list: []
+
+- name: fill node new capability list
+  set_fact:
+    node_new_capabilities_list: "{{ node_new_capabilities_list }} + [ item ]"
+  when: "{{ item.split(':') | first }}" != 'node'
+  with_items: "{{ node_capabilities_list }}"
+
+- name: add node capability to new capability list
+  set_fact:
+    node_new_capabilities_list: "{{ node_new_capabilities_list }} + [ '{{ node_capability }}' ]"
+
+- name: node new capability
+  set_fact:
+    node_new_capabilities: "{{ node_new_capabilities_list | join(',') }}"
+
+- name: node new capability list
+  debug:
+    msg: "{{ node_new_capabilities }}"
+
+- name: set node new capabilities
+  shell: "openstack baremetal node set {{ node.value.uuid }} --property capabilities={{ node_new_capabilities }}"

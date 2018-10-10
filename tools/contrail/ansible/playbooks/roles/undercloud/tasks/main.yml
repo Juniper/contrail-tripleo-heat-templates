@@ -1,0 +1,16 @@
+---
+- name:  hostvars[inventory_hostname]
+  debug:
+    msg: "{{ hostvars[inventory_hostname] }}"
+
+- name: undercloud config file
+  template:
+    src: undercloud.conf.j2
+    dest: "{{ undercloud.config.undercloud_config }}"
+
+- name: underscloud installation
+  shell: openstack undercloud install
+  when:
+    - not undercloud.config.skip_install
+
+#TODO: DHCP relay configuration¶

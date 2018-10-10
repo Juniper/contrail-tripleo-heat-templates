@@ -1,0 +1,13 @@
+---
+- name: set subcluster nodes capabilities
+  debug:
+    msg: "{{ subcluster.key }}"
+
+- name: subcluster_name
+  set_fact:
+    subcluster_name: "{{ subcluster.key | lower }}"
+
+- include: set_node_capabilities.yml
+  with_dict: "{{ subcluster.value.nodes }}"
+  loop_control:
+    loop_var: node

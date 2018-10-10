@@ -1,0 +1,31 @@
+---
+- name: default subcluster for physical-network
+  set_fact:
+    subcluster: >-
+      {%- set ns = namespace(name = "ctlplane") -%}
+      {% for subcluster, value in overcloud.subclusters.iteritems() %}
+        {%- for subcluster_node in value.nodes -%}
+          {%- if subcluster_node.uuid.lower() == node.lower() -%}
+            {%- set ns.name = subcluster -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endfor -%}
+      {{ ns.name }}
+
+- name: ports of baremetal node {{ node }}
+  shell: "openstack baremetal port list -c UUID -f value --node {{ node }}"
+  register: baremetal_node_ports
+
+- name: baremetal_node_ports list
+  set_fact:
+    baremetal_node_ports_list: "{{ baremetal_node_ports.stdout_lines }}"
+
+- name: baremetal_node_ports_list
+  debug:
+    msg: "{{ baremetal_node_ports_list }}"
+
+- name: set physical-network ports for baremetal node {{ node }}
+  shell: "openstack baremetal port set --physical-network {{ subcluster }}  {{ port }}"
+  with_items: "{{ baremetal_node_ports_list }}"
+  loop_control:
+    loop_var: port
