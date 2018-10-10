@@ -65,6 +65,14 @@ parameters:
     default: 'uio_pci_generic'
     description: DPDK Nic Driver
     type: string
+  ContrailDpdkOptions:
+    default: ''
+    description: >
+      Vrouter dpdk advanced options.
+      This string is passed to dpdk container as env variable DPDK_COMMAND_ADDITIONAL_ARGS,
+      so dpdk command line is populated with arguments from this string.
+      E.g. --vr_mempool_sz --dpdk_txd_sz --dpdk_rxd_sz
+    type: string
   ContrailSriovMode:
     default: 'kernel'
     type: string
@@ -129,6 +137,7 @@ resources:
         - name: _CONTRAIL_VROUTER_MODULE_OPTS_
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_
         - name: _CONTRAIL_SRIOV_NUM_VFS_
+        - name: _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_
         - name: _IS_DPDK_
       outputs:
         - name: result
@@ -157,6 +166,7 @@ resources:
         _CONTRAIL_VROUTER_MODULE_OPTS_: {get_param: ContrailVrouterModuleOptions}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_param: DockerContrailVrouterPluginInitImageName}
         _CONTRAIL_SRIOV_NUM_VFS_: {get_param: ContrailSriovNumVFs}
+        _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_param: ContrailDpdkOptions}
         _IS_DPDK_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, 'True', '']}
 
   SriovKernelParametersConfig:

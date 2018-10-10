@@ -48,6 +48,14 @@ parameters:
     default: 'uio_pci_generic'
     description: DPDK Nic Driver
     type: string
+  ContrailDpdkOptions:
+    default: ''
+    description: >
+      Vrouter dpdk advanced options.
+      This string is passed to dpdk container as env variable DPDK_COMMAND_ADDITIONAL_ARGS,
+      so dpdk command line is populated with arguments from this string.
+      E.g. --vr_mempool_sz --dpdk_txd_sz --dpdk_rxd_sz
+    type: string
   ContrailRegistry:
     default: 'opencontrailnightly'
     description: Contrail Registry
@@ -109,6 +117,7 @@ resources:
         - name: _CONTRAIL_HUGEPAGES_1GB_
         - name: _CONTRAIL_HUGEPAGES_2MB_
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_
+        - name: _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_
         - name: _IS_DPDK_
       outputs:
         - name: result
@@ -135,6 +144,7 @@ resources:
         _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailDpdkHugepages1GB}
         _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailDpdkHugepages2MB}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_param: DockerContrailVrouterPluginInitImageName}
+        _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_param: ContrailDpdkOptions}
         _IS_DPDK_: "True"
 
   DpdkKernelParametersConfig:
