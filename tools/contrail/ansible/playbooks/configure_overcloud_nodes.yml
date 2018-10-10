@@ -1,0 +1,17 @@
+---
+- name: Undercloud hosts
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  roles:
+    - undercloud_hosts_group
+  vars_files:
+    - "{{ config_file }}"
+
+- name: Configure baremetal nodes for overcloud
+  hosts: undercloud_hosts
+  gather_facts: no
+  roles:
+    - overcloud_nodes
+  vars_files:
+    - "{{ hostvars['localhost'].config_file }}"

@@ -1,0 +1,113 @@
+---
+provider_config:
+  kvm:
+    # ssh_pwd: qwe123QWE
+    # ssh_user: alexm
+    # ssh_public_key:
+    # ssh_private_key:
+
+stack_user: stack
+working_dir: "/home/{{ stack_user }}"
+
+undercloud:
+  nodes:
+    undercloud:
+      provider: kvm
+      ip: 192.168.56.30
+  config:
+    skip_install: true
+    undercloud_config: "{{ working_dir }}/undercloud.conf"
+
+subclusters:
+  subcluster0:
+    local: True
+    cidr: 192.168.10.0/24
+    dhcp_start: 192.168.10.10
+    dhcp_end: 192.168.10.90
+    inspection_iprange: 192.168.10.100,192.168.10.190
+    gateway: 192.168.10.1
+    masquerade: False
+
+  subcluster1:
+    local: False
+    cidr: 192.168.11.0/24
+    dhcp_start: 192.168.11.10
+    dhcp_end: 192.168.11.90
+    inspection_iprange: 192.168.11.100,192.168.11.190
+    gateway: 192.168.11.1
+    masquerade: False
+
+overcloud:
+  subclusters:
+    subcluster0:
+      asn: "65413"
+      vrouter_gateway: 10.0.0.1
+      nodes:
+        control:
+          - uuid: d57a310a-6339-4f6e-82ec-6a30ad939c65
+            ipaddress: 10.0.0.11
+        compute:
+          - uuid: 9962e2fd-8749-4170-a154-deaf69166715
+
+    subcluster1:
+      asn: "65414"
+      vrouter_gateway: 10.0.1.1
+      nodes:
+        control:
+          - uuid: d57a310a-6339-4f6e-82ec-6a30ad939c65
+            ipaddress: 10.0.1.11
+          - uuid: d57a310a-6339-4f6e-82ec-6a30ad939c66
+            ipaddress: 10.0.1.12
+        dpdk:
+          - uuid: b627ff2d-b2a0-4369-b642-6ab72404d729
+          - uuid: b627ff2d-b2a0-4369-b642-6ab72404d72a
+        compute:
+          - uuid: b627ff2d-b2a0-4369-b642-6ab72404d72b
+
+
+# TODO: move somehow below values into a constants
+tht:
+  templates_dir: "{{ working_dir }}/tripleo-heat-templates"
+  role_file: "roles_data_contrail_aio.yaml"
+  # output tht files
+  contrail_roles_file: "{{ working_dir }}/contrail-roles.yaml"
+  contrail_net: "{{ working_dir }}/contrail-net.yaml"
+  contrail_nodes: "{{ working_dir }}/contrail-nodes.yaml"
+  contrail_scheduler_hints: "{{ working_dir }}/contrail-scheduler-hints.yaml"
+
+# Mapping of roles to flavors and its names.
+# It is possible to use custom flavor if a subcluster role needs is a specific flavor
+# e.g. flavor: "compute-%subcluster%" gives name compute-subcluster1
+subcluster_roles:
+  control:
+    name: ContrailControlOnly
+    flavor: control-only
+    network_config: contrail-controller-nic-config.yaml
+    # network_config_template: contrail_controller_nic_config.yaml.j2
+  compute:
+    name: Compute
+    flavor: compute
+    pre_network_config: compute_pre_network.yaml
+    network_config: compute-nic-config.yaml
+    # network_config_template: compute_nic_config.yaml.j2
+  dpdk:
+    name: ContrailDpdk
+    flavor: compute-dpdk
+    pre_network_config: contrail_dpdk_pre_network.yaml
+    network_config: contrail-dpdk-nic-config.yaml
+    # network_config_template: contrail_dpdk_nic_config.yaml.j2
+  sriov:
+    name: ContrailSriov
+    flavor: compute-sriov
+    pre_network_config: contrail_sriov_pre_network.yaml
+    network_config: contrail-sriov-nic-config.yaml
+    # network_config_template: contrail_sriov_nic_config.yaml.j2
+  tsn:
+    name: ContrailTsn
+    flavor: contrail-tsn
+    pre_network_config: contrail_tsn_pre_network.yaml
+    network_config: contrail-tsn-nic-config.yaml
+    # network_config_template: contrail_tsn_nic_config.yaml.j2
+
+node_capability_template:
+  'contrail-%subcluster_name%-%role_name%-%index%'

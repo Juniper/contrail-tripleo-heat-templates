@@ -1,0 +1,45 @@
+# Generated file. Dont edit manually.
+parameter_defaults:
+{% for subcluster, value in overcloud.subclusters.iteritems() %}
+{% set subcluster_name = subcluster.capitalize() %}
+  # {{ subcluster_name }}
+{% for type, role in subcluster_roles.iteritems() %}
+  Overcloud{{ role.name }}{{ subcluster_name }}Flavor: {{ role.flavor | replace("%subcluster%", subcluster.lower()) }}
+{% endfor %}
+
+{% for type, nodes in value.nodes.iteritems() %}
+  {{ subcluster_roles[type].name }}{{ subcluster_name }}Count: {{ nodes | length }}
+{% endfor %}
+
+{% endfor %}
+
+  NodeDataLookup:
+{% for subcluster, value in overcloud.subclusters.iteritems() %}
+{% set ns = namespace(control_nodes = []) %}
+{% for node in value.nodes.control %}
+{% do ns.control_nodes.append(node.ipaddress) %}
+{% endfor %}
+{% for type, nodes in value.nodes.iteritems() %}
+{% for node in nodes %}
+    {{ node.uuid | upper }}:
+      contrail_settings:
+        SUBCLUSTER: {{ subcluster | lower }}
+        CONTROL_NODES: {{ ns.control_nodes | join(',') }}
+        VROUTER_GATEWAY: {{ value.vrouter_gateway }}
+{% if value.asn is defined %}
+        BGP_ASN: {{ value.asn }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endfor %}
+
+resource_registry:
+{% for subcluster, value in overcloud.subclusters.iteritems() %}
+{% set subcluster_name = subcluster.capitalize() %}
+{% for type, role in subcluster_roles.iteritems() %}
+  OS::TripleO::{{ role.name }}{{ subcluster_name }}ExtraConfigPre: {{ tht.templates_dir }}/extraconfig/pre_deploy/contrail/contrail-init.yaml
+{% if role.pre_network_config is defined %}
+  OS::TripleO::{{ role.name }}{{ subcluster_name }}::PreNetworkConfig: {{ tht.templates_dir }}/extraconfig/pre_network/contrail/{{ role.pre_network_config }}
+{% endif %}
+{% endfor %}
+{% endfor %}

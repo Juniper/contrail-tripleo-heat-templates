@@ -1,0 +1,58 @@
+---
+- name: set contrail tht dir
+  set_fact:
+    contrail_tht_dir: "{{ working_dir }}/contrail-tripleo-heta-templates"
+
+- name: check contrail tht repo is present
+  stat:
+    path: "{{ contrail_tht_dir }}"
+  register: contrail_tht_dir
+
+- name: clone contrail-tripleo-heat-templates git repo
+  git:
+    repo: https://github.com/Juniper/contrail-tripleo-heta-templates.git
+    dest: "{{ contrail_tht_dir }}"
+  ignore_errors: yes
+  when: not contrail_tht_dir.stat.exist
+
+- name: copy openstack tht
+  shell: cp -r /usr/share/openstack-tripleo-heat-templates/ {{ tht.templates_dir }}
+
+- name: copy contrail tht to openstack tht
+  shell: cp -r "{{ contrail_tht_dir }}/*" {{ tht.templates_dir }}
+
+- name: create subcluster roles file
+  template:
+    src: contrail_roles.yaml.j2
+    dest: "{{ tht.contrail_roles_file }}"
+
+- name: create contrail nodes specific template
+  template:
+    src: contrail_nodes.yaml.j2
+    dest: "{{ tht.contrail_nodes }}"
+
+- name: create contrail net specific template
+  template:
+    src: contrail_net.yaml.j2
+    dest: "{{ tht.contrail_net }}"
+
+- name: create nic configs templates
+  template:
+    src: "{{ item.value.network_config_template }}"
+    dest: "{{ working_dir }}/{{ item.value.network_config }}"
+  when:
+    - item.value.network_config is defined
+    - item.value.network_config_template is defined
+    - item.value.network_config != ""
+    - item.value.network_config_template != ""
+  with_dict: "{{ subcluster_roles }}"
+
+- name: create contrail nodes scheduler hints template
+  template:
+    src: contrail_scheduler_hints.yaml.j2
+    dest: "{{ tht.contrail_scheduler_hints }}"
+
+# service net map
+# subclusterRoleNetworkName = subclusterRoleName + 'Network'
+# if not subclusterRoleNetworkName in self.contrailServiceNetMap:
+#     self.contrailServiceNetMap[subclusterRoleNetworkName] = subcluster['network']
