@@ -89,7 +89,7 @@
           shell: "mv {{ contrail_module_dir }} {{ contrail_module_dir }}.org"
           when:
             - file_details.stat.exists
-            - not file_details_org.exists
+            - not file_details_org.stat.exists
 
         - name: Check contrail tripleo puppet module was installed.
           stat:
