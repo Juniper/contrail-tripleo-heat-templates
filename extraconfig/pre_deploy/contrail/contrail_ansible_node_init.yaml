@@ -80,9 +80,16 @@
             path: "{{ contrail_module_dir }}"
           register: file_details
 
+        - name: Check contrail tripleo puppet org module exists.
+          stat:
+            path: "{{ contrail_module_dir }}.org"
+          register: file_details_org
+
         - name: Rename old contrail-tripleo-puppet module in tripleo
           shell: "mv {{ contrail_module_dir }} {{ contrail_module_dir }}.org"
-          when: file_details.stat.exists
+          when:
+            - file_details.stat.exists
+            - not file_details_org.exists
 
         - name: Check contrail tripleo puppet module was installed.
           stat:
