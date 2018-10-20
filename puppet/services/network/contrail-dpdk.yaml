@@ -41,7 +41,7 @@ parameters:
   ContrailDpdkDriver:
     default: 'uio_pci_generic'
     description: DPDK Nic Driver
-    type: string
+    type: string    
   VrouterAnalyticsNodeIps:
     description: List of Contrail Analytics IPs
     type: comma_delimited_list
@@ -57,7 +57,10 @@ parameters:
       Example "eth1:4096,eth2:128"
     type: comma_delimited_list
     default: ""
-
+  ContrailDpdkVrouterVhostUserMode:
+    description: Vhost user mode of a DPDK based vrouter
+    type: string
+    default: ''
 
 resources:
   ContrailBase:
@@ -85,6 +88,7 @@ outputs:
             contrail::vrouter::dpdk_driver: {get_param: ContrailDpdkDriver}
             contrail::vrouter::analytics_node_ips: {get_param: VrouterAnalyticsNodeIps}
             contrail::vrouter::sriov_on: {get_param: ContrailSriovOn}
+            contrail::vrouter::vhost_user_mode: {get_param: ContrailDpdkVrouterVhostUserMode}
             tripleo::host::sriov::number_of_vfs: {get_param: NeutronSriovNumVFs}
             tripleo.contrail_dpdk.firewall_rules:
               '111 contrail_dpdk_8085':
