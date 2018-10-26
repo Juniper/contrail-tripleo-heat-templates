@@ -137,6 +137,10 @@ parameters:
     type: json
     default: {}
     description: json containing per-node configuration map
+  contrail_service_name:
+    type: string
+    default: "contrail_config_database"
+    description: used for overloading zk and cassandra values for analyticsdb node
 
 conditions:
   contrail_config_vip_unset: {equals : [{get_param: ContrailConfigVIP}, '']}
@@ -162,7 +166,6 @@ outputs:
   role_data:
     description: Shared role data for the Contrail services.
     value:
-      service_name: contrail_base
       contrail_registry: {get_param: ContrailRegistry}
       contrail_imagetag: {get_param: ContrailImageTag}
       contrail_nodemgr_image_name:
@@ -383,3 +386,115 @@ outputs:
           - *contrail_auth_tls_env
       docker_config:
         step_2: {}
+      contrail_common_env_file: &contrail_common_env_file
+        "/etc/contrail/common_contrail.env"
+      contrail_base_env_file: &contrail_base_env_file
+        - *contrail_common_env_file
+      contrail_host_prep_tasks_base:
+        - name: create contrail directories
+          file:
+            path: "{{ item }}"
+            state: directory
+            recurse: yes
+          with_items:
+            - /var/log/containers/contrail
+            - /etc/contrail/ssl
+        - name: register common env file
+          stat:
+            path: *contrail_common_env_file
+          register: p
+        - name: create common env file
+          copy:
+            dest: *contrail_common_env_file
+            content: ""
+          when: not p.stat.exists
+        - name: get dmi
+          shell: |
+            #!/bin/sh
+            dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
+          register: dmi
+        - name: set dmi fact
+          set_fact:
+            dmi_uuid: "{{ dmi.stdout }}"
+        - name: get contrail_settings
+          shell: "hiera -c /etc/puppet/hiera.yaml contrail_settings ::uuid={{ dmi_uuid }} | sed 's/=>/:/g'"
+          register: contrail_settings_string
+        - name: turn contrail_settings into json
+          set_fact:
+            contrail_settings: "{{ contrail_settings_string.stdout | from_json }}"
+          when:
+            - contrail_settings_string.stdout is defined
+            - contrail_settings_string.stdout != "nil"
+        - name: write contrail settings to file
+          lineinfile:
+            dest: *contrail_common_env_file
+            regexp: "^{{ item.key }}.*"
+            line: "{{ item.key }}={{ item.value }}"
+            state: present
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
+
+        - name: get contrail config node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_config_node_ips
+          register: contrail_config_node_ips_list
+        - name: turn contrail config ips into string
+          set_fact:
+            contrail_config_node_ips_string: "{{ contrail_config_node_ips_list.stdout | from_json | join(',') }}"
+
+        - name: get contrail config database node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_config_database_node_ips
+          register: contrail_config_database_node_ips_list
+        - name: turn contrail config db ips into string
+          set_fact:
+            contrail_config_database_node_ips_string: "{{ contrail_config_database_node_ips_list.stdout | from_json | join(',') }}"
+
+        - name: get contrail control node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_control_node_ips
+          register: contrail_control_node_ips_list
+        - name: turn contrail control ips into string
+          set_fact:
+            contrail_control_node_ips_string: "{{ contrail_control_node_ips_list.stdout | from_json | join(',') }}"
+
+        - name: get contrail analytics node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
+          register: contrail_analytics_node_ips_list
+        - name: turn contrail analytics ips into string
+          set_fact:
+            contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_list.stdout | from_json | join(',') }}"
+
+        - name: get contrail analytics database node ips
+          shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_database_node_ips
+          register: contrail_analytics_database_node_ips_list
+        - name: turn contrail analytics database ips into string
+          set_fact:
+            contrail_analytics_database_node_ips_string: "{{ contrail_analytics_database_node_ips_list.stdout | from_json | join(',') }}"
+
+        - name: service specific node ips param name
+          set_fact:
+            contrail_service_node_ips_param_name: {list_join: ["_", [{get_param: contrail_service_name}, "node_ips"]]}
+        - name: get contrail service specific node ips
+          shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_service_node_ips_param_name }}"
+          register: contrail_service_node_ips_list
+        - name: turn contrail service specific node ips into string
+          set_fact:
+            contrail_service_node_ips_string: "{{ contrail_service_node_ips_list.stdout | from_json | join(',')  }}"
+
+        - name: write contrail config node ips to environment file
+          lineinfile:
+            dest: *contrail_common_env_file
+            state: present
+            regexp: "^{{ item.key }}.*"
+            line: "{{ item.key }}={{ item.value }}"
+          with_dict:
+            ANALYTICS_NODES: "{{ contrail_analytics_node_ips_string }}"
+            ANALYTICSDB_NODES: "{{ contrail_analytics_database_node_ips_string }}"
+            CASSANDRA_SEEDS: "{{ contrail_service_node_ips_string }}"
+            CONFIG_NODES: "{{ contrail_config_node_ips_string }}"
+            CONFIGDB_NODES: "{{ contrail_config_database_node_ips_string }}"
+            CONTROL_NODES: "{{ contrail_control_node_ips_string }}"
+            DNS_NODES: "{{ contrail_control_node_ips_string }}"
+            KAFKA_NODES: "{{ contrail_analytics_database_node_ips_string }}"
+            RABBITMQ_NODES: "{{ contrail_config_database_node_ips_string }}"
+            RABBITMQ_NODE_PORT: 5673
+            ZOOKEEPER_ANALYTICS_NODES: "{{ contrail_analytics_database_node_ips_string }}"
+            ZOOKEEPER_NODES: "{{ contrail_service_node_ips_string }}"

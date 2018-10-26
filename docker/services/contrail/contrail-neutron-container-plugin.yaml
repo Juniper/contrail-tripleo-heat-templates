@@ -99,7 +99,9 @@ outputs:
                 - {get_param: DockerContrailNeutronPluginImageName}
                 - ':'
                 - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
             volumes:
               - opt_plugin:/opt/plugin
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              get_attr: [ContrailBase, role_data, contrail_base_env_file]

@@ -88,16 +88,14 @@ outputs:
                       service_port: 8082
                       service_network: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
                     - {get_attr: [ContrailBase, role_data, haproxy_config_settings]}
+      contrail_env_file: &contrail_env_file
+        "/etc/contrail/common_config.env"
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
         step_5:
           contrail_config_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
-            environment:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                - - NODE_TYPE=config
             net: host
             detach: true
             user: root
@@ -106,8 +104,12 @@ outputs:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                 - - /var/run/docker.sock:/var/run/docker.sock
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
-              - /etc/contrail/common_config.env
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
           contrail_config_api:
             image: &contrail_config_api_image
               list_join:
@@ -117,8 +119,6 @@ outputs:
                   - {get_param: DockerContrailConfigApiImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -126,8 +126,12 @@ outputs:
             restart: always
             volumes:
               get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
-              - /etc/contrail/common_config.env
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
           contrail_config_schema:
             image: &contrail_config_schema_image
               list_join:
@@ -137,8 +141,6 @@ outputs:
                   - {get_param: DockerContrailConfigSchemaImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -146,8 +148,12 @@ outputs:
             restart: always
             volumes:
               get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
-              - /etc/contrail/common_config.env
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
           contrail_config_svc_monitor:
             image: &contrail_config_svc_monitor_image
               list_join:
@@ -157,8 +163,6 @@ outputs:
                   - {get_param: DockerContrailConfigSvcmonitorImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -166,8 +170,12 @@ outputs:
             restart: always
             volumes:
               get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
-              - /etc/contrail/common_config.env
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
           contrail_config_device_manager:
             image: &contrail_config_device_manager_image
               list_join:
@@ -177,8 +185,6 @@ outputs:
                   - {get_param: DockerContrailConfigDevicemgrImageName}
                   - ':'
                   - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
             net: host
             privileged: false
             detach: true
@@ -186,97 +192,35 @@ outputs:
             restart: always
             volumes:
               get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
-              - /etc/contrail/common_config.env
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
       host_prep_tasks:
-        - name: create contrail directories
-          file:
-            path: "{{ item }}"
-            state: directory
-            recurse: yes
-          with_items:
-            - /var/log/containers/contrail
-            - /etc/contrail/ssl
-        - name: register /etc/contrail/common_config.env
-          stat:
-            path: /etc/contrail/common_config.env
-          register: p
-        - name: create /etc/contrail/common_config.env
-          copy:
-            dest: /etc/contrail/common_config.env
-            content: ""
-          when: not p.stat.exists
-        - name: get nova api vip
-          shell: hiera -c /etc/puppet/hiera.yaml nova_api_vip
-          register: nova_api_vip
-        - name: get contrail config database node ips
-          shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
-          register: contrail_config_database_node_ips_list
-        - name: turn contrail config db ips into json
-          set_fact:
-            contrail_config_database_node_ips_json: "{{ contrail_config_database_node_ips_list.stdout | from_json }}"
-        - name: turn json into comma separated string
-          set_fact:
-            contrail_config_database_node_ips_string: "{{ contrail_config_database_node_ips_json | join(',') }}"
-        - name: get contrail config node ips
-          shell: hiera -c /etc/puppet/hiera.yaml contrail_config_node_ips
-          register: contrail_config_node_ips_list
-        - name: turn contrail config ips into json
-          set_fact:
-            contrail_config_node_ips_json: "{{ contrail_config_node_ips_list.stdout | from_json }}"
-        - name: turn json into comma separated string
-          set_fact:
-            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}"
-        - name: get contrail analytics node ips
-          shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
-          register: contrail_analytics_node_ips_list
-        - name: turn contrail analytics ips into json
-          set_fact:
-            contrail_analytics_node_ips_json: "{{ contrail_analytics_node_ips_list.stdout | from_json }}"
-        - name: turn json into comma separated string
-          set_fact:
-            contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
-        - name: write contrail config node ips to environment file
-          lineinfile: dest=/etc/contrail/common_config.env regexp='^CONFIG_NODES.*' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
-        - name: write contrail config db node ips to environment file
-          lineinfile: dest=/etc/contrail/common_config.env regexp='^CONFIGDB_NODES.*' line="CONFIGDB_NODES={{ contrail_config_database_node_ips_string }}" state=present
-        - name: write contrail config db node ips to environment file
-          lineinfile: dest=/etc/contrail/common_config.env regexp='^ZOOKEEPER_NODES.*' line="ZOOKEEPER_NODES={{ contrail_config_database_node_ips_string }}" state=present
-        - name: write contrail config rmq node ips to environment file
-          lineinfile: dest=/etc/contrail/common_config.env regexp='^RABBITMQ_NODES.*' line="RABBITMQ_NODES={{ contrail_config_database_node_ips_string }}" state=present
-        - name: write contrail analytics node ips to environment file
-          lineinfile: dest=/etc/contrail/common_config.env regexp='^ANALYTICS_NODES.*' line="ANALYTICS_NODES={{ contrail_analytics_node_ips_string }}" state=present
-        - name: write remaining contrail config env cars
-          lineinfile: dest=/etc/contrail/common_config.env line="{{ item }}" state=present
-          with_items:
-            - RABBITMQ_NODE_PORT=5673
-            - IPFABRIC_SERVICE_HOST={{ nova_api_vip.stdout }}
-
-        - name: get dmi
-          shell: |
-                 #!/bin/sh
-                 dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
-          register: dmi
-
-        - name: set dmi fact
-          set_fact:
-            dmi_uuid: "{{ dmi.stdout }}"
-
-        - name: get contrail_settings
-          shell: "hiera -c /etc/puppet/hiera.yaml contrail_settings ::uuid={{ dmi_uuid }} | sed 's/=>/:/g'"
-          register: contrail_settings_string
-
-        - name: turn contrail_settings into json
-          set_fact:
-            contrail_settings: "{{ contrail_settings_string.stdout | from_json }}"
-          when:
-          - contrail_settings_string.stdout is defined
-          - contrail_settings_string.stdout != "nil"
-
-        - name: write contrail settings to file
-          lineinfile: dest=/etc/contrail/common_config.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
-          with_dict: "{{ contrail_settings }}"
-          when: contrail_settings is defined
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
+          - - name: register create contrail env file
+              stat:
+                path: *contrail_env_file
+              register: p
+            - name: create contrail env file
+              copy:
+                dest: *contrail_env_file
+                content: ""
+              when: not p.stat.exists
+            - name: get nova api vip
+              shell: hiera -c /etc/puppet/hiera.yaml nova_api_vip
+              register: nova_api_vip
+            - name: write remaining contrail config env cars
+              lineinfile: 
+                dest: *contrail_env_file
+                state: present
+                line: "{{ item }}"
+              with_items:
+                - NODE_TYPE=config
+                - IPFABRIC_SERVICE_HOST={{ nova_api_vip.stdout }}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
