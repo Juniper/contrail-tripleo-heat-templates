@@ -60,5 +60,9 @@ outputs:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
               - if:
                 - env_file_unset
-                - {}
-                - env_file: {get_param: env_file_name}
+                - env_file:
+                    get_attr: [ContrailBase, role_data, contrail_base_env_file]
+                - env_file:
+                    list_concat:
+                      - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                      - - {get_param: env_file_name}

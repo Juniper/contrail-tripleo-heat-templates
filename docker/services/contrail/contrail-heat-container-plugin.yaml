@@ -81,7 +81,9 @@ outputs:
                 - {get_param: DockerContrailHeatPluginImageName}
                 - ':'
                 - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
             volumes:
               {get_param: HeatEngineOptVolumes}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              get_attr: [ContrailBase, role_data, contrail_base_env_file]
