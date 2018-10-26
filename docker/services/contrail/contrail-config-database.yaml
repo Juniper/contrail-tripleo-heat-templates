@@ -89,6 +89,8 @@ outputs:
                   - 9161
                   - 25673
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
+      contrail_env_file: &contrail_env_file
+        "/etc/contrail/common_config_database.env"
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -109,10 +111,12 @@ outputs:
             restart: always
             volumes:
               get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            env_file:
-              - /etc/contrail/common.env
             environment:
-              - "NODE_TYPE=config-database"
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
           contrail_config_zookeeper:
             image: &contrail_config_zookeeper_image
               list_join:
@@ -132,13 +136,23 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                 - - config_zookeeper:/data
                   - config_zookeeper:/datalog
-            env_file:
-              - /etc/contrail/common.env
             environment:
-              - "NODE_TYPE=config-database"
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
         step_4:
           contrail_config_database_nodemgr:
             image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+            net: host
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /var/run/docker.sock:/var/run/docker.sock
             environment:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env]}
@@ -149,19 +163,10 @@ outputs:
                       - ''
                       - - 'CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB='
                         - {get_param: ContrailConfigDBMinDiskGB}
-                - - "NODE_TYPE=config-database"
-                  - "CASSANDRA_CQL_PORT=9041"
-                  - "CASSANDRA_JMX_LOCAL_PORT=7201"
-            net: host
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - /var/run/docker.sock:/var/run/docker.sock
             env_file:
-              - /etc/contrail/common.env
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
           contrail_config_database:
             image: &contrail_config_database_image
               list_join:
@@ -181,104 +186,40 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                 - - config_cassandra:/var/lib/cassandra/data
             environment:
-              - "NODE_TYPE=config-database"
+              get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
-              - /etc/contrail/common.env
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
       host_prep_tasks:
-        - name: create contrail directories
-          file:
-            path: "{{ item }}"
-            state: directory
-            recurse: yes
-          with_items:
-            - /var/log/containers/contrail
-            - /etc/contrail/ssl
-        - name: register /etc/contrail/common.env
-          stat:
-            path: /etc/contrail/common.env
-          register: p
-        - name: create /etc/contrail/common.env
-          copy:
-            dest: /etc/contrail/common.env
-            content: ""
-          when: not p.stat.exists
-        - name: get contrail config database node ips
-          shell: hiera -c /etc/puppet/hiera.yaml contrail_database_node_ips
-          register: contrail_config_database_node_ips_list
-        - name: turn contrail config db ips into json
-          set_fact:
-            contrail_config_database_node_ips_json: "{{ contrail_config_database_node_ips_list.stdout | from_json }}"
-        - name: turn json into comma separated string
-          set_fact:
-            contrail_config_database_node_ips_string: "{{ contrail_config_database_node_ips_json | join(',') }}"
-        - name: get contrail analytics node ips
-          shell: hiera -c /etc/puppet/hiera.yaml contrail_analytics_node_ips
-          register: contrail_analytics_node_ips_list
-        - name: turn contrail analytics ips into json
-          set_fact:
-            contrail_analytics_node_ips_json: "{{ contrail_analytics_node_ips_list.stdout | from_json }}"
-        - name: turn json into comma separated string
-          set_fact:
-            contrail_analytics_node_ips_string: "{{ contrail_analytics_node_ips_json | join(',') }}"
-        - name: get contrail config node ips
-          shell: hiera -c /etc/puppet/hiera.yaml contrail_config_node_ips
-          register: contrail_config_node_ips_list
-        - name: turn contrail config ips into json
-          set_fact:
-            contrail_config_node_ips_json: "{{ contrail_config_node_ips_list.stdout | from_json }}"
-        - name: turn json into comma separated string
-          set_fact:
-            contrail_config_node_ips_string: "{{ contrail_config_node_ips_json | join(',') }}"
-        - name: write contrail config node ips to environment file
-          lineinfile: dest=/etc/contrail/common.env regexp='^CONFIG_NODES.*' line="CONFIG_NODES={{ contrail_config_node_ips_string }}" state=present
-        - name: write contrail config db node ips to environment file
-          lineinfile: dest=/etc/contrail/common.env regexp='^CASSANDRA_SEEDS.*' line="CASSANDRA_SEEDS={{ contrail_config_database_node_ips_string }}" state=present
-        - name: write contrail config zk node ips to environment file
-          lineinfile: dest=/etc/contrail/common.env regexp='^ZOOKEEPER_NODES.*' line="ZOOKEEPER_NODES={{ contrail_config_database_node_ips_string }}" state=present
-        - name: write contrail config RMQ node ips to environment file
-          lineinfile: dest=/etc/contrail/common.env regexp='^RABBITMQ_NODES.*' line="RABBITMQ_NODES={{ contrail_config_database_node_ips_string }}" state=present
-        - name: write contrail analytics node ips to environment file
-          lineinfile: dest=/etc/contrail/common.env regexp='^ANALYTICS_NODES.*' line="ANALYTICS_NODES={{ contrail_analytics_node_ips_string }}" state=present
-        - name: write remaining contrail config env cars
-          lineinfile: dest=/etc/contrail/common.env line="{{ item }}" state=present
-          with_items:
-            - CASSANDRA_START_RPC=true
-            - CASSANDRA_CLUSTER_NAME=contrail_database
-            - CASSANDRA_PORT=9161
-            - CASSANDRA_CQL_PORT=9041
-            - CASSANDRA_SSL_STORAGE_PORT=7013
-            - CASSANDRA_STORAGE_PORT=7012
-            - CASSANDRA_JMX_LOCAL_PORT=7201
-            - ZOOKEEPER_PORTS=2888:3888
-            - ZOOKEEPER_PORT=2181
-            - RABBITMQ_ERLANG_COOKIE=abcdefg
-            - RABBITMQ_NODE_PORT=5673
-
-        - name: get dmi
-          shell: |
-                 #!/bin/sh
-                 dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
-          register: dmi
-
-        - name: set dmi fact
-          set_fact:
-            dmi_uuid: "{{ dmi.stdout }}"
-
-        - name: get contrail_settings
-          shell: "hiera -c /etc/puppet/hiera.yaml contrail_settings ::uuid={{ dmi_uuid }} | sed 's/=>/:/g'"
-          register: contrail_settings_string
-
-        - name: turn contrail_settings into json
-          set_fact:
-            contrail_settings: "{{ contrail_settings_string.stdout | from_json }}"
-          when:
-          - contrail_settings_string.stdout is defined
-          - contrail_settings_string.stdout != "nil"
-
-        - name: write contrail settings to file
-          lineinfile: dest=/etc/contrail/common.env regexp="^{{ item.key }}.*" line="{{ item.key }}={{ item.value }}" state=present
-          with_dict: "{{ contrail_settings }}"
-          when: contrail_settings is defined
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
+          - - name: register contrail env file
+              stat:
+                path: *contrail_env_file
+              register: p
+            - name: create contrail env file
+              copy:
+                dest: *contrail_env_file
+                content: ""
+              when: not p.stat.exists
+            - name: write remaining contrail config env cars
+              lineinfile:
+                dest: *contrail_env_file
+                state: present
+                line: "{{ item }}"
+              with_items:
+                - NODE_TYPE=config-database
+                - CASSANDRA_START_RPC=true
+                - CASSANDRA_CLUSTER_NAME=contrail_database
+                - CASSANDRA_PORT=9161
+                - CASSANDRA_CQL_PORT=9041
+                - CASSANDRA_SSL_STORAGE_PORT=7013
+                - CASSANDRA_STORAGE_PORT=7012
+                - CASSANDRA_JMX_LOCAL_PORT=7201
+                - ZOOKEEPER_PORTS=2888:3888
+                - ZOOKEEPER_PORT=2181
+                - RABBITMQ_ERLANG_COOKIE=abcdefg
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
