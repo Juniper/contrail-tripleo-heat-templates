@@ -39,6 +39,12 @@ parameters:
     description: Parameters specific to the role
     type: json
 
+  # internal params
+  contrail_nodes_param_suffux:
+    type: string
+    default: "node_ips"
+    description: suffix for reading hiera data, node_ips or node_names
+
 resources:
   ContainersCommon:
     type: ../containers-common.yaml
@@ -150,18 +156,21 @@ outputs:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
+            - name: node ips (names) param name
+              set_fact:
+                contrail_nodes_param_name: {list_join: ["_", ["contrail_webui", {get_param: contrail_nodes_param_suffux}]]}
             - name: get contrail webui node ips
-              shell: hiera -c /etc/puppet/hiera.yaml contrail_webui_node_ips
-              register: contrail_webui_node_ips_list
+              shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}"
+              register: contrail_webui_nodes_list
             - name: turn contrail webui ips into string
               set_fact:
-                contrail_webui_node_ips_string: "{{ contrail_webui_node_ips_list.stdout | from_json | join(',') }}"
+                contrail_webui_nodes_string: "{{ contrail_webui_nodes_list.stdout | from_json | join(',') }}"
             - name: write contrail webui node ips to environment file
               lineinfile:
                 dest: *contrail_env_file
                 state: present
                 regexp: '^WEBUI_NODES.*'
-                line: "WEBUI_NODES={{ contrail_webui_node_ips_string }}"
+                line: "WEBUI_NODES={{ contrail_webui_nodes_string }}"
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
