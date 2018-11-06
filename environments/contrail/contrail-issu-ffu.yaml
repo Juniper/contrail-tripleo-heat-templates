@@ -1,0 +1,21 @@
+
+# ISSU for FF Upgrade.
+#
+# ISSU node is deployed at the early stage of upgrade before 
+# the undercloud node is upgraded. So, this ISSU role is to just
+# keep ISSU role node alive during ff upgrade procedure.
+#
+resource_registry:
+  OS::TripleO::Services::ContrailIssu: ../../docker/services/contrail/contrail-issu-ffu.yaml
+  OS::TripleO::Services::ContrailIssuCompute: ../../docker/services/contrail/contrail-issu-ffu.yaml
+
+parameter_defaults:
+  ContrailControllerIssuCount: 1
+  OvercloudContrailControllerIssuFlavor: 'contrail-controller-issu'
+
+  ContrailIssuSshUser: 'heat-admin'
+  ContrailIssuSshKey:
+    public_key: |
+      ISSU ssh public key
+    private_key: |
+      ISSU ssh private key

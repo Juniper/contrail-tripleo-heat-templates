@@ -214,7 +214,7 @@ outputs:
               shell: hiera -c /etc/puppet/hiera.yaml nova_api_vip
               register: nova_api_vip
             - name: write remaining contrail config env cars
-              lineinfile: 
+              lineinfile:
                 dest: *contrail_env_file
                 state: present
                 line: "{{ item }}"
@@ -224,3 +224,15 @@ outputs:
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
+
+      fast_forward_upgrade_tasks:
+        - name: Stop contrail config services
+          service: name={{ item }} state=stopped enabled=no
+          when:
+            - step|int == 1
+            - release == 'ocata'
+          with_items:
+            - supervisor-config
+
+      fast_forward_post_upgrade_tasks: []
+
