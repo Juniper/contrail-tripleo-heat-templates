@@ -22,6 +22,14 @@ parameters:
     description: image
     type: string
     default: "contrail-external-rabbitmq"
+  DockerContrailConfigDatabaseVolume:
+    default: 'config_cassandra'
+    description: Docker volume for contrail config DB service
+    type: string
+  DockerContrailConfigZookeeperVolume:
+    default: 'config_zookeeper'
+    description: Docker volume for contrail config zookeeper service
+    type: string
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -134,8 +142,14 @@ outputs:
             volumes:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - config_zookeeper:/data
-                  - config_zookeeper:/datalog
+                - - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailConfigZookeeperVolume}
+                        - '/data'
+                  - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailConfigZookeeperVolume}
+                        - '/datalog'
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
@@ -184,7 +198,10 @@ outputs:
             volumes:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - config_cassandra:/var/lib/cassandra/data
+                - - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailConfigDatabaseVolume}
+                        - '/var/lib/cassandra'
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
@@ -223,3 +240,52 @@ outputs:
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
+
+      fast_forward_upgrade_tasks:
+        - name: Stop {{ item }} service
+          service: name={{ item }} state=stopped enabled=no
+          when:
+            - step|int == 1
+            - release == 'ocata'
+          with_items:
+            - contrail-database
+        - when:
+            - step|int == 8
+            - is_bootstrap_node|bool
+            - release == 'pike'
+          block:
+            - name: Prepare empty {{ item }} Volume
+              docker_volume:
+                state: present
+                name: "{{ item }}"
+              with_items:
+                - {get_param: DockerContrailConfigDatabaseVolume}
+                - {get_param: DockerContrailConfigZookeeperVolume}
+            - name: Migrate Config DB data into new volume 
+              docker_container:
+                image: *contrail_config_database_image
+                name: contrail_config_database_migrate_data
+                auto_remove: yes
+                detach: false
+                entrypoint: ""
+                command: "/bin/cp -r /opt/contrail/src/var/lib/cassandra/* /var/lib/cassandra/*"
+                volumes:
+                    - /var/lib/cassandra:/opt/contrail/src/var/lib/cassandra
+                    - list_join:
+                        - ':'
+                        - - {get_param: DockerContrailConfigDatabaseVolume}
+                          - '/var/lib/cassandra'
+            - name: Migrate Config ZK data into new volume 
+              docker_container:
+                image: *contrail_config_zookeeper_image
+                name: contrail_config_zookeeper_migrate_data
+                auto_remove: yes
+                detach: false
+                entrypoint: ""
+                command: "/bin/cp -r /opt/contrail/src/var/lib/zookeeper/* /data/*"
+                volumes:
+                    - /var/lib/zookeeper:/opt/contrail/src/var/lib/zookeeper
+                    - list_join:
+                        - ':'
+                        - - {get_param: DockerContrailConfigDatabaseVolume}
+                          - '/data'
