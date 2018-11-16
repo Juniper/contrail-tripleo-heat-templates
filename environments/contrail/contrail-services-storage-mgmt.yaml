@@ -29,6 +29,7 @@ parameter_defaults:
     ContrailTsnNetwork: storage_mgmt
     ContrailVrouterNetwork: storage_mgmt
     ContrailDpdkNetwork: storage_mgmt
+    ContrailControllerISSUNetwork: storage_mgmt
 #   KeystoneAdminApiNetwork: internal_api
   ContrailControlManageNamed: true
   ContrailRepo: http://192.0.2.1/contrail
