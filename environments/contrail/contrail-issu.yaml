@@ -1,0 +1,12 @@
+resource_registry:
+  # For the case w/o rhel registration use just contrail-issu.yaml below
+  OS::TripleO::ContrailControllerISSU::NodeExtraConfig: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
+  #OS::TripleO::ContrailControllerISSU::NodeExtraConfig: ../../extraconfig/pre_deploy/contrail/contrail-issu.yaml
+
+parameter_defaults:
+  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
+  ContrailRegistry: satellite.englab.juniper.net:5443
+  ContrailRegistryInsecure: false
+
+  ContrailControllerISSUCount: 1
+  OvercloudContrailControllerISSUFlavor: 'contrail-issu'
