@@ -81,6 +81,13 @@ resource_registry:
   OS::TripleO::ContrailAnalyticsDatabase::Ports::TenantPort: ../../network/ports/tenant.yaml
   OS::TripleO::ContrailAnalyticsDatabase::Ports::ManagementPort: ../../network/ports/management.yaml
 
+  OS::TripleO::ContrailControllerISSU::Ports::ExternalPort: ../../network/ports/external.yaml
+  OS::TripleO::ContrailControllerISSU::Ports::InternalApiPort: ../../network/ports/internal_api.yaml
+  OS::TripleO::ContrailControllerISSU::Ports::StoragePort: ../../network/ports/storage.yaml
+  OS::TripleO::ContrailControllerISSU::Ports::StorageMgmtPort: ../../network/ports/storage_mgmt.yaml
+  OS::TripleO::ContrailControllerISSU::Ports::TenantPort: ../../network/ports/tenant.yaml
+  OS::TripleO::ContrailControllerISSU::Ports::ManagementPort: ../../network/ports/management.yaml
+
   OS::TripleO::ContrailTsn::Ports::ExternalPort: ../../network/ports/external.yaml
   OS::TripleO::ContrailTsn::Ports::InternalApiPort: ../../network/ports/internal_api.yaml
   OS::TripleO::ContrailTsn::Ports::StoragePort: ../../network/ports/storage.yaml
