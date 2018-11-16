@@ -132,4 +132,3 @@ if ! ssh-copy-id -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null hea
         cat /home/heat-admin/.ssh/id_rsa.pub >> /home/heat-admin/.ssh/authorized_keys
     fi
 fi
-
