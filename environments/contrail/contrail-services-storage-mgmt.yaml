@@ -18,6 +18,8 @@ resource_registry:
   OS::TripleO::Services::ContrailDpdk: ../../puppet/services/network/contrail-dpdk.yaml
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../puppet/services/network/contrail-vrouter.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../puppet/services/network/contrail-neutron-plugin.yaml
+  OS::TripleO::Services::ContrailISSU: ../../puppet/services/network/contrail-issu.yaml
+  OS::TripleO::Services::ContrailISSUCompute: ../../puppet/services/network/contrail-issu-compute.yaml
 parameter_defaults:
   ServiceNetMap:
     ContrailAnalyticsNetwork: storage_mgmt
@@ -29,6 +31,8 @@ parameter_defaults:
     ContrailTsnNetwork: storage_mgmt
     ContrailVrouterNetwork: storage_mgmt
     ContrailDpdkNetwork: storage_mgmt
+    ContrailISSUNetwork: ctlplane
+    ContrailISSUComputeNetwork: ctlplane
 #   KeystoneAdminApiNetwork: internal_api
   ContrailControlManageNamed: true
   ContrailRepo: http://192.0.2.1/contrail
