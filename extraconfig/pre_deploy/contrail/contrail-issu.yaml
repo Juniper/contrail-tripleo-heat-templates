@@ -1,0 +1,60 @@
+heat_template_version: 2016-10-14
+
+description:  Configures Contrail registries
+
+# Parameters passed from the parent template - note if you maintain
+# out-of-tree templates they may require additional parameters if the
+# in-tree templates add a new role.
+parameters:
+  server:
+    type: string
+  ContrailRegistryCertUrl:
+    default: ''
+    description: URL to registry certificate
+    type: string
+  ContrailRegistryInsecure:
+    default: false
+    description: Contrail Registry
+    type: boolean
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+  ContrailRegistryUser:
+    default: ''
+    description: Contrail Registry Username
+    type: string
+  ContrailRegistryPassword:
+    default: ''
+    description: Contrail Registry Password
+    type: string
+
+resources:
+  ContrailContainerRegistryConfig:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config: {get_file: ./contrail-issu-host-init.sh}
+      inputs:
+        - name: contrail_registry_insecure
+          default: {get_param: ContrailRegistryInsecure}
+        - name: contrail_registry_cert_url
+          default: {get_param: ContrailRegistryCertUrl}
+        - name: contrail_registry
+          default: {get_param: ContrailRegistry}
+        - name: contrail_registry_user
+          default: {get_param: ContrailRegistryUser}
+        - name: contrail_registry_password
+          default: {get_param: ContrailRegistryPassword}
+
+  ContrailContainerRegistryDeployment:
+    type: OS::Heat::SoftwareDeployment
+    properties:
+      name: ContrailContainerRegistryDeployment
+      server:  {get_param: server}
+      config: {get_resource: ContrailContainerRegistryConfig}
+      actions: ['CREATE', 'UPDATE']
+
+outputs:
+  deploy_stdout:
+    value: {get_attr: [ContrailContainerRegistryDeployment, deploy_stdout]}
