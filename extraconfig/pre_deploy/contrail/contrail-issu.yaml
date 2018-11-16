@@ -1,0 +1,104 @@
+heat_template_version: 2016-10-14
+
+description:  Configures Contrail registries
+
+# Parameters passed from the parent template - note if you maintain
+# out-of-tree templates they may require additional parameters if the
+# in-tree templates add a new role.
+parameters:
+ server:
+    type: string
+  ContrailRegistryCertUrl:
+    default: ''
+    description: URL to registry certificate
+    type: string
+  ContrailRegistryInsecure:
+    default: false
+    description: Contrail Registry
+    type: boolean
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+  ContrailRegistryUser:
+    default: ''
+    description: Contrail Registry Username
+    type: string
+  ContrailRegistryPassword:
+    default: ''
+    description: Contrail Registry Password
+    type: string
+
+
+resources:
+  ContrailContainerRegistryConfig:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: script
+      config:
+        str_replace:
+          template: |
+            #!/bin/bash
+            export LOGFILE=/tmp/contrail_container_trace_full.txt
+            exec > >(tee -a $LOGFILE)
+            exec 2>&1
+            echo "=================== $(date) ==================="
+            set -xv
+            yum install -y docker
+            contrail_registry_insecure=_CONTRAIL_REGISTRY_INSECURE_
+            contrail_registry_cert_url=_CONTRAIL_REGISTRY_CERT_URL_
+            contrail_registry=_CONTRAIL_REGISTRY_ADDR_
+            contrail_registry_user=_CONTRAIL_REGISTRY_USER_
+            contrail_registry_password=_CONTRAIL_REGISTRY_PASSWORD_
+            if [[ -n ${contrail_registry_cert_url} ]]; then
+              registry_name=(${contrail_registry//:/ })
+              mkdir -p /etc/docker/certs.d/${registry_name}
+              (cd /etc/docker/certs.d/${registry_name}; curl -O ${contrail_registry_cert_url})
+              (cd /etc/pki/ca-trust/source/anchors/; curl -O ${contrail_registry_cert_url})
+              update-ca-trust
+              systemctl enable docker
+              systemctl restart docker
+            fi
+            if [[ ${contrail_registry_insecure,,} == 'true' ]]; then
+              registry_name=(${contrail_registry//\// })
+              found=0
+              registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
+              for reg in $registries; do if [[ ${reg} == ${contrail_registry} ]]; then found=1; fi; done
+              if [[ ${found} -eq 0 ]]; then
+                registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
+                registry_string="${registry_string} --insecure-registry ${registry_name}"
+                complete_string="INSECURE_REGISTRY=\"${registry_string}\""
+                echo ${complete_string}
+                if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
+                  sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
+                else
+                  echo ${complete_string} >> /etc/sysconfig/docker
+                fi
+              fi
+              systemctl enable docker
+              systemctl restart docker
+            fi
+            if [[ -n ${contrail_registry_user} && -n ${contrail_registry_password} ]]; then
+              systemctl enable docker
+              systemctl start docker
+              docker login -u ${contrail_registry_user} -p ${contrail_registry_password} ${contrail_registry}
+            fi
+
+          params:
+            _CONTRAIL_REGISTRY_INSECURE_: {get_param: ContrailRegistryInsecure}
+            _CONTRAIL_REGISTRY_CERT_URL_: {get_param: ContrailRegistryCertUrl}
+            _CONTRAIL_REGISTRY_ADDR_: {get_param: ContrailRegistry}
+            _CONTRAIL_REGISTRY_USER_: {get_param: ContrailRegistryUser}
+            _CONTRAIL_REGISTRY_PASSWORD_: {get_param: ContrailRegistryPassword}
+
+  ContrailContainerRegistryDeployment:
+    type: OS::Heat::SoftwareDeployment
+    properties:
+      name: ContrailContainerRegistryDeployment
+      server:  {get_param: server}
+      config: {get_resource: ContrailContainerRegistryConfig}
+      actions: ['CREATE', 'UPDATE']
+
+outputs:
+  deploy_stdout:
+    value: {get_attr: [ContrailContainerRegistryDeployment, deploy_stdout]}
