@@ -1,0 +1,12 @@
+resource_registry:
+  OS::TripleO::ContrailControllerISSU::NodeUserData: ../../firstboot/contrail/contrail-issu.yaml
+     
+  #OS::TripleO::ContrailControllerISSU::Service: ../../puppet/services/network/contrail-issu.yaml
+
+parameter_defaults:
+  ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
+  ContrailRegistry: satellite.englab.juniper.net:5443
+  ContrailRegistryInsecure: false
+
+  ContrailControllerISSUCount: 1
+  OvercloudContrailControllerISSUFlavor: 'contrail-issu'
