@@ -1,0 +1,23 @@
+heat_template_version: 2016-10-14
+
+description:  Configures Contrail registries
+
+parameters:
+  server:
+    type: string
+
+resources:
+  ContrailISSURhelRegistration:
+    type: ../rhel-registration/rhel-registration.yaml
+    properties:
+      server: {get_param: server}
+
+  ContrailISSU:
+    type: ./contrail-issu.yaml
+    depends_on: ContrailISSURhelRegistration
+    properties:
+      server: {get_param: server}
+
+outputs:
+  deploy_stdout:
+    value: {get_attr: [ContrailISSU, deploy_stdout]}
