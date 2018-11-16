@@ -121,6 +121,15 @@ fi
 if [ ! -f /root/.ssh/id_rsa.pub ] ; then
     cat /dev/zero | ssh-keygen -q -N ""
 fi
-if ! ssh-copy-id -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null localhost ; then
+if ! ssh-copy-id -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@localhost ; then
     cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
 fi
+if ! ssh-copy-id -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null heat-admin@localhost ; then
+    if [[ ! -f /home/heat-admin/.ssh/id_rsa.pub ]] ; then
+      su - heat-admin bash -c 'cat /dev/zero | ssh-keygen -q -N ""'
+    fi
+    if [[ -f /home/heat-admin/.ssh/id_rsa.pub ]] ; then
+        cat /home/heat-admin/.ssh/id_rsa.pub >> /home/heat-admin/.ssh/authorized_keys
+    fi
+fi
+
