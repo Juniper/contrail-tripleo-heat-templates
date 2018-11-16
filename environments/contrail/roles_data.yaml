@@ -240,3 +240,17 @@
     - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::FluentdClient
     - OS::TripleO::Services::VipHosts
+
+- name: ContrailControllerISSU
+  CountDefault: 0
+  ServicesDefault:
+    - OS::TripleO::Services::CACerts
+    - OS::TripleO::Services::Kernel
+    - OS::TripleO::Services::Ntp
+    - OS::TripleO::Services::Timezone
+    - OS::TripleO::Services::Snmp
+    - OS::TripleO::Services::TripleoPackages
+    - OS::TripleO::Services::SensuClient
+    - OS::TripleO::Services::FluentdClient
+    - OS::TripleO::Services::VipHosts
+    - OS::TripleO::Services::ContrailControllerISSU
