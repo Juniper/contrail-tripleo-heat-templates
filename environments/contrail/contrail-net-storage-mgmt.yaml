@@ -6,6 +6,7 @@ resource_registry:
   OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: contrail-nic-config-storage-mgmt.yaml
   OS::TripleO::ContrailAnalyticsDatabase::Net::SoftwareConfig: contrail-nic-config-storage-mgmt.yaml
   OS::TripleO::ContrailTsn::Net::SoftwareConfig: contrail-nic-config-compute-storage-mgmt.yaml
+  OS::TripleO::ContrailControllerISSU::Net::SoftwareConfig: contrail-nic-config-storage-mgmt.yaml
 
 parameter_defaults:
   ContrailConfigVIP: 10.0.0.10
