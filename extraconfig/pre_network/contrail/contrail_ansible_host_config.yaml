@@ -119,11 +119,17 @@
         create: yes
       when: _CONTRAIL_VROUTER_MODULE_OPTS_ is defined and _CONTRAIL_VROUTER_MODULE_OPTS_ != ''
 
+    - name: remove contrail vrouter plugin init container if exists
+      docker_container:
+        name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}"
+        state: absent
+      ignore_errors: yes
+
     - name: create contrail vrouter plugin init container
       docker_container:
         name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}"
         image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
-        auto_remove: yes
+        detach: no
         privileged: yes
         volumes:
           - /lib/modules:/lib/modules
@@ -137,11 +143,17 @@
             name: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
             tag: "{{ _CONTRAIL_IMAGETAG_ }}"
 
+        - name: remove contrail dpdk init container if exists
+          docker_container:
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
+            state: absent
+          ignore_errors: yes
+
         - name: create contrail dpdk init container
           docker_container:
             name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
             image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
-            auto_remove: yes
+            detach: no
             privileged: yes
             volumes:
               - /dev:/dev
@@ -154,18 +166,24 @@
               CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
               CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
               DPDK_COMMAND_ADDITIONAL_ARGS: "{{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }}"
-
       when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
 
     - name: start contrail vrouter init container
       block:
-        - name: create container
+        - name: remove contrail init container if exists
+          docker_container:
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
+            state: absent
+          ignore_errors: yes
+
+        - name: create vrouter init container
           docker_container:
             name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
             image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
-            auto_remove: yes
+            detach: no
             privileged: yes
             volumes:
+              - /dev:/dev
               - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
               - /lib/modules:/lib/modules
               - /bin:/host/bin

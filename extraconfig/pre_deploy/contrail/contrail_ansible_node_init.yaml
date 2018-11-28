@@ -9,11 +9,17 @@
         name: docker
         enabled: yes
 
-    - name: create container
+    - name: remove node-init container if exists
+      docker_container:
+        name: "{{ _CONTRAIL_NODE_INIT_IMAGE_ }}"
+        state: absent
+      ignore_errors: yes
+
+    - name: create node-init container
       docker_container:
         name: "{{ _CONTRAIL_NODE_INIT_IMAGE_ }}"
         image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_NODE_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
-        auto_remove: yes
+        detach: no
         privileged: yes
         network_mode: host
         pid_mode: host
