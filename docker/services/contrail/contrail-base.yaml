@@ -167,20 +167,16 @@ resources:
   ContainersCommon:
     type: ../containers-common.yaml
 
+  ContrailNodemgrImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailNodemgrImageName}
+
 outputs:
   role_data:
     description: Shared role data for the Contrail services.
     value:
-      contrail_registry: {get_param: ContrailRegistry}
-      contrail_imagetag: {get_param: ContrailImageTag}
-      contrail_nodemgr_image_name:
-        list_join:
-          - ''
-          - - {get_param: ContrailRegistry}
-            - '/'
-            - {get_param: DockerContrailNodemgrImageName}
-            - ':'
-            - {get_param: ContrailImageTag}
+      contrail_nodemgr_image_name: {get_attr: [ContrailNodemgrImageNormalize, contrail_image]}
       config_settings:
         map_merge:
         - contrail::admin_password: {get_param: AdminPassword}

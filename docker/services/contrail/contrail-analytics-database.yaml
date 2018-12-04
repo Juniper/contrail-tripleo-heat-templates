@@ -66,6 +66,21 @@ resources:
   ContainersCommon:
     type: ../containers-common.yaml
 
+  DockerContrailCassandraImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailCassandraImageName}
+
+  DockerContrailKafkaImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailKafkaImageName}
+
+  DockerContrailZookeeperImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailZookeeperImageName}
+
   ContrailBase:
     type: contrail-base.yaml
     properties:
@@ -105,14 +120,7 @@ outputs:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
         step_3:
           contrail_analytics_zookeeper:
-            image: &contrail_analytics_zookeeper_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailZookeeperImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_analytics_zookeeper_image {get_attr: [DockerContrailZookeeperImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
@@ -155,14 +163,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_analytics_database:
-            image: &contrail_analytics_database_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailCassandraImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_analytics_database_image {get_attr: [DockerContrailCassandraImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
@@ -186,14 +187,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_analytics_kafka:
-            image: &contrail_analytics_kafka_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailKafkaImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_analytics_kafka_image {get_attr: [DockerContrailKafkaImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true

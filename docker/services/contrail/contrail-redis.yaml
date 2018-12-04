@@ -28,6 +28,11 @@ conditions:
   env_file_unset: {equals : [{get_param: env_file_name}, '']}
 
 resources:
+  DockerContrailRedisImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailRedisImageName}
+
   ContrailBase:
     type: contrail-base.yaml
 
@@ -36,14 +41,7 @@ outputs:
     description: Role data for the Contrail Redis common part.
     value:
       service_name: contrail_redis
-      contrail_redis_image_name: &contrail_redis_image_name
-        list_join:
-          - ''
-          - - {get_param: ContrailRegistry}
-            - '/'
-            - {get_param: DockerContrailRedisImageName}
-            - ':'
-            - {get_param: ContrailImageTag}
+      contrail_redis_image_name: &contrail_redis_image_name {get_attr: [DockerContrailRedisImageNormalize, contrail_image]}
       contrail_redis_ports:
         - {get_param: ContrailRedisPort}
       docker_config:

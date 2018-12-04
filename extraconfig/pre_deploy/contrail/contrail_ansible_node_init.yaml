@@ -11,14 +11,14 @@
 
     - name: remove node-init container if exists
       docker_container:
-        name: "{{ _CONTRAIL_NODE_INIT_IMAGE_ }}"
+        name: "{{ _CONTRAIL_NODE_INIT_IMAGE_NAME_ }}"
         state: absent
       ignore_errors: yes
 
     - name: create node-init container
       docker_container:
-        name: "{{ _CONTRAIL_NODE_INIT_IMAGE_ }}"
-        image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_NODE_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+        name: "{{ _CONTRAIL_NODE_INIT_IMAGE_NAME_ }}"
+        image: "{{  _CONTRAIL_NODE_INIT_IMAGE_ }}"
         detach: no
         privileged: yes
         network_mode: host
@@ -35,7 +35,7 @@
           - /tmp/:/tmp/
         env:
           INSTALL_PUPPET: "{{ _INSTALL_PUPPET_ }}"
-          CONTRAIL_STATUS_IMAGE: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_STATUS_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+          CONTRAIL_STATUS_IMAGE: "{{ _CONTRAIL_STATUS_IMAGE_ }}"
           SSL_ENABLE: "{{ _SSL_ENABLE_ }}"
           SERVER_KEYFILE: "{{ _SERVER_KEYFILE_ }}"
           SERVER_CERTFILE: "{{ _SERVER_CERTFILE_ }}"
