@@ -47,6 +47,21 @@ resources:
   ContainersCommon:
     type: ../containers-common.yaml
 
+  DockerContrailControlControlImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailControlControlImageName}
+
+  DockerContrailControlNamedImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailControlNamedImageName}
+
+  DockerContrailControlDnsImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailControlDnsImageName}
+
   ContrailBase:
     type: contrail-base.yaml
     properties:
@@ -104,14 +119,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_control_control:
-            image: &contrail_control_control_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailControlControlImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_control_control_image {get_attr: [DockerContrailControlControlImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
@@ -126,14 +134,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_control_dns:
-            image: &contrail_control_dns_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailControlDnsImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_control_dns_image {get_attr: [DockerContrailControlDnsImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
@@ -151,14 +152,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_control_named:
-            image: &contrail_control_named_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailControlNamedImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_control_named_image {get_attr: [DockerContrailControlNamedImageNormalize, contrail_image]}
             net: host
             privileged: true
             detach: true
@@ -192,6 +186,6 @@ outputs:
                 line: "{{ item }}"
               with_items:
                 - NODE_TYPE=control
-                
+
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]

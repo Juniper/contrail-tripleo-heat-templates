@@ -121,14 +121,14 @@
 
     - name: remove contrail vrouter plugin init container if exists
       docker_container:
-        name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}"
+        name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ }}"
         state: absent
       ignore_errors: yes
 
     - name: create contrail vrouter plugin init container
       docker_container:
-        name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}"
-        image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+        name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ }}"
+        image: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}"
         detach: no
         privileged: yes
         volumes:
@@ -140,19 +140,18 @@
       block:
         - name: pull contrail vrouter dpdk agent container
           docker_image:
-            name: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
-            tag: "{{ _CONTRAIL_IMAGETAG_ }}"
+            name: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
 
         - name: remove contrail dpdk init container if exists
           docker_container:
-            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
             state: absent
           ignore_errors: yes
 
         - name: create contrail dpdk init container
           docker_container:
-            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
-            image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
+            image: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
             detach: no
             privileged: yes
             volumes:
@@ -162,7 +161,7 @@
               - /bin:/host/bin
             env:
               AGENT_MODE: dpdk
-              CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+              CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
               CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
               CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
               DPDK_COMMAND_ADDITIONAL_ARGS: "{{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }}"
@@ -172,14 +171,14 @@
       block:
         - name: remove contrail init container if exists
           docker_container:
-            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
             state: absent
           ignore_errors: yes
 
         - name: create vrouter init container
           docker_container:
-            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
-            image: "{{ _CONTRAIL_REGISTRY_ }}/{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}:{{ _CONTRAIL_IMAGETAG_ }}"
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
+            image: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
             detach: no
             privileged: yes
             volumes:

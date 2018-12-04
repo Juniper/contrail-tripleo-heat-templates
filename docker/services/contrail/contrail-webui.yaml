@@ -49,6 +49,16 @@ resources:
   ContainersCommon:
     type: ../containers-common.yaml
 
+  DockerContrailWebuiWebImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailWebuiWebImageName}
+
+  DockerContrailWebuiJobImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailWebuiJobImageName}
+
   ContrailBase:
     type: contrail-base.yaml
     properties:
@@ -101,14 +111,7 @@ outputs:
           get_attr: [ContrailRedis, role_data, docker_config, step_4]
         step_5:
           contrail_webui_web:
-            image: &contrail_webui_web_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailWebuiWebImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_webui_web_image {get_attr: [DockerContrailWebuiWebImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
@@ -123,14 +126,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_webui_job:
-            image: &contrail_webui_job_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailWebuiJobImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_webui_job_image {get_attr: [DockerContrailWebuiJobImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true

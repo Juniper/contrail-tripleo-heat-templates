@@ -122,20 +122,46 @@ conditions:
       - []
 
 resources:
+  DockerContrailVrouterKernelImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailVrouterKernelInitImageName}
+
+  DockerContrailVrouterKernelInitDpdkImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailVrouterKernelInitDpdkImageName}
+
+  DockerContrailVrouterAgentDpdkImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailVrouterAgentDpdkContainerName}
+
+  DockerContrailVrouterAgentImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailVrouterAgentContainerName}
+
+  DockerContrailVrouterPluginInitImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailVrouterPluginInitImageName}
+
   SriovHostParametersConfig:
     type: OS::Heat::SoftwareConfig
     properties:
       group: ansible
       inputs:
-        - name: _CONTRAIL_REGISTRY_
-        - name: _CONTRAIL_IMAGETAG_
         - name: _CONTRAIL_VROUTER_INIT_IMAGE_
+        - name: _CONTRAIL_VROUTER_INIT_IMAGE_NAME_
+        - name: _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_
         - name: _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_
         - name: _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_
         - name: _CONTRAIL_HUGEPAGES_1GB_
         - name: _CONTRAIL_HUGEPAGES_2MB_
         - name: _CONTRAIL_VROUTER_MODULE_OPTS_
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_
+        - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_
         - name: _CONTRAIL_SRIOV_NUM_VFS_
         - name: _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_
         - name: _IS_DPDK_
@@ -156,18 +182,25 @@ resources:
           - []
           - ['CREATE'] # Only do this on CREATE
       input_values:
-        _CONTRAIL_REGISTRY_: {get_param: ContrailRegistry}
-        _CONTRAIL_IMAGETAG_: {get_param: ContrailImageTag}
-        _CONTRAIL_VROUTER_INIT_IMAGE_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, {get_param: DockerContrailVrouterKernelInitDpdkImageName}, {get_param: DockerContrailVrouterKernelInitImageName}]}
-        _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_: {get_param: DockerContrailVrouterAgentDpdkContainerName}
-        _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_: {get_param: DockerContrailVrouterAgentContainerName}
+        _CONTRAIL_VROUTER_INIT_IMAGE_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, {get_attr: [DockerContrailVrouterKernelInitDpdkImageNormalize, contrail_image]}, {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image]}]}
+        _CONTRAIL_VROUTER_INIT_IMAGE_NAME_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, {get_attr: [DockerContrailVrouterKernelInitDpdkImageNormalize, contrail_image_only]}, {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}]}
+        _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_: {get_attr: [DockerContrailVrouterAgentDpdkImageNormalize, contrail_image]}
+        _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_: {get_attr: [DockerContrailVrouterAgentDpdkImageNormalize, contrail_image_only]}
+        _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_: {get_attr: [DockerContrailVrouterAgentImageNormalize, contrail_image_only]}
         _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailSriovHugepages1GB}
         _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailSriovHugepages2MB}
         _CONTRAIL_VROUTER_MODULE_OPTS_: {get_param: ContrailVrouterModuleOptions}
-        _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_param: DockerContrailVrouterPluginInitImageName}
+        _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image]}
+        _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image_only]}
         _CONTRAIL_SRIOV_NUM_VFS_: {get_param: ContrailSriovNumVFs}
         _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_param: ContrailDpdkOptions}
         _IS_DPDK_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, 'True', '']}
+    depends_on:
+      - DockerContrailVrouterKernelImageNormalize
+      - DockerContrailVrouterKernelInitDpdkImageNormalize
+      - DockerContrailVrouterAgentDpdkImageNormalize
+      - DockerContrailVrouterAgentImageNormalize
+      - DockerContrailVrouterPluginInitImageNormalize
 
   SriovKernelParametersConfig:
     type: OS::Heat::SoftwareConfig

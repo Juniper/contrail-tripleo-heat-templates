@@ -48,6 +48,26 @@ parameters:
     type: json
 
 resources:
+  DockerContrailConfigApiImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailConfigApiImageName}
+
+  DockerContrailConfigSchemaImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailConfigSchemaImageName}
+
+  DockerContrailConfigSvcmonitorigImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailConfigSvcmonitorImageName}
+
+  DockerContrailConfigDevicemgrImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailConfigDevicemgrImageName}
+
   ContrailBase:
     type: contrail-base.yaml
     properties:
@@ -111,14 +131,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_config_api:
-            image: &contrail_config_api_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailConfigApiImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_config_api_image {get_attr: [DockerContrailConfigApiImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
@@ -133,14 +146,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_config_schema:
-            image: &contrail_config_schema_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailConfigSchemaImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_config_schema_image {get_attr: [DockerContrailConfigSchemaImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
@@ -155,14 +161,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_config_svc_monitor:
-            image: &contrail_config_svc_monitor_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailConfigSvcmonitorImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_config_svc_monitor_image {get_attr: [DockerContrailConfigSvcmonitorigImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
@@ -177,14 +176,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_config_device_manager:
-            image: &contrail_config_device_manager_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailConfigDevicemgrImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_config_device_manager_image {get_attr: [DockerContrailConfigDevicemgrImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
@@ -214,7 +206,7 @@ outputs:
               shell: hiera -c /etc/puppet/hiera.yaml nova_api_vip
               register: nova_api_vip
             - name: write remaining contrail config env cars
-              lineinfile: 
+              lineinfile:
                 dest: *contrail_env_file
                 state: present
                 line: "{{ item }}"

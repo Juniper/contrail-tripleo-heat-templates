@@ -28,6 +28,8 @@ parameter_defaults:
 #  ContrailRegistryInsecure: true
 #  DockerInsecureRegistryAddress: 10.87.64.32:5000,192.168.24.1:8787
 #  ContrailRegistry: 10.87.64.32:5000
+# Including images with specific registry and tag is supported
+# DockerContrailVrouterAgentImageName: 192.168.24.1:8787/contrail-vrouter-agent:queens-5.0-104-rhel-queens
 # enable private secure registry
   ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
   ContrailRegistry: satellite.englab.juniper.net:5443
