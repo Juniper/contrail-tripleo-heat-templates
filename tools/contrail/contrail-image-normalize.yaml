@@ -1,0 +1,100 @@
+heat_template_version: queens
+
+description: >
+  Normalize images so, that they all consist or registry, image name and tag
+
+parameters:
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+  GenericImageName:
+    type: string
+    description: > 
+      name of the image that needs to be normalized
+
+conditions:
+  is_empty:
+    equals:
+      - {get_param: GenericImageName}
+      - ''
+  contains_registry:
+    not:
+      equals:
+        - yaql:
+            expression: $.data.generic_image.split("/").len()
+            data:
+              generic_image: {get_param: GenericImageName}
+        - 1
+  contains_tag:
+    not:
+      equals:
+        - yaql:
+            expression: $.data.generic_image.split("/")[-1].split(":").len()
+            data:
+              generic_image: {get_param: GenericImageName}
+        - 1
+
+
+outputs:
+  contrail_image:
+    description: >
+      normalized image in format registry/image:tag including global values
+    value: 
+      if: 
+        - "is_empty" 
+        - ''
+        - if: 
+            - and:
+              - "contains_registry"
+              - "contains_tag"
+            - {get_param: GenericImageName}
+            - if:
+              - "contains_registry"
+              - list_join:
+                  - ''
+                  - - {get_param: GenericImageName}
+                    - ':'
+                    - {get_param: ContrailImageTag}
+              - if:
+                - "contains_tag"
+                - list_join:
+                    - ''
+                    - - {get_param: ContrailRegistry}
+                      - '/'
+                      - {get_param: GenericImageName}
+                - list_join:
+                    - ''
+                    - - {get_param: ContrailRegistry}
+                      - '/'
+                      - {get_param: GenericImageName}
+                      - ':'
+                      - {get_param: ContrailImageTag}
+  contrail_image_only:
+    description: image stripped form tag and registry
+    value: 
+      if: 
+        - and:
+          - "contains_registry"
+          - "contains_tag"
+        - yaql:
+            expression: $.data.generic_image.split(":")[-2].split("/")[-1]
+            data:
+              generic_image: {get_param: GenericImageName}
+        - if:
+          - "contains_registry"
+          - yaql:
+              expression: $.data.generic_image.split("/")[-1]
+              data:
+                generic_image: {get_param: GenericImageName}
+          - if:
+            - "contains_tag"
+            - yaql:
+                expression: $.data.generic_image.split(":")[-2]
+                data:
+                  generic_image: {get_param: GenericImageName}
+            - {get_param: GenericImageName}

@@ -53,6 +53,11 @@ resources:
   ContainersCommon:
     type: ../containers-common.yaml
 
+  DockerContrailVrouterAgentImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailVrouterAgentImageName}
+
   ContrailBase:
     type: contrail-base.yaml
     properties:
@@ -100,14 +105,7 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
           contrail_vrouter_agent:
-            image: &contrail_vrouter_agent_image
-              list_join:
-                - ''
-                - - {get_attr: [ContrailBase, role_data, contrail_registry]}
-                  - '/'
-                  - {get_param: DockerContrailVrouterAgentImageName}
-                  - ':'
-                  - {get_attr: [ContrailBase, role_data, contrail_imagetag]}
+            image: &contrail_vrouter_agent_image {get_attr: [DockerContrailVrouterAgentImageNormalize, contrail_image]}
             net: host
             privileged: true
             detach: true
