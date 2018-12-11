@@ -92,6 +92,7 @@ resources:
         - name: md5sum
       config: |
         #!/bin/sh
+        set -e
         mkdir -p $(dirname ${path})
         cat > ${path} << EOF
         ${content}
@@ -110,7 +111,7 @@ resources:
       input_values:
         path: {get_param: ContrailServiceCertFile}
         content: {get_param: ContrailServiceCert}
-        mode: 0444
+        mode: '0444'
 
   ContrailKeyDeployment:
     type: OS::Heat::SoftwareDeployment
@@ -122,7 +123,7 @@ resources:
       input_values:
         path: {get_param: ContrailServiceKeyFile}
         content: {get_param: ContrailServiceKey}
-        mode: 0400
+        mode: '0400'
 
   ContrailCaCertDeployment:
     type: OS::Heat::SoftwareDeployment
@@ -134,7 +135,7 @@ resources:
       input_values:
         path: {get_param: ContrailCaCertFile}
         content: {get_param: ContrailCaCert}
-        mode: 0444
+        mode: '0444'
 
   ContrailCaKeyDeployment:
     type: OS::Heat::SoftwareDeployment
@@ -146,7 +147,7 @@ resources:
       input_values:
         path: {get_param: ContrailCaKeyFile}
         content: {get_param: ContrailCaKey}
-        mode: 0400
+        mode: '0400'
 
 outputs:
   cert_md5sum:
