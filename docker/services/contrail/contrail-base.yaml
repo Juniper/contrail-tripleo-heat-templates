@@ -167,6 +167,20 @@ resources:
   ContainersCommon:
     type: ../containers-common.yaml
 
+  # Merging role-specific parameters (RoleParameters) with the default parameters.
+  # RoleParameters will have the precedence over the default parameters.
+  RoleParametersValue:
+    type: OS::Heat::Value
+    properties:
+      type: json
+      value:
+        map_replace:
+          - map_replace:
+            - contrail_settings: ContrailSettings
+            - values: {get_param: [RoleParameters]}
+          - values:
+              ContrailSettings: {get_param: ContrailSettings}
+
 outputs:
   role_data:
     description: Shared role data for the Contrail services.
@@ -200,8 +214,8 @@ outputs:
           contrail::aaa_mode: {get_param: AAAMode}
           contrail_internal_api_ssl: {get_param: EnableInternalTLS}
           # ==
-          contrail_settings: {get_param: ContrailSettings}
           node_data_lookup: {get_param: NodeDataLookup}
+        - get_attr: [RoleParametersValue, value]
         - if:
           - contrail_config_vip_unset
           - contrail_config_vip: "%{hiera('internal_api_virtual_ip')}"
