@@ -200,7 +200,10 @@ outputs:
           contrail::aaa_mode: {get_param: AAAMode}
           contrail_internal_api_ssl: {get_param: EnableInternalTLS}
           # ==
-          contrail_settings: {get_param: ContrailSettings}
+          contrail_settings:
+            map_merge:
+              - {get_param: ContrailSettings}
+              - {get_param: [RoleParameters, ContrailSettings]}
           node_data_lookup: {get_param: NodeDataLookup}
         - if:
           - contrail_config_vip_unset
