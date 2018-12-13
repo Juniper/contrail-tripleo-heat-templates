@@ -41,7 +41,7 @@ parameter_defaults:
   NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
   NovaComputeOptVolumes:
     - vrouter_port_control:/opt/plugin/bin
-    - /var/lib/contrail
+    - contrail_var_lib:/var/lib/contrail
     - nova_contrail_vif:/usr/lib/python2.7/site-packages/nova_contrail_vif
     - nova_contrail_vif_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
     - vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
