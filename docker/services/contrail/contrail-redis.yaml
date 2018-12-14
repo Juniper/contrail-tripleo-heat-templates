@@ -73,7 +73,6 @@ outputs:
   role_data:
     description: Role data for the Contrail Redis common part.
     value:
-      service_name: contrail_redis
       contrail_redis_image_name: &contrail_redis_image_name {get_attr: [DockerContrailRedisImageNormalize, contrail_image]}
       contrail_redis_ports:
         - {get_param: ContrailRedisPort}
