@@ -1,10 +1,23 @@
+resource_registry:
+  OS::TripleO::Services::ContrailCertmongerUser: ../../docker/services/contrail/contrail-certmonger-user.yaml
+
 parameter_defaults:
+  # local or IPA
+  # (local - for manually managed certs, IPA - using FreeIPA)
+  ContrailCA: 'IPA'
   ContrailSslEnabled: true
+  # For IPA fqdn should be used for Contrail services lists
+  contrail_nodes_param_suffux: 'node_names'
+  # For now only /etc/contrail/ssl dir is supported.
   ContrailServiceCertFile: '/etc/contrail/ssl/certs/server.pem'
   ContrailServiceKeyFile: '/etc/contrail/ssl/private/server-privkey.pem'
-  ContrailCaCertFile: '/etc/contrail/ssl/certs/ca-cert.pem'
-  ContrailCaKeyFile: '/etc/contrail/ssl/private/ca-key.pem'
-  # CA cert and key to sign contrail services certificates
+  ContrailCaCertFile: ''
+  ContrailCaKeyFile: ''
+  # CA files paths, CA cert, CA key to sign contrail services certificates
+  # Only for case with manual certs lifecycle.
+  # In case of IPA they must be empty / not_defined  
+  # ContrailCaCertFile: '/etc/contrail/ssl/certs/ca-cert.pem'
+  # ContrailCaKeyFile: '/etc/contrail/ssl/private/ca-key.pem'
   # ContrailCaCert: |
   #   CA certificate content
   # ContrailCaKey: |
