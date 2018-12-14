@@ -107,3 +107,6 @@ outputs:
               get_attr: [ContrailBase, role_data, contrail_base_env_file]
       host_prep_tasks:
         get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]
+
+      metadata_settings:
+        get_attr: [ContrailBase, role_data, metadata_settings]
