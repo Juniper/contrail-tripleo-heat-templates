@@ -9,6 +9,32 @@
         name: docker
         enabled: yes
 
+    - name: create contrail containers common directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        recurse: yes
+      with_items:
+        - /var/log/containers/contrail
+        - /etc/contrail
+
+    - name: create contrail containers ssl directories
+      file:
+        path: "{{ item.split('/')[0:-1] | join('/') }}"
+        state: directory
+        seuser: 'system_u'
+        serole: 'object_r'
+        setype: 'cert_t'
+        recursive: yes
+      with_items:
+        - "{{ _SERVER_KEYFILE_ }}"
+        - "{{ _SERVER_CERTFILE_ }}"
+      when:
+        - _SERVER_KEYFILE_ is defined
+        - _SERVER_CERTFILE_ is defined
+        - _SERVER_KEYFILE_ != ""
+        - _SERVER_CERTFILE_ != ""
+
     - name: remove node-init container if exists
       docker_container:
         name: "{{ _CONTRAIL_NODE_INIT_IMAGE_NAME_ }}"

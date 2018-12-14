@@ -104,6 +104,10 @@ parameters:
   EnableInternalTLS:
     type: boolean
     default: false
+  ContrailCA:
+    default: ''
+    description: Contrail CA, could be local or IPA
+    type: string
   ContrailSslEnabled:
     description:  Flag to identify is SSL should be used in internal Contrail
                   services communications (sandesh, introspect, xmpp, ..).
@@ -162,6 +166,11 @@ conditions:
         - {equals: [{get_param: ContrailSslEnabled}, false]}
         - {equals: [{get_param: ContrailServiceCertFile}, '']}
   contrail_tls_insecure: {equals: [{get_param: ContrailSslInsecure}, true]}
+  contrail_ipa_ca:
+    and:
+      - {equals: [{get_param: ContrailCA}, 'IPA']}
+      - not: {equals: [{get_param: ContrailServiceCertFile}, '']}
+      - not: {equals: [{get_param: ContrailServiceKeyFile}, '']}
 
 resources:
   ContainersCommon:
@@ -406,14 +415,6 @@ outputs:
       contrail_base_env_file: &contrail_base_env_file
         - *contrail_common_env_file
       contrail_host_prep_tasks_base:
-        - name: create contrail directories
-          file:
-            path: "{{ item }}"
-            state: directory
-            recurse: yes
-          with_items:
-            - /var/log/containers/contrail
-            - /etc/contrail/ssl
         - name: register common env file
           stat:
             path: *contrail_common_env_file
@@ -528,3 +529,5 @@ outputs:
             RABBITMQ_NODE_PORT: 5673
             ZOOKEEPER_ANALYTICS_NODES: "{{ contrail_analytics_database_nodes_string }}"
             ZOOKEEPER_NODES: "{{ contrail_service_nodes_string }}"
+
+      metadata_settings: []
