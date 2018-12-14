@@ -15,6 +15,7 @@ resource_registry:
   OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
   OS::TripleO::Services::ContrailHeatPlugin: ../../docker/services/contrail/contrail-heat-container-plugin.yaml
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
+  OS::TripleO::Services::ContrailCertmongerUser: OS::Heat::None
   OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
   OS::TripleO::ContrailTsn::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_tsn_pre_network.yaml
