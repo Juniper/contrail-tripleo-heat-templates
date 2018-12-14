@@ -104,6 +104,10 @@ parameters:
   EnableInternalTLS:
     type: boolean
     default: false
+  ContrailCA:
+    default: ''
+    description: Contrail CA, could be local or IPA
+    type: string
   ContrailSslEnabled:
     description:  Flag to identify is SSL should be used in internal Contrail
                   services communications (sandesh, introspect, xmpp, ..).
@@ -162,6 +166,11 @@ conditions:
         - {equals: [{get_param: ContrailSslEnabled}, false]}
         - {equals: [{get_param: ContrailServiceCertFile}, '']}
   contrail_tls_insecure: {equals: [{get_param: ContrailSslInsecure}, true]}
+  ipa_ca:
+    and:
+      - equals: [{get_param: ContrailCA}, 'IPA']}
+      - not: {equals: [{get_param: ContrailServiceCertFile}, '']}
+      - not: {equals: [{get_param: ContrailServiceKeyFile}, '']}
 
 resources:
   ContainersCommon:
@@ -171,6 +180,15 @@ outputs:
   role_data:
     description: Shared role data for the Contrail services.
     value:
+      role_network_parameter_name: &role_network_parameter_name
+        str_replace:
+          template: __ROLE__Network
+          params:
+            __ROLE__: {get_param: RoleName}
+      role_network_name_lower: &role_network_parameter_name
+        get_param: [ServiceNetMap, *role_network_parameter_name, name_lower]
+      role_network_name: &role_network_parameter_name
+        get_param: [ServiceNetMap, *role_network_parameter_name]}
       contrail_registry: {get_param: ContrailRegistry}
       contrail_imagetag: {get_param: ContrailImageTag}
       contrail_nodemgr_image_name:
@@ -214,6 +232,36 @@ outputs:
           - contrail_analytics_vip_unset
           - contrail_analytics_vip: "%{hiera('internal_api_virtual_ip')}"
           - contrail_analytics_vip: {get_param: ContrailAnalyticsVIP}
+        - if:
+          - ipa_ca:
+          - contrail_generate_service_certificates: true
+            tripleo::certmonger::contrail_dirs::certificate_dir:
+              yaql:
+                expression: $.data.path.rightSplit(separator => "/", maxSplits => 1)[0]
+                data:
+                  path: {get_param: ContrailServiceCertFile}
+            tripleo::certmonger::contrail_dirs::key_dir:
+              yaql:
+                expression: $.data.path.rightSplit(separator => "/", maxSplits => 1)[0]
+                data:
+                  path: {get_param: ContrailServiceKeyFile}
+            contrail_certificates_specs:
+              contrail:
+                service_certificate: {get_param: ContrailServiceCertFile}
+                service_key: {get_param: ContrailServiceKeyFile}
+                hostname:
+                  str_replace:
+                    template:
+                      "%{hiera('fqdn_NETWORK')}"
+                    params:
+                      NETWORK: *role_network_name_lower
+                principal:
+                  str_replace:
+                    template:
+                      "contrail/%{hiera('fqdn_NETWORK')}"
+                    params:
+                      NETWORK: *role_network_name_lower
+          - {}
       haproxy_config_settings_member_options: &haproxy_config_settings_member_options
           - 'check'
           - 'inter 2000'
@@ -518,3 +566,11 @@ outputs:
             RABBITMQ_NODE_PORT: 5673
             ZOOKEEPER_ANALYTICS_NODES: "{{ contrail_analytics_database_nodes_string }}"
             ZOOKEEPER_NODES: "{{ contrail_service_nodes_string }}"
+
+      metadata_settings:
+        if:
+          - ipa_ca
+          - - service: contrail
+              network: *role_network_name_lower
+              type: node
+          - null
