@@ -1,10 +1,18 @@
+resource_registry:
+  OS::TripleO::Services::ContrailCertmongerUser: ../../docker/puppet/services/contrail/contrail-certmonger-user.yaml
+
 parameter_defaults:
+  # local or IPA
+  # (local - for manually managed certs, IPA - using FreeIPA)
+  ContrailCA: 'IPA'
   ContrailSslEnabled: true
   ContrailServiceCertFile: '/etc/contrail/ssl/certs/server.pem'
   ContrailServiceKeyFile: '/etc/contrail/ssl/private/server-privkey.pem'
   ContrailCaCertFile: '/etc/contrail/ssl/certs/ca-cert.pem'
   ContrailCaKeyFile: '/etc/contrail/ssl/private/ca-key.pem'
   # CA cert and key to sign contrail services certificates
+  # Only for case with manual certs lifecycle.
+  # In case of IPA they must be empty / not_defined
   # ContrailCaCert: |
   #   CA certificate content
   # ContrailCaKey: |

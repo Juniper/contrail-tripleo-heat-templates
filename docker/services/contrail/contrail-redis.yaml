@@ -35,7 +35,6 @@ outputs:
   role_data:
     description: Role data for the Contrail Redis common part.
     value:
-      service_name: contrail_redis
       contrail_redis_image_name: &contrail_redis_image_name
         list_join:
           - ''

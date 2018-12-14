@@ -1,0 +1,59 @@
+parameters:
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ContrailCA:
+    default: ''
+    description: CA, could be local or IPA
+    type: string
+  ContrailServiceCertFile:
+    default: ''
+    description: Path to the node's public certificate
+    type: string
+  ContrailServiceKeyFile:
+    default: ''
+    description: Path to server's/node's private key
+    type: string
+  ContrailCaCertFile:
+    default: ''
+    description: Path to CA certificate
+    type: string
+  DefaultCRLURL:
+    default: 'http://ipa-ca/ipa/crl/MasterCRL.bin'
+    description: URI where to get the CRL to be configured in the nodes.
+    type: string
+
+outputs:
+  role_data:
+    description: Role data for the certmonger-user service
+    value:
+      service_name: contrail_certmonger_user
+      config_settings:
+        tripleo::certmonger::ca::crl::crl_source: {get_param: DefaultCRLURL}
+        contrail_certmonger_ca: {get_param: ContrailCA}
+
+      step_config: |
+        include ::tripleo::profile::base::certmonger_user
