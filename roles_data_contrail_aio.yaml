@@ -67,6 +67,7 @@
     - OS::TripleO::Services::CinderScheduler
     - OS::TripleO::Services::CinderVolume
     - OS::TripleO::Services::Clustercheck
+    - OS::TripleO::Services::ContrailCertmongerUser
     - OS::TripleO::Services::ContrailHeatPlugin
     - OS::TripleO::Services::Collectd
     - OS::TripleO::Services::Congress
@@ -210,6 +211,7 @@
     - OS::TripleO::Services::NovaMigrationTarget
     - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::ContainersLogrotateCrond
+    - OS::TripleO::Services::ContrailCertmongerUser
     - OS::TripleO::Services::Rhsm
     - OS::TripleO::Services::RsyslogSidecar
     - OS::TripleO::Services::Securetty
@@ -253,10 +255,11 @@
     - OS::TripleO::Services::Sshd
     - OS::TripleO::Services::Timezone
     - OS::TripleO::Services::TripleoPackages
-    - OS::TripleO::Services::ContrailConfigDatabase
     - OS::TripleO::Services::ContrailAnalyticsDatabase
     - OS::TripleO::Services::ContrailAnalytics
+    - OS::TripleO::Services::ContrailCertmongerUser
     - OS::TripleO::Services::ContrailConfig
+    - OS::TripleO::Services::ContrailConfigDatabase
     - OS::TripleO::Services::ContrailControl
     - OS::TripleO::Services::ContrailWebui
     - OS::TripleO::Services::TripleoFirewall
@@ -287,11 +290,12 @@
     - OS::TripleO::Services::LoginDefs
     - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::ContainersLogrotateCrond
+    - OS::TripleO::Services::ContrailCertmongerUser
+    - OS::TripleO::Services::ContrailControlOnly
     - OS::TripleO::Services::Snmp
     - OS::TripleO::Services::Sshd
     - OS::TripleO::Services::Timezone
     - OS::TripleO::Services::TripleoPackages
-    - OS::TripleO::Services::ContrailControlOnly
     - OS::TripleO::Services::TripleoFirewall
 ###############################################################################
 # Role: ContrailDpdk                                                          #
@@ -316,10 +320,12 @@
     - OS::TripleO::Services::CephExternal
     - OS::TripleO::Services::CertmongerUser
     - OS::TripleO::Services::Collectd
+    - OS::TripleO::Services::ContrailCertmongerUser
     - OS::TripleO::Services::ContrailDpdk
     - OS::TripleO::Services::ComputeCeilometerAgent
     - OS::TripleO::Services::ComputeNeutronL3Agent
     - OS::TripleO::Services::ComputeNeutronMetadataAgent
+    - OS::TripleO::Services::ContainersLogrotateCrond
     - OS::TripleO::Services::Docker
     - OS::TripleO::Services::Fluentd
     - OS::TripleO::Services::Ipsec
@@ -331,7 +337,6 @@
     - OS::TripleO::Services::NovaLibvirt
     - OS::TripleO::Services::NovaMigrationTarget
     - OS::TripleO::Services::Ntp
-    - OS::TripleO::Services::ContainersLogrotateCrond
     - OS::TripleO::Services::Rhsm
     - OS::TripleO::Services::RsyslogSidecar
     - OS::TripleO::Services::Securetty
@@ -367,6 +372,7 @@
     - OS::TripleO::Services::CephExternal
     - OS::TripleO::Services::CertmongerUser
     - OS::TripleO::Services::Collectd
+    - OS::TripleO::Services::ContrailCertmongerUser
     - OS::TripleO::Services::ContrailSriov
     - OS::TripleO::Services::ComputeCeilometerAgent
     - OS::TripleO::Services::ComputeNeutronL3Agent
@@ -418,6 +424,7 @@
     - OS::TripleO::Services::CephExternal
     - OS::TripleO::Services::CertmongerUser
     - OS::TripleO::Services::Collectd
+    - OS::TripleO::Services::ContrailCertmongerUser
     - OS::TripleO::Services::ContrailTsn
     - OS::TripleO::Services::ComputeCeilometerAgent
     - OS::TripleO::Services::ComputeNeutronL3Agent
