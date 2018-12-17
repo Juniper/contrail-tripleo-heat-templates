@@ -53,6 +53,9 @@ resources:
   ContainersCommon:
     type: ../containers-common.yaml
 
+  ContrailVrouterBase:
+    type: contrail-vrouter-base.yaml
+
   DockerContrailVrouterAgentImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
@@ -130,6 +133,8 @@ outputs:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
+      update_tasks: {get_attr: [ContrailVrouterBase, role_data, update_tasks]}
+      post_update_tasks: {get_attr: [ContrailVrouterBase, role_data, post_update_tasks]}
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
