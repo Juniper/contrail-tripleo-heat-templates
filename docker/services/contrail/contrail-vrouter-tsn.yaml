@@ -121,7 +121,7 @@ outputs:
                   - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
                   - /lib/modules:/lib/modules
                   - /var/run:/var/run
-                  - contrail_var_lib:/var/lib/contrail
+                  - /var/lib/contrail:/var/lib/contrail
             environment:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env]}
