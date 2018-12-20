@@ -1,0 +1,89 @@
+---
+- name: Call Contrail init container for compute/dpdk/tls nodes 
+  connection: local
+  hosts: localhost
+
+  tasks:
+    - name: create /var/lib/contrail
+      file:
+        path: "/var/lib/contrail"
+        state: directory
+
+    - name: prepare /etc/modprobe.d/vrouter.conf
+      lineinfile:
+        dest: /etc/modprobe.d/vrouter.conf
+        regexp: "^options vrouter"
+        line: "options vrouter {{ _CONTRAIL_VROUTER_MODULE_OPTS_ }}"
+        create: yes
+      when: _CONTRAIL_VROUTER_MODULE_OPTS_ is defined and _CONTRAIL_VROUTER_MODULE_OPTS_ != ''
+
+    - name: remove contrail vrouter plugin init container if exists
+      docker_container:
+        name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ }}"
+        state: absent
+      ignore_errors: yes
+
+    - name: create contrail vrouter plugin init container
+      docker_container:
+        name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ }}"
+        image: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}"
+        detach: no
+        privileged: yes
+        volumes:
+          - /lib/modules:/lib/modules
+          - /usr/src:/usr/src
+      when: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ is defined and _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ != ''
+
+    - name: start contrail dpdk init container
+      block:
+        - name: pull contrail vrouter dpdk agent container
+          docker_image:
+            name: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
+
+        - name: remove contrail dpdk init container if exists
+          docker_container:
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
+            state: absent
+          ignore_errors: yes
+
+        - name: create contrail dpdk init container
+          docker_container:
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
+            image: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
+            detach: no
+            privileged: yes
+            volumes:
+              - /dev:/dev
+              - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
+              - /lib/modules:/lib/modules
+              - /bin:/host/bin
+            env:
+              AGENT_MODE: dpdk
+              CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
+              CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
+              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
+              DPDK_COMMAND_ADDITIONAL_ARGS: "{{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }}"
+      when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
+
+    - name: start contrail vrouter init container
+      block:
+        - name: remove contrail init container if exists
+          docker_container:
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
+            state: absent
+          ignore_errors: yes
+
+        - name: create vrouter init container
+          docker_container:
+            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
+            image: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
+            detach: no
+            privileged: yes
+            volumes:
+              - /dev:/dev
+              - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
+              - /lib/modules:/lib/modules
+              - /bin:/host/bin
+            env:
+              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
+      when: _IS_DPDK_ is undefined or _IS_DPDK_ == ''

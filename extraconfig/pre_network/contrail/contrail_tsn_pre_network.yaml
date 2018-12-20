@@ -117,14 +117,8 @@ resources:
     properties:
       group: ansible
       inputs:
-        - name: _CONTRAIL_VROUTER_INIT_IMAGE_
-        - name: _CONTRAIL_VROUTER_INIT_IMAGE_NAME_
-        - name: _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_
         - name: _CONTRAIL_HUGEPAGES_1GB_
         - name: _CONTRAIL_HUGEPAGES_2MB_
-        - name: _CONTRAIL_VROUTER_MODULE_OPTS_
-        - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_
-        - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_
       outputs:
         - name: result
       config:
@@ -142,17 +136,47 @@ resources:
           - []
           - ['CREATE'] # Only do this on CREATE
       input_values:
+        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailVrouterHugepages1GB}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailVrouterHugepages2MB}
+
+  VrouterContainerParametersConfig:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ansible
+      inputs:
+        - name: _CONTRAIL_VROUTER_INIT_IMAGE_
+        - name: _CONTRAIL_VROUTER_INIT_IMAGE_NAME_
+        - name: _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_
+        - name: _CONTRAIL_VROUTER_MODULE_OPTS_
+        - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_
+        - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_
+      outputs:
+        - name: result
+      config:
+        get_file: contrail_ansible_container_config.yaml
+
+  VrouterContainerParametersDeployment:
+    type: OS::Heat::SoftwareDeployment
+    properties:
+      name: VrouterContainerParametersDeployment
+      server:  {get_param: server}
+      config: {get_resource: VrouterContainerParametersConfig}
+      actions:
+        if:
+          - deployment_actions_empty
+          - []
+          - ['CREATE', 'UPDATE']
+      input_values:
         _CONTRAIL_VROUTER_INIT_IMAGE_: {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}
         _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_: {get_attr: [DockerContrailVrouterAgentImageNormalize, contrail_image_only]}
-        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailVrouterHugepages1GB}
-        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailVrouterHugepages2MB}
         _CONTRAIL_VROUTER_MODULE_OPTS_: {get_param: ContrailVrouterModuleOptions}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image_only]}
     depends_on:
-      - DockerContrailVrouterKernelImageNormalize
+      - VrouterHostParametersDeployment
       - DockerContrailVrouterPluginInitImageNormalize
+      - DockerContrailVrouterKernelImageNormalize
       - DockerContrailVrouterAgentImageNormalize
 
   VrouterKernelParametersConfig:
@@ -172,7 +196,7 @@ resources:
 
   VrouterKernelParametersDeployment:
     type: OS::Heat::SoftwareDeployment
-    depends_on: [VrouterHostParametersDeployment]
+    depends_on: [VrouterContainerParametersDeployment]
     condition: is_kernel_config_required
     properties:
       name: VrouterKernelParametersDeployment
