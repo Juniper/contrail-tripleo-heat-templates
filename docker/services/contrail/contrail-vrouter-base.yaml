@@ -7,28 +7,22 @@ outputs:
   role_data:
     value:
       update_tasks:
-        - name: Create a volume
-          docker_volume:
-            name: contrail_var_lib
+        - name: Find out current volume name of contrail_vrouter_agent container
+          shell: >
+            docker inspect contrail_vrouter_agent | jq -r '.[].Mounts | .[] | select(.Destination =="/var/lib/contrail") | .Name'
           register:
-            created_volume
+            agent_container_volume_name
         - block:
-          - name: Find out current volume name of contrail_vrouter_agent container
-            shell: >
-              docker inspect contrail_vrouter_agent | jq -r '.[].Mounts | .[] | select(.Destination =="/var/lib/contrail") | .Name'
-            register:
-              agent_container_volume_name
           - name: Find out current volume location of contrail_vrouter_agent container
             shell: >
               docker inspect contrail_vrouter_agent | jq -r '.[].Mounts | .[] | select(.Destination =="/var/lib/contrail") | .Source'
             register:
               agent_container_volume_location
           - name: Copy contents of old volume to the new one
-            command: cp -R {{ agent_container_volume_location.stdout }}/. {{ created_volume.ansible_facts.docker_volume.Mountpoint }}
+            command: cp -R {{ agent_container_volume_location.stdout }}/. /var/lib/contrail/
           - name: Save information about old volume for furhter reference
             shell: echo "{{ agent_container_volume_name.stdout }}" > /tmp/contrail_var_lib_unnamed_volume
-            when: "agent_container_volume_name.stdout != 'contrail_var_lib'"
-          when: created_volume.changed == true
+          when: agent_container_volume_name.stdout != ''
       post_update_tasks:
         - block:
           - name: Ensure old unused volume is absent
