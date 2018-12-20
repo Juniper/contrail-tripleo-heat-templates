@@ -136,15 +136,26 @@ outputs:
                   - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
                   - /lib/modules:/lib/modules
                   - /var/run:/var/run
-                  - contrail_var_lib:/var/lib/contrail
+                  - /var/lib/contrail:/var/lib/contrail
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
-      update_tasks: {get_attr: [ContrailVrouterBase, role_data, update_tasks]}
-      post_update_tasks: {get_attr: [ContrailVrouterBase, role_data, post_update_tasks]}
+      update_tasks:
+        list_concat:
+          - {get_attr: [ContrailVrouterBase, role_data, update_tasks]}
+          - - name: Stop contrail agent container
+              docker_container:
+              name: "contrail_vrouter_agent"
+              state: stopped
+            - name: Restart vhost0 interface
+              shell: bash -c 'ifdown vhost0; ifup vhost0'
+
+      post_update_tasks:
+        {get_attr: [ContrailVrouterBase, role_data, post_update_tasks]}
+
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
