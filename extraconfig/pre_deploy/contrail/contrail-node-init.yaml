@@ -32,6 +32,10 @@ parameters:
     description: Path to server's/node's private key
     type: string
     default: ''
+  ContrailCA:
+    default: ''
+    description: Contrail CA, could be local or IPA
+    type: string
   ContrailCaCertFile:
     default: ''
     description: Path to CA certificate
@@ -67,6 +71,7 @@ resources:
         - name: _CONTRAIL_NODE_INIT_IMAGE_
         - name: _CONTRAIL_NODE_INIT_IMAGE_NAME_
         - name: _CONTRAIL_STATUS_IMAGE_
+        - name: _SERVER_CA_
         - name: _SERVER_CA_CERTFILE_
         - name: _SERVER_CA_KEYFILE_
         - name: _SERVER_CERTFILE_
@@ -89,6 +94,7 @@ resources:
         _CONTRAIL_NODE_INIT_IMAGE_: {get_attr: [DockerContrailNodeImageNormalize, contrail_image]}
         _CONTRAIL_NODE_INIT_IMAGE_NAME_: {get_attr: [DockerContrailNodeImageNormalize, contrail_image_only]}
         _CONTRAIL_STATUS_IMAGE_: {get_attr: [DockerContrailStatusImageNormalize, contrail_image]}
+        _SERVER_CA_: {get_param: ContrailCA}
         _SERVER_CA_CERTFILE_: {get_param: ContrailCaCertFile}
         _SERVER_CA_KEYFILE_: {get_param: ContrailCaKeyFile}
         _SERVER_CERTFILE_: {get_param: ContrailServiceCertFile}

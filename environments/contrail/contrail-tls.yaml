@@ -1,20 +1,39 @@
 resource_registry:
+  # ====
+  # IPA certs lifecycle management parameters:
+  # ====
   OS::TripleO::Services::ContrailCertmongerUser: ../../docker/services/contrail/contrail-certmonger-user.yaml
+  OS::TripleO::ServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals.yaml
+
+  # ====
+  # Manual certs lifecycle management parameters:
+  # ====
+  # OS::TripleO::Services::ContrailCertmongerUser: OS::Heat::None
+  # OS::TripleO::ServiceServerMetadataHook: OS::Heat::None
 
 parameter_defaults:
-  # local or IPA
-  # (local - for manually managed certs, IPA - using FreeIPA)
-  ContrailCA: 'IPA'
   ContrailSslEnabled: true
-  # For IPA fqdn should be used for Contrail services lists
-  contrail_nodes_param_suffux: 'node_names'
-  # For now only /etc/contrail/ssl dir is supported.
   ContrailServiceCertFile: '/etc/contrail/ssl/certs/server.pem'
   ContrailServiceKeyFile: '/etc/contrail/ssl/private/server-privkey.pem'
-  ContrailCaCertFile: ''
+
+  # ====
+  # IPA certs lifecycle management parameters:
+  # ====
+  ContrailCA: 'IPA'
+  # For IPA fqdn should be used for Contrail services lists
+  contrail_nodes_param_suffux: 'node_names'
+  # Server metadata should be True for IPA case
+  ServerMetadata:
+    ipa_enroll: True
+  # For now only /etc/contrail/ssl dir is supported.
+  ContrailCaCertFile: '/etc/ipa/ca.crt'
   ContrailCaKeyFile: ''
+
+  # ====
+  # Manual certs lifecycle management parameters:
+  # ====
+  # ContrailCA: 'local'
   # CA files paths, CA cert, CA key to sign contrail services certificates
-  # Only for case with manual certs lifecycle.
   # In case of IPA they must be empty / not_defined  
   # ContrailCaCertFile: '/etc/contrail/ssl/certs/ca-cert.pem'
   # ContrailCaKeyFile: '/etc/contrail/ssl/private/ca-key.pem'
