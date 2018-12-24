@@ -40,6 +40,42 @@
         state: absent
       ignore_errors: yes
 
+    - set_fact:
+        ssl_enable: "{{ _SSL_ENABLE_ | default('false')}} | bool"
+
+    - set_fact:
+        node_init_volumes:
+          - /dev:/dev
+          - /usr/bin:/host/usr/bin
+          - /etc/sysctl.d:/etc/sysctl.d
+          - /var/crashes:/var/crashes
+          - /var/log/containers/contrail:/var/log/contrail
+          - /var/run:/var/run
+          - /tmp/:/tmp/
+
+    - set_fact:
+        node_init_env_vars:
+          INSTALL_PUPPET: "{{ _INSTALL_PUPPET_ }}"
+          CONTRAIL_STATUS_IMAGE: "{{ _CONTRAIL_STATUS_IMAGE_ }}"
+
+    # for IPA case certs are managed externally by certmonger 
+    - name: Add SSL folder for self-signed cert management only
+      block:
+        - set_fact:
+            node_init_volumes: "{{ node_init_volumes + ['/etc/contrail/ssl:/etc/contrail/ssl'] }}"
+
+        - set_fact:
+            node_init_env_vars: "{{ node_init_env_vars | combine({item.key: item.value}) }}"
+          with_items:
+            - { key: SSL_ENABLE, value: "{{ _SSL_ENABLE_ }}" }
+            - { key: SERVER_KEYFILE, value: "{{ _SERVER_KEYFILE_ }}" }
+            - { key: SERVER_CERTFILE, value: "{{ _SERVER_CERTFILE_ }}" }
+            - { key: SERVER_CA_CERTFILE, value: "{{ _SERVER_CA_CERTFILE_ }}" }
+            - { key: SERVER_CA_KEYFILE, value: "{{ _SERVER_CA_KEYFILE_ }}" }
+      when:
+        - ssl_enable
+        - _SERVER_CA_ != 'IPA'
+
     - name: create node-init container
       docker_container:
         name: "{{ _CONTRAIL_NODE_INIT_IMAGE_NAME_ }}"
@@ -49,23 +85,8 @@
         network_mode: host
         pid_mode: host
         user: root
-        volumes:
-          - /dev:/dev
-          - /usr/bin:/host/usr/bin
-          - /etc/contrail/ssl:/etc/contrail/ssl
-          - /etc/sysctl.d:/etc/sysctl.d
-          - /var/crashes:/var/crashes
-          - /var/log/containers/contrail:/var/log/contrail
-          - /var/run:/var/run
-          - /tmp/:/tmp/
-        env:
-          INSTALL_PUPPET: "{{ _INSTALL_PUPPET_ }}"
-          CONTRAIL_STATUS_IMAGE: "{{ _CONTRAIL_STATUS_IMAGE_ }}"
-          SSL_ENABLE: "{{ _SSL_ENABLE_ }}"
-          SERVER_KEYFILE: "{{ _SERVER_KEYFILE_ }}"
-          SERVER_CERTFILE: "{{ _SERVER_CERTFILE_ }}"
-          SERVER_CA_CERTFILE: "{{ _SERVER_CA_CERTFILE_ }}"
-          SERVER_CA_KEYFILE: "{{ _SERVER_CA_KEYFILE_ }}"
+        volumes: "{{ node_init_volumes }}"
+        env: "{{ node_init_env_vars }}"
 
     - set_fact:
         install_puppet: "{{ _INSTALL_PUPPET_ }} | bool"

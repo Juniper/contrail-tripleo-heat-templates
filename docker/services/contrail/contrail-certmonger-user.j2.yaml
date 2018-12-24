@@ -52,11 +52,7 @@ parameters:
     type: string
 
 conditions:
-  contrail_ipa_ca:
-    and:
-      - {equals: [{get_param: ContrailCA}, 'IPA']}
-      - not: {equals: [{get_param: ContrailServiceCertFile}, '']}
-      - not: {equals: [{get_param: ContrailServiceKeyFile}, '']}
+  contrail_ipa_ca: {equals: [{get_param: ContrailCA}, 'IPA']}
 
 resources:
   ContrailNetworks:
