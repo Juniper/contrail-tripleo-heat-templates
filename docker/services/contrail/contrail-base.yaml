@@ -166,11 +166,7 @@ conditions:
         - {equals: [{get_param: ContrailSslEnabled}, false]}
         - {equals: [{get_param: ContrailServiceCertFile}, '']}
   contrail_tls_insecure: {equals: [{get_param: ContrailSslInsecure}, true]}
-  contrail_ipa_ca:
-    and:
-      - {equals: [{get_param: ContrailCA}, 'IPA']}
-      - not: {equals: [{get_param: ContrailServiceCertFile}, '']}
-      - not: {equals: [{get_param: ContrailServiceKeyFile}, '']}
+  contrail_ipa_ca: {equals: [{get_param: ContrailCA}, 'IPA']}
 
 resources:
   ContainersCommon:
@@ -287,9 +283,17 @@ outputs:
       contrail_base_volumes: &contrail_base_volumes
         list_concat:
           - {get_attr: [ContainersCommon, volumes]}
-          - - /etc/contrail/ssl:/etc/contrail/ssl
+          - - /etc/contrail/ssl:/etc/contrail/ssl:ro
             - /var/crashes:/var/crashes
             - /var/log/containers/contrail:/var/log/contrail
+          - if:
+            - contrail_ipa_ca
+            - - list_join:
+                - ':'
+                - - {get_param: ContrailCaCertFile}
+                  - {get_param: ContrailCaCertFile}
+                  - 'ro'
+            - null
       contrail_general_base_env: &contrail_general_base_env
         - 'CLOUD_ORCHESTRATOR=openstack'
         - 'OPENSTACK_VERSION=queens'
