@@ -1,7 +1,7 @@
 heat_template_version: 2016-10-14
 
 description: >
-  Contrail Controller ISSU
+  Contrail Controller Issu
 
 parameters:
   ServiceNetMap:
@@ -44,7 +44,7 @@ resources:
 
 outputs:
   role_data:
-    description: Role Contrail Controller ISSU
+    description: Role Contrail Controller Issu
     value:
       config_settings:
         map_merge:

@@ -1,7 +1,7 @@
 heat_template_version: 2016-10-14
 
 description: >
-  Contrail Controller ISSU
+  Contrail Controller Issu
 
 parameters:
   ServiceNetMap:
@@ -20,7 +20,7 @@ parameters:
     type: json
 
 resources:
-  ContrailISSUBase:
+  ContrailIssuBase:
     type: ./contrail-issu-base.yaml
     properties:
       ServiceNetMap: {get_param: ServiceNetMap}
@@ -29,12 +29,12 @@ resources:
 
 outputs:
   role_data:
-    description: Role Contrail Controller ISSU
+    description: Role Contrail Controller Issu
     value:
       service_name: contrail_issu
       config_settings:
         map_merge:
-          - get_attr: [ContrailISSUBase, role_data, config_settings]
-          - contrail_issu_host_ip: {get_param: [ServiceNetMap, ContrailISSUNetwork]}
+          - get_attr: [ContrailIssuBase, role_data, config_settings]
+          - contrail_issu_host_ip: {get_param: [ServiceNetMap, ContrailIssuNetwork]}
       step_config: |
         include ::tripleo::network::contrail::issu

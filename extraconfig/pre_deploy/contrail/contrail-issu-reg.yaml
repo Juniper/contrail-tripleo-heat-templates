@@ -12,7 +12,7 @@ resources:
     properties:
       server: {get_param: server}
 
-  ContrailISSUInit:
+  ContrailIssuInit:
     type: ./contrail-issu.yaml
     depends_on: ContrailRhelRegistration
     properties:
@@ -20,4 +20,4 @@ resources:
 
 outputs:
   deploy_stdout:
-    value: {get_attr: [ContrailISSUInit, deploy_stdout]}
+    value: {get_attr: [ContrailIssuInit, deploy_stdout]}

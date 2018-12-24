@@ -1,5 +1,5 @@
 resource_registry:
-  OS::TripleO::ContrailControllerISSUExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
+  OS::TripleO::ContrailControllerIssuExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
   OS::TripleO::ComputeExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
   OS::TripleO::ContrailDpdkExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
   OS::TripleO::ContrailTsnExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
@@ -10,5 +10,5 @@ parameter_defaults:
   ContrailRegistryInsecure: false
   ContrailImageTag: queens-5.0-104-rhel-queens
 
-  ContrailControllerISSUCount: 1
-  OvercloudContrailControllerISSUFlavor: 'contrail-controller-issu'
+  ContrailControllerIssuCount: 1
+  OvercloudContrailControllerIssuFlavor: 'contrail-controller-issu'

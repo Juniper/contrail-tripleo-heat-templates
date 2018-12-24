@@ -16,7 +16,7 @@ role=`hostname -s`
 role_short=`echo $role | awk -F"-" '{print $2}'`
 
 if [[ ! 'contrailcontrollerissu|contraildpdk|novacompute|contrailtsn' =~ "$role_short" ]] ; then
-  echo "Skip ISSU init script for $role"
+  echo "Skip Issu init script for $role"
   exit 0
 fi
 

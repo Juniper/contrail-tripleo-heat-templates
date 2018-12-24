@@ -5,7 +5,7 @@ resource_registry:
   OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: contrail-nic-config-single.yaml
   OS::TripleO::ContrailAnalyticsDatabase::Net::SoftwareConfig: contrail-nic-config-single.yaml
   OS::TripleO::ContrailTsn::Net::SoftwareConfig: contrail-nic-config-compute-single.yaml
-  OS::TripleO::ContrailControllerISSU::Net::SoftwareConfig: contrail-nic-config-single.yaml
+  OS::TripleO::ContrailControllerIssu::Net::SoftwareConfig: contrail-nic-config-single.yaml
 
 parameter_defaults:
   ControlPlaneSubnetCidr: '24'

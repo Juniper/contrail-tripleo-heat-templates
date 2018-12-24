@@ -17,7 +17,7 @@ resource_registry:
   OS::TripleO::ContrailController::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
   OS::TripleO::ContrailAnalytics::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
   OS::TripleO::ContrailAnalyticsDatabase::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
-  OS::TripleO::ContrailControllerISSU::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
+  OS::TripleO::ContrailControllerIssu::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
   OS::TripleO::ContrailTsn::Ports::InternalApiPort: ../../network/ports/internal_api_from_pool.yaml
 
   #OS::TripleO::CephStorage::Ports::ExternalPort: ../../network/ports/noop.yaml
