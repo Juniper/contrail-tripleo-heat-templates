@@ -28,6 +28,16 @@ parameters:
     default: ''
     description: Contrail Registry Password
     type: string
+  ContrailIssuSshUser:
+    type: string
+    default: ''
+  ContrailIssuSshKey:
+    default: {}
+    description: >
+      Contrail ISSU ssh key.
+      ISSU procedure needs access via SSH to Contrail nodes.
+      It is a dictionary with keys 'public_key' and 'private_key'.
+    type: json
 
 resources:
   ContrailContainerRegistryConfig:
@@ -46,6 +56,12 @@ resources:
           default: {get_param: ContrailRegistryUser}
         - name: contrail_registry_password
           default: {get_param: ContrailRegistryPassword}
+        - name: contrail_issu_ssh_user
+          default: {get_param: ContrailIssuSshUser}
+        - name: contrail_issu_ssh_private_key
+          default: {get_param: [ContrailIssuSshKey, private_key]}
+        - name: contrail_issu_ssh_public_key
+          default: {get_param: [ContrailIssuSshKey, public_key]}
 
   ContrailContainerRegistryDeployment:
     type: OS::Heat::SoftwareDeployment

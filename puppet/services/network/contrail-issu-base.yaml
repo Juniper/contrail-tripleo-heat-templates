@@ -33,6 +33,9 @@ parameters:
   ContrailImageTag:
     description: Contrail Container images tag
     type: string
+  ContrailIssuSshUser:
+    type: string
+    default: ''
 
 resources:
   ContrailBase:
@@ -53,7 +56,4 @@ outputs:
             contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
             contrail_issu_container_registry: {get_param: ContrailRegistry}
             contrail_issu_container_tag: {get_param: ContrailImageTag}
-            
-
-
-#fqdn_ctlplane: {get_attr: [NetHostMap, value, ctlplane, fqdn]}
+            contrail_issu_ssh_user: {get_param: ContrailIssuSshUser}
