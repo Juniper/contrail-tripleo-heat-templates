@@ -12,3 +12,10 @@ parameter_defaults:
 
   ContrailControllerIssuCount: 1
   OvercloudContrailControllerIssuFlavor: 'contrail-controller-issu'
+
+  ContrailIssuSshUser: 'heat-admin'
+  ContrailIssuSshKey:
+    public_key: |
+      ISSU ssh public key
+    private_key: |
+      ISSU ssh private key
