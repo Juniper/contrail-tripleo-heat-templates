@@ -132,3 +132,14 @@ outputs:
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
+
+      fast_forward_upgrade_tasks:
+        - name: Stop contrail control services
+          service: name={{ item }} state=stopped enabled=no
+          when:
+            - step|int == 1
+            - release == 'ocata'
+          with_items:
+            - supervisor-control
+
+      fast_forward_post_upgrade_tasks: []

@@ -24,12 +24,12 @@ resource_registry:
   OS::TripleO::ControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/controller-init.yaml
   OS::TripleO::ContrailControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailControlOnlyExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
+  OS::TripleO::ContrailAnalyticsExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
+  OS::TripleO::ContrailAnalyticsDatabaseExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ComputeExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailDpdkExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailSriovExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailTsnExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
-  OS::TripleO::ContrailAnalyticsExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
-  OS::TripleO::ContrailAnalyticsDatabaseExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
 
 parameter_defaults:
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
