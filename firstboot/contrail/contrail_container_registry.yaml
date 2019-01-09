@@ -47,6 +47,10 @@ resources:
             exec 2>&1
             echo "=================== $(date) ==================="
             set -xv
+            # disable rate limit to avoid holes in docker logs
+            sed -i 's/.*RateLimitInterval.*/RateLimitInterval=0/g' /etc/systemd/journald.conf
+            sed -i 's/.*RateLimitBurst.*/RateLimitBurst=0/g' /etc/systemd/journald.conf
+            systemctl restart systemd-journald        
             contrail_registry_insecure=$contrail_registry_insecure
             contrail_registry_cert_url=$contrail_registry_cert_url
             contrail_registry=$contrail_registry
