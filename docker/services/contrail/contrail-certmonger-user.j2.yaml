@@ -61,7 +61,9 @@ resources:
       value:
         - ctlplane
 {%- for network in networks %}
+  {%- if network.name_lower not in ( 'external', 'management', 'storage', 'storagemgmt' ) %}
         - {{network.name_lower}}
+  {%- endif %}
 {%- endfor %}
 
 outputs:

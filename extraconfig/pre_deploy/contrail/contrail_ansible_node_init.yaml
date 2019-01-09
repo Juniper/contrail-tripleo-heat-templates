@@ -58,8 +58,7 @@
           INSTALL_PUPPET: "{{ _INSTALL_PUPPET_ }}"
           CONTRAIL_STATUS_IMAGE: "{{ _CONTRAIL_STATUS_IMAGE_ }}"
 
-    # for IPA case certs are managed externally by certmonger 
-    - name: Add SSL folder for self-signed cert management only
+    - name: Add SSL folder for self-signed cert management
       block:
         - set_fact:
             node_init_volumes: "{{ node_init_volumes + ['/etc/contrail/ssl:/etc/contrail/ssl'] }}"
@@ -75,6 +74,21 @@
       when:
         - ssl_enable
         - _SERVER_CA_ != 'IPA'
+
+    - name: Add SSL folder for IPA cert management
+      block:
+        - set_fact:
+            node_init_volumes: "{{ node_init_volumes + ['/etc/contrail/ssl:/etc/contrail/ssl:ro'] }}"
+
+        - set_fact:
+            node_init_env_vars: "{{ node_init_env_vars | combine({item.key: item.value}) }}"
+          with_items:
+            - { key: SERVER_KEYFILE, value: "{{ _SERVER_KEYFILE_ }}" }
+            - { key: SERVER_CERTFILE, value: "{{ _SERVER_CERTFILE_ }}" }
+            - { key: SERVER_CA_CERTFILE, value: "{{ _SERVER_CA_CERTFILE_ }}" }
+      when:
+        - ssl_enable
+        - _SERVER_CA_ == 'IPA'
 
     - name: create node-init container
       docker_container:

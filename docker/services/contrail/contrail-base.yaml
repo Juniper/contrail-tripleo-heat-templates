@@ -113,10 +113,6 @@ parameters:
                   services communications (sandesh, introspect, xmpp, ..).
     type: boolean
     default: false
-  ContrailSslInsecure:
-    description:  Flag to identify strict cert validation (sandesh, introspect, xmpp, ..).
-    type: boolean
-    default: false
   ContrailServiceCertFile:
     description: Path to the node's public certificate
     type: string
@@ -165,7 +161,6 @@ conditions:
       or:
         - {equals: [{get_param: ContrailSslEnabled}, false]}
         - {equals: [{get_param: ContrailServiceCertFile}, '']}
-  contrail_tls_insecure: {equals: [{get_param: ContrailSslInsecure}, true]}
   contrail_ipa_ca: {equals: [{get_param: ContrailCA}, 'IPA']}
 
 resources:
@@ -219,15 +214,15 @@ outputs:
         - get_attr: [RoleParametersValue, value]
         - if:
           - contrail_config_vip_unset
-          - contrail_config_vip: "%{hiera('internal_api_virtual_ip')}"
+          - contrail_config_vip: "%{hiera('cloud_name_internal_api')}"  
           - contrail_config_vip: {get_param: ContrailConfigVIP}
         - if:
           - contrail_webui_vip_unset
-          - contrail_webui_vip: "%{hiera('internal_api_virtual_ip')}"
+          - contrail_webui_vip: "%{hiera('cloud_name_internal_api')}"
           - contrail_webui_vip: {get_param: ContrailWebuiVIP}
         - if:
           - contrail_analytics_vip_unset
-          - contrail_analytics_vip: "%{hiera('internal_api_virtual_ip')}"
+          - contrail_analytics_vip: "%{hiera('cloud_name_internal_api')}"
           - contrail_analytics_vip: {get_param: ContrailAnalyticsVIP}
       haproxy_config_settings_member_options: &haproxy_config_settings_member_options
           - 'check'
@@ -364,10 +359,13 @@ outputs:
           - - "XMPP_SSL_ENABLE=True"
             - "SANDESH_SSL_ENABLE=True"
             - "INTROSPECT_SSL_ENABLE=True"
+            - "RABBITMQ_USE_SSL=True"
+            - "KAFKA_SSL_ENABLE=True"
+            - "CASSANDRA_SSL_ENABLE=True"
             - if:
-              - contrail_tls_insecure
-              - 'INTROSPECT_SSL_INSECURE=True'
+              - contrail_ipa_ca
               - 'INTROSPECT_SSL_INSECURE=False'
+              - 'INTROSPECT_SSL_INSECURE=True'
             - list_join:
                 - '='
                 - - 'SERVER_CERTFILE'
@@ -388,15 +386,40 @@ outputs:
       contrail_auth_tls_env: &contrail_auth_tls_env
         if:
           - internal_tls_enabled
-          - - 'KEYSTONE_AUTH_INSECURE=True'
+          - list_concat:
+              - - list_join:
+                    - '='
+                    - - 'KEYSTONE_AUTH_CERTFILE'
+                      - {get_param: ContrailServiceCertFile}
+                - list_join:
+                    - '='
+                    - - 'KEYSTONE_AUTH_KEYFILE'
+                      - {get_param: ContrailServiceKeyFile}
+              - if:
+                - contrail_ipa_ca
+                - - 'KEYSTONE_AUTH_INSECURE=False'
+                  - list_join:
+                      - '='
+                      - - 'KEYSTONE_AUTH_CA_CERTFILE'
+                        - {get_param: ContrailCaCertFile}
+                - - 'KEYSTONE_AUTH_INSECURE=True'
+          - []
+      metadata_tls_env: &metadata_tls_env
+        if:
+          - internal_tls_enabled
+          - - 'METADATA_SSL_ENABLE=True'
             - list_join:
                 - '='
-                - - 'KEYSTONE_AUTH_CERTFILE'
+                - - 'METADATA_SSL_CERTFILE'
                   - {get_param: ContrailServiceCertFile}
             - list_join:
                 - '='
-                - - 'KEYSTONE_AUTH_KEYFILE'
+                - - 'METADATA_SSL_KEYFILE'
                   - {get_param: ContrailServiceKeyFile}
+            - list_join:
+                - '='
+                - - 'METADATA_SSL_CA_CERTFILE'
+                  - {get_param: ContrailCaCertFile}
           - []
       contrail_base_env: &contrail_base_env
         list_concat:
@@ -405,6 +428,7 @@ outputs:
           - *contrail_auth_admin_env
           - *contrail_tls_env
           - *contrail_auth_tls_env
+          - *metadata_tls_env
       contrail_base_auth_internal_env: &contrail_base_auth_internal_env
         list_concat:
           - *contrail_general_base_env
@@ -412,6 +436,7 @@ outputs:
           - *contrail_auth_internal_env
           - *contrail_tls_env
           - *contrail_auth_tls_env
+          - *metadata_tls_env
       docker_config:
         step_2: {}
       contrail_common_env_file: &contrail_common_env_file
