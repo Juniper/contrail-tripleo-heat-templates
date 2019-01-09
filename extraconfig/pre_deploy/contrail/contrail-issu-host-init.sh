@@ -12,14 +12,6 @@ exec 2>&1
 echo "=================== $(date) ==================="
 set -xv
 
-role=`hostname -s`
-role_short=`echo $role | awk -F"-" '{print $2}'`
-
-if [[ ! 'contrailcontrollerissu|contraildpdk|novacompute|contrailtsn|contrailcontroller' =~ "$role_short" ]] ; then
-  echo "Skip Issu init script for $role"
-  exit 0
-fi
-
 # WARNING: docker-compose doesnt work properly with selinux,
 # so it is needed to disable selinux temporary during upgrade
 # procedure instead of configuring selinux policies
@@ -80,44 +72,42 @@ setenforce 0
 getenforce
 #
 
-if [[ ! 'contrailcontroller' =~ "$role_short" ]] ; then
-    mkdir -p /var/crashes
-    chmod 755 /var/crashes
-    yum install -y docker python-docker-py python27-python-pip libselinux-python
-    source scl_source enable python27
-    pip install --upgrade pip
-    pip install docker-compose
-    if [[ -n ${contrail_registry_cert_url} ]]; then
-        registry_name=(${contrail_registry//:/ })
-        mkdir -p /etc/docker/certs.d/${registry_name}
-        (cd /etc/docker/certs.d/${registry_name}; curl -O ${contrail_registry_cert_url})
-        (cd /etc/pki/ca-trust/source/anchors/; curl -O ${contrail_registry_cert_url})
-        update-ca-trust
+mkdir -p /var/crashes
+chmod 755 /var/crashes
+yum install -y docker python-docker-py python27-python-pip libselinux-python
+source scl_source enable python27
+pip install --upgrade pip
+pip install docker-compose
+if [[ -n ${contrail_registry_cert_url} ]]; then
+    registry_name=(${contrail_registry//:/ })
+    mkdir -p /etc/docker/certs.d/${registry_name}
+    (cd /etc/docker/certs.d/${registry_name}; curl -O ${contrail_registry_cert_url})
+    (cd /etc/pki/ca-trust/source/anchors/; curl -O ${contrail_registry_cert_url})
+    update-ca-trust
+fi
+if [[ ${contrail_registry_insecure,,} == 'true' ]]; then
+    registry_name=(${contrail_registry//\// })
+    found=0
+    registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
+    for reg in $registries; do if [[ ${reg} == ${contrail_registry} ]]; then found=1; fi; done
+    if [[ ${found} -eq 0 ]]; then
+    registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
+    registry_string="${registry_string} --insecure-registry ${registry_name}"
+    complete_string="INSECURE_REGISTRY=\"${registry_string}\""
+    echo ${complete_string}
+    if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
+        sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
+    else
+        echo ${complete_string} >> /etc/sysconfig/docker
     fi
-    if [[ ${contrail_registry_insecure,,} == 'true' ]]; then
-        registry_name=(${contrail_registry//\// })
-        found=0
-        registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
-        for reg in $registries; do if [[ ${reg} == ${contrail_registry} ]]; then found=1; fi; done
-        if [[ ${found} -eq 0 ]]; then
-        registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
-        registry_string="${registry_string} --insecure-registry ${registry_name}"
-        complete_string="INSECURE_REGISTRY=\"${registry_string}\""
-        echo ${complete_string}
-        if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
-            sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
-        else
-            echo ${complete_string} >> /etc/sysconfig/docker
-        fi
-        fi
     fi
-    systemctl enable docker
-    systemctl restart docker
-    sleep 5
-    if [[ -n ${contrail_registry_user} && -n ${contrail_registry_password} ]]; then
-        docker login -u ${contrail_registry_user} -p ${contrail_registry_password} ${contrail_registry}
-    fi
-fi # if [[ ! 'contrailcontroller' =~ "$role_short" ]]
+fi
+systemctl enable docker
+systemctl restart docker
+sleep 5
+if [[ -n ${contrail_registry_user} && -n ${contrail_registry_password} ]]; then
+    docker login -u ${contrail_registry_user} -p ${contrail_registry_password} ${contrail_registry}
+fi
 
 # enable local ssh connect for ISSU (ansible and issu sync)
 user_name=${contrail_issu_ssh_user:-'heat-admin'}

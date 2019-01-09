@@ -1,5 +1,9 @@
 resource_registry:
   OS::TripleO::ContrailControllerIssuExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
+  OS::TripleO::ControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
+  OS::TripleO::ContrailControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
+  OS::TripleO::ContrailAnalyticsExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
+  OS::TripleO::ContrailAnalyticsDatabaseExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
   OS::TripleO::ComputeExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
   OS::TripleO::ContrailDpdkExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
   OS::TripleO::ContrailTsnExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
