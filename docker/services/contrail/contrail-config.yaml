@@ -202,9 +202,9 @@ outputs:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
-            - name: get nova api vip
-              shell: hiera -c /etc/puppet/hiera.yaml nova_api_vip
-              register: nova_api_vip
+            - name: get nova api
+              shell: hiera -c /etc/puppet/hiera.yaml cloud_name_internal_api
+              register: nova_api_host
             - name: write remaining contrail config env cars
               lineinfile:
                 dest: *contrail_env_file
@@ -212,7 +212,7 @@ outputs:
                 line: "{{ item }}"
               with_items:
                 - NODE_TYPE=config
-                - IPFABRIC_SERVICE_HOST={{ nova_api_vip.stdout }}
+                - IPFABRIC_SERVICE_HOST={{ nova_api_host.stdout }}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
