@@ -38,7 +38,18 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
-
+  ContrailCA:
+    default: ''
+    description: Contrail CA, could be local or IPA
+    type: string
+  ContrailServiceCertFile:
+    description: Path to the node's public certificate
+    type: string
+    default: ''
+  ContrailServiceKeyFile:
+    description: Path to server's/node's private key
+    type: string
+    default: ''
   # internal params
   contrail_nodes_param_suffux:
     type: string
@@ -174,6 +185,27 @@ outputs:
                 state: present
                 regexp: '^WEBUI_NODES.*'
                 line: "WEBUI_NODES={{ contrail_webui_nodes_string }}"
+            - name: contrail CA
+              set_fact:
+                contrail_ca: {get_param: ContrailCA}
+            - name: overwrite webui cert files for IPA
+              block:
+                - name: contrail server cert
+                  set_fact:
+                    contrail_cert: {get_param: ContrailServiceCertFile}
+                - name: contrail server key
+                  set_fact:
+                    contrail_key: {get_param: ContrailServiceKeyFile}
+                - name: set webui certs for IPA case 
+                  lineinfile:
+                    dest: *contrail_env_file
+                    state: present
+                    regexp: "^{{ item.key }}.*"
+                    line: "{{ item.key }}={{ item.value }}"
+                  with_dict:
+                    WEBUI_SSL_CERT_FILE: "{{ contrail_cert }}"
+                    WEBUI_SSL_KEY_FILE: "{{ contrail_key }}"
+              when: contrail_ca == 'IPA'
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
