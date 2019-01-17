@@ -39,6 +39,20 @@ parameters:
   HeatEngineOptVolumes:
     description: list of optional volumes to be mounted
     type: comma_delimited_list
+  EnableInternalTLS:
+    type: boolean
+    default: false
+  ContrailServiceCertFile:
+    description: Path to the node's public certificate
+    type: string
+    default: ''
+  ContrailServiceKeyFile:
+    description: Path to server's/node's private key
+    type: string
+    default: ''
+
+conditions:
+  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 resources:
   ContainersCommon:
@@ -74,7 +88,15 @@ outputs:
         step_config:
           include ::tripleo::network::contrail::heat
         config_image: {get_param: DockerHeatConfigImage}
-      kolla_config: {}
+      kolla_config:
+        if:
+          - internal_tls_enabled
+          - permissions:
+              - path: {get_param: ContrailServiceCertFile}
+                owner: heat:heat
+              - path: {get_param: ContrailServiceKeyFile}
+                owner: heat:heat
+          - {}
       docker_config:
         step_3:
           contrail_heat_plugin:

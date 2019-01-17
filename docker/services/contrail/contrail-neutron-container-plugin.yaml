@@ -53,6 +53,20 @@ parameters:
     description: Neutron Core Plugin Name
     type: string
     default: 'neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2'
+  EnableInternalTLS:
+    type: boolean
+    default: false
+  ContrailServiceCertFile:
+    description: Path to the node's public certificate
+    type: string
+    default: ''
+  ContrailServiceKeyFile:
+    description: Path to server's/node's private key
+    type: string
+    default: ''
+
+conditions:
+  internal_tls_enabled: {equals: [{get_param: EnableInternalTLS}, true]}
 
 resources:
   ContainersCommon:
@@ -92,7 +106,15 @@ outputs:
         step_config:
           include ::tripleo::network::contrail::neutron_plugin
         config_image: {get_param: DockerNeutronConfigImage}
-      kolla_config: {}
+      kolla_config:
+        if:
+          - internal_tls_enabled
+          - permissions:
+              - path: {get_param: ContrailServiceCertFile}
+                owner: neutron:neutron
+              - path: {get_param: ContrailServiceKeyFile}
+                owner: neutron:neutron
+          - {}
       docker_config:
         step_3:
           contrail_neutron_plugin:

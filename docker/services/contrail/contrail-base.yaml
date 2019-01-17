@@ -356,7 +356,8 @@ outputs:
       contrail_tls_env: &contrail_tls_env
         if:
           - contrail_tls_enabled
-          - - "XMPP_SSL_ENABLE=True"
+          - - "SSL_ENABLE=True"
+            - "XMPP_SSL_ENABLE=True"
             - "SANDESH_SSL_ENABLE=True"
             - "INTROSPECT_SSL_ENABLE=True"
             - "RABBITMQ_USE_SSL=True"
