@@ -33,6 +33,7 @@ parameters:
   ContrailImageTag:
     description: Contrail Container images tag
     type: string
+    default: ''
   ContrailIssuSshUser:
     type: string
     default: ''
