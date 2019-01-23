@@ -288,7 +288,7 @@ Download rhel-server-7.5-update-1-x86_64-kvm.qcow2 from RedHat portal to ~/image
 cloud_image=~/images/rhel-server-7.5-update-1-x86_64-kvm.qcow2
 ```
 
-## customize the undercloud vm image
+## customize the undercloud VM image
 ```
 undercloud_name=queensa
 undercloud_suffix=local
@@ -335,6 +335,115 @@ virt-install --name ${undercloud_name} \
 virsh start ${undercloud_name}
 ```
 
+## for TLS with RedHat IDM (FreeIPA)
+### cusomize the idm VM image
+```
+freeipa_name=freeipa
+qemu-img create -f qcow2 /var/lib/libvirt/images/${freeipa_name}.qcow2 100G
+virt-resize --expand /dev/sda1 ${cloud_image} /var/lib/libvirt/images/${freeipa_name}.qcow2
+virt-customize  -a /var/lib/libvirt/images/${freeipa_name}.qcow2 \
+  --run-command 'xfs_growfs /' \
+  --root-password password:${root_password} \
+  --hostname ${freeipa_name}.${undercloud_suffix} \
+  --run-command 'sed -i "s/PasswordAuthentication no/PasswordAuthentication yes/g" /etc/ssh/sshd_config' \
+  --run-command 'systemctl enable sshd' \
+  --run-command 'yum remove -y cloud-init' \
+  --selinux-relabel
+```
+
+### virsh define IDM VM
+```
+vcpus=2
+vram=4000
+virt-install --name ${freeipa_name} \
+  --disk /var/lib/libvirt/images/${freeipa_name}.qcow2 \
+  --vcpus=${vcpus} \
+  --ram=${vram} \
+  --network network=default,model=virtio \
+  --network network=br0,model=virtio,portgroup=overcloud \
+  --virt-type kvm \
+  --import \
+  --os-variant rhel7 \
+  --graphics vnc \
+  --serial pty \
+  --noautoconsole \
+  --console pty,target_type=virtio
+```
+
+### start the IDM VM
+```
+virsh start ${freeipa_name}
+```
+
+### get IDM ip and log into it
+```
+freeipa_ip=`virsh domifaddr ${freeipa_name} |grep ipv4 |awk '{print $4}' |awk -F"/" '{print $1}'`
+ssh-copy-id ${freeipa_ip}
+ssh ${freeipa_ip}
+```
+
+### on the IDM VM prepare IDM (FreeIPA)
+
+#### initialize second NIC which should be available in provisioning network (!!!ADJUST an IP)
+```
+### !!! Adjust this IP to your setup
+prov_freeipa_ip=10.87.64.4
+###
+cat << EOM > /etc/sysconfig/network-scripts/ifcfg-eth1
+DEVICE=eth1
+ONBOOT=yes
+HOTPLUG=no
+NM_CONTROLLED=no
+BOOTPROTO=static
+IPADDR=$prov_freeipa_ip
+NETMASK=255.255.255.0
+EOM
+ifdown eth1
+ifup eth1
+```
+
+#### download setup script
+```
+cd /root/
+yum install -y wget
+wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum localinstall -y ./epel-release-latest-7.noarch.rpm
+#wget https://raw.githubusercontent.com/openstack/tripleo-heat-templates/stable/queens/ci/scripts/freeipa_setup.sh
+wget https://raw.githubusercontent.com/progmaticlab/juniper-ci/master/tripleo/freeipa_setup.sh
+chmod +x ./freeipa_setup.sh
+```
+
+#### prepare config for freeipa installation (!!!ADJUST) and setup
+```
+# !!! adjust another name is used
+undercloud_name=queensa
+####
+freeipa_name=`hostname -s`
+freeipa_suffix=`hostname -d`
+cat <<EOF > ./freeipa-setup.env
+Hostname=${freeipa_name}.${freeipa_suffix}
+FreeIPAIP=$prov_freeipa_ip
+DirectoryManagerPassword=qwe123QWE
+AdminPassword=qwe123QWE
+UndercloudFQDN=${undercloud_name}.${freeipa_suffix}
+CLOUD_DOMAIN_NAME=$freeipa_suffix
+# !!! remove if not rhel
+ENVIRONMENT_OS=rhel
+# ===
+EOF
+cp ./freeipa-setup.env /tmp/freeipa-setup.env
+./freeipa_setup.sh
+```
+
+#### read and save OTP for unercloud
+```
+cat ~/undercloud_otp
+```
+#### finish ssh on IDM
+```
+exit
+```
+
 ## get undercloud ip and log into it
 ```
 undercloud_ip=`virsh domifaddr ${undercloud_name} |grep ipv4 |awk '{print $4}' |awk -F"/" '{print $1}'`
@@ -372,11 +481,45 @@ org=Juniper
 yum localinstall -y http://${satellite_fqdn}/pub/katello-ca-consumer-latest.noarch.rpm
 subscription-manager register --activationkey=${act_key} --org=${org}
 ```
+
+## for TLS with RedHat IDM (FreeIPA) case
+### setup novajoing plugin
+```
+pip install novajoin==1.0.21 oslo.policy==1.33.2
+yum install -y ipa-client
+if ! grep -q novajoin /etc/passwd ; then
+  adduser -M novajoin
+fi
+mkdir -p /etc/novajoin /var/lib/novajoin
+chown -R novajoin:novajoin /etc/novajoin /var/lib/novajoin
+touch /etc/novajoin/join.conf
+```
+
 ## Install the undercloud
+### prepare config for undercloud installation
 ```
 yum install -y python-tripleoclient tmux
 su - stack
 cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf
+```
+### for TLS with RedHat IDM (FreeIPA) case update config (!!! ADJUST)
+```
+### !!! Set to OTP that was saved from IDM VM from the file ~/undercloud_otp
+FREE_IPA_OTP="<otp>"
+### !!! Adjust this IP to your setup
+prov_freeipa_ip=10.87.64.4
+###
+cat << EOF >> ~/undercloud.conf
+undercloud_hostname: ${undercloud_name}.${undercloud_suffix}
+undercloud_nameservers: $prov_freeipa_ip
+overcloud_domain_name: $undercloud_suffix
+enable_novajoin: True
+ipa_otp: "$FREE_IPA_OTP"
+EOF
+
+```
+### install undercloud
+```
 openstack undercloud install
 source stackrc
 ```
@@ -389,8 +532,16 @@ sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 ```
 
 ## set overcloud nameserver
+### for regular case
 ```
 undercloud_nameserver=8.8.8.8
+```
+### for TLS with RedHat IDM (FreeIPA) case
+```
+undercloud_nameserver=$prov_freeipa_ip
+```
+### set nameserver
+```
 openstack subnet set `openstack subnet show ctlplane-subnet -c id -f value` --dns-nameserver ${undercloud_nameserver}
 ```
 
@@ -611,6 +762,19 @@ tripleo-heat-templates/environments/contrail/contrail-net.yaml
 ```
 tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ```
+### for TLS with RedHat IDM (FreeIPA) case
+#### add options for cloud name
+```
+cat << EOF >> tripleo-heat-templates/environments/contrail/contrail-tls.yaml
+  CloudName: overcloud.$undercloud_suffix
+  CloudNameInternal: overcloud.internalapi.$undercloud_suffix
+  CloudNameCtlplane: overcloud.ctlplane.$undercloud_suffix
+EOF
+```
+##### set option DnsServers to $prov_freeipa_ip in the overcloud network config file
+```
+vi tripleo-heat-templates/environments/contrail/contrail-net.yaml
+```
 
 ## deploy the stack
 ### tripleo upstream queens
@@ -632,6 +796,21 @@ openstack overcloud deploy --templates ~/tripleo-heat-templates \
   -e ~/tripleo-heat-templates/environments/contrail/contrail-plugins.yaml \
   -e ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml \
   -e ~/tripleo-heat-templates/environments/contrail/contrail-net.yaml \
+  --roles-file ~/tripleo-heat-templates/roles_data_contrail_aio.yaml
+```
+### OSP13 for TLS everwhere with RedHat IDM (FreeIPA) case
+```
+openstack overcloud deploy --templates ~/tripleo-heat-templates \
+  -e ~/overcloud_images.yaml \
+  -e ~/tripleo-heat-templates/environments/network-isolation.yaml \
+  -e ~/tripleo-heat-templates/environments/contrail/contrail-plugins.yaml \
+  -e ~/tripleo-heat-templates/environments/contrail/contrail-services.yaml \
+  -e ~/tripleo-heat-templates/environments/contrail/contrail-net.yaml \
+  -e ~/tripleo-heat-templates/environments/contrail/contrail-tls.yaml \
+  -e ~/tripleo-heat-templates/environments/ssl/enable-internal-tls.yaml \
+  -e ~/tripleo-heat-templates/environments/ssl/tls-everywhere-endpoints-dns.yaml \
+  -e ~/tripleo-heat-templates/environments/services/haproxy-internal-tls-certmonger.yaml \
+  -e ~/tripleo-heat-templates/environments/services/haproxy-public-tls-certmonger.yaml \  
   --roles-file ~/tripleo-heat-templates/roles_data_contrail_aio.yaml
 ```
 
