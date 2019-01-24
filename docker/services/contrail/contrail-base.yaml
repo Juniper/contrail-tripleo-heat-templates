@@ -193,9 +193,11 @@ resources:
         map_replace:
           - map_replace:
             - contrail_settings: ContrailSettings
+              contrail::aaa_mode: AAAMode
             - values: {get_param: [RoleParameters]}
           - values:
               ContrailSettings: {get_param: ContrailSettings}
+              AAAMode: {get_param: AAAMode}
 
   ContrailNodemgrImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
@@ -223,7 +225,6 @@ outputs:
           contrail::keystone_region: {get_param: KeystoneRegion}
           contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
           contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
-          contrail::aaa_mode: {get_param: AAAMode}
           contrail_internal_api_ssl: {get_param: EnableInternalTLS}
           # ==
           node_data_lookup: {get_param: NodeDataLookup}
@@ -315,7 +316,7 @@ outputs:
         - list_join:
           - '='
           - - 'AAA_MODE'
-            - {get_param: AAAMode}
+            - {get_attr: [RoleParametersValue, value, 'contrail::aaa_mode']}
         - str_replace:
             template: REDIS_SERVER_PORT=_REDIS_SERVER_PORT_
             params:
