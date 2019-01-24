@@ -40,20 +40,23 @@ parameter_defaults:
 # Enable 1 GB hugepages
 #  ContrailDpdkHugepages1GB: 10
 #  ContrailVrouterHugepages1GB: 10
-#
+
 # Custome Contrail container configuration settings
   ContrailSettings:
     VROUTER_GATEWAY: 10.0.0.1
 #    KEY1: value1
 #    KEY2: value2
-#
+
+# Contrail NIC Offload enable/disable
+# ContrailNicOffloadEnable: false
+
 # SRIOV settings
 #  NovaPCIPassthrough:
 #    - devname: "ens2f1"
 #      physical_network: "sriov1"
 #  ContrailSriovNumVFs: ["ens2f1:7"]
 #  ContrailSriovHugepages1GB: 10
-#
+
 # Mellanox with kernel node doesnt requre any additions.
 # TODO: in further as soon as Mellanox supports full-offload
 # feature the following parmater will be needed to enable fresh drivers:
@@ -62,7 +65,7 @@ parameter_defaults:
 #
 # Mellanox with DPDK mode requries the paramter to be set:
 #  ContrailDpdkDriver: mlnx
-#
+
 # Tuned-d profile configuration
 #   TunedProfileName -  Name of tuned profile
 #   IsolCpusList     -  Logical CPUs list to be isolated from the host process (applied via cpu-partitioning tuned).

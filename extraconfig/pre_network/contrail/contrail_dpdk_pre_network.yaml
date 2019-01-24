@@ -56,6 +56,11 @@ parameters:
       so dpdk command line is populated with arguments from this string.
       E.g. --vr_mempool_sz --dpdk_txd_sz --dpdk_rxd_sz
     type: string
+  ContrailNicOffloadEnable:
+    default: false
+    description: >
+      Enable Nic Offload feature.
+    type: boolean
   ContrailRegistry:
     default: 'opencontrailnightly'
     description: Contrail Registry
@@ -166,6 +171,7 @@ resources:
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_
         - name: _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_
+        - name: _CONTRAIL_NIC_OFFLOAD_ENABLE_
         - name: _IS_DPDK_
       outputs:
         - name: result
@@ -192,6 +198,7 @@ resources:
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image_only]}
         _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_param: ContrailDpdkOptions}
+        _CONTRAIL_NIC_OFFLOAD_ENABLE_: {get_param: ContrailNicOffloadEnable}
         _IS_DPDK_: "True"
     depends_on:
       - DpdkHostParametersDeployment
