@@ -108,3 +108,9 @@ outputs:
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
+
+      fast_forward_post_upgrade_tasks:
+        get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
+
+      upgrade_tasks:
+        get_attr: [ContrailBase, role_data, upgrade_tasks_common]

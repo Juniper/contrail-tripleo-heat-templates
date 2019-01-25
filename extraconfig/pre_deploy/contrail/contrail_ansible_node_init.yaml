@@ -3,6 +3,14 @@
   connection: local
   hosts: localhost
   tasks:
+    - name: Install docker packages on upgrade if missing
+      yum:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - docker
+        - python-docker-py
+
     - name: Ensure docker service is run
       systemd:
         state: started

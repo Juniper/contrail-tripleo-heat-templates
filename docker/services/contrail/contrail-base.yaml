@@ -581,3 +581,15 @@ outputs:
             ZOOKEEPER_NODES: "{{ contrail_service_nodes_string }}"
 
       metadata_settings: []
+
+      fast_forward_post_upgrade_tasks_common: []
+
+      upgrade_tasks_common:
+        - name: Install docker packages on upgrade if missing
+          yum:
+            name: "{{ item }}"
+            state: present
+          with_items:
+            - docker
+            - python-docker-py
+          when: step|int == 3
