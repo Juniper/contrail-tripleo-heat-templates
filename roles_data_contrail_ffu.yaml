@@ -307,7 +307,7 @@
   networks:
     - InternalApi
     - Tenant
-  HostnameFormatDefault: '%stackname%-contrailanalyticsdb-%index%'
+  HostnameFormatDefault: '%stackname%-contrailanalyticsdatabase-%index%'
   ServicesDefault:
     - OS::TripleO::Services::AuditD
     - OS::TripleO::Services::CACerts
