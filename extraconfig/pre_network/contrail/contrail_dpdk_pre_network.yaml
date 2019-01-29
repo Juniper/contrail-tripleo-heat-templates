@@ -61,6 +61,13 @@ parameters:
     description: >
       Enable Nic Offload feature.
     type: boolean
+  ContrailLacpRate:
+    default: 0
+    description: >
+      Lacp rate option for DPDK bonding.
+      This is temporariry workaround until option be suppoerted in 
+      os-net-config for vrouter
+    type: number
   ContrailRegistry:
     default: 'opencontrailnightly'
     description: Contrail Registry
@@ -172,6 +179,7 @@ resources:
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_
         - name: _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_
         - name: _CONTRAIL_NIC_OFFLOAD_ENABLE_
+        - name: _CONTRAIL_LACP_RATE_
         - name: _IS_DPDK_
       outputs:
         - name: result
@@ -199,6 +207,7 @@ resources:
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image_only]}
         _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_param: ContrailDpdkOptions}
         _CONTRAIL_NIC_OFFLOAD_ENABLE_: {get_param: ContrailNicOffloadEnable}
+        _CONTRAIL_LACP_RATE_: {get_param: ContrailLacpRate}
         _IS_DPDK_: "True"
     depends_on:
       - DpdkHostParametersDeployment

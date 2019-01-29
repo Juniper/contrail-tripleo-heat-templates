@@ -568,6 +568,9 @@ outputs:
             regexp: "^{{ item.key }}.*"
             line: "{{ item.key }}={{ item.value }}"
           with_dict:
+            ANALYTICS_ALARM_ENABLE: 'True'
+            ANALYTICS_SNMP_ENABLE: 'True'
+            ANALYTICSDB_ENABLE: 'True'
             ANALYTICS_NODES: "{{ contrail_analytics_nodes_string }}"
             ANALYTICSDB_NODES: "{{ contrail_analytics_database_nodes_string }}"
             CASSANDRA_SEEDS: "{{ contrail_service_nodes_string }}"

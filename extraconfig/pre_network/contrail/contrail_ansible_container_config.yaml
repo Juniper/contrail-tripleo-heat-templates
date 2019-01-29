@@ -68,6 +68,7 @@
               CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
               DPDK_COMMAND_ADDITIONAL_ARGS: "{{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }}"
               NIC_OFFLOAD_ENABLE: "{{ _CONTRAIL_NIC_OFFLOAD_ENABLE_ }}"
+              LACP_RATE: "{{ _CONTRAIL_LACP_RATE_ }}"
       when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
 
     - name: start contrail vrouter init container
