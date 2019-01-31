@@ -44,6 +44,11 @@ parameter_defaults:
 # Custome Contrail container configuration settings
   ContrailSettings:
     VROUTER_GATEWAY: 10.0.0.1
+# 16 bit BGP Autonomous System number for the cluster.
+    BGP_ASN: 64512
+# Supported values are true/false. When true, system will automatically create BGP peering mesh with all control-nodes that have same BGP AS number as global AS number.
+    BGP_AUTO_MESH: true
+# Other environment variables for containers may be set here if needed.
 #    KEY1: value1
 #    KEY2: value2
 

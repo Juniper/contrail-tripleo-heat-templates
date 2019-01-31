@@ -171,4 +171,6 @@ parameter_defaults:
     ContrailVrouterNetwork: tenant
   ContrailSettings:
     VROUTER_GATEWAY: 10.0.0.1
+    BGP_ASN: 64512
+    BGP_AUTO_MESH: true
 ```
