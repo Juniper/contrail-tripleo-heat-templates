@@ -112,6 +112,11 @@ parameters:
     type: string
     description: Specifies the default CA cert to use if TLS is used for
                  services in the internal network.
+  InternalTLSCRLPEMFile:
+    default: '/etc/pki/CA/crl/overcloud-crl.pem'
+    type: string
+    description: Specifies the default CRL PEM file to use for revocation if
+                 TLS is used for services in the internal network.
   ContrailCA:
     default: ''
     description: Contrail CA, could be local or IPA
@@ -178,6 +183,15 @@ conditions:
     and:
       - internal_tls_enabled
       - internal_ipa_ca
+  haproxy_verify_host:
+    and:
+      - internal_tls_enabled
+      - internal_ipa_ca
+      - contrail_tls_enabled
+      - contrail_ipa_ca
+      - {equals: [{get_param: ContrailCaCertFile}, {get_param: InternalTLSCAFile}]}
+  haproxy_crl_file:
+    not: {equals: [{get_param: InternalTLSCRLPEMFile}, '']}
 
 resources:
   ContainersCommon:
@@ -250,6 +264,26 @@ outputs:
           - 'inter 2000'
           - 'rise 2'
           - 'fall 5'
+      haproxy_config_settings_member_options_tls: &haproxy_config_settings_member_options_tls
+        list_concat:
+          - *haproxy_config_settings_member_options
+          - - 'ssl'
+          - if:
+            - haproxy_verify_host:
+            - list_concat:
+              - - 'verify required'
+                - list_join:
+                  - ' '
+                  - - 'ca-file'
+                    - {get_param: InternalTLSCAFile}
+              - if:
+                - haproxy_crl_file
+                - - list_join:
+                    - ' '
+                    - - 'crl-file'
+                      - {get_param: InternalTLSCRLPEMFile}
+                - null
+            - - 'verify none'
       haproxy_config_settings_listen_options: &haproxy_config_settings_listen_options
         balance:
           - 'source'
@@ -262,6 +296,8 @@ outputs:
           map_merge:
             - *haproxy_config_settings_listen_options
             - option:
+                - 'httpchk'
+                - 'httplog'
                 - 'forwardfor'
               http-request:
                 - 'set-header X-Forwarded-Proto https if { ssl_fc }'
@@ -288,10 +324,7 @@ outputs:
           - public_tls_enabled
           - map_merge:
               - *haproxy_config_settings
-              - member_options:
-                  list_concat:
-                    - *haproxy_config_settings_member_options
-                    - - 'ssl verify none'
+              - member_options: *haproxy_config_settings_member_options_tls
           - public_virtual_ip: "%{hiera('public_virtual_ip')}"
             mode: 'tcp'
             listen_options: *haproxy_config_settings_listen_options
