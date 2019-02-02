@@ -104,7 +104,11 @@ outputs:
                 contrail_config:
                   map_merge:
                     - public_ssl_port: 18082
-                      internal_ip: "%{hiera('contrail_config_vip')}"
+                      internal_ip:
+                        str_replace:
+                          template: "%{hiera('NETWORK_virtual_ip')}"
+                          params:
+                            NETWORK: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
                       service_port: 8082
                       service_network: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
                     - {get_attr: [ContrailBase, role_data, haproxy_config_settings]}

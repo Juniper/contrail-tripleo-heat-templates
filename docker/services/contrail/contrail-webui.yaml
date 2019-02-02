@@ -116,7 +116,11 @@ outputs:
                 contrail_webui:
                   map_merge:
                     - public_ssl_port: 8143
-                      internal_ip: "%{hiera('contrail_webui_vip')}"
+                      internal_ip:
+                        str_replace:
+                          template: "%{hiera('NETWORK_virtual_ip')}"
+                          params:
+                            NETWORK: {get_param: [ServiceNetMap, ContrailWebuiNetwork]}
                       service_port: 8143
                       service_network: {get_param: [ServiceNetMap, ContrailWebuiNetwork]}
                     - {get_attr: [ContrailBase, role_data, haproxy_config_settings_tls]}
