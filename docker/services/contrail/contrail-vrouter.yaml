@@ -54,9 +54,6 @@ parameters:
     type: json
 
 resources:
-  ContainersCommon:
-    type: ../containers-common.yaml
-
   ContrailVrouterBase:
     type: contrail-vrouter-base.yaml
 

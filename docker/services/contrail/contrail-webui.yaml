@@ -57,9 +57,6 @@ parameters:
     description: suffix for reading hiera data, node_ips or node_names
 
 resources:
-  ContainersCommon:
-    type: ../containers-common.yaml
-
   DockerContrailWebuiWebImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:

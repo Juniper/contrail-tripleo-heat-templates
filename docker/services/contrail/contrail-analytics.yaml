@@ -4,30 +4,18 @@ description: >
   Contrail containerized Config Analytics service
 
 parameters:
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
   DockerContrailAnalyticsApiImageName:
     description: image
     type: string
     default: "contrail-analytics-api"
-  DockerContrailAnalyticsQueryEngineImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-query-engine"
   DockerContrailAnalyticsCollectorImageName:
     description: image
     type: string
     default: "contrail-analytics-collector"
-  DockerContrailAnalyticsAlarmGenImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-alarm-gen"
-  DockerContrailAnalyticsTopologyImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-topology"
-  DockerContrailAnalyticsSnmpCollectorImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-snmp-collector"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -55,39 +43,30 @@ parameters:
     description: Parameters specific to the role
     type: json
 
-resources:
-  ContainersCommon:
-    type: ../containers-common.yaml
+conditions:
+  is_not_5_0:
+    not: 
+      or:
+        - yaql:
+            expression: $.data.split(":")[-1].matches("5\.0")
+            data: {get_param: DockerContrailAnalyticsApiImageName}
+        - yaql:
+            expression: $.data.split(":")[-1].matches("5\.0")
+            data: {get_param: DockerContrailAnalyticsCollectorImageName}
+        - yaql:
+            expression: $.data.split(":")[-1].matches("5\.0")
+            data: {get_param: ContrailImageTag}
 
+resources:
   DockerContrailAnalyticsApiImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsApiImageName}
 
-  DockerContrailAnalyticsQueryEngineImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailAnalyticsQueryEngineImageName}
-
   DockerContrailAnalyticsCollectorImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsCollectorImageName}
-
-  DockerContrailAnalyticsAlarmGenImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailAnalyticsAlarmGenImageName}
-
-  DockerContrailAnalyticsTopologyImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailAnalyticsTopologyImageName}
-
-  DockerContrailAnalyticsSnmpCollectorImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
 
   ContrailBase:
     type: contrail-base.yaml
@@ -110,6 +89,16 @@ resources:
       RoleParameters: {get_param: RoleParameters}
       env_file_name: '/etc/contrail/common_analytics.env'
 
+  ContrailQueryEngine:
+    type: contrail-analytics-query-engine.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
 outputs:
   role_data:
     description: Role data for the Contrail Analytics service.
@@ -123,18 +112,25 @@ outputs:
               '117 contrail_analytics':
                 dport:
                   list_concat:
-                    - - 3514
-                      - 5920
-                      - 5921
-                      - 5995
+                    -  # collector structured syslog
+                      - 3514
+                      # op server
                       - 8081
+                      # collector
                       - 8086
+                      # http collector
                       - 8089
+                      # http op server
                       - 8090
-                      - 8091
+                      # op server admin
                       - 8181
+                      # analytics nodemgr
                       - 8104
                     - {get_attr: [ContrailRedis, role_data, contrail_redis_ports]}
+                    - if:
+                        - is_not_5_0
+                        - null
+                        - {get_attr: [ContrailQueryEngine, role_data, analytics_query_engine_ports]}
       service_config_settings:
         map_merge:
           - {get_attr: [ContrailBase, role_data, service_config_settings]}
@@ -159,112 +155,58 @@ outputs:
         step_4:
           get_attr: [ContrailRedis, role_data, docker_config, step_4]
         step_5:
-          contrail_analytics_nodemgr:
-            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
-            net: host
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - /var/run/docker.sock:/var/run/docker.sock
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_api:
-            image: &contrail_analytics_api_image {get_attr: [DockerContrailAnalyticsApiImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            restart: always
-            user: root
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_queryengine:
-            image: &contrail_analytics_queryengine_image {get_attr: [DockerContrailAnalyticsQueryEngineImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_collector:
-            image: &contrail_analytics_collector_image {get_attr: [DockerContrailAnalyticsCollectorImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_alarmgen:
-            image: &contrail_analytics_alarmgen_image {get_attr: [DockerContrailAnalyticsAlarmGenImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_topology:
-            image: &contrail_analytics_topology_image {get_attr: [DockerContrailAnalyticsTopologyImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_snmp_collector:
-            image: &contrail_analytics_snmp_collector_image {get_attr: [DockerContrailAnalyticsSnmpCollectorImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
+          map_merge:
+            - contrail_analytics_nodemgr:
+                image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run/docker.sock:/var/run/docker.sock
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+              contrail_analytics_api:
+                image: &contrail_analytics_api_image {get_attr: [DockerContrailAnalyticsApiImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                restart: always
+                user: root
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+              contrail_analytics_collector:
+                image: &contrail_analytics_collector_image {get_attr: [DockerContrailAnalyticsCollectorImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+            - if:
+                - is_not_5_0
+                - null
+                - get_attr: [ContrailQueryEngine, role_data, docker_config, step_5]
+
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
@@ -284,6 +226,11 @@ outputs:
                 line: "{{ item }}"
               with_items:
                 - NODE_TYPE=analytics
+          - if:
+              - is_not_5_0
+              - null
+              - {get_attr: [ContrailQueryEngine, role_data, host_prep_tasks]}
+
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
 
