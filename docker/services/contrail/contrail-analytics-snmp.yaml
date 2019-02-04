@@ -1,0 +1,202 @@
+heat_template_version: queens
+
+description: >
+  Contrail containerized Analytics Snmp service
+
+parameters:
+  DockerContrailAnalyticsTopologyImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-snmp-topology"
+  DockerContrailAnalyticsTopologyImageName_5_0:
+    description:  5.0 compatibility image name.
+    type: string
+    default: "contrail-analytics-topology"
+  DockerContrailAnalyticsSnmpCollectorImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-snmp-collector"
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+
+resources:
+  ContainersCommon:
+    type: ../containers-common.yaml
+
+  DockerContrailAnalyticsTopologyImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailAnalyticsTopologyImageName}
+
+  DockerContrailAnalyticsTopologyImageNormalize_5_0:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
+
+  DockerContrailAnalyticsSnmpCollectorImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
+
+  ContrailBase:
+    type: contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+conditions:
+  is_not_5_0:
+    not: 
+      and:
+        - yaql:
+            expression: $.data.split(":")[-1].matches("5\.0")
+            data: {get_attr: [DockerContrailAnalyticsTopologyImageNormalize, contrail_image_tag_only]}
+        - yaql:
+            expression: $.data.split(":")[-1].matches("5\.0")
+            data: {get_attr: [DockerContrailAnalyticsTopologyImageNormalize_5_0, contrail_image_tag_only]}
+
+outputs:
+  role_data:
+    description: Role data for the Contrail Analytics Snmp service.
+    value:
+      service_name: contrail_analytics_snmp
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - tripleo.contrail_analytics_snmp.firewall_rules:
+              '119 contrail_analytics_snmp':
+                dport:
+                  # snmp collector
+                  - 5920
+                  # topology
+                  - 5921
+                  # analytics snmp nodemgr
+                  - 8114
+      contrail_env_file: &contrail_env_file
+        "/etc/contrail/common_analytics_snmp.env"
+      contrail_analytics_topology_image: &contrail_analytics_topology_image
+        - if:
+            - is_not_5_0
+            - {get_attr: [DockerContrailAnalyticsTopologyImageNormalize, contrail_image]}
+            - {get_attr: [DockerContrailAnalyticsTopologyImageNormalize_5_0, contrail_image]}
+      docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
+        step_5:
+          map_merge:
+            - contrail_analytics_topology:
+                image: *contrail_analytics_topology_image
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+              contrail_analytics_snmp_collector:
+                image: &contrail_analytics_snmp_collector_image {get_attr: [DockerContrailAnalyticsSnmpCollectorImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+            - if:
+                - is_not_5_0
+                - contrail_analytics_snmp_nodemgr:
+                    image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                    net: host
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                        - - /var/run/docker.sock:/var/run/docker.sock
+                    environment:
+                      get_attr: [ContrailBase, role_data, contrail_base_env]
+                    env_file:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                        - - *contrail_env_file
+                - null
+      host_prep_tasks:
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
+          - - name: register create contrail analytics env file
+              stat:
+                path: *contrail_env_file
+              register: p
+            - name: create contrail analytics env file
+              copy:
+                dest: *contrail_env_file
+                content: ""
+              when: not p.stat.exists
+          - if:
+            - is_not_5_0
+            - - name: write remaining contrail config env cars
+                lineinfile:
+                  dest: *contrail_env_file
+                  state: present
+                  line: "{{ item }}"
+                with_items:
+                  - NODE_TYPE=analytics-snmp
+            - null
+      metadata_settings:
+        get_attr: [ContrailBase, role_data, metadata_settings]
+
+      fast_forward_upgrade_tasks:
+        - name: Stop contrail analytics services
+          service: name={{ item }} state=stopped enabled=no
+          when:
+            - step|int == 1
+            - release == 'ocata'
+          with_items:
+            - supervisor-analytics
+
+      fast_forward_post_upgrade_tasks:
+        get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
+
+      upgrade_tasks:
+        get_attr: [ContrailBase, role_data, upgrade_tasks_common]
