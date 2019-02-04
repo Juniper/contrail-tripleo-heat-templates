@@ -88,6 +88,10 @@ if [[ -n ${missing} ]]; then
   exit 1
 fi
 
+topology_name='contrail-analytics-snmp-topology'
+if echo "$tag" | grep -q '5\.0' ; then
+  topology_name='contrail-analytics-topology'
+fi
 
 CONTAINER_MAP=(
 DockerContrailAnalyticsAlarmGenImageName:contrail-analytics-alarm-gen
@@ -95,7 +99,7 @@ DockerContrailAnalyticsApiImageName:contrail-analytics-api
 DockerContrailAnalyticsCollectorImageName:contrail-analytics-collector
 DockerContrailAnalyticsQueryEngineImageName:contrail-analytics-query-engine
 DockerContrailAnalyticsSnmpCollectorImageName:contrail-analytics-snmp-collector
-DockerContrailAnalyticsTopologyImageName:contrail-analytics-topology
+DockerContrailAnalyticsTopologyImageName:${topology_name}
 DockerContrailCassandraImageName:contrail-external-cassandra
 DockerContrailConfigApiImageName:contrail-controller-config-api
 DockerContrailConfigDevicemgrImageName:contrail-controller-config-devicemgr
@@ -122,7 +126,6 @@ DockerContrailWebuiJobImageName:contrail-controller-webui-job
 DockerContrailWebuiWebImageName:contrail-controller-webui-web
 DockerContrailZookeeperImageName:contrail-external-zookeeper
 )
-
 
 if [[ -n ${user} && -n ${password} ]]; then
   docker login -u ${user} -p ${password} ${registry}
