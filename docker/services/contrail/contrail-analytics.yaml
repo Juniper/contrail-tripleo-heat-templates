@@ -8,26 +8,10 @@ parameters:
     description: image
     type: string
     default: "contrail-analytics-api"
-  DockerContrailAnalyticsQueryEngineImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-query-engine"
   DockerContrailAnalyticsCollectorImageName:
     description: image
     type: string
     default: "contrail-analytics-collector"
-  DockerContrailAnalyticsAlarmGenImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-alarm-gen"
-  DockerContrailAnalyticsTopologyImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-topology"
-  DockerContrailAnalyticsSnmpCollectorImageName:
-    description: image
-    type: string
-    default: "contrail-analytics-snmp-collector"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -64,30 +48,10 @@ resources:
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsApiImageName}
 
-  DockerContrailAnalyticsQueryEngineImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailAnalyticsQueryEngineImageName}
-
   DockerContrailAnalyticsCollectorImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsCollectorImageName}
-
-  DockerContrailAnalyticsAlarmGenImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailAnalyticsAlarmGenImageName}
-
-  DockerContrailAnalyticsTopologyImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailAnalyticsTopologyImageName}
-
-  DockerContrailAnalyticsSnmpCollectorImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
 
   ContrailBase:
     type: contrail-base.yaml
@@ -123,16 +87,19 @@ outputs:
               '117 contrail_analytics':
                 dport:
                   list_concat:
-                    - - 3514
-                      - 5920
-                      - 5921
-                      - 5995
+                    -  # collector structured syslog
+                      - 3514
+                      # op server
                       - 8081
+                      # collector
                       - 8086
+                      # http collector
                       - 8089
+                      # http op server
                       - 8090
-                      - 8091
+                      # op server admin
                       - 8181
+                      # analytics nodemgr
                       - 8104
                     - {get_attr: [ContrailRedis, role_data, contrail_redis_ports]}
       service_config_settings:
@@ -190,68 +157,8 @@ outputs:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
-          contrail_analytics_queryengine:
-            image: &contrail_analytics_queryengine_image {get_attr: [DockerContrailAnalyticsQueryEngineImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
           contrail_analytics_collector:
             image: &contrail_analytics_collector_image {get_attr: [DockerContrailAnalyticsCollectorImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_alarmgen:
-            image: &contrail_analytics_alarmgen_image {get_attr: [DockerContrailAnalyticsAlarmGenImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_topology:
-            image: &contrail_analytics_topology_image {get_attr: [DockerContrailAnalyticsTopologyImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_snmp_collector:
-            image: &contrail_analytics_snmp_collector_image {get_attr: [DockerContrailAnalyticsSnmpCollectorImageNormalize, contrail_image]}
             net: host
             privileged: false
             detach: true
