@@ -1,0 +1,233 @@
+heat_template_version: queens
+
+description: >
+  Contrail containerized Analytics Alarm service
+
+parameters:
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
+  DockerContrailAnalyticsAlarmGenImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-alarm-gen"
+  DockerContrailKafkaImageName:
+    description: image
+    type: string
+    default: "contrail-external-kafka"
+  DockerContrailZookeeperImageName:
+    description: image
+    type: string
+    default: "contrail-external-zookeeper"
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+
+conditions:
+  is_not_5_0:
+    not: 
+      or:
+        - yaql:
+            expression: $.data.split(":")[-1].matches("5\.0")
+            data: {get_param: DockerContrailAnalyticsAlarmGenImageName}
+        - yaql:
+            expression: $.data.split(":")[-1].matches("5\.0")
+            data: {get_param: ContrailImageTag}
+
+resources:
+  ContainersCommon:
+    type: ../containers-common.yaml
+
+  DockerContrailAnalyticsAlarmGenImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailAnalyticsAlarmGenImageName}
+
+  DockerContrailKafkaImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailKafkaImageName}
+
+  DockerContrailZookeeperImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailZookeeperImageName}
+
+  ContrailBase:
+    type: contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+outputs:
+  role_data:
+    description: Role data for the Contrail Analytics Alarm service.
+    value:
+      service_name: contrail_analytics_alarm
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - tripleo.contrail_analytics_alarm.firewall_rules:
+              '120 contrail_analytics_alarm':
+                dport:
+                  # zookeeper
+                  - 2182
+                  - '4888-5888'
+                  # alarm
+                  - 5995
+                  # alarm nodemgr
+                  - 8113
+                  # kafka
+                  - 9092
+      contrail_env_file: &contrail_env_file
+        "/etc/contrail/common_analytics_alarm.env"
+      docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
+        step_3:
+          contrail_analytics_zookeeper:
+            image: &contrail_analytics_zookeeper_image {get_attr: [DockerContrailZookeeperImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - analytics_zookeeper:/data
+                  - analytics_zookeeper:/datalog
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
+        step_4:
+          contrail_analytics_kafka:
+            image: &contrail_analytics_kafka_image {get_attr: [DockerContrailKafkaImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
+        step_5:
+          map_merge:
+            - contrail_analytics_alarmgen:
+                image: &contrail_analytics_alarmgen_image {get_attr: [DockerContrailAnalyticsAlarmGenImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+            - if:
+                - is_not_5_0
+                - contrail_analytics_alarm_nodemgr:
+                    image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                    net: host
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                        - - /var/run/docker.sock:/var/run/docker.sock
+                    environment:
+                      get_attr: [ContrailBase, role_data, contrail_base_env]
+                    env_file:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                        - - *contrail_env_file
+                - null
+      host_prep_tasks:
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
+          - - name: register create contrail analytics env file
+              stat:
+                path: *contrail_env_file
+              register: p
+            - name: create contrail analytics env file
+              copy:
+                dest: *contrail_env_file
+                content: ""
+              when: not p.stat.exists
+            - set_fact:
+                alarm_env_vars:
+                  - ZOOKEEPER_PORTS=4888:5888
+                  - ZOOKEEPER_PORT=2182
+          - if:
+            - is_not_5_0
+            - - set_fact:
+                  alarm_env_vars: "{{ alarm_env_vars + ['NODE_TYPE=analytics-alarm'] }}"
+            - - set_fact:
+                  alarm_env_vars: "{{ alarm_env_vars + ['NODE_TYPE=analytics'] }}"
+          - - name: write remaining contrail config env vars
+              lineinfile:
+                dest: *contrail_env_file
+                state: present
+                line: "{{ item }}"
+              with_items: "{{ alarm_env_vars }}"
+
+      metadata_settings:
+        get_attr: [ContrailBase, role_data, metadata_settings]
+
+      fast_forward_upgrade_tasks:
+        - name: Stop contrail analytics alarm related services
+          service: name={{ item }} state=stopped enabled=no
+          when:
+            - step|int == 1
+            - release == 'ocata'
+          with_items:
+            - supervisor-analytics
+            - kafka
+            - zookeeper
+
+      fast_forward_post_upgrade_tasks:
+        get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
+
+      upgrade_tasks:
+        get_attr: [ContrailBase, role_data, upgrade_tasks_common]
