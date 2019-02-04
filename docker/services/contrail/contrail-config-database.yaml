@@ -70,9 +70,6 @@ conditions:
   rabbitmq_log_keep_default: {equals : [{get_param: DockerContrailRabbitmqLogPath}, '']}
 
 resources:
-  ContainersCommon:
-    type: ../containers-common.yaml
-
   DockerContrailCassandraImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
@@ -97,6 +94,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_cassandra_service_name: "contrail_database"
 
 outputs:
   role_data:

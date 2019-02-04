@@ -293,6 +293,8 @@
     - OS::TripleO::Services::TripleoPackages
     - OS::TripleO::Services::TripleoFirewall
     - OS::TripleO::Services::ContrailAnalytics
+    - OS::TripleO::Services::ContrailAnalyticsAlarm
+    - OS::TripleO::Services::ContrailAnalyticsSnmp
 
 ###############################################################################
 # Role: ContrailAnalyticsDatabase                                             #

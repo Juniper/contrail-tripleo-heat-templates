@@ -3,8 +3,25 @@ Currently the following combinations of Operating System/OpenStack/Deployer/Cont
 
 | Operating System  | OpenStack         | Deployer              | Contrail               |
 | ----------------- | ----------------- | --------------------- | ---------------------- |
-| RHEL 7.5          | OSP13             | OSPd13                | Contrail 5.0.1         |
+| RHEL 7.5          | OSP13             | OSPd13                | Contrail 5.0.1, 5.1    |
 | CentOS 7.5        | RDO queens/stable | tripleo queens/stable | Tungsten Fabric latest |
+
+
+# Contrail Versions Notes
+
+5.0 and 5.1 have different incompatible containers layout.
+Starting from 5.1:
+- Analytics Query Engine is deployed on Analytics Database node,
+- There are new TripleO::Service types:
+  - ContrailAnalyticsAlarm: includes Analytics Alarm, Kafka and Analytics Zookeeper
+  - ContrailAnalyticsSnmp:  Analytics Snmp Collector and Analitics Topology
+These 2 news services byt default are included into ContrailAnalytics role, they could be
+moved to separate Role if needed.
+
+Note: The templates choose the layout based on containers tag and containers name:
+parameter ContrailImageTag and parameters like DockerContrail...ImageName.
+It do greap by tag and name the value '5.0' to detect old layout.
+
 
 # Configuration elements
 1. Infrastructure
