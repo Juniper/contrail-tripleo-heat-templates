@@ -580,6 +580,26 @@ outputs:
 
         - name: node ips (names) param name
           set_fact:
+            contrail_nodes_param_name: {list_join: ["_", ["contrail_analytics_snmp", {get_param: contrail_nodes_param_suffux}]]}
+        - name: get contrail analytics snmp node ips
+          shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}
+          register: contrail_analytics_snmp_nodes_list
+        - name: turn contrail analytics snmp ips into string
+          set_fact:
+            contrail_analytics_snmp_nodes_string: "{{ contrail_analytics_snmp_nodes_list.stdout | from_json | join(',') }}"
+
+        - name: node ips (names) param name
+          set_fact:
+            contrail_nodes_param_name: {list_join: ["_", ["contrail_analytics_alarm", {get_param: contrail_nodes_param_suffux}]]}
+        - name: get contrail analytics alarm node ips
+          shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}
+          register: contrail_analytics_alarm_nodes_list
+        - name: turn contrail analytics ips into string
+          set_fact:
+            contrail_analytics_alarm_nodes_string: "{{ contrail_analytics_alarm_nodes_list.stdout | from_json | join(',') }}"
+
+        - name: node ips (names) param name
+          set_fact:
             contrail_nodes_param_name: {list_join: ["_", ["contrail_analytics_database", {get_param: contrail_nodes_param_suffux}]]}
         - name: get contrail analytics database node ips
           shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}
@@ -609,6 +629,8 @@ outputs:
             ANALYTICS_SNMP_ENABLE: 'True'
             ANALYTICSDB_ENABLE: 'True'
             ANALYTICS_NODES: "{{ contrail_analytics_nodes_string }}"
+            ANALYTICS_SNMP_NODES: "{{ contrail_analytics_snmp_nodes_string }}"
+            ANALYTICS_ALARM_NODES: "{{ contrail_analytics_alarm_nodes_string }}"
             ANALYTICSDB_NODES: "{{ contrail_analytics_database_nodes_string }}"
             CASSANDRA_SEEDS: "{{ contrail_service_nodes_string }}"
             CONFIG_NODES: "{{ contrail_config_nodes_string }}"
