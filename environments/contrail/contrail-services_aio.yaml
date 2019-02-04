@@ -3,6 +3,8 @@
 resource_registry:
   OS::TripleO::Services::ContrailConfigDatabase: ../../docker/services/contrail/contrail-config-database.yaml
   OS::TripleO::Services::ContrailAnalyticsDatabase: ../../docker/services/contrail/contrail-analytics-database.yaml
+  OS::TripleO::Services::ContrailAnalyticsAlarm: ../../docker/services/contrail/contrail-analytics-alarm.yaml
+  OS::TripleO::Services::ContrailAnalyticsSnmp: ../../docker/services/contrail/contrail-analytics-snmp.yaml
   OS::TripleO::Services::ContrailConfig: ../../docker/services/contrail/contrail-config.yaml
   OS::TripleO::Services::ContrailAnalytics: ../../docker/services/contrail/contrail-analytics.yaml
   OS::TripleO::Services::ContrailControl: ../../docker/services/contrail/contrail-control.yaml
@@ -17,10 +19,12 @@ resource_registry:
 
 parameter_defaults:
   ServiceNetMap:
-    ContrailDatabaseNetwork: internal_api
-    ContrailAnalyticsDatabaseNetwork: internal_api
-    ContrailConfigNetwork: internal_api
     ContrailAnalyticsNetwork: internal_api
+    ContrailAnalyticsAlarmNetwork: internal_api
+    ContrailAnalyticsDatabaseNetwork: internal_api
+    ContrailAnalyticsSnmpNetwork: internal_api
+    ContrailDatabaseNetwork: internal_api
+    ContrailConfigNetwork: internal_api
     ContrailControlNetwork: tenant
     ContrailWebuiNetwork: internal_api
     ContrailVrouterNetwork: tenant

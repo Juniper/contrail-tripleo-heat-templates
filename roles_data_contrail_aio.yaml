@@ -255,8 +255,10 @@
     - OS::TripleO::Services::Sshd
     - OS::TripleO::Services::Timezone
     - OS::TripleO::Services::TripleoPackages
-    - OS::TripleO::Services::ContrailAnalyticsDatabase
     - OS::TripleO::Services::ContrailAnalytics
+    - OS::TripleO::Services::ContrailAnalyticsAlarm
+    - OS::TripleO::Services::ContrailAnalyticsDatabase
+    - OS::TripleO::Services::ContrailAnalyticsSnmp
     - OS::TripleO::Services::ContrailCertmongerUser
     - OS::TripleO::Services::ContrailConfig
     - OS::TripleO::Services::ContrailConfigDatabase
