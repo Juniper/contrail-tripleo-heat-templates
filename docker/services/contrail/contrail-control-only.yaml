@@ -36,9 +36,6 @@ parameters:
     type: json
 
 resources:
-  ContainersCommon:
-    type: ../containers-common.yaml
-
   DockerContrailControlControlImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:

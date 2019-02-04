@@ -775,6 +775,12 @@ EOF
 ```
 vi tripleo-heat-templates/environments/contrail/contrail-net.yaml
 ```
+### For Contrail 5.0 set the topology container name (the name by default is for 5.1)
+```
+cat << EOF >> tripleo-heat-templates/environments/contrail/contrail-services.yaml
+  DockerContrailAnalyticsTopologyImageName: 'contrail-analytics-topology'
+EOF
+```
 
 ## deploy the stack
 ### tripleo upstream queens

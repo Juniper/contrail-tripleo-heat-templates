@@ -70,9 +70,6 @@ conditions:
   rabbitmq_log_keep_default: {equals : [{get_param: DockerContrailRabbitmqLogPath}, '']}
 
 resources:
-  ContainersCommon:
-    type: ../containers-common.yaml
-
   DockerContrailCassandraImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:

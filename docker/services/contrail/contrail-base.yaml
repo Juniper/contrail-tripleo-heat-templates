@@ -154,7 +154,9 @@ parameters:
   contrail_service_name:
     type: string
     default: "contrail_database"
-    description: used for overloading zk and cassandra values for analyticsdb node
+    description: used for overloading cassandra seeds for config and 
+                 analytics database nodes, 
+                 for 5.1 overload zk nodes list
   contrail_nodes_param_suffux:
     type: string
     default: "node_ips"
@@ -580,6 +582,26 @@ outputs:
 
         - name: node ips (names) param name
           set_fact:
+            contrail_nodes_param_name: {list_join: ["_", ["contrail_analytics_snmp", {get_param: contrail_nodes_param_suffux}]]}
+        - name: get contrail analytics snmp node ips
+          shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}
+          register: contrail_analytics_snmp_nodes_list
+        - name: turn contrail analytics snmp ips into string
+          set_fact:
+            contrail_analytics_snmp_nodes_string: "{{ contrail_analytics_snmp_nodes_list.stdout | from_json | join(',') }}"
+
+        - name: node ips (names) param name
+          set_fact:
+            contrail_nodes_param_name: {list_join: ["_", ["contrail_analytics_alarm", {get_param: contrail_nodes_param_suffux}]]}
+        - name: get contrail analytics alarm node ips
+          shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}
+          register: contrail_analytics_alarm_nodes_list
+        - name: turn contrail analytics ips into string
+          set_fact:
+            contrail_analytics_alarm_nodes_string: "{{ contrail_analytics_alarm_nodes_list.stdout | from_json | join(',') }}"
+
+        - name: node ips (names) param name
+          set_fact:
             contrail_nodes_param_name: {list_join: ["_", ["contrail_analytics_database", {get_param: contrail_nodes_param_suffux}]]}
         - name: get contrail analytics database node ips
           shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}
@@ -609,16 +631,18 @@ outputs:
             ANALYTICS_SNMP_ENABLE: 'True'
             ANALYTICSDB_ENABLE: 'True'
             ANALYTICS_NODES: "{{ contrail_analytics_nodes_string }}"
+            ANALYTICS_SNMP_NODES: "{{ contrail_analytics_snmp_nodes_string }}"
+            ANALYTICS_ALARM_NODES: "{{ contrail_analytics_alarm_nodes_string }}"
             ANALYTICSDB_NODES: "{{ contrail_analytics_database_nodes_string }}"
             CASSANDRA_SEEDS: "{{ contrail_service_nodes_string }}"
             CONFIG_NODES: "{{ contrail_config_nodes_string }}"
             CONFIGDB_NODES: "{{ contrail_database_nodes_string }}"
             CONTROL_NODES: "{{ contrail_control_nodes_string }}"
             DNS_NODES: "{{ contrail_control_nodes_string }}"
-            KAFKA_NODES: "{{ contrail_analytics_database_nodes_string }}"
+            KAFKA_NODES: "{{ contrail_analytics_alarm_nodes_string }}"
             RABBITMQ_NODES: "{{ contrail_database_nodes_string }}"
             RABBITMQ_NODE_PORT: 5673
-            ZOOKEEPER_ANALYTICS_NODES: "{{ contrail_analytics_database_nodes_string }}"
+            ZOOKEEPER_ANALYTICS_NODES: "{{ contrail_analytics_alarm_nodes_string }}"
             ZOOKEEPER_NODES: "{{ contrail_service_nodes_string }}"
 
       metadata_settings: []

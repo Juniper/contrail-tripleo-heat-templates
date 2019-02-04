@@ -41,9 +41,6 @@ parameters:
     type: comma_delimited_list
 
 resources:
-  ContainersCommon:
-    type: ../containers-common.yaml
-
   DockerHeatConfigImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
