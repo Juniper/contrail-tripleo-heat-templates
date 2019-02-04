@@ -3,7 +3,9 @@ resource_registry:
   OS::TripleO::ContrailController::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config.yaml
   OS::TripleO::ContrailControlOnly::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config.yaml
   OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config.yaml
+  OS::TripleO::ContrailAnalyticsAlarm::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config.yaml
   OS::TripleO::ContrailAnalyticsDatabase::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config.yaml
+  OS::TripleO::ContrailAnalyticsSnmp::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config.yaml
   OS::TripleO::Compute::Net::SoftwareConfig: ../../network/config/contrail/compute-nic-config.yaml
   OS::TripleO::ContrailDpdk::Net::SoftwareConfig: ../../network/config/contrail/contrail-dpdk-nic-config.yaml
   OS::TripleO::ContrailSriov::Net::SoftwareConfig: ../../network/config/contrail/contrail-sriov-nic-config.yaml

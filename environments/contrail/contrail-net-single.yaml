@@ -3,7 +3,9 @@ resource_registry:
   OS::TripleO::ContrailController::Net::SoftwareConfig: ../../network/config/contrail/examples/contrail-controller/contrail-controller-nic-config-single.yaml
   OS::TripleO::ContrailControlOnly::Net::SoftwareConfig: ../../network/config/contrail/examples/contrail-controller/contrail-controller-nic-config-single.yaml
   OS::TripleO::ContrailAnalytics::Net::SoftwareConfig: ../../network/config/contrail/examples/contrail-controller/contrail-controller-nic-config-single.yaml
+  OS::TripleO::ContrailAnalyticsAlarm::Net::SoftwareConfig: ../../network/config/contrail/examples/contrail-controller/contrail-controller-nic-config-single.yaml
   OS::TripleO::ContrailAnalyticsDatabase::Net::SoftwareConfig: ../../network/config/contrail/examples/contrail-controller/contrail-controller-nic-config-single.yaml
+  OS::TripleO::ContrailAnalyticsSnmp::Net::SoftwareConfig: ../../network/config/contrail/examples/contrail-controller/contrail-controller-nic-config-single.yaml
   OS::TripleO::Compute::Net::SoftwareConfig: ../../network/config/contrail/examples/vrouter/compute-nic-config-single.yaml
   OS::TripleO::ContrailDpdk::Net::SoftwareConfig: ../../network/config/contrail/examples/dpdk/contrail-dpdk-nic-config-single.yaml
   OS::TripleO::ContrailSriov::Net::SoftwareConfig: ../../network/config/contrail/examples/sriov/contrail-sriov-nic-config-single.yaml
