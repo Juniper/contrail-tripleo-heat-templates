@@ -1,9 +1,13 @@
 heat_template_version: queens
 
 description: >
-  Contrail containerized Config Databse service
+  Contrail containerized Config Database service
 
 parameters:
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
   ContrailAnalyticsDBMinDiskGB:
     description:  The min size for Contrail Analytics DB.
                   It is to check the size of the node.
@@ -24,14 +28,6 @@ parameters:
     description: image
     type: string
     default: "contrail-external-cassandra"
-  DockerContrailKafkaImageName:
-    description: image
-    type: string
-    default: "contrail-external-kafka"
-  DockerContrailZookeeperImageName:
-    description: image
-    type: string
-    default: "contrail-external-zookeeper"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -61,25 +57,21 @@ parameters:
 
 conditions:
   contrail_analyticsdb_min_disk_gb_unset: {equals : [{get_param: ContrailAnalyticsDBMinDiskGB}, '']}
+  is_not_5_0:
+    not: 
+      or:
+        - yaql:
+            expression: $.data.split(":")[-1].matches("5\.0")
+            data: {get_param: DockerContrailCassandraImageName}
+        - yaql:
+            expression: $.data.split(":")[-1].matches("5\.0")
+            data: {get_param: ContrailImageTag}
 
 resources:
-  ContainersCommon:
-    type: ../containers-common.yaml
-
   DockerContrailCassandraImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailCassandraImageName}
-
-  DockerContrailKafkaImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailKafkaImageName}
-
-  DockerContrailZookeeperImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailZookeeperImageName}
 
   ContrailBase:
     type: contrail-base.yaml
@@ -90,7 +82,27 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
-      contrail_service_name: "contrail_analytics_database"
+      contrail_cassandra_service_name: "contrail_analytics_database"
+
+  ContrailQueryEngine:
+    type: contrail-analytics-query-engine.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+  ContrailAnalyticsKafka:
+    type: contrail-analytics-kafka
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
 
 outputs:
   role_data:
@@ -103,104 +115,82 @@ outputs:
           - tripleo.contrail_analytics_database.firewall_rules:
               '115 contrail_analytics_database':
                 dport:
-                  - 2182
-                  - '4888-5888'
-                  - 7010
-                  - 7011
-                  - 7200
-                  - 8103
-                  - 9042
-                  - 9092
-                  - 9160
+                  list_concat:
+                    - # cassandra
+                      - 7010
+                      - 7011
+                      - 7200
+                      # database nodemgr
+                      - 8103
+                      # cassandra
+                      - 9042
+                      - 9160
+                    - if:
+                        - is_not_5_0
+                        - {get_attr: [ContrailQueryEngine, role_data, analytics_query_engine_ports]}
+                        - {get_attr: [ContrailAnalyticsKafka, role_data, contrail_analytics_kafka_ports]}
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       contrail_env_file: &contrail_env_file
         "/etc/contrail/common_analytics_database.env"
       docker_config:
-        step_2:
-          get_attr: [ContrailBase, role_data, docker_config, step_2]
-        step_3:
-          contrail_analytics_zookeeper:
-            image: &contrail_analytics_zookeeper_image {get_attr: [DockerContrailZookeeperImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - analytics_zookeeper:/data
-                  - analytics_zookeeper:/datalog
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-        step_4:
-          contrail_analytics_database_nodemgr:
-            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
-            net: host
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - /var/run/docker.sock:/var/run/docker.sock
-            environment:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                - if:
-                  - contrail_analyticsdb_min_disk_gb_unset
-                  - []
-                  - - list_join:
-                      - ''
-                      - - 'DATABASE_NODEMGR__DEFAULTS__minimum_diskGB='
-                        - {get_param: ContrailAnalyticsDBMinDiskGB}
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_database:
-            image: &contrail_analytics_database_image {get_attr: [DockerContrailCassandraImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - list_join:
-                      - ':'
-                      - - {get_param: ContrailAnalyticsDBPath}
-                        - '/var/lib/cassandra/data'
-                  - list_join:
-                      - ':'
-                      - - {get_param: ContrailAnalyticsCommitlogPath}
-                        - '/var/lib/cassandra/commitlog'
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_analytics_kafka:
-            image: &contrail_analytics_kafka_image {get_attr: [DockerContrailKafkaImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
+        map_merge:
+          - step_2:
+              get_attr: [ContrailBase, role_data, docker_config, step_2]
+            step_4:
+              contrail_analytics_database:
+                image: &contrail_analytics_database_image {get_attr: [DockerContrailCassandraImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - list_join:
+                          - ':'
+                          - - {get_param: ContrailAnalyticsDBPath}
+                            - '/var/lib/cassandra/data'
+                      - list_join:
+                          - ':'
+                          - - {get_param: ContrailAnalyticsCommitlogPath}
+                            - '/var/lib/cassandra/commitlog'
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+            step_5:
+              contrail_analytics_database_nodemgr:
+                image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run/docker.sock:/var/run/docker.sock
+                environment:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                    - if:
+                      - contrail_analyticsdb_min_disk_gb_unset
+                      - []
+                      - - list_join:
+                          - ''
+                          - - 'DATABASE_NODEMGR__DEFAULTS__minimum_diskGB='
+                            - {get_param: ContrailAnalyticsDBMinDiskGB}
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+          - if:
+              - is_not_5_0
+              - get_attr: [ContrailQueryEngine, role_data, docker_config]
+              - get_attr: [ContrailAnalyticsKafka, role_data, docker_config]
+
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
@@ -227,8 +217,11 @@ outputs:
                 - CASSANDRA_SSL_STORAGE_PORT=7011
                 - CASSANDRA_STORAGE_PORT=7010
                 - CASSANDRA_JMX_LOCAL_PORT=7200
-                - ZOOKEEPER_PORTS=4888:5888
-                - ZOOKEEPER_PORT=2182
+          - if:
+              - is_not_5_0
+              - {get_attr: [ContrailQueryEngine, role_data, host_prep_tasks]}
+              - {get_attr: [ContrailAnalyticsKafka, role_data, host_prep_tasks]}
+
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
 
