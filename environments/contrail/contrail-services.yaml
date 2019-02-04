@@ -1,21 +1,27 @@
 parameter_defaults:
   ServiceNetMap:
     ContrailDatabaseNetwork: internal_api
-    ContrailAnalyticsDatabaseNetwork: internal_api
-    ContrailConfigNetwork: internal_api
     ContrailAnalyticsNetwork: internal_api
+    ContrailAnalyticsAlarmNetwork: internal_api
+    ContrailAnalyticsDatabaseNetwork: internal_api
+    ContrailAnalyticsSnmpNetwork: internal_api
+    ContrailConfigNetwork: internal_api
     ContrailControlNetwork: tenant
     ContrailWebuiNetwork: internal_api
     ContrailVrouterNetwork: tenant
     ContrailCertmongerUserNetwork: internal_api
   OvercloudControllerFlavor: control
   OvercloudContrailControllerFlavor: contrail-controller
+  OvercloudContrailAnalyticsFlavor: contrail-analytics
+  OvercloudContrailAnalyticsDatabaseFlavor: contrail-analytics-database
   OvercloudContrailControlOnlyFlavor: control-only
   OvercloudComputeFlavor: compute
   OvercloudContrailDpdkFlavor: compute-dpdk
   OvercloudContrailSriovFlavor: compute-sriov
   ControllerCount: 1
   ContrailControllerCount: 1
+  ContrailAnalyticsCount: 0
+  ContrailAnalyticsDatabaseCount: 0
   ContrailControlOnlyCount: 0
   ComputeCount: 1
   ContrailDpdkCount: 0
