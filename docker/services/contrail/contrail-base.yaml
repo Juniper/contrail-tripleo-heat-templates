@@ -300,7 +300,7 @@ outputs:
           map_merge:
             - *haproxy_config_settings_listen_options
             - option:
-                - 'httpchk'
+                - 'httpchk GET /'
                 - 'httplog'
                 - 'forwardfor'
               http-request:
