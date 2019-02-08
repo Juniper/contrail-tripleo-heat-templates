@@ -1,9 +1,18 @@
-heat_template_version: 2016-10-14
+heat_template_version: queens
 
 description: >
-  Contrail Controller Issu
+  Contrail Issu
 
 parameters:
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
   ServiceNetMap:
     default: {}
     description: Mapping of service_name -> network name. Typically set
@@ -13,10 +22,13 @@ parameters:
   DefaultPasswords:
     default: {}
     type: json
-  EndpointMap:
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
     default: {}
-    description: Mapping of service endpoint -> protocol. Typically set
-                 via parameter_defaults in the resource registry.
+    description: Parameters specific to the role
     type: json
   ContrailIssuSshUser:
     type: string
