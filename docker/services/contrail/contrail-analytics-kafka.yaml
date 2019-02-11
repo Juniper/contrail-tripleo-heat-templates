@@ -46,16 +46,9 @@ parameters:
 conditions:
   is_not_5_0:
     not: 
-      or:
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailKafkaImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailZookeeperImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: ContrailImageTag}
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailKafkaImageNormalize:

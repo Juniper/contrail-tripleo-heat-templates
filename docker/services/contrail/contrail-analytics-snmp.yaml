@@ -50,19 +50,9 @@ parameters:
 conditions:
   is_not_5_0:
     not: 
-      or:
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsTopologyImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: ContrailImageTag}
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailAnalyticsTopologyImageNormalize:
