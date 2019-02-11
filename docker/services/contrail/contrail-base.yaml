@@ -166,6 +166,11 @@ parameters:
     description: suffix for reading hiera data, node_ips or node_names
 
 conditions:
+  is_not_5_0:
+    not: 
+      - yaql:
+          expression: $.data.split(":")[-1].matches("5\.0")
+          data: {get_param: ContrailImageTag}
   contrail_config_vip_unset: {equals : [{get_param: ContrailConfigVIP}, '']}
   contrail_analytics_vip_unset: {equals : [{get_param: ContrailAnalyticsVIP}, '']}
   contrail_webui_vip_unset: {equals : [{get_param: ContrailWebuiVIP}, '']}
@@ -425,33 +430,40 @@ outputs:
       contrail_tls_env: &contrail_tls_env
         if:
           - contrail_tls_enabled
-          - - "SSL_ENABLE=True"
-            - "XMPP_SSL_ENABLE=True"
-            - "SANDESH_SSL_ENABLE=True"
-            - "INTROSPECT_SSL_ENABLE=True"
-            - "RABBITMQ_USE_SSL=True"
-            - "KAFKA_SSL_ENABLE=True"
-            - "CASSANDRA_SSL_ENABLE=True"
-            - if:
-              - contrail_ipa_ca
-              - 'INTROSPECT_SSL_INSECURE=False'
-              - 'INTROSPECT_SSL_INSECURE=True'
-            - list_join:
-                - '='
-                - - 'SERVER_CERTFILE'
-                  - {get_param: ContrailServiceCertFile}
-            - list_join:
-                - '='
-                - - 'SERVER_KEYFILE'
-                  - {get_param: ContrailServiceKeyFile}
-            - list_join:
-                - '='
-                - - 'SERVER_CA_CERTFILE'
-                  - {get_param: ContrailCaCertFile}
-            - list_join:
-                - '='
-                - - 'SERVER_CA_KEYFILE'
-                  - {get_param: ContrailCaKeyFile}
+          - list_concat:
+              - - "SSL_ENABLE=True"
+                - "XMPP_SSL_ENABLE=True"
+                - "SANDESH_SSL_ENABLE=True"
+                - "INTROSPECT_SSL_ENABLE=True"
+                - if:
+                  - contrail_ipa_ca
+                  - 'INTROSPECT_SSL_INSECURE=False'
+                  - 'INTROSPECT_SSL_INSECURE=True'
+                - list_join:
+                    - '='
+                    - - 'SERVER_CERTFILE'
+                      - {get_param: ContrailServiceCertFile}
+                - list_join:
+                    - '='
+                    - - 'SERVER_KEYFILE'
+                      - {get_param: ContrailServiceKeyFile}
+                - list_join:
+                    - '='
+                    - - 'SERVER_CA_CERTFILE'
+                      - {get_param: ContrailCaCertFile}
+                - list_join:
+                    - '='
+                    - - 'SERVER_CA_KEYFILE'
+                      - {get_param: ContrailCaKeyFile}
+              - if:
+                  - is_not_5_0
+                  - - "KAFKA_SSL_ENABLE=True"
+                    - "CASSANDRA_SSL_ENABLE=True"
+                    - "RABBITMQ_USE_SSL=True"
+                  - - "KAFKA_SSL_ENABLE=False"
+                    - "CASSANDRA_SSL_ENABLE=False"
+                    - "RABBITMQ_USE_SSL=False"
+
           - []
       contrail_auth_tls_env: &contrail_auth_tls_env
         if:
