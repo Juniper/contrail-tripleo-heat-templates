@@ -54,18 +54,18 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
+  contrail_nodes_param_suffux:
+    type: string
+    default: "node_ips"
+    description: suffix for reading hiera data, node_ips or node_names
 
 conditions:
   contrail_analyticsdb_min_disk_gb_unset: {equals : [{get_param: ContrailAnalyticsDBMinDiskGB}, '']}
   is_not_5_0:
     not: 
-      or:
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailCassandraImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: ContrailImageTag}
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailCassandraImageNormalize:
@@ -82,7 +82,6 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
-      contrail_cassandra_service_name: "contrail_analytics_database"
 
   ContrailQueryEngine:
     type: contrail-analytics-query-engine.yaml
@@ -132,6 +131,8 @@ outputs:
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       contrail_env_file: &contrail_env_file
         "/etc/contrail/common_analytics_database.env"
+      contrail_cassandra_service_name: &contrail_cassandra_service_name
+        "contrail_analytics_database"
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -213,20 +214,30 @@ outputs:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
+            - name: cassandra service specific node ips param name
+              set_fact:
+                contrail_nodes_param_name: {list_join: ["_", [*contrail_cassandra_service_name, {get_param: contrail_nodes_param_suffux}]]}
+            - name: get contrail service specific node ips
+              shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}"
+              register: contrail_service_nodes_list
+            - name: turn contrail service specific node ips into string
+              set_fact:
+                contrail_cassandra_service_nodes_string: "{{ contrail_service_nodes_list.stdout | from_json | join(',')  }}"
             - name: write analytics db specific env cars
               lineinfile:
                 dest: *contrail_env_file
                 state: present
                 line: "{{ item }}"
               with_items:
-                - NODE_TYPE=database
-                - CASSANDRA_START_RPC=true
-                - CASSANDRA_CLUSTER_NAME=contrail_analytics
-                - CASSANDRA_PORT=9160
-                - CASSANDRA_CQL_PORT=9042
-                - CASSANDRA_SSL_STORAGE_PORT=7011
-                - CASSANDRA_STORAGE_PORT=7010
-                - CASSANDRA_JMX_LOCAL_PORT=7200
+                - "NODE_TYPE=database"
+                - "CASSANDRA_SEEDS={{ contrail_cassandra_service_nodes_string }}"
+                - "CASSANDRA_START_RPC=true"
+                - "CASSANDRA_CLUSTER_NAME=contrail_analytics"
+                - "CASSANDRA_PORT=9160"
+                - "CASSANDRA_CQL_PORT=9042"
+                - "CASSANDRA_SSL_STORAGE_PORT=7011"
+                - "CASSANDRA_STORAGE_PORT=7010"
+                - "CASSANDRA_JMX_LOCAL_PORT=7200"
           - if:
               - is_not_5_0
               - {get_attr: [ContrailQueryEngine, role_data, host_prep_tasks]}
