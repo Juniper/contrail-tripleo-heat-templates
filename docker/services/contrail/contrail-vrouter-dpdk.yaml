@@ -152,26 +152,26 @@ outputs:
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register contrail env file
+          - - name: register contrail dpdk env file
               stat:
                 path: *contrail_env_file
               register: p
-            - name: create contrail env file
+            - name: create contrail dpdk env file
               copy:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
-            - name: get metadata secret
+            - name: contrail dpdk get metadata secret
               shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::metadata_proxy_shared_secret
-              register: contrail_metadata_secret
-            - name: write remaining contrail config env cars
+              register: contrail_dpdk_metadata_secret
+            - name: write remaining contrail dpdk env cars
               lineinfile:
                 dest: *contrail_env_file
                 state: present
                 line: "{{ item }}"
               with_items:
                 - NODE_TYPE=vrouter
-                - METADATA_PROXY_SECRET={{ contrail_metadata_secret.stdout }}
+                - METADATA_PROXY_SECRET={{ contrail_dpdk_metadata_secret.stdout }}
                 - AGENT_MODE=dpdk
 
       metadata_settings:

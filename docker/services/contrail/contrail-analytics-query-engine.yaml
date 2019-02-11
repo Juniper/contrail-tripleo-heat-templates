@@ -42,13 +42,9 @@ parameters:
 conditions:
   is_not_5_0:
     not: 
-      or:
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsQueryEngineImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: ContrailImageTag}
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailAnalyticsQueryEngineImageNormalize:
@@ -104,16 +100,16 @@ outputs:
                 content: ""
               when: not p.stat.exists
             - set_fact:
-                qe_env_vars: []
+                analytics_qe_env_vars: []
           - if:
             - is_not_5_0
             - - set_fact:
-                  qe_env_vars: "{{ qe_env_vars + ['NODE_TYPE=database'] }}"
+                  analytics_qe_env_vars: "{{ analytics_qe_env_vars + ['NODE_TYPE=database'] }}"
             - - set_fact:
-                  qe_env_vars: "{{ qe_env_vars + ['NODE_TYPE=analytics'] }}"
-          - - name: write remaining contrail config env vars
+                  analytics_qe_env_vars: "{{ analytics_qe_env_vars + ['NODE_TYPE=analytics'] }}"
+          - - name: write remaining contrail analytics query-engine env vars
               lineinfile:
                 dest: *contrail_env_file
                 state: present
                 line: "{{ item }}"
-              with_items: "{{ qe_env_vars }}"
+              with_items: "{{ analytics_qe_env_vars }}"

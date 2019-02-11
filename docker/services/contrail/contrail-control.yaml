@@ -167,16 +167,16 @@ outputs:
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register contrail env file
+          - - name: register contrail control env file
               stat:
                 path: *contrail_env_file
               register: p
-            - name: create contrail env file
+            - name: create contrail control env file
               copy:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
-            - name: write remaining contrail config env cars
+            - name: write remaining contrail control config env cars
               lineinfile:
                 dest: *contrail_env_file
                 state: present

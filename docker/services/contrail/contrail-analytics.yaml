@@ -46,16 +46,9 @@ parameters:
 conditions:
   is_not_5_0:
     not: 
-      or:
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsApiImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsCollectorImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: ContrailImageTag}
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailAnalyticsApiImageNormalize:
@@ -219,7 +212,7 @@ outputs:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
-            - name: write remaining contrail config env cars
+            - name: write remaining contrail analytics env cars
               lineinfile:
                 dest: *contrail_env_file
                 state: present

@@ -42,20 +42,18 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
+  # internal params
+  contrail_nodes_param_suffux:
+    type: string
+    default: "node_ips"
+    description: suffix for reading hiera data, node_ips or node_names
 
 conditions:
   is_not_5_0:
     not: 
-      or:
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailKafkaImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailZookeeperImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: ContrailImageTag}
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailKafkaImageNormalize:
@@ -77,11 +75,6 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
-      contrail_kafka_service_name:
-        if: 
-          - is_not_5_0
-          - 'contrail_analytics_alarm'
-          - ''
 
 outputs:
   role_data:
@@ -144,17 +137,30 @@ outputs:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
+            - name: contrail analytics kafka node ips param name
+              set_fact:
+                contrail_analytics_kafka_param_name: {list_join: ["_", [{get_attr: [ContrailBase, role_data, contrail_kafka_service_name]}, {get_param: contrail_nodes_param_suffux}]]}
+            - name: get contrail analytics kafka specific node ips
+              shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_analytics_kafka_param_name }}"
+              register: contrail_analytics_kafka_nodes_list
+            - name: turn contrail service specific node ips into string
+              set_fact:
+                contrail_analytics_kafka_nodes_string: "{{ contrail_analytics_kafka_nodes_list.stdout | from_json | join(',')  }}"
             - set_fact:
                 kafka_env_vars:
-                  - ZOOKEEPER_PORTS=4888:5888
-                  - ZOOKEEPER_PORT=2182
+                  - "ZOOKEEPER_PORTS=4888:5888"
+                  - "ZOOKEEPER_PORT=2182"
+                  - "ZOOKEEPER_NODES={{ contrail_analytics_kafka_nodes_string }}"
+                  # 5.0 compatibility parameters
+                  - "ZOOKEEPER_ANALYTICS_PORT=2182"
+                  - "ZOOKEEPER_ANALYTICS_NODES={{ contrail_analytics_kafka_nodes_string }}"
           - if:
             - is_not_5_0
             - - set_fact:
                   kafka_env_vars: "{{ kafka_env_vars + ['NODE_TYPE=analytics-alarm'] }}"
             - - set_fact:
                   kafka_env_vars: "{{ kafka_env_vars + ['NODE_TYPE=database'] }}"
-          - - name: write remaining contrail config env vars
+          - - name: write remaining contrail analytics kafka env vars
               lineinfile:
                 dest: *contrail_env_file
                 state: present
