@@ -94,7 +94,6 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
-      contrail_cassandra_service_name: "contrail_database"
 
 outputs:
   role_data:
@@ -121,6 +120,8 @@ outputs:
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       contrail_env_file: &contrail_env_file
         "/etc/contrail/common_config_database.env"
+      contrail_cassandra_service_name: &contrail_cassandra_service_name
+        "contrail_database"
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -239,23 +240,33 @@ outputs:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
+            - name: cassandra service specific node ips param name
+              set_fact:
+                contrail_nodes_param_name: {list_join: ["_", [*contrail_cassandra_service_name, {get_param: contrail_nodes_param_suffux}]]}
+            - name: get contrail service specific node ips
+              shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}"
+              register: contrail_service_nodes_list
+            - name: turn contrail service specific node ips into string
+              set_fact:
+                contrail_cassandra_service_nodes_string: "{{ contrail_service_nodes_list.stdout | from_json | join(',')  }}"
             - name: write remaining contrail config env cars
               lineinfile:
                 dest: *contrail_env_file
                 state: present
                 line: "{{ item }}"
               with_items:
-                - NODE_TYPE=config-database
-                - CASSANDRA_START_RPC=true
-                - CASSANDRA_CLUSTER_NAME=contrail_database
-                - CASSANDRA_PORT=9161
-                - CASSANDRA_CQL_PORT=9041
-                - CASSANDRA_SSL_STORAGE_PORT=7013
-                - CASSANDRA_STORAGE_PORT=7012
-                - CASSANDRA_JMX_LOCAL_PORT=7201
-                - ZOOKEEPER_PORTS=2888:3888
-                - ZOOKEEPER_PORT=2181
-                - RABBITMQ_ERLANG_COOKIE=abcdefg
+                - "NODE_TYPE=config-database"
+                - "CASSANDRA_SEEDS={{ contrail_cassandra_service_nodes_string }}"
+                - "CASSANDRA_START_RPC=true"
+                - "CASSANDRA_CLUSTER_NAME=contrail_database"
+                - "CASSANDRA_PORT=9161"
+                - "CASSANDRA_CQL_PORT=9041"
+                - "CASSANDRA_SSL_STORAGE_PORT=7013"
+                - "CASSANDRA_STORAGE_PORT=7012"
+                - "CASSANDRA_JMX_LOCAL_PORT=7201"
+                - "ZOOKEEPER_PORTS=2888:3888"
+                - "ZOOKEEPER_PORT=2181"
+                - "RABBITMQ_ERLANG_COOKIE=abcdefg"
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
