@@ -42,13 +42,9 @@ parameters:
 conditions:
   is_not_5_0:
     not: 
-      or:
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsAlarmGenImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: ContrailImageTag}
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailAnalyticsAlarmGenImageNormalize:
@@ -152,11 +148,11 @@ outputs:
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register create contrail analytics env file
+          - - name: register create contrail analytics alarm env file
               stat:
                 path: *contrail_env_file
               register: p
-            - name: create contrail analytics env file
+            - name: create contrail analytics alarm env file
               copy:
                 dest: *contrail_env_file
                 content: ""
@@ -170,7 +166,7 @@ outputs:
             - - set_fact:
                   alarm_env_vars:
                     - NODE_TYPE=analytics
-          - - name: write remaining contrail config env vars
+          - - name: write remaining contrail analytics alarm env vars
               lineinfile:
                 dest: *contrail_env_file
                 state: present

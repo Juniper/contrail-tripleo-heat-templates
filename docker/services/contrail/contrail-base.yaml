@@ -151,21 +151,17 @@ parameters:
     default: {}
     description: json containing per-node configuration map
   # internal params
-  contrail_cassandra_service_name:
-    type: string
-    default: ''
-    description: used for overloading cassandra seeds for config and 
-                 analytics database nodes
-  contrail_kafka_service_name:
-    type: string
-    default: ''
-    description: used for overloading kafka nodes list
   contrail_nodes_param_suffux:
     type: string
     default: "node_ips"
     description: suffix for reading hiera data, node_ips or node_names
 
 conditions:
+  is_not_5_0:
+    not: 
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
   contrail_config_vip_unset: {equals : [{get_param: ContrailConfigVIP}, '']}
   contrail_analytics_vip_unset: {equals : [{get_param: ContrailAnalyticsVIP}, '']}
   contrail_webui_vip_unset: {equals : [{get_param: ContrailWebuiVIP}, '']}
@@ -201,12 +197,6 @@ conditions:
   haproxy_crl_file: false
   # haproxy_crl_file:
   #   not: {equals: [{get_param: InternalTLSCRLPEMFile}, '']}
-
-  contrail_cassandra_is_set: 
-    not: {equals: [{get_param: contrail_cassandra_service_name}, '']}
-
-  contrail_kafka_is_set: 
-    not: {equals: [{get_param: contrail_kafka_service_name}, '']}
 
 resources:
   ContainersCommon:
@@ -425,33 +415,40 @@ outputs:
       contrail_tls_env: &contrail_tls_env
         if:
           - contrail_tls_enabled
-          - - "SSL_ENABLE=True"
-            - "XMPP_SSL_ENABLE=True"
-            - "SANDESH_SSL_ENABLE=True"
-            - "INTROSPECT_SSL_ENABLE=True"
-            - "RABBITMQ_USE_SSL=True"
-            - "KAFKA_SSL_ENABLE=True"
-            - "CASSANDRA_SSL_ENABLE=True"
-            - if:
-              - contrail_ipa_ca
-              - 'INTROSPECT_SSL_INSECURE=False'
-              - 'INTROSPECT_SSL_INSECURE=True'
-            - list_join:
-                - '='
-                - - 'SERVER_CERTFILE'
-                  - {get_param: ContrailServiceCertFile}
-            - list_join:
-                - '='
-                - - 'SERVER_KEYFILE'
-                  - {get_param: ContrailServiceKeyFile}
-            - list_join:
-                - '='
-                - - 'SERVER_CA_CERTFILE'
-                  - {get_param: ContrailCaCertFile}
-            - list_join:
-                - '='
-                - - 'SERVER_CA_KEYFILE'
-                  - {get_param: ContrailCaKeyFile}
+          - list_concat:
+              - - "SSL_ENABLE=True"
+                - "XMPP_SSL_ENABLE=True"
+                - "SANDESH_SSL_ENABLE=True"
+                - "INTROSPECT_SSL_ENABLE=True"
+                - if:
+                  - contrail_ipa_ca
+                  - 'INTROSPECT_SSL_INSECURE=False'
+                  - 'INTROSPECT_SSL_INSECURE=True'
+                - list_join:
+                    - '='
+                    - - 'SERVER_CERTFILE'
+                      - {get_param: ContrailServiceCertFile}
+                - list_join:
+                    - '='
+                    - - 'SERVER_KEYFILE'
+                      - {get_param: ContrailServiceKeyFile}
+                - list_join:
+                    - '='
+                    - - 'SERVER_CA_CERTFILE'
+                      - {get_param: ContrailCaCertFile}
+                - list_join:
+                    - '='
+                    - - 'SERVER_CA_KEYFILE'
+                      - {get_param: ContrailCaKeyFile}
+              - if:
+                  - is_not_5_0
+                  - - "KAFKA_SSL_ENABLE=True"
+                    - "CASSANDRA_SSL_ENABLE=True"
+                    - "RABBITMQ_USE_SSL=True"
+                  - - "KAFKA_SSL_ENABLE=False"
+                    - "CASSANDRA_SSL_ENABLE=False"
+                    - "RABBITMQ_USE_SSL=False"
+
           - []
       contrail_auth_tls_env: &contrail_auth_tls_env
         if:
@@ -511,6 +508,11 @@ outputs:
         step_2: {}
       contrail_common_env_file: &contrail_common_env_file
         "/etc/contrail/common_contrail.env"
+      contrail_kafka_service_name: &contrail_kafka_service_name
+        if: 
+          - is_not_5_0
+          - 'contrail_analytics_alarm'
+          - 'contrail_analytics_database'
       contrail_base_env_file: &contrail_base_env_file
         - *contrail_common_env_file
       contrail_host_prep_tasks_base:
@@ -619,7 +621,15 @@ outputs:
             - name: turn contrail analytics database ips into string
               set_fact:
                 contrail_analytics_database_nodes_string: "{{ contrail_analytics_database_nodes_list.stdout | from_json | join(',') }}"
-
+            - name: kafka services specific node ips param name
+              set_fact:
+                contrail_nodes_param_name: {list_join: ["_", [*contrail_kafka_service_name, {get_param: contrail_nodes_param_suffux}]]}
+            - name: get contrail service specific node ips
+              shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}"
+              register: contrail_service_nodes_list
+            - name: turn contrail service specific node ips into string
+              set_fact:
+                contrail_kafka_service_nodes_string: "{{ contrail_service_nodes_list.stdout | from_json | join(',')  }}"
             - name: write contrail config node ips to environment file
               lineinfile:
                 dest: *contrail_common_env_file
@@ -640,48 +650,9 @@ outputs:
                 DNS_NODES: "{{ contrail_control_nodes_string }}"
                 RABBITMQ_NODES: "{{ contrail_database_nodes_string }}"
                 RABBITMQ_NODE_PORT: 5673
-                ZOOKEEPER_NODES: "{{ contrail_database_nodes_string }}"
-          - if:
-            - contrail_cassandra_is_set
-            - - name: cassandra service specific node ips param name
-                set_fact:
-                  contrail_nodes_param_name: {list_join: ["_", [{get_param: contrail_cassandra_service_name}, {get_param: contrail_nodes_param_suffux}]]}
-              - name: get contrail service specific node ips
-                shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}"
-                register: contrail_service_nodes_list
-              - name: turn contrail service specific node ips into string
-                set_fact:
-                  contrail_cassandra_service_nodes_string: "{{ contrail_service_nodes_list.stdout | from_json | join(',')  }}"
-              - name: write contrail config node ips to environment file
-                lineinfile:
-                  dest: *contrail_common_env_file
-                  state: present
-                  regexp: "^{{ item.key }}.*"
-                  line: "{{ item.key }}={{ item.value }}"
-                with_dict:
-                  CASSANDRA_SEEDS: "{{ contrail_cassandra_service_nodes_string }}"
-            - []
-          - if:
-            - contrail_kafka_is_set
-            - - name: kafka and its zk services specific node ips param name
-                set_fact:
-                  contrail_nodes_param_name: {list_join: ["_", [{get_param: contrail_kafka_service_name}, {get_param: contrail_nodes_param_suffux}]]}
-              - name: get contrail service specific node ips
-                shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}"
-                register: contrail_service_nodes_list
-              - name: turn contrail service specific node ips into string
-                set_fact:
-                  contrail_kafka_service_nodes_string: "{{ contrail_service_nodes_list.stdout | from_json | join(',')  }}"
-              - name: write contrail config node ips to environment file
-                lineinfile:
-                  dest: *contrail_common_env_file
-                  state: present
-                  regexp: "^{{ item.key }}.*"
-                  line: "{{ item.key }}={{ item.value }}"
-                with_dict:
-                  KAFKA_NODES: "{{ contrail_kafka_service_nodes_string }}"
-                  ZOOKEEPER_NODES: "{{ contrail_kafka_service_nodes_string }}"
-            - []
+                KAFKA_NODES: "{{ contrail_kafka_service_nodes_string }}"
+# dont set zk, all services except kafka uses default zk from configdb
+#               ZOOKEEPER_NODES: "{{ contrail_database_nodes_string }}"
 
       metadata_settings: []
 

@@ -164,29 +164,29 @@ outputs:
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register contrail env file
+          - - name: register contrail sriov env file
               stat:
                 path: *contrail_env_file
               register: p
-            - name: create contrail env file
+            - name: create contrail sriov env file
               copy:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
-            - name: get metadata secret
+            - name: contrail sriov get metadata secret
               shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::metadata_proxy_shared_secret
-              register: contrail_metadata_secret
-            - name: get sriov mode
+              register: contrail_sriov_metadata_secret
+            - name: get scontrail sriov mode
               shell: hiera -c /etc/puppet/hiera.yaml contrail_sriov_mode
               register: contrail_sriov_mode
-            - name: write remaining contrail config env cars
+            - name: write remaining contrail sriov env vars
               lineinfile:
                 dest: *contrail_env_file
                 line: "{{ item }}"
                 state: present
               with_items:
                 - NODE_TYPE=vrouter
-                - METADATA_PROXY_SECRET={{ contrail_metadata_secret.stdout }}
+                - METADATA_PROXY_SECRET={{ contrail_sriov_metadata_secret.stdout }}
                 - AGENT_MODE={{ contrail_sriov_mode.stdout }}
 
       metadata_settings:

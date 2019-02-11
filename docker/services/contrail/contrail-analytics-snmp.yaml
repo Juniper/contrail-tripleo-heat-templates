@@ -50,19 +50,9 @@ parameters:
 conditions:
   is_not_5_0:
     not: 
-      or:
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsTopologyImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
-        - yaql:
-            expression: $.data.split(":")[-1].matches("5\.0")
-            data: {get_param: ContrailImageTag}
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailAnalyticsTopologyImageNormalize:
@@ -165,29 +155,29 @@ outputs:
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register create contrail analytics env file
+          - - name: register create contrail analytics snmp env file
               stat:
                 path: *contrail_env_file
               register: p
-            - name: create contrail analytics env file
+            - name: create contrail contrail analytics snmp env file
               copy:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
             - set_fact:
-                snmp_env_vars: []
+                analytics_snmp_env_vars: []
           - if:
             - is_not_5_0
             - - set_fact:
-                  snmp_env_vars: "{{ snmp_env_vars + ['NODE_TYPE=analytics-snmp'] }}"
+                  analytics_snmp_env_vars: "{{ analytics_snmp_env_vars + ['NODE_TYPE=analytics-snmp'] }}"
             - - set_fact:
-                  snmp_env_vars: "{{ snmp_env_vars + ['NODE_TYPE=analytics'] }}"
-          - - name: write remaining contrail config env vars
+                  analytics_snmp_env_vars: "{{ analytics_snmp_env_vars + ['NODE_TYPE=analytics'] }}"
+          - - name: write remaining contrail analytics snmp env vars
               lineinfile:
                 dest: *contrail_env_file
                 state: present
                 line: "{{ item }}"
-              with_items: "{{ snmp_env_vars }}"
+              with_items: "{{ analytics_snmp_env_vars }}"
 
 
       metadata_settings:

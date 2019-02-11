@@ -162,20 +162,20 @@ outputs:
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register contrail env file
+          - - name: register contrail webui env file
               stat:
                 path: *contrail_env_file
               register: p
-            - name: create contrail env file
+            - name: create contrail webui env file
               copy:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
-            - name: node ips (names) param name
+            - name: contrail webui node ips (names) param name
               set_fact:
-                contrail_nodes_param_name: {list_join: ["_", ["contrail_webui", {get_param: contrail_nodes_param_suffux}]]}
+                contrail_webui_nodes_param_name: {list_join: ["_", ["contrail_webui", {get_param: contrail_nodes_param_suffux}]]}
             - name: get contrail webui node ips
-              shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}"
+              shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_webui_nodes_param_name }}"
               register: contrail_webui_nodes_list
             - name: turn contrail webui ips into string
               set_fact:
@@ -186,27 +186,27 @@ outputs:
                 state: present
                 regexp: '^WEBUI_NODES.*'
                 line: "WEBUI_NODES={{ contrail_webui_nodes_string }}"
-            - name: contrail CA
+            - name: contrail webui CA
               set_fact:
-                contrail_ca: {get_param: ContrailCA}
-            - name: overwrite webui cert files for IPA
+                contrail_webui_ca: {get_param: ContrailCA}
+            - name: overwrite contrail webui cert files for IPA
               block:
-                - name: contrail server cert
+                - name: contrail webui server cert
                   set_fact:
-                    contrail_cert: {get_param: ContrailServiceCertFile}
-                - name: contrail server key
+                    contrail_webui_cert: {get_param: ContrailServiceCertFile}
+                - name: contrail webui server key
                   set_fact:
-                    contrail_key: {get_param: ContrailServiceKeyFile}
-                - name: set webui certs for IPA case 
+                    contrail_webui_key: {get_param: ContrailServiceKeyFile}
+                - name: set contrail webui certs for IPA case 
                   lineinfile:
                     dest: *contrail_env_file
                     state: present
                     regexp: "^{{ item.key }}.*"
                     line: "{{ item.key }}={{ item.value }}"
                   with_dict:
-                    WEBUI_SSL_CERT_FILE: "{{ contrail_cert }}"
-                    WEBUI_SSL_KEY_FILE: "{{ contrail_key }}"
-              when: contrail_ca == 'IPA'
+                    WEBUI_SSL_CERT_FILE: "{{ contrail_webui_cert }}"
+                    WEBUI_SSL_KEY_FILE: "{{ contrail_webui_key }}"
+              when: contrail_webui_ca == 'IPA'
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
