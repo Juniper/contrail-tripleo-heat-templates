@@ -17,7 +17,7 @@ resources:
     depends_on: [ContrailTlsInit]
     properties:
       server: {get_param: server}
-      install_contrail_puppet: false
+      install_contrail_puppet: true
 
 outputs:
   contrail_tls_init:
