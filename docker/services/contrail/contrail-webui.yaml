@@ -120,7 +120,7 @@ outputs:
                             NETWORK: {get_param: [ServiceNetMap, ContrailWebuiNetwork]}
                       service_port: 8143
                       service_network: {get_param: [ServiceNetMap, ContrailWebuiNetwork]}
-                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings_tls]}
+                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings_webui]}
       contrail_env_file: &contrail_env_file
         "/etc/contrail/common_webui.env"
       docker_config:

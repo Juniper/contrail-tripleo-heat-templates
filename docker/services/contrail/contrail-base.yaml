@@ -324,12 +324,19 @@ outputs:
         #     - 'set-header X-Forwarded-Proto https if { ssl_fc }'
         #     - 'set-header X-Forwarded-Proto http if !{ ssl_fc }'
         member_options: *haproxy_config_settings_member_options
-      haproxy_config_settings_tls:
+      haproxy_config_settings_tls: &haproxy_config_settings_tls
+        map_merge:
+          - *haproxy_config_settings
+          - member_options: *haproxy_config_settings_member_options_tls
+      haproxy_config_settings_api: &haproxy_config_settings_api
+        if:
+          - contrail_tls_enabled
+          - *haproxy_config_settings_tls
+          - *haproxy_config_settings
+      haproxy_config_settings_webui: &haproxy_config_settings_webui
         if:
           - public_tls_enabled
-          - map_merge:
-              - *haproxy_config_settings
-              - member_options: *haproxy_config_settings_member_options_tls
+          - *haproxy_config_settings_tls
           - public_virtual_ip: "%{hiera('public_virtual_ip')}"
             mode: 'tcp'
             listen_options: *haproxy_config_settings_listen_options
