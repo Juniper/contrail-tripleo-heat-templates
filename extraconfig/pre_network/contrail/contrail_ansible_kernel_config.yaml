@@ -28,19 +28,41 @@
       set_fact:
         _KERNEL_ARGS_: "{{ kernel_arg_list | join(' ') }}"
     - block:
+        - name: set default grub file
+          set_fact:
+            default_grub_config: "/etc/default/grub"
+        # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/sec-customizing_the_grub_2_configuration_file
+        # #25.5.2
+        - name: set uefi target grub file
+          set_fact:
+            uefi_grub_config: "/boot/efi/EFI/redhat/grub.cfg"
+        - name: check if EFI config exists
+          stat:
+            path: "{{ uefi_grub_config }}"
+          register: efi_file_rc
+        - name: set target grub file for uefi
+          set_fact:
+            target_grub_config: "{{ uefi_grub_config }}"
+          when:
+            - efi_file_rc.stat.exists == true
+        - name: set target grub file for bios
+          set_fact:
+            target_grub_config: "/boot/grub2/grub.cfg"
+          when:
+            - efi_file_rc.stat.exists == false
         - name: Ensure the kernel args ( {{ _KERNEL_ARGS_ }} ) is present as TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS
           lineinfile:
-            dest: /etc/default/grub
+            dest: "{{ default_grub_config }}"
             regexp: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
             insertafter: '^GRUB_CMDLINE_LINUX.*'
             line: 'TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS=" {{ _KERNEL_ARGS_ }} "'
         - name: Add TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS to the GRUB_CMDLINE_LINUX parameter
           lineinfile:
-            dest: /etc/default/grub
+            dest: "{{ default_grub_config }}"
             line: 'GRUB_CMDLINE_LINUX="${GRUB_CMDLINE_LINUX:+$GRUB_CMDLINE_LINUX }${TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS}"'
             insertafter: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
         - name: Generate grub config file
-          command: grub2-mkconfig -o /boot/grub2/grub.cfg
+          command: "grub2-mkconfig -o {{ target_grub_config }}"
       become: true
       when: _KERNEL_ARGS_|default("") != ""
     - name: create hugepage devs
