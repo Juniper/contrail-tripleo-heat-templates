@@ -65,7 +65,7 @@ resources:
               systemctl enable docker
               systemctl restart docker
             fi
-            if [[ ${contrail_registry_insecure} == 'True' ]]; then
+            if [[ ${contrail_registry_insecure,,} == 'true' ]]; then
               registry_name=(${contrail_registry//\// })
               found=0
               registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
