@@ -673,4 +673,4 @@ outputs:
           with_items:
             - docker
             - python-docker-py
-          when: step|int == 3
+          when: step|int == 0

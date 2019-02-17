@@ -152,8 +152,6 @@ outputs:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
-      update_tasks: {get_attr: [ContrailVrouterBase, role_data, update_tasks]}
-      post_update_tasks: {get_attr: [ContrailVrouterBase, role_data, post_update_tasks]}
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
@@ -181,17 +179,22 @@ outputs:
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
 
+      update_tasks:
+        get_attr: [ContrailVrouterBase, role_data, update_tasks]
+
+      post_update_tasks:
+        get_attr: [ContrailVrouterBase, role_data, post_update_tasks]
+
       fast_forward_upgrade_tasks:
-        - name: Stop contrail vrouter services
-          service: name={{ item }} state=stopped enabled=no
-          when:
-            - step|int == 1
-            - release == 'ocata'
-          with_items:
-            - supervisor-vrouter
+        get_attr: [ContrailVrouterBase, role_data, fast_forward_upgrade_tasks]
 
       fast_forward_post_upgrade_tasks:
-        get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
+        get_attr: [ContrailVrouterBase, role_data, fast_forward_post_upgrade_tasks]
 
       upgrade_tasks:
-        get_attr: [ContrailBase, role_data, upgrade_tasks_common]
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, upgrade_tasks_common]}
+          - {get_attr: [ContrailVrouterBase, role_data, upgrade_tasks]}
+      
+      post_upgrade_tasks:
+        get_attr: [ContrailVrouterBase, role_data, post_upgrade_tasks]
