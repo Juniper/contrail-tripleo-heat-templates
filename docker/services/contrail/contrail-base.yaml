@@ -667,10 +667,11 @@ outputs:
 
       upgrade_tasks_common:
         - name: Install docker packages on upgrade if missing
+          when: step|int == 0
+          tags: common
           yum:
             name: "{{ item }}"
             state: present
           with_items:
             - docker
             - python-docker-py
-          when: step|int == 3

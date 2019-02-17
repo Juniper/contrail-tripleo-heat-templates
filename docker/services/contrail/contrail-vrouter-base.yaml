@@ -45,3 +45,20 @@ outputs:
               name: "/tmp/contrail_var_lib_unnamed_volume"
               state: absent
           when: 'contrail_var_lib_unnamed_volume.stat.exists == true'
+      fast_forward_upgrade_tasks:
+        - name: Stop contrail vrouter dpdk services
+          service: name={{ item }} state=stopped enabled=no
+          when:
+            - step|int == 1
+            - release == 'ocata'
+          with_items:
+            - supervisor-vrouter
+      fast_forward_post_upgrade_tasks: []
+      upgrade_tasks:
+        - when: step|int == 1
+          tags: common
+          block:
+            - name: Remove temporary agent & nodemgr deployed by ansible-deployer
+              shell: bash -c 'source /opt/rh/python27/enable && cd /etc/contrail/vrouter && docker-compose down'
+              ignore_errors: True
+      post_upgrade_tasks: []
