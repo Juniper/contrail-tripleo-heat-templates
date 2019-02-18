@@ -525,7 +525,7 @@ cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf
 FREE_IPA_OTP="<otp>"
 ### !!! Adjust this IP to your setup
 prov_freeipa_ip=10.87.64.4
-The following parameters need to be set withing [DEFAULT] section 
+The following parameters need to be set within [DEFAULT] section 
 ###
 cat << EOF >> ~/undercloud.conf
 undercloud_hostname: ${undercloud_name}.${undercloud_suffix}
