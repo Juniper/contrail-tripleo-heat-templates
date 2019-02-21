@@ -54,12 +54,12 @@ parameter_defaults:
     BGP_ASN: 64512
 # Supported values are true/false. When true, system will automatically create BGP peering mesh with all control-nodes that have same BGP AS number as global AS number.
     BGP_AUTO_MESH: true
+# Vrouter dpdk options
+#    LACP_RATE: 0
+#    NIC_OFFLOAD_ENABLE: true
 # Other environment variables for containers may be set here if needed.
 #    KEY1: value1
 #    KEY2: value2
-
-# Contrail NIC Offload enable/disable
-# ContrailNicOffloadEnable: false
 
 # SRIOV settings
 #  NovaPCIPassthrough:
