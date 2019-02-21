@@ -79,6 +79,10 @@ parameters:
       For Mellanox the image name is contrail-vrouter-plugin-mellanox-init-redhat
     type: string
     default: ''
+  NodeDataLookup:
+    type: json
+    default: {}
+    description: json string containing per-node configuration map
 
 description: >
   This template installs the Contrail kernel module  packages in order
@@ -144,6 +148,7 @@ resources:
     properties:
       group: ansible
       inputs:
+        - name: _NODEDATA_
         - name: _CONTRAIL_VROUTER_INIT_IMAGE_
         - name: _CONTRAIL_VROUTER_INIT_IMAGE_NAME_
         - name: _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_
@@ -167,6 +172,7 @@ resources:
           - []
           - ['CREATE', 'UPDATE']
       input_values:
+        _NODEDATA_: {get_param: NodeDataLookup}
         _CONTRAIL_VROUTER_INIT_IMAGE_: {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}
         _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_: {get_attr: [DockerContrailVrouterAgentImageNormalize, contrail_image_only]}
