@@ -533,6 +533,16 @@ outputs:
                 dest: *contrail_common_env_file
                 content: ""
               when: not p.stat.exists
+            - name: set contrail base calculated parameters
+              set_fact:
+                contrail_base_env_params: *contrail_base_env
+            - name: write contrail base parameters to environment file
+              lineinfile:
+                dest: *contrail_common_env_file
+                state: present
+                regexp: "^{{ item.key }}.*"
+                line: "{{ item.key }}={{ item.value }}"
+              with_dict: "{{ contrail_base_env_params }}"
             - name: get dmi
               shell: |
                 #!/bin/sh
