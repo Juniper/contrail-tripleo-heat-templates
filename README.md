@@ -500,17 +500,8 @@ subscription-manager register --activationkey=${act_key} --org=${org}
 ```
 
 ## for TLS with RedHat IDM (FreeIPA) case
-### setup novajoing plugin
-```
-pip install novajoin==1.0.21 oslo.policy==1.33.2
-yum install -y ipa-client
-if ! grep -q novajoin /etc/passwd ; then
-  adduser -M novajoin
-fi
-mkdir -p /etc/novajoin /var/lib/novajoin
-chown -R novajoin:novajoin /etc/novajoin /var/lib/novajoin
-touch /etc/novajoin/join.conf
-```
+### install IDM according to RH documentaion 
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/linux_domain_identity_authentication_and_policy_guide/install-server
 
 ## Install the undercloud
 ### prepare config for undercloud installation
@@ -519,7 +510,9 @@ yum install -y python-tripleoclient tmux
 su - stack
 cp /usr/share/instack-undercloud/undercloud.conf.sample ~/undercloud.conf
 ```
-### for TLS with RedHat IDM (FreeIPA) case update config (!!! ADJUST)
+### for TLS with RedHat IDM (FreeIPA) case update config
+#### (see details in RH documentaion https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/13/html-single/advanced_overcloud_customization/#sect-Enabling_Internal_SSLTLS_on_the_Overcloud)
+An exmaple:
 ```
 ### !!! Set to OTP that was saved from IDM VM from the file ~/undercloud_otp
 FREE_IPA_OTP="<otp>"
