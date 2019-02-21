@@ -79,6 +79,14 @@ parameters:
       For Mellanox the image name is contrail-vrouter-plugin-mellanox-init-redhat
     type: string
     default: ''
+  NodeDataLookup:
+    type: json
+    default: {}
+    description: json string containing per-node configuration map
+  ContrailSettings:
+    default: {}
+    description: Contrail Service settings
+    type: json
 
 description: >
   This template installs the Contrail kernel module  packages in order
@@ -112,6 +120,18 @@ resources:
     properties:
       GenericImageName: {get_param: DockerContrailVrouterAgentContainerName}
 
+  ContrailSettingsRoleParametersValue:
+    type: OS::Heat::Value
+    properties:
+      type: json
+      value:
+        map_replace:
+          - map_replace:
+            - contrail_settings: ContrailSettings
+            - values: {get_param: [RoleParameters]}
+          - values:
+              ContrailSettings: {get_param: ContrailSettings}
+
   VrouterHostParametersConfig:
     type: OS::Heat::SoftwareConfig
     properties:
@@ -144,9 +164,12 @@ resources:
     properties:
       group: ansible
       inputs:
+        - name: _NODEDATA_
+          type: Json
+        - name: _CONTRAIL_SETTINGS_
+          type: Json
         - name: _CONTRAIL_VROUTER_INIT_IMAGE_
         - name: _CONTRAIL_VROUTER_INIT_IMAGE_NAME_
-        - name: _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_
         - name: _CONTRAIL_VROUTER_MODULE_OPTS_
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_
@@ -167,9 +190,10 @@ resources:
           - []
           - ['CREATE', 'UPDATE']
       input_values:
+        _NODEDATA_: {get_param: NodeDataLookup}
+        _CONTRAIL_SETTINGS_: {get_attr: [ContrailSettingsRoleParametersValue, value, contrail_settings]}
         _CONTRAIL_VROUTER_INIT_IMAGE_: {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}
-        _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_: {get_attr: [DockerContrailVrouterAgentImageNormalize, contrail_image_only]}
         _CONTRAIL_VROUTER_MODULE_OPTS_: {get_param: ContrailVrouterModuleOptions}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image_only]}
