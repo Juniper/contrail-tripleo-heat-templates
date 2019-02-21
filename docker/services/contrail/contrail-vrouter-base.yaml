@@ -54,8 +54,8 @@ outputs:
           with_items:
             - supervisor-vrouter
       fast_forward_post_upgrade_tasks: []
-      upgrade_tasks:
-        - when: step|int == 1
+      upgrade_tasks: 
+        - when: step|int == 4
           tags: common
           block:
             - name: Remove temporary agent & nodemgr deployed by ansible-deployer

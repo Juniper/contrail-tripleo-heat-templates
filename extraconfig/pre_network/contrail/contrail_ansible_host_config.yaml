@@ -77,12 +77,6 @@
 
       when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
 
-    - name: enable docker service
-      systemd:
-        state: restarted
-        name: docker
-        enabled: yes
-
     - name: create crash directory
       file:
         path: "/var/crashes"

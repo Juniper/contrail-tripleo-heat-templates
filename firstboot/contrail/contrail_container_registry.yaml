@@ -56,14 +56,14 @@ resources:
             contrail_registry=$contrail_registry
             contrail_registry_user=$contrail_registry_user
             contrail_registry_password=$contrail_registry_password
+            need_restart=0
             if [[ -n ${contrail_registry_cert_url} ]]; then
               registry_name=(${contrail_registry//:/ })
               mkdir -p /etc/docker/certs.d/${registry_name}
               (cd /etc/docker/certs.d/${registry_name}; curl -O ${contrail_registry_cert_url})
               (cd /etc/pki/ca-trust/source/anchors/; curl -O ${contrail_registry_cert_url})
               update-ca-trust
-              systemctl enable docker
-              systemctl restart docker
+              need_restart=1
             fi
             if [[ ${contrail_registry_insecure,,} == 'true' ]]; then
               registry_name=(${contrail_registry//\// })
@@ -80,13 +80,19 @@ resources:
                 else
                   echo ${complete_string} >> /etc/sysconfig/docker
                 fi
+                need_restart=1
               fi
+            fi
+            if [[ ${need_restart} -eq 0 ]]; then
               systemctl enable docker
               systemctl restart docker
             fi
             if [[ -n ${contrail_registry_user} && -n ${contrail_registry_password} ]]; then
-              systemctl enable docker
-              systemctl start docker
+              if [[ ${need_restart} -eq 1 ]]; then
+                systemctl enable docker
+                systemctl start docker
+              fi
+              sleep 10
               docker login -u ${contrail_registry_user} -p ${contrail_registry_password} ${contrail_registry}
             fi
 

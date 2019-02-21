@@ -495,22 +495,21 @@ outputs:
                 - - 'METADATA_SSL_CA_CERTFILE'
                   - {get_param: InternalTLSCAFile}
           - []
+      contrail_common_base_env: &contrail_common_base_env
+        list_concat:
+          - *contrail_general_base_env
+          - *contrail_auth_base_env
+          - *contrail_tls_env
+          - *contrail_auth_tls_env
+          - *metadata_tls_env
       contrail_base_env: &contrail_base_env
         list_concat:
-          - *contrail_general_base_env
-          - *contrail_auth_base_env
           - *contrail_auth_admin_env
-          - *contrail_tls_env
-          - *contrail_auth_tls_env
-          - *metadata_tls_env
+          - null
       contrail_base_auth_internal_env: &contrail_base_auth_internal_env
         list_concat:
-          - *contrail_general_base_env
-          - *contrail_auth_base_env
           - *contrail_auth_internal_env
-          - *contrail_tls_env
-          - *contrail_auth_tls_env
-          - *metadata_tls_env
+          - null
       docker_config:
         step_2: {}
       contrail_common_env_file: &contrail_common_env_file
@@ -533,6 +532,15 @@ outputs:
                 dest: *contrail_common_env_file
                 content: ""
               when: not p.stat.exists
+            - name: set contrail base calculated parameters
+              set_fact:
+                contrail_base_env_params: *contrail_common_base_env
+            - name: write contrail base parameters to environment file
+              lineinfile:
+                dest: *contrail_common_env_file
+                state: present
+                line: "{{ item }}"
+              with_items: "{{ contrail_base_env_params }}"
             - name: get dmi
               shell: |
                 #!/bin/sh
@@ -667,7 +675,7 @@ outputs:
 
       upgrade_tasks_common:
         - name: Install docker packages on upgrade if missing
-          when: step|int == 0
+          when: step|int == 3
           tags: common
           yum:
             name: "{{ item }}"
