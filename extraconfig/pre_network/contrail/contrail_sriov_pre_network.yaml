@@ -73,18 +73,6 @@ parameters:
       so dpdk command line is populated with arguments from this string.
       E.g. --vr_mempool_sz --dpdk_txd_sz --dpdk_rxd_sz
     type: string
-  ContrailNicOffloadEnable:
-    default: false
-    description: >
-      Enable Nic Offload feature.
-    type: boolean
-  ContrailLacpRate:
-    default: 0
-    description: >
-      Lacp rate option for DPDK bonding.
-      This is temporariry workaround until option be suppoerted in 
-      os-net-config for vrouter
-    type: number
   ContrailSriovMode:
     default: 'kernel'
     type: string
@@ -204,8 +192,6 @@ resources:
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_
         - name: _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_
         - name: _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_
-        - name: _CONTRAIL_NIC_OFFLOAD_ENABLE_
-        - name: _CONTRAIL_LACP_RATE_
         - name: _IS_DPDK_
       outputs:
         - name: result
@@ -233,8 +219,6 @@ resources:
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image_only]}
         _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_param: ContrailDpdkOptions}
-        _CONTRAIL_NIC_OFFLOAD_ENABLE_: {get_param: ContrailNicOffloadEnable}
-        _CONTRAIL_LACP_RATE_: {get_param: ContrailLacpRate}
         _IS_DPDK_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, 'True', '']}
     depends_on:
       - SriovHostParametersDeployment
