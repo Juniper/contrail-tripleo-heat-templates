@@ -4,6 +4,42 @@
   hosts: localhost
 
   tasks:
+    - name: contrail settings
+      set_fact:
+        contrail_settings: "{{ _CONTRAIL_SETTINGS_ | default({})}}"      
+
+    - name: contrail nodedata if provided
+      block:
+      - name: get system dmi code
+        shell: |
+                #!/bin/sh
+                dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
+        register: dmi
+
+      - name: set dmi fact
+        set_fact:
+          dmi_uuid: "{{ dmi.stdout }}"
+
+      - name: set nodedata
+        set_fact:
+          nodedata: "{{ _NODEDATA_[dmi_uuid] }}"
+        when: _NODEDATA_[dmi_uuid] is defined
+
+      - name: set contrail_settings nodedata
+        set_fact:
+          nodedata: "{{ _NODEDATA_[dmi_uuid] }}"
+        when: _NODEDATA_[dmi_uuid] is defined
+
+      - name: update contrail settings with node data values
+        set_fact:
+          contrail_settings: "{{ contrail_settings | combine({item.key: item.value}) }}"
+        with_dict: "{{ nodedata[contrail_settings] }}"
+        when:
+          - nodedata is defined
+          - nodedata[contrail_settings] is defined
+
+      when: _NODEDATA_ is defined
+
     - name: create /var/lib/contrail
       file:
         path: "/var/lib/contrail"
@@ -40,6 +76,19 @@
 
     - name: start contrail dpdk init container
       block:
+        - set_fact:
+            dpdk_init_env_vars:
+              AGENT_MODE: dpdk
+              CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
+              CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
+              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
+              DPDK_COMMAND_ADDITIONAL_ARGS: "{{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }}"
+
+        - set_fact:
+            dpdk_init_env_vars: "{{ dpdk_init_env_vars | combine({item.key: item.value}) }}"
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
+
         - name: pull contrail vrouter dpdk agent container
           docker_image:
             name: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
@@ -61,18 +110,20 @@
               - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
               - /lib/modules:/lib/modules
               - /bin:/host/bin
-            env:
-              AGENT_MODE: dpdk
-              CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
-              CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
-              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
-              DPDK_COMMAND_ADDITIONAL_ARGS: "{{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }}"
-              NIC_OFFLOAD_ENABLE: "{{ _CONTRAIL_NIC_OFFLOAD_ENABLE_ }}"
-              LACP_RATE: "{{ _CONTRAIL_LACP_RATE_ }}"
+            env: "{{ dpdk_init_env_vars }}"
       when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
 
     - name: start contrail vrouter init container
       block:
+        - set_fact:
+            vrouter_init_env_vars:
+              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
+
+        - set_fact:
+            vrouter_init_env_vars: "{{ vrouter_init_env_vars | combine({item.key: item.value}) }}"
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
+
         - name: remove contrail init container if exists
           docker_container:
             name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
@@ -90,6 +141,6 @@
               - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
               - /lib/modules:/lib/modules
               - /bin:/host/bin
-            env:
-              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
+            env: "{{ vrouter_init_env_vars }}"
+
       when: _IS_DPDK_ is undefined or _IS_DPDK_ == ''
