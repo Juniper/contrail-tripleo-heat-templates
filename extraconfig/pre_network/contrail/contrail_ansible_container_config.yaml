@@ -4,6 +4,31 @@
   hosts: localhost
 
   tasks:
+    - name: get system dmi code
+      shell: |
+              #!/bin/sh
+              dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
+      register: dmi
+
+    - name: set dmi fact
+      set_fact:
+        dmi_uuid: "{{ dmi.stdout }}"
+
+    - name: Setup nodedata
+      block:
+      - name: set nodedata
+        set_fact:
+          nodedata: "{{ _NODEDATA_[dmi_uuid] }}"
+        when: _NODEDATA_[dmi_uuid] is defined
+
+      - name: write nodedata
+        copy:
+          dest: "/etc/puppet/hieradata/{{ dmi_uuid }}.json"
+          content: "{{ nodedata }}"
+        when: nodedata is defined
+
+      when: _NODEDATA_ is defined
+
     - name: create /var/lib/contrail
       file:
         path: "/var/lib/contrail"
@@ -40,6 +65,31 @@
 
     - name: start contrail dpdk init container
       block:
+        - name: get contrail_settings (dpdk)
+          shell: "hiera -c /etc/puppet/hiera.yaml contrail_settings ::uuid={{ dmi_uuid }} | sed 's/=>/:/g'"
+          register: contrail_settings_string
+
+        - name: turn contrail_settings into json (dpdk)
+          set_fact:
+            contrail_settings: "{{ contrail_settings_string.stdout | from_json }}"
+          when:
+            - contrail_settings_string is defined
+            - contrail_settings_string.stdout is defined
+            - contrail_settings_string.stdout != "nil"
+
+        - set_fact:
+            dpdk_init_env_vars:
+              AGENT_MODE: dpdk
+              CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
+              CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
+              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
+              DPDK_COMMAND_ADDITIONAL_ARGS: "{{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }}"
+
+        - set_fact:
+            dpdk_init_env_vars: "{{ dpdk_init_env_vars | combine({item.key: item.value}) }}"
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
+
         - name: pull contrail vrouter dpdk agent container
           docker_image:
             name: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
@@ -61,14 +111,7 @@
               - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
               - /lib/modules:/lib/modules
               - /bin:/host/bin
-            env:
-              AGENT_MODE: dpdk
-              CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
-              CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
-              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_CONTAINER_NAME_ }}"
-              DPDK_COMMAND_ADDITIONAL_ARGS: "{{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }}"
-              NIC_OFFLOAD_ENABLE: "{{ _CONTRAIL_NIC_OFFLOAD_ENABLE_ }}"
-              LACP_RATE: "{{ _CONTRAIL_LACP_RATE_ }}"
+            env: "{{ dpdk_init_env_vars }}"
       when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
 
     - name: start contrail vrouter init container
