@@ -121,6 +121,7 @@
     - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::FluentdClient
     - OS::TripleO::Services::VipHosts
+    - OS::TripleO::Services::ContrailIssuCompute
 
 - name: BlockStorage
   ServicesDefault:
@@ -220,6 +221,7 @@
     - OS::TripleO::Services::NeutronSriovAgent
     - OS::TripleO::Services::FluentdClient
     - OS::TripleO::Services::VipHosts
+    - OS::TripleO::Services::ContrailIssuCompute
 
 - name: ContrailDpdk
   ServicesDefault:
@@ -240,6 +242,7 @@
     - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::FluentdClient
     - OS::TripleO::Services::VipHosts
+    - OS::TripleO::Services::ContrailIssuCompute
 
 - name: ContrailControllerIssu
   CountDefault: 0
