@@ -12,62 +12,56 @@ exec 2>&1
 echo "=================== $(date) ==================="
 set -xv
 
+cat <<EOF > /tmp/contrail_issu_selinux.te
+module contrail_issu_selinux 1.0;
+
+require {
+        type ifconfig_t;
+        type user_tmp_t;
+        type haproxy_exec_t;
+        type var_lib_t;
+        type http_port_t;
+        type container_var_run_t;
+        type svirt_t;
+        type var_run_t;
+        type virtlogd_t;
+        type spc_t;
+        class process setrlimit;
+        class capability { kill net_bind_service setgid setuid sys_resource };
+        class tcp_socket name_bind;
+        class sock_file { create link rename unlink setattr write };
+        class dir { add_name mounton remove_name write search };
+        class file { create execute execute_no_trans getattr open read unlink write };
+}
+
+#============= ifconfig_t ==============
+allow ifconfig_t user_tmp_t:dir mounton;
+allow ifconfig_t haproxy_exec_t:file { execute execute_no_trans open read };
+allow ifconfig_t http_port_t:tcp_socket name_bind;
+allow ifconfig_t self:capability { kill net_bind_service setgid setuid sys_resource };
+allow ifconfig_t self:process setrlimit;
+allow ifconfig_t var_lib_t:dir { add_name remove_name write };
+allow ifconfig_t var_lib_t:file { create getattr unlink open read write };
+allow ifconfig_t var_lib_t:sock_file { create link rename unlink setattr write };
+
+#============= svirt_t ==============
+allow svirt_t container_var_run_t:dir { add_name remove_name write };
+allow svirt_t container_var_run_t:sock_file { create unlink };
+allow svirt_t var_run_t:sock_file { create unlink };
+
+#============= virtlogd_t ==============
+allow virtlogd_t spc_t:dir search;
+allow virtlogd_t spc_t:file { open read };
+
+EOF
+
+/bin/checkmodule -M -m -o /tmp/contrail_issu_selinux.mod /tmp/contrail_issu_selinux.te
+/bin/semodule_package -o /tmp/contrail_issu_selinux.pp -m /tmp/contrail_issu_selinux.mod
+/sbin/semodule -i /tmp/contrail_issu_selinux.pp
+
 # WARNING: docker-compose doesnt work properly with selinux,
 # so it is needed to disable selinux temporary during upgrade
 # procedure instead of configuring selinux policies
-#
-# cat <<EOF > /tmp/contrail_issu_selinux.te
-# module contrail_issu_selinux 1.0;
-# require {
-#         type ifconfig_t;
-#         type user_tmp_t;
-#         type http_port_t;
-#         type haproxy_exec_t;
-#         type var_lib_t;
-#         type var_log_t;
-#         type var_run_t;
-#         type container_t;
-#         type container_log_t;
-#         type container_var_lib_t;
-#         type container_var_run_t;
-#         type svirt_t;
-#         type bin_t;
-
-#         class process setrlimit;
-#         class capability { kill net_bind_service setgid setuid sys_resource };
-#         class tcp_socket name_bind;
-#         class sock_file { create link rename unlink setattr write };
-#         class dir { create add_name mounton remove_name write setattr };
-#         class file { create execute execute_no_trans getattr open read unlink write };
-
-# }
-
-# allow ifconfig_t user_tmp_t:dir mounton;
-# allow ifconfig_t haproxy_exec_t:file { execute execute_no_trans open read };
-# allow ifconfig_t http_port_t:tcp_socket name_bind;
-
-# allow ifconfig_t self:capability { kill net_bind_service setgid setuid sys_resource };
-# allow ifconfig_t self:process setrlimit;
-
-# allow ifconfig_t var_lib_t:dir { add_name remove_name write };
-# allow ifconfig_t var_lib_t:file { create getattr unlink open read write append };
-# allow ifconfig_t var_lib_t:sock_file { create link rename unlink setattr write };
-
-# allow svirt_t container_var_run_t:dir { add_name remove_name write };
-# allow svirt_t container_var_run_t:sock_file { create unlink };
-
-# allow container_t container_var_lib_t:dir { create setattr add_name remove_name write };
-# allow container_t container_log_t:dir { create setattr add_name remove_name write };
-
-# allow container_t var_log_t:dir { create setattr add_name remove_name write };
-# allow container_t var_log_t:file { create getattr unlink open read write append };
-
-# allow container_t bin_t:file write;
-
-# EOF
-# /bin/checkmodule -M -m -o /tmp/contrail_issu_selinux.mod /tmp/contrail_issu_selinux.te
-# /bin/semodule_package -o /tmp/contrail_issu_selinux.pp -m /tmp/contrail_issu_selinux.mod
-# /sbin/semodule -i /tmp/contrail_issu_selinux.pp
 setenforce 0
 getenforce
 #
@@ -75,6 +69,9 @@ getenforce
 mkdir -p /var/crashes
 chmod 755 /var/crashes
 yum install -y docker python-docker-py python27-python-pip libselinux-python
+if ! yum install -y python-paunch ; then
+    yum install -y --enablerepo=rhel-7-server-openstack-13-rpms python-paunch
+fi
 source scl_source enable python27
 pip install --upgrade pip
 pip install docker-compose
@@ -104,7 +101,7 @@ if [[ ${contrail_registry_insecure,,} == 'true' ]]; then
 fi
 systemctl enable docker
 systemctl restart docker
-sleep 5
+sleep 10
 if [[ -n ${contrail_registry_user} && -n ${contrail_registry_password} ]]; then
     docker login -u ${contrail_registry_user} -p ${contrail_registry_password} ${contrail_registry}
 fi
