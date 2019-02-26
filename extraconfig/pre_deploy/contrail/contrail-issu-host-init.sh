@@ -26,12 +26,17 @@ require {
         type var_run_t;
         type virtlogd_t;
         type spc_t;
-        class process setrlimit;
+        type container_t;
+        type container_log_t;
+        type dhcpc_t;
+        type NetworkManager_t;
+        type unconfined_service_t;
+        class process { setrlimit signal signull };
         class capability { kill net_bind_service setgid setuid sys_resource };
         class tcp_socket name_bind;
         class sock_file { create link rename unlink setattr write };
         class dir { add_name mounton remove_name write search };
-        class file { create execute execute_no_trans getattr open read unlink write };
+        class file { create execute execute_no_trans getattr open read append unlink write };
 }
 
 #============= ifconfig_t ==============
@@ -48,6 +53,17 @@ allow ifconfig_t var_lib_t:sock_file { create link rename unlink setattr write }
 allow svirt_t container_var_run_t:dir { add_name remove_name write };
 allow svirt_t container_var_run_t:sock_file { create unlink };
 allow svirt_t var_run_t:sock_file { create unlink };
+
+#============= container_t ==============
+allow container_t container_log_t:dir { add_name write };
+allow container_t container_log_t:file { append create open };
+
+#============= dhcpc_t ==============
+allow dhcpc_t var_run_t:file { read write };
+
+#============= NetworkManager_t ==============
+allow NetworkManager_t unconfined_service_t:process { signal signull };
+allow NetworkManager_t var_run_t:file { getattr open read unlink };
 
 #============= virtlogd_t ==============
 allow virtlogd_t spc_t:dir search;
