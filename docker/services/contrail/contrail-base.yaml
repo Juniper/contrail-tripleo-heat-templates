@@ -191,6 +191,12 @@ conditions:
       - contrail_tls_enabled
       - contrail_ipa_ca
       - {equals: [{get_param: ContrailCaCertFile}, {get_param: InternalTLSCAFile}]}
+
+  contrail_api_ssl_enabled:
+    and:
+      - is_not_5_0
+      - contrail_tls_enabled
+
   # tripleo-heat-templates/docker/services/haproxy.yaml:
   # NOTE(jaosorior): We disable the CRL since we have no way to restart haproxy
   # when this is updated
@@ -330,7 +336,7 @@ outputs:
           - member_options: *haproxy_config_settings_member_options_tls
       haproxy_config_settings_api: &haproxy_config_settings_api
         if:
-          - contrail_tls_enabled
+          - contrail_api_ssl_enabled
           - *haproxy_config_settings_tls
           - *haproxy_config_settings
       haproxy_config_settings_webui: &haproxy_config_settings_webui
