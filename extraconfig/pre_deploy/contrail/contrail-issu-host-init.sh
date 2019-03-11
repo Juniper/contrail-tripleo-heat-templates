@@ -104,17 +104,32 @@ if [[ ${contrail_registry_insecure,,} == 'true' ]]; then
     registries=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"--insecure-registry" '{$1="";print $0;}' |tr  "\"" " "`
     for reg in $registries; do if [[ ${reg} == ${contrail_registry} ]]; then found=1; fi; done
     if [[ ${found} -eq 0 ]]; then
-    registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
-    registry_string="${registry_string} --insecure-registry ${registry_name}"
-    complete_string="INSECURE_REGISTRY=\"${registry_string}\""
-    echo ${complete_string}
-    if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
-        sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
-    else
-        echo ${complete_string} >> /etc/sysconfig/docker
-    fi
+        registry_string=`cat /etc/sysconfig/docker |grep INSECURE_REGISTRY |awk -F"INSECURE_REGISTRY=\"" '{print $2}'|tr "\"" " "`
+        registry_string="${registry_string} --insecure-registry ${registry_name}"
+        complete_string="INSECURE_REGISTRY=\"${registry_string}\""
+        echo ${complete_string}
+        if [[ `grep INSECURE_REGISTRY /etc/sysconfig/docker` ]]; then
+            sed -i "s/^INSECURE_REGISTRY=.*/${complete_string}/" /etc/sysconfig/docker
+        else
+            echo ${complete_string} >> /etc/sysconfig/docker
+        fi
     fi
 fi
+
+# enable docker live-restore
+cur_opt_line=$(cat /etc/sysconfig/docker | grep 'OPTIONS=' | awk -F 'OPTIONS=' '{print($2)}' | tr -d "'")
+if ! echo "$cur_opt_line" | grep -q 'log-driver' ; then
+    cur_opt_line+=" --log-driver=journald"
+fi
+if ! echo "$cur_opt_line" | grep -q 'signature-verification' ; then
+    cur_opt_line+=" --signature-verification=false"
+fi
+if ! echo "$cur_opt_line" | grep -q 'live-restore' ; then
+    cur_opt_line+=" --live-restore"
+fi
+sed -i '/OPTIONS=/d' /etc/sysconfig/docker
+echo "OPTIONS='$cur_opt_line'" >> /etc/sysconfig/docker
+
 systemctl enable docker
 systemctl restart docker
 sleep 10
