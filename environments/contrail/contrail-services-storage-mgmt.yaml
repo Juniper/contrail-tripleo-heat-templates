@@ -18,8 +18,8 @@ resource_registry:
   OS::TripleO::Services::ContrailDpdk: ../../puppet/services/network/contrail-dpdk.yaml
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../puppet/services/network/contrail-vrouter.yaml
   OS::TripleO::Services::NeutronCorePlugin: ../../puppet/services/network/contrail-neutron-plugin.yaml
-  OS::TripleO::Services::ContrailIssu: ../../puppet/services/network/contrail-issu.yaml
-  OS::TripleO::Services::ContrailIssuCompute: ../../puppet/services/network/contrail-issu-compute.yaml
+  OS::TripleO::Services::ContrailIssu: OS::Heat::None
+  OS::TripleO::Services::ContrailIssuCompute: OS::Heat::None
 parameter_defaults:
   ServiceNetMap:
     ContrailAnalyticsNetwork: storage_mgmt
