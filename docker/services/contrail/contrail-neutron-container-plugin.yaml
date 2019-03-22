@@ -48,7 +48,7 @@ parameters:
   NeutronApiExtensionPath:
     description: Path to Neutron API plugin
     type: string
-    default: '/opt/plugin/site-packages/neutron_plugin_contrail/extensions:/opt/plugin/site-packages/neutron_lbaas/extensions'
+    default: '/opt/plugin/site-packages/neutron_plugin_contrail/extensions:/usr/lib/python2.7/site-packages/neutron_lbaas/extensions'
   NeutronCorePlugin:
     description: Neutron Core Plugin Name
     type: string

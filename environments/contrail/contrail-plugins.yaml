@@ -44,7 +44,7 @@ parameter_defaults:
   NeutronApiOptVolumes:
     - 'opt_plugin:/opt/plugin'
     - '/etc/contrail/ssl:/etc/contrail/ssl'
-  NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages']
+  NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages:/usr/lib/python2.7/site-packages']
   NovaComputeOptEnvVars: ['PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin']
   NovaComputeOptVolumes:
     - vrouter_port_control:/opt/plugin/bin
@@ -56,7 +56,7 @@ parameter_defaults:
     - '/etc/contrail/ssl:/etc/contrail/ssl'
     - 'contrail_heat_opt_plugin:/opt/plugin'
   HeatEngineOptEnvVars:
-    - 'PYTHONPATH=/opt/plugin/site-packages'
+    - 'PYTHONPATH=/opt/plugin/site-packages:/usr/lib/python2.7/site-packages'
   HeatEnginePluginDirs:
     - '/opt/plugin/site-packages/vnc_api/gen/heat/resources'
     - '/opt/plugin/site-packages/contrail_heat/resources'
