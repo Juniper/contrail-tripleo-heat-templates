@@ -93,9 +93,10 @@ outputs:
             image: &contrail_nova_plugin_image {get_attr: [DockerContrailNovaPluginImageNormalize, contrail_image]}
             volumes:
               - vrouter_port_control:/opt/plugin/bin
-              - vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
-              - nova_contrail_vif:/usr/lib/python2.7/site-packages/nova_contrail_vif
-              - nova_contrail_vif_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
+              - nova_contrail_vif:/opt/plugin/site-packages/nova_contrail_vif
+              - nova_contrail_vif_egg:/opt/plugin/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
+              - vif_plug_vrouter:/opt/plugin/site-packages/vif_plug_vrouter
+              - vif_plug_contrail_vrouter:/opt/plugin/site-packages/vif_plug_contrail_vrouter
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
