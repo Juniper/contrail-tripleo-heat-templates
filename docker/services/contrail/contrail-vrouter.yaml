@@ -26,6 +26,9 @@ parameters:
       when vrouter is loaded by ifup scripts called by os-collect-config from host.
       E.g. vr_mpls_labels=196000 vr_nexthops=521000 vr_vrfs=65536 vr_bridge_entries=1000000
     type: string
+  NovaComputeOptVolumes:
+    description: list of optional volumes to be mounted
+    type: comma_delimited_list
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -102,7 +105,7 @@ outputs:
           contrail_nova_plugin:
             image: &contrail_nova_plugin_image {get_attr: [DockerContrailNovaPluginImageNormalize, contrail_image]}
             volumes:
-              - vrouter_port_control:/opt/plugin/bin
+              {get_param: NovaComputeOptVolumes}
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
