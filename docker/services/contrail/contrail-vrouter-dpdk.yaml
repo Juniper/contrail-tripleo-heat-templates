@@ -16,6 +16,9 @@ parameters:
     description: Metadata Secret
     type: string
     hidden: true
+  NovaComputeOptVolumes:
+    description: list of optional volumes to be mounted
+    type: comma_delimited_list
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -92,10 +95,7 @@ outputs:
           contrail_nova_plugin:
             image: &contrail_nova_plugin_image {get_attr: [DockerContrailNovaPluginImageNormalize, contrail_image]}
             volumes:
-              - vrouter_port_control:/opt/plugin/bin
-              - vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
-              - nova_contrail_vif:/usr/lib/python2.7/site-packages/nova_contrail_vif
-              - nova_contrail_vif_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
+              {get_param: NovaComputeOptVolumes}
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
