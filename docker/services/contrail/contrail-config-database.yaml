@@ -275,8 +275,61 @@ outputs:
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
 
-      upgrade_tasks: []
-      post_upgrade_tasks: []
+      update_tasks:
+        # 5.0.2 => 5.0.3 case:
+        #   5.0.2:  config_cassandra:/var/lib/cassandra/data
+        #   5.0.3:  config_cassandra:/var/lib/cassandra
+        #
+        #   So, it is needed to move data from the volume into data sub-folder
+        - name: Update contrail_config_database data
+          when:
+            - step|int == 0
+          block: &contrail_config_database_update_data
+            - name: Find out current volume name of contrail_config_database container for old mount path
+              shell: >
+                docker inspect contrail_config_database | jq -r '.[].Mounts | .[] | select(.Destination =="/var/lib/cassandra/data") | .Name'
+              register:
+                contrail_config_database_volume_name
+            - name: Move contrail_config_database_volume folders to the data subfolder
+              when: contrail_config_database_volume_name.stdout != ''
+              block:
+              - name: Stop previous contrail_config_database container
+                docker_container:
+                  name: contrail_config_database
+                  state: stopped
+                ignore_errors: yes
+              - name: Get contrail_config_database_volume_name location  
+                shell: >
+                  docker inspect {{ contrail_config_database_volume_name.stdout }} | jq -r '.[].Mountpoint'
+                register:
+                  contrail_config_database_volume_location
+              - name: Make contrail_config_database_volume data subfolder 
+                when: contrail_config_database_volume_location.stdout != ''
+                shell: >
+                  mkdir -p {{ contrail_config_database_volume_location.stdout }}/data
+              - name: Move contrail_config_database_volume data subfolder 
+                when: contrail_config_database_volume_location.stdout != ''
+                shell: >
+                  find {{ contrail_config_database_volume_location.stdout }} -maxdepth 1 -mindepth 1 -path {{ contrail_config_database_volume_location.stdout }}/data -o -prune -execdir mv {} {{ contrail_config_database_volume_location.stdout }}/data/ \;
+              - name: Find out commitlog volume for contrail_config_database container for old mount path
+                shell: >
+                  docker inspect contrail_config_database | jq -r '.[].Mounts | .[] | select(.Destination =="/var/lib/cassandra") | .Name'
+                register:
+                  contrail_config_database_log_volume_name
+              - name: Move commitlog from unnamed volume to new named one
+                when: contrail_config_database_log_volume_name.stdout != ''
+                block:
+                - name: Get contrail_config_database_log_volume_name location  
+                  shell: >
+                    docker inspect {{ contrail_config_database_log_volume_name.stdout }} | jq -r '.[].Mountpoint'
+                  register:
+                    contrail_config_database_log_volume_location
+                - name: Move commitlog data to the new volume
+                  when: contrail_config_database_log_volume_location.stdout != ''
+                  shell: >
+                    mv {{ contrail_config_database_log_volume_location }}/commitlog {{ contrail_config_database_volume_location.stdout }}/
+
+      post_update_tasks: []
 
       fast_forward_upgrade_tasks:
         - name: Stop contrail config database services
@@ -293,4 +346,10 @@ outputs:
         get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
 
       upgrade_tasks:
-        get_attr: [ContrailBase, role_data, upgrade_tasks_common]
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, upgrade_tasks_common]}
+          - - name: Upgrade contrail_config_database data
+              block: *contrail_config_database_update_data
+              when: step|int == 0
+
+      post_upgrade_tasks: []
