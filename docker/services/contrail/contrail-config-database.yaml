@@ -288,14 +288,17 @@ outputs:
             - name: Log contrail_config_database inspect
               shell: >
                 docker inspect contrail_config_database > /tmp/contrail_config_database_inspect 2>&1
+              ignore_errors: yes
             - name: Find out current volume name of contrail_config_database container for old mount path
               shell: >
                 docker inspect contrail_config_database | jq -r '.[].Mounts | .[] | select(.Destination =="/var/lib/cassandra/data") | .Name'
               register:
                 contrail_config_database_volume_name
+              ignore_errors: yes
             - name: Log contrail_config_database_volume_name
               shell: >
                 echo {{ contrail_config_database_volume_name.stdout }} > /tmp/contrail_config_database_volume_name 2>&1
+              ignore_errors: yes
             - name: Move contrail_config_database_volume folders to the data subfolder
               when: contrail_config_database_volume_name.stdout != ''
               block:
