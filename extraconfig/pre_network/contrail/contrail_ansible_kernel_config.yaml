@@ -8,6 +8,10 @@
     - name: init kernel arg list
       set_fact:
         kernel_arg_list: []
+    - name: append KernelArgs if defined
+      set_fact:
+        kernel_arg_list: "{{ kernel_arg_list }} + [ '{{ _KERNEL_ARGS_ }}' ]" 
+      when: (_KERNEL_ARGS_ is defined and _KERNEL_ARGS_ != '')
     - name: set kernel iommu arg
       set_fact:
         kernel_arg_list: "{{ kernel_arg_list }} + [ 'iommu=pt' ]"

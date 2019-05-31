@@ -87,6 +87,10 @@ parameters:
     default: {}
     description: Contrail Service settings
     type: json
+  KernelArgs:
+    default: ''
+    type: string
+    description: Kernel arguments to apply to host
 
 description: >
   This template installs the Contrail kernel module  packages in order
@@ -99,6 +103,7 @@ conditions:
       - {not: {equals: [{get_param: ContrailVrouterHugepages1GB}, ""]}}
       - {not: {equals: [{get_param: [RoleParameters, TunedProfileName]}, ""]}}
       - {not: {equals: [{get_param: [RoleParameters, IsolCpusList]}, ""]}}
+      - {not: {equals: [{get_param: KernelArgs}, ""]}}
   deployment_actions_empty:
     equals:
       - {get_param: deployment_actions}
@@ -213,6 +218,7 @@ resources:
         - name: _CONTRAIL_HUGEPAGES_1GB_
         - name: _TUNED_PROFILE_NAME_
         - name: _TUNED_CORES_
+        - name: _KERNEL_ARGS_
       outputs:
         - name: result
       config:
@@ -236,6 +242,7 @@ resources:
         _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailVrouterHugepages1GB}
         _TUNED_PROFILE_NAME_: {get_param: [RoleParameters, TunedProfileName]}
         _TUNED_CORES_: {get_param: [RoleParameters, IsolCpusList]}
+        _KERNEL_ARGS_: {get_param: KernelArgs}
 
   RebootConfig:
     type: OS::Heat::SoftwareConfig
