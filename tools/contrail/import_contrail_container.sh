@@ -116,6 +116,7 @@ DockerContrailNodemgrImageName:contrail-nodemgr
 DockerContrailNovaPluginImageName:contrail-openstack-compute-init
 DockerContrailRabbitmqImageName:contrail-external-rabbitmq
 DockerContrailRedisImageName:contrail-external-redis
+DockerContrailStunnelImageName:contrail-external-stunnel
 DockerContrailStatusImageName:contrail-status
 DockerContrailVrouterAgentContainerName:contrail-vrouter-agent
 DockerContrailVrouterAgentDpdkContainerName:contrail-vrouter-agent-dpdk
