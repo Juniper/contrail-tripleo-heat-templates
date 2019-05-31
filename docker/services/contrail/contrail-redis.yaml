@@ -49,15 +49,34 @@ parameters:
   env_file_name:
     type: string
     default: ""
+  ContrailSslEnabled:
+    description:  Flag to identify is SSL should be used in internal Contrail
+                  services communications (sandesh, introspect, xmpp, redis ..).
+    type: boolean
+    default: false
+  DockerContrailStunnelImageName:
+    description: image
+    type: string
+    default: "contrail-external-stunnel"
 
 conditions:
   env_file_unset: {equals : [{get_param: env_file_name}, '']}
+  contrail_tls_enabled: {equals: [{get_param: ContrailSslEnabled}, true]}
+  contrail_redis_ssl_enabled:
+    and:
+      - is_not_5_0
+      - contrail_tls_enabled
 
 resources:
   DockerContrailRedisImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailRedisImageName}
+
+  DockerContrailStunnelImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailStunnelImageName}
 
   ContrailBase:
     type: contrail-base.yaml
@@ -74,6 +93,7 @@ outputs:
     description: Role data for the Contrail Redis common part.
     value:
       contrail_redis_image_name: &contrail_redis_image_name {get_attr: [DockerContrailRedisImageNormalize, contrail_image]}
+      contrail_stunnel_image_name: &contrail_stunnel_image_name {get_attr: [DockerContrailStunnelImageNormalize, contrail_image]}
       contrail_redis_ports:
         - {get_param: ContrailRedisPort}
       docker_config:
@@ -96,3 +116,27 @@ outputs:
                     list_concat:
                       - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                       - - {get_param: env_file_name}
+          - if:
+              - contrail_redis_ssl_enabled
+              - contrail_stunnel:
+                  map_merge:
+                    - image: *contrail_stunnel_image_name
+                      net: host
+                      privileged: false
+                      detach: true
+                      user: root
+                      restart: always
+                      volumes:
+                        list_concat:
+                          - - /etc/contrail/ssl:/etc/contrail/ssl:ro
+                      environment:
+                        get_attr: [ContrailBase, role_data, contrail_base_env]
+                    - if:
+                      - env_file_unset
+                      - env_file:
+                          get_attr: [ContrailBase, role_data, contrail_base_env_file]
+                      - env_file:
+                          list_concat:
+                            - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                            - - {get_param: env_file_name}
+              - null
