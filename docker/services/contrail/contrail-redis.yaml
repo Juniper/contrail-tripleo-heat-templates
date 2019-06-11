@@ -104,24 +104,27 @@ outputs:
       docker_config:
         step_4:
           map_merge:
-          - contrail_redis:
-              - image: *contrail_redis_image_name
-                net: host
-                privileged: false
-                detach: true
-                user: root
-                restart: always
-                environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
-              - if:
-                - env_file_unset
-                - env_file:
-                    get_attr: [ContrailBase, role_data, contrail_base_env_file]
-                - env_file:
-                    list_concat:
-                      - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                      - - {get_param: env_file_name}
-          - if:
+            - contrail_redis:
+                map_merge:
+                  - image: *contrail_redis_image_name
+                    net: host
+                    privileged: false
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                    environment:
+                      get_attr: [ContrailBase, role_data, contrail_base_env]
+                  - if:
+                    - env_file_unset
+                    - env_file:
+                        get_attr: [ContrailBase, role_data, contrail_base_env_file]
+                    - env_file:
+                        list_concat:
+                          - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                          - - {get_param: env_file_name}
+            - if:
               - contrail_redis_ssl_enabled
               - contrail_stunnel:
                   map_merge:
@@ -132,8 +135,7 @@ outputs:
                       user: root
                       restart: always
                       volumes:
-                        list_concat:
-                          - - /etc/contrail/ssl:/etc/contrail/ssl:ro
+                        get_attr: [ContrailBase, role_data, contrail_base_volumes]
                       environment:
                         get_attr: [ContrailBase, role_data, contrail_base_env]
                     - if:
