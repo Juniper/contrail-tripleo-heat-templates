@@ -111,6 +111,8 @@ outputs:
                 detach: true
                 user: root
                 restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
               - if:
@@ -124,24 +126,22 @@ outputs:
           - if:
               - contrail_redis_ssl_enabled
               - contrail_stunnel:
-                  map_merge:
-                    - image: *contrail_stunnel_image_name
-                      net: host
-                      privileged: false
-                      detach: true
-                      user: root
-                      restart: always
-                      volumes:
+                  - image: *contrail_stunnel_image_name
+                    net: host
+                    privileged: false
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                    environment:
+                      get_attr: [ContrailBase, role_data, contrail_base_env]
+                  - if:
+                    - env_file_unset
+                    - env_file:
+                        get_attr: [ContrailBase, role_data, contrail_base_env_file]
+                    - env_file:
                         list_concat:
-                          - - /etc/contrail/ssl:/etc/contrail/ssl:ro
-                      environment:
-                        get_attr: [ContrailBase, role_data, contrail_base_env]
-                    - if:
-                      - env_file_unset
-                      - env_file:
-                          get_attr: [ContrailBase, role_data, contrail_base_env_file]
-                      - env_file:
-                          list_concat:
-                            - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                            - - {get_param: env_file_name}
+                          - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                          - - {get_param: env_file_name}
               - null
