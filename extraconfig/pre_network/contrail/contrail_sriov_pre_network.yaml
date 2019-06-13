@@ -21,6 +21,12 @@ parameters:
       toplevel DeploymentServerBlacklist parameter's value.
   server:
     type: string
+  KernelArgs:
+    default: ""
+    type: string
+    description: Kernel Args to apply to the host
+    tags:
+      - role_specific
   TunedProfileName:
     default: ""
     type: string
@@ -285,6 +291,7 @@ resources:
         _CONTRAIL_SRIOV_NUM_VFS_: {get_param: ContrailSriovNumVFs}
         _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailSriovHugepages2MB}
         _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailSriovHugepages1GB}
+        _KERNEL_ARGS_: {get_param: [RoleParameters, KernelArgs]}
         _TUNED_PROFILE_NAME_: {get_param: [RoleParameters, TunedProfileName]}
         _TUNED_CORES_: {get_param: [RoleParameters, IsolCpusList]}
 

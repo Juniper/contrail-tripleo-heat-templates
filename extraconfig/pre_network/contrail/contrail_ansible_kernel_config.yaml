@@ -5,28 +5,40 @@
 
   tasks:
     # Kernel Args Configuration
+    - name: convert _KERNEL_ARGS_ to list if defined
+      set_fact:
+        _KERNEL_ARGS_: "{{ _KERNEL_ARGS_.split() }}"
+      when: _KERNEL_ARGS_ | default("") != ""
+    - name: init _KERNEL_ARGS_ if undefined
+      set_fact:
+        _KERNEL_ARGS_: []
+      when: _KERNEL_ARGS_ is undefined
     - name: init kernel arg list
       set_fact:
         kernel_arg_list: []
-    - name: set kernel iommu arg
+    - name: set kernel iommu args
       set_fact:
-        kernel_arg_list: "{{ kernel_arg_list }} + [ 'iommu=pt' ]"
-      when: (_CONTRAIL_DPDK_DRIVER_ is defined and _CONTRAIL_DPDK_DRIVER_ == "vfio-pci") or (_CONTRAIL_SRIOV_NUM_VFS_ is defined and _CONTRAIL_SRIOV_NUM_VFS_ != '')
-    - name: set kernel intel_iommu arg
-      set_fact:
-        kernel_arg_list: "{{ kernel_arg_list }} + [ 'intel_iommu=on' ]"
-      when: (_CONTRAIL_DPDK_DRIVER_ is defined and _CONTRAIL_DPDK_DRIVER_ == "vfio-pci") or (_CONTRAIL_SRIOV_NUM_VFS_ is defined and _CONTRAIL_SRIOV_NUM_VFS_ != '')
+        kernel_arg_list: "{{ kernel_arg_list }} + [ 'iommu=pt', 'intel_iommu=on' ]"
+      when: (_CONTRAIL_DPDK_DRIVER_ | default("") == "vfio-pci") or (_CONTRAIL_SRIOV_NUM_VFS_ | default("") != "")
     - name: set kernel 1GB hugepage arg
       set_fact:
         kernel_arg_list: "{{ kernel_arg_list }} + [ 'default_hugepagesz=1GB hugepagesz=1G hugepages={{ _CONTRAIL_HUGEPAGES_1GB_ }}' ]"
-      when: _CONTRAIL_HUGEPAGES_1GB_ != ""
+      when: _CONTRAIL_HUGEPAGES_1GB_ | default("") != ""
     - name: set kernel 2MB hugepage arg
       set_fact:
         kernel_arg_list: "{{ kernel_arg_list }} + [ 'hugepagesz=2M hugepages={{ _CONTRAIL_HUGEPAGES_2MB_ }}' ]"
-      when: _CONTRAIL_HUGEPAGES_2MB_ != ""
-    - name: set _KERNEL_ARGS_ string
+      when: _CONTRAIL_HUGEPAGES_2MB_ | default("") != ""
+    - name: add new items to _KERNEL_ARGS_
       set_fact:
-        _KERNEL_ARGS_: "{{ kernel_arg_list | join(' ') }}"
+        _KERNEL_ARGS_: "{{ _KERNEL_ARGS_ }} + [ '{{ item }}' ]"
+      when: item not in _KERNEL_ARGS_
+      with_items: "{{ kernel_arg_list }}"
+    - name: convert _KERNEL_ARGS_ to string
+      set_fact:
+        _KERNEL_ARGS_: "{{ _KERNEL_ARGS_ | join(' ') }}"
+    - debug:
+        msg: "_KERNEL_ARGS_: '{{ _KERNEL_ARGS_ }}'"
+
     - block:
         - name: set default grub file
           set_fact:
