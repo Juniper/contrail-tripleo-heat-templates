@@ -109,7 +109,9 @@ conditions:
   is_kernel_config_required:
     or:
       - {not: {equals: [{get_param: ContrailDpdkHugepages1GB}, ""]}}
+      - {not: {equals: [{get_param: [RoleParameters, ContrailDpdkHugepages1GB]}, ""]}}
       - {equals: [{get_param: ContrailDpdkDriver}, "vfio-pci"]}
+      - {equals: [{get_param: [RoleParameters, ContrailDpdkDriver]}, "vfio-pci"]}
       - {not: {equals: [{get_param: [RoleParameters, KernelArgs]}, ""]}}
       - {not: {equals: [{get_param: [RoleParameters, TunedProfileName]}, ""]}}
       - {not: {equals: [{get_param: [RoleParameters, IsolCpusList]}, ""]}}
@@ -147,9 +149,17 @@ resources:
         map_replace:
           - map_replace:
             - contrail_settings: ContrailSettings
+              hugepages_2mb: ContrailDpdkHugepages2MB
+              hugepages_1gb: ContrailDpdkHugepages1GB
+              dpdk_driver: ContrailDpdkDriver
+              dpdk_options: ContrailDpdkOptions
             - values: {get_param: [RoleParameters]}
           - values:
               ContrailSettings: {get_param: ContrailSettings}
+              ContrailDpdkHugepages2MB: {get_param: ContrailDpdkHugepages2MB}
+              ContrailDpdkHugepages1GB: {get_param: ContrailDpdkHugepages1GB}
+              ContrailDpdkDriver: {get_param: ContrailDpdkDriver}
+              ContrailDpdkOptions: {get_param: ContrailDpdkOptions}
 
   DpdkHostParametersConfig:
     type: OS::Heat::SoftwareConfig
@@ -176,8 +186,8 @@ resources:
           - []
           - ['CREATE'] # Only do this on CREATE
       input_values:
-        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailDpdkHugepages1GB}
-        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailDpdkHugepages2MB}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_1gb]}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_2mb]}
         _IS_DPDK_: "True"
 
   DpdkContainerParametersConfig:
@@ -222,7 +232,7 @@ resources:
         _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_: {get_attr: [DockerContrailVrouterAgentDpdkImageNormalize, contrail_image_only]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image_only]}
-        _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_param: ContrailDpdkOptions}
+        _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_attr: [ContrailSettingsRoleParametersValue, value, dpdk_options]}
         _IS_DPDK_: "True"
     depends_on:
       - DpdkHostParametersDeployment
@@ -261,9 +271,9 @@ resources:
           - []
           - ['CREATE'] # Only do this on CREATE
       input_values:
-        _CONTRAIL_DPDK_DRIVER_: {get_param: ContrailDpdkDriver}
-        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailDpdkHugepages2MB}
-        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailDpdkHugepages1GB}
+        _CONTRAIL_DPDK_DRIVER_: {get_attr: [ContrailSettingsRoleParametersValue, value, dpdk_driver]}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_1gb]}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_2mb]}
         _KERNEL_ARGS_: {get_param: [RoleParameters, KernelArgs]}
         _TUNED_PROFILE_NAME_: {get_param: [RoleParameters, TunedProfileName]}
         _TUNED_CORES_: {get_param: [RoleParameters, IsolCpusList]}

@@ -103,6 +103,7 @@ conditions:
   is_kernel_config_required:
     or:
       - {not: {equals: [{get_param: ContrailVrouterHugepages1GB}, ""]}}
+      - {not: {equals: [{get_param: [RoleParameters, ContrailVrouterHugepages1GB]}, ""]}}
       - {not: {equals: [{get_param: [RoleParameters, KernelArgs]}, ""]}}
       - {not: {equals: [{get_param: [RoleParameters, TunedProfileName]}, ""]}}
       - {not: {equals: [{get_param: [RoleParameters, IsolCpusList]}, ""]}}
@@ -135,10 +136,16 @@ resources:
         map_replace:
           - map_replace:
             - contrail_settings: ContrailSettings
+              hugepages_2mb: ContrailVrouterHugepages2MB
+              hugepages_1gb: ContrailVrouterHugepages1GB
+              vrouter_module_opts: ContrailVrouterModuleOptions
             - values: {get_param: [RoleParameters]}
           - values:
               ContrailSettings: {get_param: ContrailSettings}
-
+              ContrailVrouterHugepages2MB: {get_param: ContrailVrouterHugepages2MB}
+              ContrailVrouterHugepages1GB: {get_param: ContrailVrouterHugepages1GB}
+              ContrailVrouterModuleOptions: {get_param: ContrailVrouterModuleOptions}
+              
   VrouterHostParametersConfig:
     type: OS::Heat::SoftwareConfig
     properties:
@@ -163,8 +170,8 @@ resources:
           - []
           - ['CREATE'] # Only do this on CREATE
       input_values:
-        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailVrouterHugepages1GB}
-        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailVrouterHugepages2MB}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_1gb]}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_2mb]}
 
   VrouterContainerParametersConfig:
     type: OS::Heat::SoftwareConfig
@@ -201,7 +208,7 @@ resources:
         _CONTRAIL_SETTINGS_: {get_attr: [ContrailSettingsRoleParametersValue, value, contrail_settings]}
         _CONTRAIL_VROUTER_INIT_IMAGE_: {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}
-        _CONTRAIL_VROUTER_MODULE_OPTS_: {get_param: ContrailVrouterModuleOptions}
+        _CONTRAIL_VROUTER_MODULE_OPTS_: {get_attr: [ContrailSettingsRoleParametersValue, value, vrouter_module_opts]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image_only]}
     depends_on:
@@ -239,8 +246,8 @@ resources:
           - []
           - ['CREATE'] # Only do this on CREATE
       input_values:
-        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailVrouterHugepages2MB}
-        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailVrouterHugepages1GB}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_2mb]}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_1gb]}
         _KERNEL_ARGS_: {get_param: [RoleParameters, KernelArgs]}
         _TUNED_PROFILE_NAME_: {get_param: [RoleParameters, TunedProfileName]}
         _TUNED_CORES_: {get_param: [RoleParameters, IsolCpusList]}
