@@ -194,6 +194,11 @@ outputs:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
+      get_nova_api_network_cmd: &get_nova_api_network_cmd
+        str_replace:
+          template: "hiera -c /etc/puppet/hiera.yaml cloud_name_$NETWORK"
+          params:
+            $NETWORK: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
@@ -207,7 +212,7 @@ outputs:
                 content: ""
               when: not p.stat.exists
             - name: get nova api
-              shell: hiera -c /etc/puppet/hiera.yaml cloud_name_internal_api
+              shell: *get_nova_api_network_cmd
               register: nova_api_host
             - name: write remaining contrail config env cars
               lineinfile:
