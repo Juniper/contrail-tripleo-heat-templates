@@ -207,7 +207,12 @@ outputs:
                 content: ""
               when: not p.stat.exists
             - name: get nova api
-              shell: hiera -c /etc/puppet/hiera.yaml cloud_name_internal_api
+              shell: |
+                str_replace:
+                  template:
+                    "hiera -c /etc/puppet/hiera.yaml cloud_name_$NETWORK"
+                  params:
+                    $NETWORK: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
               register: nova_api_host
             - name: write remaining contrail config env cars
               lineinfile:

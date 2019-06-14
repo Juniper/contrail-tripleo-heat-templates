@@ -256,15 +256,30 @@ outputs:
         - get_attr: [RoleParametersValue, value]
         - if:
           - contrail_config_vip_unset
-          - contrail_config_vip: "%{hiera('cloud_name_internal_api')}"  
+          - contrail_config_vip:
+              str_replace:
+                template:
+                  "%{hiera('cloud_name_$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
           - contrail_config_vip: {get_param: ContrailConfigVIP}
         - if:
           - contrail_webui_vip_unset
-          - contrail_webui_vip: "%{hiera('cloud_name_internal_api')}"
+          - contrail_webui_vip:
+              str_replace:
+                template:
+                  "%{hiera('cloud_name_$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, ContrailWebuiNetwork]}
           - contrail_webui_vip: {get_param: ContrailWebuiVIP}
         - if:
           - contrail_analytics_vip_unset
-          - contrail_analytics_vip: "%{hiera('cloud_name_internal_api')}"
+          - contrail_analytics_vip:
+              str_replace:
+                template:
+                  "%{hiera('cloud_name_$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, ContrailAnalyticsNetwork]}
           - contrail_analytics_vip: {get_param: ContrailAnalyticsVIP}
         - if:
           - set_auth_ca_file
