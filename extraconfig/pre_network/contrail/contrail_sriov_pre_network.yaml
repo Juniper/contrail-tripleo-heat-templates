@@ -169,9 +169,23 @@ resources:
         map_replace:
           - map_replace:
             - contrail_settings: ContrailSettings
+              sriov_mode: ContrailSriovMode
+              sriov_num: ContrailSriovNumVFs
+              hugepages_2mb: ContrailSriovHugepages2MB
+              hugepages_1gb: ContrailSriovHugepages1GB
+              vrouter_module_opts: ContrailVrouterModuleOptions
+              dpdk_driver: ContrailDpdkDriver
+              dpdk_options: ContrailDpdkOptions
             - values: {get_param: [RoleParameters]}
           - values:
               ContrailSettings: {get_param: ContrailSettings}
+              ContrailSriovMode: {get_param: ContrailSriovMode}
+              ContrailSriovNumVFs: {get_param: ContrailSriovNumVFs}
+              ContrailSriovHugepages2MB: {get_param: ContrailSriovHugepages2MB}
+              ContrailSriovHugepages1GB: {get_param: ContrailSriovHugepages1GB}
+              ContrailVrouterModuleOptions: {get_param: ContrailVrouterModuleOptions}
+              ContrailDpdkDriver: {get_param: ContrailDpdkDriver}
+              ContrailDpdkOptions: {get_param: ContrailDpdkOptions}
 
   SriovHostParametersConfig:
     type: OS::Heat::SoftwareConfig
@@ -199,10 +213,10 @@ resources:
           - []
           - ['CREATE'] # Only do this on CREATE
       input_values:
-        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailSriovHugepages1GB}
-        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailSriovHugepages2MB}
-        _CONTRAIL_SRIOV_NUM_VFS_: {get_param: ContrailSriovNumVFs}
-        _IS_DPDK_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, 'True', '']}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_1gb]}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_2mb]}
+        _CONTRAIL_SRIOV_NUM_VFS_: {get_attr: [ContrailSettingsRoleParametersValue, value, sriov_num]}
+        _IS_DPDK_: {if: [{equals: [{get_attr: [ContrailSettingsRoleParametersValue, value, sriov_mode]}, 'dpdk']}, 'True', '']}
 
   SriovContainerParametersConfig:
     type: OS::Heat::SoftwareConfig
@@ -241,15 +255,15 @@ resources:
       input_values:
         _NODEDATA_: {get_param: NodeDataLookup}
         _CONTRAIL_SETTINGS_: {get_attr: [ContrailSettingsRoleParametersValue, value, contrail_settings]}
-        _CONTRAIL_VROUTER_INIT_IMAGE_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, {get_attr: [DockerContrailVrouterKernelInitDpdkImageNormalize, contrail_image]}, {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image]}]}
-        _CONTRAIL_VROUTER_INIT_IMAGE_NAME_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, {get_attr: [DockerContrailVrouterKernelInitDpdkImageNormalize, contrail_image_only]}, {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}]}
+        _CONTRAIL_VROUTER_INIT_IMAGE_: {if: [{equals: [{get_attr: [ContrailSettingsRoleParametersValue, value, sriov_mode]}, 'dpdk']}, {get_attr: [DockerContrailVrouterKernelInitDpdkImageNormalize, contrail_image]}, {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image]}]}
+        _CONTRAIL_VROUTER_INIT_IMAGE_NAME_: {if: [{equals: [{get_attr: [ContrailSettingsRoleParametersValue, value, sriov_mode]}, 'dpdk']}, {get_attr: [DockerContrailVrouterKernelInitDpdkImageNormalize, contrail_image_only]}, {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}]}
         _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_: {get_attr: [DockerContrailVrouterAgentDpdkImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_: {get_attr: [DockerContrailVrouterAgentDpdkImageNormalize, contrail_image_only]}
-        _CONTRAIL_VROUTER_MODULE_OPTS_: {get_param: ContrailVrouterModuleOptions}
+        _CONTRAIL_VROUTER_MODULE_OPTS_: {get_attr: [ContrailSettingsRoleParametersValue, value, vrouter_module_opts]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image]}
         _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_: {get_attr: [DockerContrailVrouterPluginInitImageNormalize, contrail_image_only]}
-        _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_param: ContrailDpdkOptions}
-        _IS_DPDK_: {if: [{equals: [{get_param: ContrailSriovMode}, 'dpdk']}, 'True', '']}
+        _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_: {get_attr: [ContrailSettingsRoleParametersValue, value, dpdk_options]}
+        _IS_DPDK_: {if: [{equals: [{get_attr: [ContrailSettingsRoleParametersValue, value, sriov_mode]}, 'dpdk']}, 'True', '']}
     depends_on:
       - SriovHostParametersDeployment
       - DockerContrailVrouterPluginInitImageNormalize
@@ -287,10 +301,10 @@ resources:
           - []
           - ['CREATE'] # Only do this on CREATE
       input_values:
-        _CONTRAIL_DPDK_DRIVER_: {get_param: ContrailDpdkDriver}
-        _CONTRAIL_SRIOV_NUM_VFS_: {get_param: ContrailSriovNumVFs}
-        _CONTRAIL_HUGEPAGES_2MB_: {get_param: ContrailSriovHugepages2MB}
-        _CONTRAIL_HUGEPAGES_1GB_: {get_param: ContrailSriovHugepages1GB}
+        _CONTRAIL_DPDK_DRIVER_: {get_attr: [ContrailSettingsRoleParametersValue, value, dpdk_driver]}
+        _CONTRAIL_HUGEPAGES_1GB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_1gb]}
+        _CONTRAIL_HUGEPAGES_2MB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_2mb]}
+        _CONTRAIL_SRIOV_NUM_VFS_: {get_attr: [ContrailSettingsRoleParametersValue, value, sriov_num]}
         _KERNEL_ARGS_: {get_param: [RoleParameters, KernelArgs]}
         _TUNED_PROFILE_NAME_: {get_param: [RoleParameters, TunedProfileName]}
         _TUNED_CORES_: {get_param: [RoleParameters, IsolCpusList]}
