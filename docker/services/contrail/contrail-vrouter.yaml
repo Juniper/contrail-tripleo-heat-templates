@@ -54,9 +54,6 @@ parameters:
     type: json
 
 resources:
-  ContrailVrouterBase:
-    type: contrail-vrouter-base.yaml
-
   DockerContrailVrouterAgentImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
@@ -76,6 +73,9 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+
+  ContrailVrouterBase:
+    type: contrail-vrouter-base.yaml
 
 outputs:
   role_data:
