@@ -251,6 +251,7 @@ outputs:
           contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
           contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
           contrail_internal_api_ssl: {get_param: EnableInternalTLS}
+          contrail_ssl_enabled: {get_param: ContrailSslEnabled}
           # ==
           node_data_lookup: {get_param: NodeDataLookup}
         - get_attr: [RoleParametersValue, value]
