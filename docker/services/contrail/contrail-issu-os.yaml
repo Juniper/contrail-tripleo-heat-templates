@@ -1,0 +1,55 @@
+heat_template_version: queens
+
+description: >
+  Contrail Issu resource for Openstack node.
+  It is put hiera vairable for pointing neutron and
+  heat plugins to ISSU node during uprgade of
+  Contrail Control plane. 
+
+outputs:
+  role_data:
+    description: Contrail Vrouter Issu upgrade tasks
+    value:
+      # remote copy paste
+      contrail_issu_api_port: &contrail_issu_api_port 28082
+      hiera_data_file: &hiera_data_file "/etc/puppet/hieradata/extraconfig.json"
+
+      # upgrade task should put contrail::api_port to point to ISSU node
+      upgrade_tasks:
+        - name: contrail issu os set dmi fact
+          set_fact:
+            hiera_data_file: *hiera_data_file
+        - name: contrail issu os read extra config
+          set_fact:
+            extradata: "{{ lookup('file', '{{ hiera_data_file }}') | from_json }}"
+        - name: contrail issu os set api port 
+          set_fact:
+            contrail_issu_api_port: *contrail_issu_api_port
+        - name: contrail issu os set contrail api_port to point to issu node
+          set_fact:
+            extradata: "{{ extradata | combine({'contrail::api_port': '{{ contrail_issu_api_port }}'}) }}"
+        - name: contrail issu os write extradata
+          copy:
+            dest: "{{ hiera_data_file }}"
+            content: "{{ extradata }}"
+
+      # post upgrade task should remove contrail::api_port that point to ISSU node
+      post_upgrade_tasks:
+        - name: contrail issu os set dmi fact
+          set_fact:
+            hiera_data_file: *hiera_data_file
+        - name: contrail issu os read extra config
+          set_fact:
+            old_extradata: "{{ lookup('file', '{{ hiera_data_file }}') | from_json }}"
+        - name: contrail issu os read empty extra config
+          set_fact:
+            extradata: {}
+        - name: contrail issu os read populate extra config
+          set_fact:
+            extradata: "{{ extradata | combine({item.key: item.value}) }}"
+          when: item.key != 'contrail::api_port'
+          with_dict: "{{ old_extradata }}"
+        - name: contrail issu os write extradata
+          copy:
+            dest: "{{ hiera_data_file }}"
+            content: "{{ extradata }}"

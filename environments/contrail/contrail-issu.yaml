@@ -1,0 +1,28 @@
+
+# ISSU for Upgrade.
+#
+# ISSU node is deployed at the early stage of upgrade before 
+# the undercloud node is upgraded. So, this ISSU role is to just
+# keep ISSU role node alive during upgrade procedure.
+#
+resource_registry:
+  OS::TripleO::Services::ContrailIssu: ../../docker/services/contrail/contrail-issu.yaml
+  OS::TripleO::Services::ContrailIssuScript: ../../docker/services/contrail/contrail-issu-script.yaml
+  # OS::TripleO::Services::ContrailIssuCompute: ../../docker/services/contrail/contrail-issu-compute.yaml
+  OS::TripleO::ContrailControllerIssuExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
+
+  OS::TripleO::ContrailIssuInit: ../../extraconfig/pre_deploy/contrail/contrail-issu.yaml
+  OS::TripleO::ContrailVrouterIssu: ../../docker/services/contrail/contrail-issu-vrouter.yaml
+  OS::TripleO::ContrailHeatIssu: ../../docker/services/contrail/contrail-issu-os.yaml
+  OS::TripleO::ContrailNeutronIssu: ../../docker/services/contrail/contrail-issu-os.yaml
+
+parameter_defaults:
+  ContrailControllerIssuCount: 1
+  OvercloudContrailControllerIssuFlavor: 'contrail-controller-issu'
+
+  ContrailIssuSshUser: 'heat-admin'
+  ContrailIssuSshKey:
+    public_key: |
+      ISSU ssh public key
+    private_key: |
+      ISSU ssh private key
