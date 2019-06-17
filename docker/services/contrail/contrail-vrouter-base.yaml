@@ -54,11 +54,5 @@ outputs:
           with_items:
             - supervisor-vrouter
       fast_forward_post_upgrade_tasks: []
-      upgrade_tasks: 
-        - when: step|int == 4
-          tags: common
-          block:
-            - name: Remove temporary agent & nodemgr deployed by ansible-deployer
-              shell: bash -c 'source /opt/rh/python27/enable && cd /etc/contrail/vrouter && docker-compose down'
-              ignore_errors: True
+      upgrade_tasks: [] 
       post_upgrade_tasks: []
