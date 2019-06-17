@@ -1,7 +1,8 @@
 heat_template_version: queens
 
 description: >
-  Contrail Issu
+  Contrail Issu Script service to launch puppet manifests.
+
 parameters:
   EndpointMap:
     default: {}
@@ -35,9 +36,11 @@ parameters:
 
 outputs:
   role_data:
-    description: Role Contrail Controller Issu
+    description: Role Contrail Controller Issu script
     value:
-      service_name: contrail_issu
+      service_name: contrail_issu_script
       config_settings:
         contrail_issu_ssh_user: {get_param: ContrailIssuSshUser}
         contrail_issu_host_ip: {get_param: [ServiceNetMap, ContrailIssuNetwork]}
+      step_config: |
+        include ::tripleo::network::contrail::issu
