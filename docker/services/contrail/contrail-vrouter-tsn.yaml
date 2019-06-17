@@ -50,9 +50,6 @@ parameters:
     type: json
 
 resources:
-  ContrailVrouterBase:
-    type: contrail-vrouter-base.yaml
-
   DockerContrailVrouterAgentImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
@@ -67,6 +64,9 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+
+  ContrailVrouterBase:
+    type: contrail-vrouter-base.yaml
 
 outputs:
   role_data:
@@ -83,7 +83,7 @@ outputs:
                   - 8085
                   - 8097
       contrail_env_file: &contrail_env_file
-        "/etc/contrail/common_vrouter.env"
+        get_attr: [ContrailVrouterBase, role_data, contrail_env_file]
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -130,29 +130,11 @@ outputs:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
+
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register contrail tsn env file
-              stat:
-                path: *contrail_env_file
-              register: p
-            - name: create contrail tsn env file
-              copy:
-                dest: *contrail_env_file
-                content: ""
-              when: not p.stat.exists
-            - name: contrail tsn get metadata secret
-              shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::metadata_proxy_shared_secret
-              register: contrail_tsn_metadata_secret
-            - name: write remaining contrail tsn env cars
-              lineinfile:
-                dest: *contrail_env_file
-                line: "{{ item }}"
-                state: present
-              with_items:
-                - NODE_TYPE=vrouter
-                - METADATA_PROXY_SECRET={{ contrail_tsn_metadata_secret.stdout }}
+          - {get_attr: [ContrailVrouterBase, role_data, host_prep_tasks]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
