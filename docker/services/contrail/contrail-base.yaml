@@ -251,6 +251,7 @@ outputs:
           contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
           contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
           contrail_internal_api_ssl: {get_param: EnableInternalTLS}
+          contrail_ssl_enabled: {get_param: ContrailSslEnabled}
           # ==
           node_data_lookup: {get_param: NodeDataLookup}
         - get_attr: [RoleParametersValue, value]
@@ -543,8 +544,10 @@ outputs:
       contrail_base_env_file: &contrail_base_env_file
         - *contrail_common_env_file
       contrail_host_prep_tasks_base:
-        list_concat:
-          - - name: register common env file
+        - name: Contrail Base host prep tasks
+          tags: common
+          block:
+            - name: register common env file
               stat:
                 path: *contrail_common_env_file
               register: p
@@ -687,8 +690,8 @@ outputs:
                 RABBITMQ_NODES: "{{ contrail_database_nodes_string }}"
                 RABBITMQ_NODE_PORT: 5673
                 KAFKA_NODES: "{{ contrail_kafka_service_nodes_string }}"
-# dont set zk, all services except kafka uses default zk from configdb
-#               ZOOKEEPER_NODES: "{{ contrail_database_nodes_string }}"
+  # dont set zk, all services except kafka uses default zk from configdb
+  #               ZOOKEEPER_NODES: "{{ contrail_database_nodes_string }}"
 
       metadata_settings: []
 

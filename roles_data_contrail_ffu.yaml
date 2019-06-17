@@ -529,6 +529,9 @@
 ###############################################################################
 - name: ContrailControllerIssu
   CountDefault: 0
+  networks:
+    - InternalApi
+    - Tenant
   ServicesDefault:
     - OS::TripleO::Services::AuditD
     - OS::TripleO::Services::CACerts
