@@ -3,9 +3,87 @@ heat_template_version: queens
 description: >
   Common outputs for contrail containerized Vrouter service
 
+
+parameters:
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  ContrailVrouterAgentMode:
+    default: 'kernel'
+    description: Agent mode kernel or dpdk
+    type: string
+
+resources:
+  ContrailVrouterIssu:
+    type: OS::TripleO::ContrailVrouterIssu
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
 outputs:
   role_data:
     value:
+      contrail_env_file: &contrail_env_file
+        "/etc/contrail/common_vrouter.env"
+      agent_mode: &agent_mode {get_param: ContrailVrouterAgentMode}
+      host_prep_tasks:
+        list_concat:
+          - - name: Contrail vrouter base host prep tasks
+              tags: common
+              block:
+                - name: register contrail dpdk env file
+                  stat:
+                    path: *contrail_env_file
+                  register: p
+                - name: create contrail dpdk env file
+                  copy:
+                    dest: *contrail_env_file
+                    content: ""
+                  when: not p.stat.exists
+                - name: contrail dpdk get metadata secret
+                  shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::metadata_proxy_shared_secret
+                  register: contrail_dpdk_metadata_secret
+                - name: contrail vrouter agent_mode
+                  set_fact:
+                    agent_mode: *agent_mode
+                - name: write remaining contrail dpdk env cars
+                  lineinfile:
+                    dest: *contrail_env_file
+                    state: present
+                    line: "{{ item }}"
+                  with_items:
+                    - NODE_TYPE=vrouter
+                    - METADATA_PROXY_SECRET={{ contrail_dpdk_metadata_secret.stdout }}
+                    - AGENT_MODE={{ agent_mode }}
+          - {get_attr: [ContrailVrouterIssu, role_data, host_prep_tasks]}
+
       update_tasks:
         - name: Find out current volume name of contrail_vrouter_agent container
           shell: >
@@ -25,6 +103,7 @@ outputs:
           when: 
             - agent_container_volume_name.stdout != ''
             - agent_container_volume_location.stdout != '/var/lib/contrail'
+
       post_update_tasks:
         - name: Check if /tmp/contrail_var_lib_unnamed_volume exists
           stat:
@@ -45,6 +124,7 @@ outputs:
               name: "/tmp/contrail_var_lib_unnamed_volume"
               state: absent
           when: 'contrail_var_lib_unnamed_volume.stat.exists == true'
+
       fast_forward_upgrade_tasks:
         - name: Stop contrail vrouter dpdk services
           service: name={{ item }} state=stopped enabled=no
@@ -53,12 +133,11 @@ outputs:
             - release == 'ocata'
           with_items:
             - supervisor-vrouter
+
       fast_forward_post_upgrade_tasks: []
-      upgrade_tasks: 
-        - when: step|int == 4
-          tags: common
-          block:
-            - name: Remove temporary agent & nodemgr deployed by ansible-deployer
-              shell: bash -c 'source /opt/rh/python27/enable && cd /etc/contrail/vrouter && docker-compose down'
-              ignore_errors: True
-      post_upgrade_tasks: []
+
+      upgrade_tasks:
+        get_attr: [ContrailVrouterIssu, role_data, upgrade_tasks]
+
+      post_upgrade_tasks:
+        get_attr: [ContrailVrouterIssu, role_data, post_upgrade_tasks]

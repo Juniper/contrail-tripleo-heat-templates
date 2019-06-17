@@ -1,0 +1,137 @@
+heat_template_version: queens
+
+description: >
+  Contrail Vrouter Issu. 
+  The resource for patching vrouter container configs 
+  to connect upgraded computes to ISSU node.
+  The compute nodes are connevtced back to Contrail
+  Control plane on converge step.
+
+parameters:
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+  ContrailImageTag:
+    description: Contrail container image tag
+    type: string
+
+  NodeDataLookup:
+    type: json
+    default: {}
+    description: json containing per-node configuration map
+
+  # internal params
+  contrail_nodes_param_suffux:
+    type: string
+    default: "node_ips"
+    description: suffix for reading hiera data, node_ips or node_names
+
+
+resources:
+  ContrailBase:
+    type: contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+
+outputs:
+  role_data:
+    description: Contrail Vrouter Issu upgrade tasks
+    value:
+      contrail_common_env_file: &contrail_common_env_file
+        get_attr: [ContrailBase, role_data, contrail_common_env_file]
+
+      # task should patch docker config to connect computes to ISSU node
+      host_prep_tasks:
+        - name: Contrail Vrouter Issu host prep tasks
+          tags: issu
+          block:
+            - name: Check if /tmp/contrail_issu_marker exists
+              stat:
+                path: /tmp/contrail_issu_marker
+              register: contrail_issu_in_progress
+            - name: Contrail Vrouter ISSU patch containers config
+              when: 'contrail_issu_in_progress.stat.exists == true'
+              block:
+                - name: vrouter node issu ips (names) param name
+                  set_fact:
+                    contrail_issu_param_name: {list_join: ["_", ["contrail_issu", {get_param: contrail_nodes_param_suffux}]]}
+                - name: vrouter node get issu node ips from hiera
+                  shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_issu_param_name }}
+                  register: contrail_issu_nodes_list
+                - name: vrouter node turn contrail issu ips into string
+                  set_fact:
+                    contrail_issu_nodes_string: "{{ contrail_issu_nodes_list.stdout | from_json | join(',') }}"
+
+                - name: vrouter node write contrail issu node ips to environment file
+                  lineinfile:
+                    dest: *contrail_common_env_file
+                    state: present
+                    regexp: "^{{ item.key }}.*"
+                    line: "{{ item.key }}={{ item.value }}"
+                  with_dict:
+                    ANALYTICS_NODES: "{{ contrail_issu_nodes_string }}"
+                    ANALYTICS_SNMP_NODES: "{{ contrail_issu_nodes_string }}"
+                    ANALYTICS_ALARM_NODES: "{{ contrail_issu_nodes_string }}"
+                    ANALYTICSDB_NODES: "{{ contrail_issu_nodes_string }}"
+                    CONFIG_NODES: "{{ contrail_issu_nodes_string }}"
+                    CONFIGDB_NODES: "{{ contrail_issu_nodes_string }}"
+                    CONTROL_NODES: "{{ contrail_issu_nodes_string }}"
+                    DNS_NODES: "{{ contrail_issu_nodes_string }}"
+                    RABBITMQ_NODES: "{{ contrail_issu_nodes_string }}"
+                    KAFKA_NODES: "{{ contrail_issu_nodes_string }}"
+
+      upgrade_tasks:
+        - name: Contrail Vrouter ISSU upgrade  
+          tags: issu
+          block:
+            - name: Stop contrail_vrouter_agent and contrail_vrouter_agent_nodemgr
+              ignore_errors: yes
+              shell: >
+                docker stop contrail_vrouter_agent contrail_vrouter_agent_nodemgr
+            - name: Remove contrail_vrouter_agent and contrail_vrouter_agent_nodemgr
+              ignore_errors: yes
+              shell: >
+                docker rm --force contrail_vrouter_agent contrail_vrouter_agent_nodemgr
+            - name: Save Contrail Vrouter ISSU is in progress marker
+              shell: touch /tmp/contrail_issu_marker
+
+      post_upgrade_tasks:
+        - name: Contrail Vrouter ISSU upgrade  
+          tags: issu
+          block:
+            - name: Remove Contrail Vrouter ISSU is in progress marker
+              shell: rm -f /tmp/contrail_issu_marker
