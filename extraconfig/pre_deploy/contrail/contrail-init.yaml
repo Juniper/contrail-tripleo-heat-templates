@@ -19,8 +19,15 @@ resources:
       server: {get_param: server}
       install_contrail_puppet: true
 
+  ContrailIssuInit:
+    type: ./contrail-issu.yaml
+    properties:
+      server: {get_param: server}
+
 outputs:
   contrail_tls_init:
     value: {get_resource: ContrailTlsInit}
   contrail_node_init:
     value: {get_resource: ContrailNodeInit}
+  contrail_issu_init:
+    value: {get_resource: ContrailIssuInit}
