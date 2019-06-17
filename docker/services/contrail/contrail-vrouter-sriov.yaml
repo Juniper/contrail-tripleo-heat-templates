@@ -57,8 +57,6 @@ parameters:
     type: json
 
 resources:
-  ContrailVrouterBase:
-    type: contrail-vrouter-base.yaml
 
   DockerContrailVrouterAgentImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
@@ -79,6 +77,11 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+
+  ContrailVrouterBase:
+    type: contrail-vrouter-base.yaml
+    properties:
+      ContrailVrouterAgentMode: {get_param: ContrailSriovMode}
 
 outputs:
   role_data:
@@ -163,30 +166,7 @@ outputs:
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register contrail sriov env file
-              stat:
-                path: *contrail_env_file
-              register: p
-            - name: create contrail sriov env file
-              copy:
-                dest: *contrail_env_file
-                content: ""
-              when: not p.stat.exists
-            - name: contrail sriov get metadata secret
-              shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::metadata_proxy_shared_secret
-              register: contrail_sriov_metadata_secret
-            - name: get scontrail sriov mode
-              shell: hiera -c /etc/puppet/hiera.yaml contrail_sriov_mode
-              register: contrail_sriov_mode
-            - name: write remaining contrail sriov env vars
-              lineinfile:
-                dest: *contrail_env_file
-                line: "{{ item }}"
-                state: present
-              with_items:
-                - NODE_TYPE=vrouter
-                - METADATA_PROXY_SECRET={{ contrail_sriov_metadata_secret.stdout }}
-                - AGENT_MODE={{ contrail_sriov_mode.stdout }}
+          - {get_attr: [ContrailVrouterBase, role_data, host_prep_tasks]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]

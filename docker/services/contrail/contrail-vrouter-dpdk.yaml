@@ -44,9 +44,6 @@ parameters:
     type: json
 
 resources:
-  ContrailVrouterBase:
-    type: contrail-vrouter-base.yaml
-
   DockerContrailVrouterAgentImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
@@ -66,6 +63,11 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+
+  ContrailVrouterBase:
+    type: contrail-vrouter-base.yaml
+    properties:
+      ContrailVrouterAgentMode: 'dpdk'
 
 outputs:
   role_data:
@@ -144,27 +146,7 @@ outputs:
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register contrail dpdk env file
-              stat:
-                path: *contrail_env_file
-              register: p
-            - name: create contrail dpdk env file
-              copy:
-                dest: *contrail_env_file
-                content: ""
-              when: not p.stat.exists
-            - name: contrail dpdk get metadata secret
-              shell: hiera -c /etc/puppet/hiera.yaml contrail::vrouter::metadata_proxy_shared_secret
-              register: contrail_dpdk_metadata_secret
-            - name: write remaining contrail dpdk env cars
-              lineinfile:
-                dest: *contrail_env_file
-                state: present
-                line: "{{ item }}"
-              with_items:
-                - NODE_TYPE=vrouter
-                - METADATA_PROXY_SECRET={{ contrail_dpdk_metadata_secret.stdout }}
-                - AGENT_MODE=dpdk
+          - {get_attr: [ContrailVrouterBase, role_data, host_prep_tasks]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
