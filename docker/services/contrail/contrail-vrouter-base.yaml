@@ -3,6 +3,47 @@ heat_template_version: queens
 description: >
   Common outputs for contrail containerized Vrouter service
 
+
+parameters:
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+
+
+resources:
+  ContrailVrouterIssu:
+    type: OS::TripleO::ContrailVrouterIssu
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
 outputs:
   role_data:
     value:
@@ -25,6 +66,7 @@ outputs:
           when: 
             - agent_container_volume_name.stdout != ''
             - agent_container_volume_location.stdout != '/var/lib/contrail'
+
       post_update_tasks:
         - name: Check if /tmp/contrail_var_lib_unnamed_volume exists
           stat:
@@ -45,6 +87,7 @@ outputs:
               name: "/tmp/contrail_var_lib_unnamed_volume"
               state: absent
           when: 'contrail_var_lib_unnamed_volume.stat.exists == true'
+
       fast_forward_upgrade_tasks:
         - name: Stop contrail vrouter dpdk services
           service: name={{ item }} state=stopped enabled=no
@@ -53,12 +96,11 @@ outputs:
             - release == 'ocata'
           with_items:
             - supervisor-vrouter
+
       fast_forward_post_upgrade_tasks: []
-      upgrade_tasks: 
-        - when: step|int == 4
-          tags: common
-          block:
-            - name: Remove temporary agent & nodemgr deployed by ansible-deployer
-              shell: bash -c 'source /opt/rh/python27/enable && cd /etc/contrail/vrouter && docker-compose down'
-              ignore_errors: True
-      post_upgrade_tasks: []
+
+      upgrade_tasks:
+        get_attr: [ContrailVrouterIssu, role_data, upgrade_tasks]
+
+      post_upgrade_tasks:
+        get_attr: [ContrailVrouterIssu, role_data, post_upgrade_tasks]
