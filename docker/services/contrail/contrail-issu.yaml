@@ -1,0 +1,1112 @@
+# contrail base
+# config api
+# config db
+# contrail analitycs
+# analytics snmp
+# analytics query engine
+# analytics kafka
+# analytics database
+# analytics alarm
+# control
+# web ui
+
+heat_template_version: queens
+
+description: >
+  Contrail Issu
+
+parameters:
+
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+
+  DockerContrailConfigApiImageName:
+    description: image
+    type: string
+    default: "contrail-controller-config-api"
+
+  DockerContrailConfigSchemaImageName:
+    description: image
+    type: string
+    default: "contrail-controller-config-schema"
+
+  DockerContrailConfigSvcmonitorImageName:
+    description: image
+    type: string
+    default: "contrail-controller-config-svcmonitor"
+
+  DockerContrailConfigDevicemgrImageName:
+    description: image
+    type: string
+    default: "contrail-controller-config-devicemgr"
+  # internal params
+
+  contrail_nodes_param_suffux:
+    type: string
+    default: "node_ips"
+    description: suffix for reading hiera data, node_ips or node_names
+
+  ContrailConfigDBMinDiskGB:
+    description:  The min size for Contrail Config DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
+
+  DockerContrailCassandraImageName:
+    description: image
+    type: string
+    default: "contrail-external-cassandra"
+
+  DockerContrailZookeeperImageName:
+    description: image
+    type: string
+    default: "contrail-external-zookeeper"
+
+  DockerContrailRabbitmqImageName:
+    description: image
+    type: string
+    default: "contrail-external-rabbitmq"
+
+  DockerContrailRabbitmqLogPath:
+    description: Path where rabbitmq logs will be stored. If set to
+                 empty value, container default will be used, which
+                 is usually set to '-', resulting in logs going to 
+                 stdout
+    type: string
+    default: "/var/log/contrail"
+
+  DockerContrailConfigDatabaseVolume:
+    default: 'config_cassandra'
+    description: Docker volume for contrail config DB service
+    type: string
+
+  DockerContrailConfigZookeeperVolume:
+    default: 'config_zookeeper'
+    description: Docker volume for contrail config zookeeper service
+    type: string
+
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
+
+  DockerContrailAnalyticsApiImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-api"
+
+  DockerContrailAnalyticsCollectorImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-collector"
+
+  DockerContrailAnalyticsTopologyImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-snmp-topology"
+
+  DockerContrailAnalyticsTopologyImageName_5_0:
+    description:  5.0 compatibility image name.
+    type: string
+    default: "contrail-analytics-topology"
+
+  DockerContrailAnalyticsSnmpCollectorImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-snmp-collector"
+
+  DockerContrailAnalyticsQueryEngineImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-query-engine"
+
+  DockerContrailKafkaImageName:
+    description: image
+    type: string
+    default: "contrail-external-kafka"
+
+  ContrailAnalyticsDBMinDiskGB:
+    description:  The min size for Contrail Analytics DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
+
+  ContrailAnalyticsDBPath:
+    description:  The path to cassandra database directory. Default
+                  will be /var/lib/docker/volumes/analytics_cassandra_data/_data.
+    type: string
+    default: 'analytics_cassandra_data'
+
+  ContrailAnalyticsCommitlogPath:
+    description:  The path to cassandra commitlog directory. Default
+                  will be /var/lib/docker/volumes/analytics_cassandra_commitlog/_data.
+    type: string
+    default: 'analytics_cassandra_commitlog'
+
+  DockerContrailAnalyticsAlarmGenImageName:
+    description: image
+    type: string
+    default: "contrail-analytics-alarm-gen"
+
+  DockerContrailControlControlImageName:
+    description: image
+    type: string
+    default: "contrail-controller-control-control"
+
+  DockerContrailControlNamedImageName:
+    description: image
+    type: string
+    default: "contrail-controller-control-named"
+
+  DockerContrailControlDnsImageName:
+    description: image
+    type: string
+    default: "contrail-controller-control-dns"
+
+  DockerContrailWebuiWebImageName:
+    description: image
+    type: string
+    default: "contrail-controller-webui-web"
+
+  DockerContrailWebuiJobImageName:
+    description: image
+    type: string
+    default: "contrail-controller-webui-job"
+
+  ContrailCA:
+    default: ''
+    description: Contrail CA, could be local or IPA
+    type: string
+
+  ContrailServiceCertFile:
+    description: Path to the node's public certificate
+    type: string
+    default: ''
+
+  ContrailServiceKeyFile:
+    description: Path to server's/node's private key
+    type: string
+    default: ''
+
+  AdminTenantName:
+    description: Keystone admin tenant name
+    type: string
+    default: 'admin'
+
+conditions:
+  contrail_configdb_min_disk_gb_unset: {equals : [{get_param: ContrailConfigDBMinDiskGB}, '']}
+
+  rabbitmq_log_keep_default: {equals : [{get_param: DockerContrailRabbitmqLogPath}, '']}
+
+  contrail_analyticsdb_min_disk_gb_unset: {equals : [{get_param: ContrailAnalyticsDBMinDiskGB}, '']}
+
+  is_not_5_0:
+    not: 
+      yaql:
+        expression: $.data.split(":")[-1].matches("5\.0")
+        data: {get_param: ContrailImageTag}
+
+resources:
+
+  DockerContrailConfigApiImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailConfigApiImageName}
+
+  DockerContrailConfigSchemaImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailConfigSchemaImageName}
+
+  DockerContrailConfigSvcmonitorigImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailConfigSvcmonitorImageName}
+
+  DockerContrailConfigDevicemgrImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailConfigDevicemgrImageName}
+
+  DockerContrailCassandraImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailCassandraImageName}
+
+  DockerContrailZookeeperImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailZookeeperImageName}
+
+  DockerContrailRabbitmqImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailRabbitmqImageName}
+
+  ContrailBase:
+    type: contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+  DockerContrailAnalyticsApiImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailAnalyticsApiImageName}
+
+  DockerContrailAnalyticsCollectorImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailAnalyticsCollectorImageName}
+
+  ContrailRedis:
+    type: contrail-redis.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+      env_file_name: '/etc/contrail/issu_config.env'
+
+  ContrailQueryEngine:
+    type: contrail-analytics-query-engine.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+  DockerContrailAnalyticsTopologyImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName:
+        if:
+          - is_not_5_0
+          - {get_param: DockerContrailAnalyticsTopologyImageName}
+          - {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
+
+  DockerContrailAnalyticsSnmpCollectorImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
+
+  DockerContrailAnalyticsQueryEngineImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailAnalyticsQueryEngineImageName}
+
+  DockerContrailKafkaImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailKafkaImageName}
+
+  ContrailAnalyticsKafka:
+    type: contrail-analytics-kafka.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+  DockerContrailAnalyticsAlarmGenImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailAnalyticsAlarmGenImageName}
+
+  DockerContrailControlControlImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailControlControlImageName}
+
+  DockerContrailControlNamedImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailControlNamedImageName}
+
+  DockerContrailControlDnsImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailControlDnsImageName}
+
+  DockerContrailWebuiWebImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailWebuiWebImageName}
+
+  DockerContrailWebuiJobImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailWebuiJobImageName}
+
+outputs:
+  role_data:
+    description: Role Contrail Controller Issu
+    value:
+      service_name: contrail_issu
+      contrail_redis_image_name: &contrail_redis_image_name {get_attr: [DockerContrailRedisImageNormalize, contrail_image]}
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - tripleo.contrail_issu.firewall_rules:
+              '113 contrail_issu_udp':
+                dport: 53
+                  - 53
+                  - 8092
+                proto: 'udp'
+              '118 contrail_issu_tcp':
+                dport:
+                  list_concat:
+                    - # config 
+                      - 8082
+                      - 8084
+                      - 8087
+                      - 8088
+                      - 8096
+                      - 8100
+                      - 8101
+                    - # database
+                      - 2181
+                      - '2888-3888'
+                      - 4369
+                      - 5673
+                      - 7012
+                      - 7013
+                      - 7201
+                      - 8112
+                      - 9041
+                      - 9161
+                      - 25673
+                    - # analytics
+                      # collector structured syslog
+                      - 3514
+                      # op server
+                      - 8081
+                      # collector
+                      - 8086
+                      # http collector
+                      - 8089
+                      # http op server
+                      - 8090
+                      # op server admin
+                      - 8181
+                      # analytics nodemgr
+                      - 8104
+                    - {get_attr: [ContrailRedis, role_data, contrail_redis_ports]}
+                    - {get_attr: [ContrailQueryEngine, role_data, analytics_query_engine_ports]}
+                    - {get_attr: [ContrailAnalyticsKafka, role_data, contrail_analytics_kafka_ports]}
+                    - if:
+                        - is_not_5_0
+                          # alarm nodemgr
+                        - - 8113
+                        - null
+                    - # analytics snmp
+                      # snmp collector
+                      - 5920
+                      # topology
+                      - 5921
+                      # analytics snmp nodemgr
+                      - 8114
+                      # analytics database
+                    - # cassandra
+                      - 7010
+                      - 7011
+                      - 7200
+                      # database nodemgr
+                      - 8103
+                      # cassandra
+                      - 9042
+                      - 9160
+                    - # analytics alarm
+                      # alarm
+                      - 5995
+                    - # control tcp
+                      - 179
+                      - 5269
+                      - 8083
+                      - 8092
+                      - 8093
+                      - 8094
+                      - 8101
+                    - # web ui
+                      - 3000
+                      - 3002
+                      - 8143
+                      - 8180
+
+      contrail_issu_env_file: &contrail_issu_env_file
+        "/etc/contrail/issu_config.env"
+      contrail_issu_configdb_env_file: &contrail_issu_configdb_env_file
+        "/etc/contrail/issu_configdb.env"
+      contrail_issu_analyticsdb_env_file: &contrail_issu_analyticsdb_env_file
+        "/etc/contrail/issu_analyticsdb.env"
+
+      contrail_common_base_env: &contrail_common_base_env
+        {get_attr: [ContrailBase, role_data, contrail_common_base_env]}
+
+      docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
+
+        step_3:
+          contrail_config_rabbitmq:
+            image: &contrail_config_rabbitmq_image {get_attr: [DockerContrailRabbitmqImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              list_concat:
+                - get_attr: [ContrailBase, role_data, contrail_base_env]
+                - - 'NODE_TYPE=config-database'
+                - if:
+                  - rabbitmq_log_keep_default
+                  - []
+                  - - list_join:
+                      - '='
+                      - - 'RABBITMQ_LOGS'
+                        - list_join:
+                          - '/'
+                          - - {get_param: DockerContrailRabbitmqLogPath}
+                            - 'rabbitmq.log'
+                    - list_join:
+                      - '='
+                      - - 'RABBITMQ_SASL_LOGS'
+                        - list_join:
+                          - '/'
+                          - - {get_param: DockerContrailRabbitmqLogPath}
+                            - 'rabbitmq_sasl.log'
+            env_file:  *contrail_issu_env_file
+          contrail_config_zookeeper:
+            image: &contrail_config_zookeeper_image {get_attr: [DockerContrailZookeeperImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailConfigZookeeperVolume}
+                        - '/data'
+                  - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailConfigZookeeperVolume}
+                        - '/datalog'
+            environment:
+              list_concat:
+                - get_attr: [ContrailBase, role_data, contrail_base_env]
+                - - 'NODE_TYPE=config-database'
+            env_file: *contrail_issu_env_file
+        step_4:
+          contrail_config_database_nodemgr:
+            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+            net: host
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /var/run/docker.sock:/var/run/docker.sock
+            environment:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                - if:
+                  - contrail_configdb_min_disk_gb_unset
+                  - []
+                  - - list_join:
+                      - ''
+                      - - 'CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB='
+                        - {get_param: ContrailConfigDBMinDiskGB}
+            env_file:
+              list_concat:
+                - *contrail_issu_env_file
+                - *contrail_issu_configdb_env_file
+          contrail_config_database:
+            image: &contrail_config_database_image {get_attr: [DockerContrailCassandraImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailConfigDatabaseVolume}
+                        - '/var/lib/cassandra'
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              list_concat:
+                - *contrail_issu_env_file
+                - *contrail_issu_configdb_env_file
+          contrail_redis:
+            image: *contrail_redis_image_name
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file: *contrail_issu_env_file
+          contrail_analytics_kafka:
+            image: &contrail_analytics_kafka_image {get_attr: [DockerContrailKafkaImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              list_concat:
+                - get_attr: [ContrailBase, role_data, contrail_base_env]
+                - if:
+                  - is_not_5_0
+                  - - 'NODE_TYPE=analytics-alarm'
+                  - - 'NODE_TYPE=database'
+            env_file: *contrail_issu_env_file
+          contrail_analytics_database:
+            image: &contrail_analytics_database_image {get_attr: [DockerContrailCassandraImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - list_join:
+                      - ':'
+                      - - {get_param: ContrailAnalyticsDBPath}
+                        - '/var/lib/cassandra/data'
+                  - list_join:
+                      - ':'
+                      - - {get_param: ContrailAnalyticsCommitlogPath}
+                        - '/var/lib/cassandra/commitlog'
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              list_concat:
+                - *contrail_issu_env_file
+                - *contrail_issu_analyticsdb_env_file
+
+        step_5:
+          map_merge:
+            - contrail_config_nodemgr:
+                image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run/docker.sock:/var/run/docker.sock
+                environment:
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_env]
+                    - - 'NODE_TYPE=config'
+                env_file: *contrail_issu_env_file
+              contrail_config_api:
+                image: &contrail_config_api_image {get_attr: [DockerContrailConfigApiImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_config_schema:
+                image: &contrail_config_schema_image {get_attr: [DockerContrailConfigSchemaImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_config_svc_monitor:
+                image: &contrail_config_svc_monitor_image {get_attr: [DockerContrailConfigSvcmonitorigImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_config_device_manager:
+                image: &contrail_config_device_manager_image {get_attr: [DockerContrailConfigDevicemgrImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_analytics_nodemgr:
+                image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run/docker.sock:/var/run/docker.sock
+                environment:
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_env]
+                    - - 'NODE_TYPE=analytics'
+                env_file: *contrail_issu_env_file
+              contrail_analytics_api:
+                image: &contrail_analytics_api_image {get_attr: [DockerContrailAnalyticsApiImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                restart: always
+                user: root
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_analytics_collector:
+                image: &contrail_analytics_collector_image {get_attr: [DockerContrailAnalyticsCollectorImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_analytics_topology:
+                image: &contrail_analytics_topology_image {get_attr: [DockerContrailAnalyticsTopologyImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_analytics_snmp_collector:
+                image: &contrail_analytics_snmp_collector_image {get_attr: [DockerContrailAnalyticsSnmpCollectorImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_analytics_queryengine:
+                image: &contrail_analytics_queryengine_image {get_attr: [DockerContrailAnalyticsQueryEngineImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_analytics_database_nodemgr:
+                image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run/docker.sock:/var/run/docker.sock
+                environment:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                    - if:
+                      - contrail_analyticsdb_min_disk_gb_unset
+                      - []
+                      - - list_join:
+                          - ''
+                          - - 'DATABASE_NODEMGR__DEFAULTS__minimum_diskGB='
+                            - {get_param: ContrailAnalyticsDBMinDiskGB}
+                env_file:
+                  list_concat:
+                    - *contrail_issu_env_file
+                    - *contrail_issu_analyticsdb_env_file
+              contrail_analytics_alarmgen:
+                image: &contrail_analytics_alarmgen_image {get_attr: [DockerContrailAnalyticsAlarmGenImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_control_nodemgr:
+                image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run/docker.sock:/var/run/docker.sock
+                environment:
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_env]
+                    - - 'NODE_TYPE=control'
+                env_file: *contrail_issu_env_file
+              contrail_control_control:
+                image: &contrail_control_control_image {get_attr: [DockerContrailControlControlImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_control_dns:
+                image: &contrail_control_dns_image {get_attr: [DockerContrailControlDnsImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                pid: host
+                volumes:
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                    - - contrail_control_dns:/etc/contrail/dns
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_control_named:
+                image: &contrail_control_named_image {get_attr: [DockerContrailControlNamedImageNormalize, contrail_image]}
+                net: host
+                privileged: true
+                detach: true
+                user: root
+                restart: always
+                pid: host
+                volumes_from:
+                  - contrail_control_dns
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_env_file
+              contrail_webui_web:
+                image: &contrail_webui_web_image {get_attr: [DockerContrailWebuiWebImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_auth_internal_env]
+                env_file: *contrail_issu_env_file
+              contrail_webui_job:
+                image: &contrail_webui_job_image {get_attr: [DockerContrailWebuiJobImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_auth_internal_env]
+                env_file: *contrail_issu_env_file
+            - if:
+                - is_not_5_0
+                - contrail_analytics_snmp_nodemgr:
+                    image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                    net: host
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                        - - /var/run/docker.sock:/var/run/docker.sock
+                    environment:
+                      list_concat:
+                        - get_attr: [ContrailBase, role_data, contrail_base_env]
+                        - - 'NODE_TYPE=analytics-snmp'
+                    env_file: *contrail_issu_env_file
+                  contrail_analytics_alarm_nodemgr:
+                    image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                    net: host
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                        - - /var/run/docker.sock:/var/run/docker.sock
+                    environment:
+                      list_concat:
+                        - get_attr: [ContrailBase, role_data, contrail_base_env]
+                        - - ‘NODE_TYPE=analytics-alarm’
+                    env_file: *contrail_issu_env_file
+                - null
+
+      get_nova_api_network_cmd: &get_nova_api_network_cmd
+        str_replace:
+          template: "hiera -c /etc/puppet/hiera.yaml cloud_name_$NETWORK"
+          params:
+            $NETWORK: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+
+      host_prep_tasks:
+        - name: create contrail containers common directories
+          file:
+            path: "{{ item }}"
+            state: directory
+            recurse: yes
+          with_items:
+            - /var/log/containers/contrail
+            - /etc/contrail
+        - name: register contrail config issu env file
+          stat:
+            path: *contrail_issu_env_file
+          register: p
+        - name: create contrail config issu env file
+          copy:
+            dest: *contrail_issu_env_file
+            content: ""
+          when: not p.stat.exists
+
+        - name: set contrail base calculated parameters
+          set_fact:
+            contrail_base_env_params: *contrail_common_base_env
+        - name: write contrail base parameters to environment file
+          lineinfile:
+            dest: *contrail_issu_env_file
+            state: present
+            line: "{{ item }}"
+          with_items: "{{ contrail_base_env_params }}"
+
+        - name: get dmi
+          shell: |
+            #!/bin/sh
+            dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
+          register: dmi
+        - name: set dmi fact
+          set_fact:
+            dmi_uuid: "{{ dmi.stdout }}"
+        - name: get contrail_settings
+          shell: "hiera -c /etc/puppet/hiera.yaml contrail_settings ::uuid={{ dmi_uuid }} | sed 's/=>/:/g'"
+          register: contrail_settings_string
+        - name: turn contrail_settings into json
+          set_fact:
+            contrail_settings: "{{ contrail_settings_string.stdout | from_json }}"
+          when:
+            - contrail_settings_string.stdout is defined
+            - contrail_settings_string.stdout != "nil"
+        - name: write contrail settings to file
+          lineinfile:
+            dest: *contrail_issu_env_file
+            regexp: "^{{ item.key }}.*"
+            line: "{{ item.key }}={{ item.value }}"
+            state: present
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
+
+        - name: get nova api
+          shell: *get_nova_api_network_cmd
+          register: nova_api_host
+
+        - name: node ips (names) param name
+          set_fact:
+            contrail_nodes_param_name: {list_join: ["_", ["contrail_issu", {get_param: contrail_nodes_param_suffux}]]}
+        - name: get contrail issu node ips
+          shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}"
+          register: contrail_issu_nodes_list
+        - name: turn contrail config ips into string
+          set_fact:
+            contrail_issu_nodes_string: "{{ contrail_issu_nodes_list.stdout | from_json | join(',') }}"
+        - name: write contrail issu config node ips to environment file
+          lineinfile:
+            dest: *contrail_issu_env_file
+            state: present
+            regexp: "^{{ item.key }}.*"
+            line: "{{ item.key }}={{ item.value }}"
+          with_dict:
+            ANALYTICS_ALARM_ENABLE: 'True'
+            ANALYTICS_SNMP_ENABLE: 'True'
+            ANALYTICSDB_ENABLE: 'True'
+            ANALYTICS_NODES: "{{ contrail_issu_nodes_string }}"
+            ANALYTICS_SNMP_NODES: "{{ contrail_issu_nodes_string }}"
+            ANALYTICS_ALARM_NODES: "{{ contrail_issu_nodes_string }}"
+            ANALYTICSDB_NODES: "{{ contrail_issu_nodes_string }}"
+            CONFIG_NODES: "{{ contrail_issu_nodes_string }}"
+            CONFIGDB_NODES: "{{ contrail_issu_nodes_string }}"
+            CONTROL_NODES: "{{ contrail_issu_nodes_string }}"
+            DNS_NODES: "{{ contrail_issu_nodes_string }}"
+            WEBUI_NODES: "{{ contrail_issu_nodes_string }}"
+            RABBITMQ_NODES: "{{ contrail_issu_nodes_string }}"
+            RABBITMQ_NODE_PORT: 5673
+            RABBITMQ_ERLANG_COOKIE: "abcdefg"
+            KAFKA_NODES: "{{ contrail_issu_nodes_string }}"
+            IPFABRIC_SERVICE_HOST: "{{ nova_api_host.stdout }}"
+            # for 5.0 compatibility, starting from 5.1 it has correct default
+            ZOOKEEPER_PORTS: "2888:3888"
+            ZOOKEEPER_PORT: "2181"
+            ZOOKEEPER_NODES: "{{ contrail_issu_nodes_string }}"
+            ZOOKEEPER_ANALYTICS_PORT: "2181"
+            ZOOKEEPER_ANALYTICS_NODES: "{{ contrail_issu_nodes_string }}"
+
+        - name: register contrail issu config database env file
+          stat:
+            path: *contrail_issu_configdb_env_file
+          register: p
+        - name: create contrail issu config database env file
+          copy:
+            dest: *contrail_issu_configdb_env_file
+            content: ""
+          when: not p.stat.exists
+        - name: write contrail issu configdb env vars
+          lineinfile:
+            dest: *contrail_issu_configdb_env_file
+            state: present
+            line: "{{ item }}"
+          with_items:
+            - "NODE_TYPE=config-database"
+            - "CASSANDRA_SEEDS={{ contrail_issu_nodes_string }}"
+            - "CASSANDRA_START_RPC=true"
+            - "CASSANDRA_CLUSTER_NAME=contrail_database"
+            - "CASSANDRA_PORT=9161"
+            - "CASSANDRA_CQL_PORT=9041"
+            - "CASSANDRA_SSL_STORAGE_PORT=7013"
+            - "CASSANDRA_STORAGE_PORT=7012"
+            - "CASSANDRA_JMX_LOCAL_PORT=7201"
+
+        - name: register contrail issu analytics database env file
+          stat:
+            path: *contrail_issu_analyticsdb_env_file
+          register: p
+        - name: create contrail issu analytics database env file
+          copy:
+            dest: *contrail_issu_analyticsdb_env_file
+            content: ""
+          when: not p.stat.exists
+        - name: write contrail issu analytics database specific env cars
+          lineinfile:
+            dest: *contrail_issu_analyticsdb_env_file
+            state: present
+            line: "{{ item }}"
+          with_items:
+            - "NODE_TYPE=database"
+            - "CASSANDRA_SEEDS={{ contrail_issu_nodes_string }}"
+            - "CASSANDRA_START_RPC=true"
+            - "CASSANDRA_CLUSTER_NAME=contrail_analytics"
+            - "CASSANDRA_PORT=9160"
+            - "CASSANDRA_CQL_PORT=9042"
+            - "CASSANDRA_SSL_STORAGE_PORT=7011"
+            - "CASSANDRA_STORAGE_PORT=7010"
+            - "CASSANDRA_JMX_LOCAL_PORT=7200"
+
+        - name: contrail webui CA
+          set_fact:
+            contrail_webui_ca: {get_param: ContrailCA}
+        - name: overwrite contrail webui cert files for IPA
+          block:
+            - name: contrail webui server cert
+              set_fact:
+                contrail_webui_cert: {get_param: ContrailServiceCertFile}
+            - name: contrail webui server key
+              set_fact:
+                contrail_webui_key: {get_param: ContrailServiceKeyFile}
+            - name: set contrail webui certs for IPA case 
+              lineinfile:
+                dest: *contrail_issu_env_file
+                state: present
+                regexp: "^{{ item.key }}.*"
+                line: "{{ item.key }}={{ item.value }}"
+              with_dict:
+                WEBUI_SSL_CERT_FILE: "{{ contrail_webui_cert }}"
+                WEBUI_SSL_KEY_FILE: "{{ contrail_webui_key }}"
+          when: contrail_webui_ca == 'IPA'
+
+      metadata_settings:
+        get_attr: [ContrailBase, role_data, metadata_settings]
+
