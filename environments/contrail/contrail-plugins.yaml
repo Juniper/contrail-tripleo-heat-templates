@@ -20,6 +20,11 @@ resource_registry:
   OS::TripleO::Services::ContrailCertmongerUser: OS::Heat::None
   OS::TripleO::Services::ContrailIssu: OS::Heat::None
   OS::TripleO::Services::ContrailIssuCompute: OS::Heat::None
+  OS::TripleO::Services::ContrailIssuScript: OS::Heat::None
+  OS::TripleO::ContrailIssuInit: OS::Heat::None
+  OS::TripleO::ContrailVrouterIssu: OS::Heat::None
+  OS::TripleO::ContrailHeatIssu: OS::Heat::None
+  OS::TripleO::ContrailNeutronIssu: OS::Heat::None
   OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
   OS::TripleO::ContrailTsn::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_tsn_pre_network.yaml
