@@ -1,0 +1,86 @@
+heat_template_version: queens
+
+description: >
+  This template prepares the Contrail ISSU node.
+
+parameters:
+  server:
+    type: string
+
+  ContrailIssuSshUser:
+    type: string
+    default: ''
+
+  ContrailIssuSshKey:
+    default: {}
+    description: >
+      Contrail ISSU ssh key.
+      ISSU procedure needs access via SSH to Contrail nodes.
+      It is a dictionary with keys 'public_key' and 'private_key'.
+    type: json
+
+conditions:
+  issu_enabled:
+    {not: {equals: [{get_param: ContrailIssuSshUser}, ""]}}
+
+resources:
+  ContrailIssuConfig:
+    type: OS::Heat::SoftwareConfig
+    condition: issu_enabled
+    properties:
+      group: script
+      inputs:
+        - name: contrail_issu_ssh_user
+        - name: contrail_issu_ssh_private_key
+        - name: contrail_issu_ssh_public_key
+      config: |
+        #!/bin/sh
+        set -e
+        user_name=${contrail_issu_ssh_user}
+        if [[ -n "contrail_issu_ssh_public_key" && -n "contrail_issu_ssh_private_key" ]] ; then
+            if [[ ! -d "/home/${user_name}/.ssh" ]] ; then
+                mkdir -p /home/${user_name}/.ssh
+                chmod 700 /home/${user_name}/.ssh
+                chown ${user_name}:${user_name} /home/${user_name}/.ssh
+            fi
+            pushd /home/${user_name}/.ssh/
+            if [[ ! -f ./authorized_keys ]] ; then
+                echo "$contrail_issu_ssh_public_key" >> ./authorized_keys
+                chmod 600 ./authorized_keys
+                chown ${user_name}:${user_name} ./authorized_keys
+            else
+                echo "$contrail_issu_ssh_public_key" >> ./authorized_keys
+            fi
+            echo "$contrail_issu_ssh_public_key" > ./issu_id_rsa.pub
+            chown ${user_name}:${user_name} ./issu_id_rsa.pub
+
+            echo "$contrail_issu_ssh_private_key" > ./issu_id_rsa
+            chmod 600 ./issu_id_rsa
+            chown ${user_name}:${user_name} ./issu_id_rsa
+        fi
+
+  ContrailIssuDeployment:
+    type: OS::Heat::SoftwareDeployment
+    condition: issu_enabled
+    properties:
+      name: ContrailIssuDeployment
+      config: {get_resource: ContrailIssuConfig}
+      server: {get_param: server}
+      input_values:
+        contrail_issu_ssh_user: {get_param: ContrailIssuSshUser}
+        contrail_issu_ssh_public_key: {get_param: [ContrailIssuSshKey, public_key]}
+        contrail_issu_ssh_private_key: {get_param: [ContrailIssuSshKey, private_key]}
+
+outputs:
+  result:
+    value:
+      get_attr: [ContrailIssuDeployment, result]
+  stdout:
+    value:
+      get_attr: [ContrailIssuDeployment, deploy_stdout]
+  stderr:
+    value:
+      get_attr: [ContrailIssuDeployment, deploy_stderr]
+  status_code:
+    value:
+      get_attr: [ContrailIssuDeployment, deploy_status_code]
