@@ -9,7 +9,14 @@ parameter_defaults:
     ContrailControlNetwork: tenant
     ContrailWebuiNetwork: internal_api
     ContrailVrouterNetwork: tenant
+    ContrailDpdkNetwork: tenant
+    ContrailSriovNetwork: tenant
     ContrailCertmongerUserNetwork: internal_api
+    # In case of using custom network for Conraril controller this should be defined
+    # as well as RabbitMQ use hostname for host resolving.
+    # Default value is defined for all roles as:
+    #   .//network/service_net_map.j2.yaml: {{role.name}}HostnameResolveNetwork: internal_api 
+    # ContrailControllerHostnameResolveNetwork: internal_api
   OvercloudControllerFlavor: control
   OvercloudContrailControllerFlavor: contrail-controller
   OvercloudContrailAnalyticsFlavor: contrail-analytics
