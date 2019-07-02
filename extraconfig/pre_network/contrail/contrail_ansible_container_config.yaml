@@ -34,10 +34,10 @@
       - name: update contrail settings with node data values
         set_fact:
           contrail_settings_env_vars: "{{ contrail_settings_env_vars | combine({item.key: item.value}) }}"
-        with_dict: "{{ nodedata[contrail_settings] }}"
+        with_dict: "{{ nodedata['contrail_settings'] }}"
         when:
           - nodedata is defined
-          - nodedata[contrail_settings] is defined
+          - nodedata['contrail_settings'] is defined
 
       when: _NODEDATA_ is defined
 
