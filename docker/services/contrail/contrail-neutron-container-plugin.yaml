@@ -70,6 +70,9 @@ resources:
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
 
+  ContrailNeutronIssu:
+    type: OS::TripleO::ContrailNeutronIssu
+
 outputs:
   role_data:
     description: Role data for the Contrail Neutron Plugin role.
@@ -100,6 +103,7 @@ outputs:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
               get_attr: [ContrailBase, role_data, contrail_base_env_file]
+
       host_prep_tasks:
         get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]
 
@@ -110,4 +114,9 @@ outputs:
         get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
 
       upgrade_tasks:
-        get_attr: [ContrailBase, role_data, upgrade_tasks_common]
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, upgrade_tasks_common]}
+          - {get_attr: [ContrailNeutronIssu, role_data, upgrade_tasks]}
+
+      post_upgrade_tasks:
+        get_attr: [ContrailNeutronIssu, role_data, post_upgrade_tasks]

@@ -12,6 +12,8 @@ parameter_defaults:
     ContrailDpdkNetwork: tenant
     ContrailSriovNetwork: tenant
     ContrailCertmongerUserNetwork: internal_api
+    ContrailIssuNetwork: internal_api
+    ContrailIssuScriptNetwork: internal_api
     # In case of using custom network for Conraril controller this should be defined
     # as well as RabbitMQ use hostname for host resolving.
     # Default value is defined for all roles as:
@@ -57,6 +59,8 @@ parameter_defaults:
 # Custome Contrail container configuration settings
   ContrailSettings:
     VROUTER_GATEWAY: 10.0.0.1
+    CONTRAIL_UID: ""
+    CONTRAIL_GID: ""
 # 16 bit BGP Autonomous System number for the cluster.
     BGP_ASN: 64512
 # Supported values are true/false. When true, system will automatically create BGP peering mesh with all control-nodes that have same BGP AS number as global AS number.
