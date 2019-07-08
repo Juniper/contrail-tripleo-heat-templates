@@ -1,0 +1,527 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25d2342a_c1106c83",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "remove, it is in the issu-script.",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 15
+      },
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "958d9c95_d2f33717",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 394,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "upload latest change from testbed",
+      "range": {
+        "startLine": 391,
+        "startChar": 7,
+        "endLine": 394,
+        "endChar": 69
+      },
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a94f43ea_2e779921",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 518,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add one more env variable:\n- - \u0027NODE_TYPE\u003dconfig-database\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f5f94e8_1d06b8ce",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add one more env variable:\n- - \u0027NODE_TYPE\u003dconfig-database\u0027\n\n(via using list_concat)",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d3805816_5f8e6884",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 571,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add one more env variable:\n          - if:\n            - is_not_5_0\n            - - \u0027NODE_TYPE\u003danalytics-alarm\u0027\n            - - \u0027NODE_TYPE\u003ddatabase\u0027\n(use list_concat)",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06b4e8d6_59cb8e17",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "remove as you already put content from step 3 . (it is contrail_analytics_zookeeper above)",
+      "range": {
+        "startLine": 573,
+        "startChar": 14,
+        "endLine": 573,
+        "endChar": 82
+      },
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "be1128a7_734502b6",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add one more env variable:\n- - \u0027NODE_TYPE\u003dconfig-database\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28615ea3_f286d2ca",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 613,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add one more env variable:\n- - \u0027NODE_TYPE\u003dconfig-database\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "91a55888_44b68a18",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 615,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "copy-paste contrail_redis directly instead of it. Otherwise it will use wrong env file form contrail_base_env_file.  (remember you removed all env_file links to get_attr: [ContrailBase, role_data, contrail_base_env_file]",
+      "range": {
+        "startLine": 615,
+        "startChar": 14,
+        "endLine": 615,
+        "endChar": 73
+      },
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "597c5758_ca260a5b",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 626,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add one more env variable:\n          - if:\n            - is_not_5_0\n            - - \u0027NODE_TYPE\u003danalytics-alarm\u0027\n            - - \u0027NODE_TYPE\u003ddatabase\u0027\n(use list_concat)",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "33b28a68_aeca3a1b",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 647,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add one more env variable:\n\u0027NODE_TYPE\u003ddatabase\u0027\n(use list_concat",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5b0f6b4_ebc3b0e7",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 649,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "remove as you already put kafka above",
+      "range": {
+        "startLine": 649,
+        "startChar": 14,
+        "endLine": 649,
+        "endChar": 82
+      },
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4de20073_30c9b62c",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 664,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add env var: \u0027NODE_TYPE\u003dconfig\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae9e66e6_90992a5f",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 676,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add env var: \u0027NODE_TYPE\u003dconfig\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a43e4b51_5881e7a7",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 688,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add env var: \u0027NODE_TYPE\u003dconfig\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "09a8b0cf_211117d5",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 700,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add env var: \u0027NODE_TYPE\u003dconfig\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3696c954_1bd836e7",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add env var: \u0027NODE_TYPE\u003dconfig\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d75f4567_e358db3d",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 725,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "NODE_TYPE\u003danalytics",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a1c60b1b_4a148357",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "NODE_TYPE\u003danalytics",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b80f6e1e_03716831",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "NODE_TYPE\u003danalytics",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7630d784_6b3bd590",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "add env variable:\n- if:\n  - is_not_5_0\n  - - \u0027NODE_TYPE\u003danalytics-snmp\u0027\n  - - \u0027NODE_TYPE\u003danalytics\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e0df4127_64c58bc8",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "- if:\n  - is_not_5_0\n  - - \u0027NODE_TYPE\u003danalytics-snmp\u0027\n  - - \u0027NODE_TYPE\u003danalytics\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "75333996_1e9bc54f",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 785,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "- if:\n   - is_not_5_0\n   - - \u0027NODE_TYPE\u003ddatabase\u0027\n   - - \u0027NODE_TYPE\u003danalytics\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bbdd4a12_5cec7156",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 799,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "\u0027NODE_TYPE\u003ddatabase\u0027",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8998ed8c_bd991229",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 818,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "- if:\n  - is_not_5_0\n  - - ‘NODE_TYPE\u003danalytics-alarm’\n  - - ‘NODE_TYPE\u003danalytics’",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57cb5d4b_ec2bf43f",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 831,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "NODE_TYPE\u003dcontrol",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "721f0dc1_cfa97490",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "NODE_TYPE\u003dcontrol",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a70b01da_d4eb16d4",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 858,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "NODE_TYPE\u003dcontrol",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "51838fd8_f93038e8",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 871,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-07-08T15:10:12Z",
+      "side": 1,
+      "message": "NODE_TYPE\u003dcontrol",
+      "revId": "d2c8611668aafc930cf59194633d858f7aa542fe",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    }
+  ]
+}
