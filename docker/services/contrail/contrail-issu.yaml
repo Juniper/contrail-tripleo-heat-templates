@@ -114,6 +114,11 @@ parameters:
     description: Docker volume for contrail config zookeeper service
     type: string
 
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+
   ContrailIssuImageTag:
     default: 'latest'
     description: Contrail container image tag
@@ -235,7 +240,7 @@ conditions:
 
   contrail_analyticsdb_min_disk_gb_unset: {equals : [{get_param: ContrailAnalyticsDBMinDiskGB}, '']}
 
-  is_not_5_0:
+  is_not_5_0_issu:
     not: 
       yaql:
         expression: $.data.split(":")[-1].matches("5\.0")
@@ -298,15 +303,16 @@ resources:
       GenericImageName: {get_param: DockerContrailAnalyticsCollectorImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
-  DockerContrailAnalyticsTopologyImageNormalize:
+  DockerContrailAnalyticsTopologyImageNormalizeIssu:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
+      ContrailImageTag: {get_param: ContrailIssuImageTag}
+      ContrailRegistry: {get_param: ContrailRegistry}
       GenericImageName:
         if:
-          - is_not_5_0
+          - is_not_5_0_issu
           - {get_param: DockerContrailAnalyticsTopologyImageName}
           - {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
-      ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailAnalyticsSnmpCollectorImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
@@ -673,7 +679,7 @@ outputs:
               list_concat:
                 - get_attr: [ContrailBase, role_data, contrail_base_env]
                 - if:
-                  - is_not_5_0
+                  - is_not_5_0_issu
                   - - 'NODE_TYPE=analytics-alarm'
                   - - 'NODE_TYPE=database'
             env_file: *contrail_issu_env_file
@@ -806,7 +812,7 @@ outputs:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file: *contrail_issu_env_file
               contrail_analytics_topology:
-                image: &contrail_analytics_topology_image {get_attr: [DockerContrailAnalyticsTopologyImageNormalize, contrail_image]}
+                image: &contrail_analytics_topology_image {get_attr: [DockerContrailAnalyticsTopologyImageNormalizeIssu, contrail_image]}
                 net: host
                 privileged: false
                 detach: true
@@ -815,7 +821,12 @@ outputs:
                 volumes:
                   get_attr: [ContrailBase, role_data, contrail_base_volumes]
                 environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_env]
+                    - if:
+                      - is_not_5_0_issu
+                      - - 'NODE_TYPE=analytics-snmp'
+                      - - 'NODE_TYPE=analytics'
                 env_file: *contrail_issu_env_file
               contrail_analytics_snmp_collector:
                 image: &contrail_analytics_snmp_collector_image {get_attr: [DockerContrailAnalyticsSnmpCollectorImageNormalize, contrail_image]}
@@ -827,7 +838,12 @@ outputs:
                 volumes:
                   get_attr: [ContrailBase, role_data, contrail_base_volumes]
                 environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_env]
+                    - if:
+                      - is_not_5_0_issu
+                      - - 'NODE_TYPE=analytics-snmp'
+                      - - 'NODE_TYPE=analytics'
                 env_file: *contrail_issu_env_file
               contrail_analytics_queryengine:
                 image: &contrail_analytics_queryengine_image {get_attr: [DockerContrailAnalyticsQueryEngineImageNormalize, contrail_image]}
@@ -839,7 +855,12 @@ outputs:
                 volumes:
                   get_attr: [ContrailBase, role_data, contrail_base_volumes]
                 environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_env]
+                    - if:
+                      - is_not_5_0_issu
+                      - - 'NODE_TYPE=database'
+                      - - 'NODE_TYPE=analytics'
                 env_file: *contrail_issu_env_file
               contrail_analytics_database_nodemgr:
                 image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
@@ -874,7 +895,12 @@ outputs:
                 volumes:
                   get_attr: [ContrailBase, role_data, contrail_base_volumes]
                 environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_env]
+                    - if:
+                      - is_not_5_0_issu
+                      - - 'NODE_TYPE=analytics-alarm'
+                      - - 'NODE_TYPE=database'
                 env_file: *contrail_issu_env_file
               contrail_control_nodemgr:
                 image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
@@ -956,7 +982,7 @@ outputs:
                   get_attr: [ContrailBase, role_data, contrail_base_auth_internal_env]
                 env_file: *contrail_issu_env_file
             - if:
-                - is_not_5_0
+                - is_not_5_0_issu
                 - contrail_analytics_snmp_nodemgr:
                     image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
                     net: host
