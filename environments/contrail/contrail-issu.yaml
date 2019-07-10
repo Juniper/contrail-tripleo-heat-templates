@@ -9,7 +9,7 @@ resource_registry:
   OS::TripleO::Services::ContrailIssu: ../../docker/services/contrail/contrail-issu.yaml
   OS::TripleO::Services::ContrailIssuScript: ../../docker/services/contrail/contrail-issu-script.yaml
   # OS::TripleO::Services::ContrailIssuCompute: ../../docker/services/contrail/contrail-issu-compute.yaml
-  OS::TripleO::ContrailControllerIssuExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
+  OS::TripleO::ContrailControllerIssuExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init-issu.yaml
 
   OS::TripleO::ContrailIssuInit: ../../extraconfig/pre_deploy/contrail/contrail-issu.yaml
   OS::TripleO::ContrailVrouterIssu: ../../docker/services/contrail/contrail-issu-vrouter.yaml

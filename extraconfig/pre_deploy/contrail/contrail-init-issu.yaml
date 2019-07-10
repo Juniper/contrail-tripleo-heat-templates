@@ -1,0 +1,49 @@
+heat_template_version: queens
+
+description:  Contrail Node init
+
+parameters:
+  server:
+    type: string
+  ContrailRegistry:
+    description: Contrail Registry
+    type: string
+  ContrailIssuImageTag:
+    description: Contrail ISSU image tag
+    type: string
+  DockerContrailNodeInitImageName:
+    description: image
+    type: string
+    default: "contrail-node-init"
+  DockerContrailStatusImageName:
+    description: image
+    type: string
+    default: "contrail-status"
+
+resources:
+  ContrailTlsInit:
+    type: ./contrail-tls-inject.yaml
+    properties:
+      server: {get_param: server}
+
+  ContrailNodeInit:
+    type: ./contrail-node-init.yaml
+    depends_on: [ContrailTlsInit]
+    properties:
+      server: {get_param: server}
+      install_contrail_puppet: true
+      ContrailImageTag: {get_param: ContrailIssuImageTag}
+      ContrailRegistry: {get_param: ContrailRegistry}
+
+  ContrailIssuInit:
+    type: OS::TripleO::ContrailIssuInit
+    properties:
+      server: {get_param: server}
+
+outputs:
+  contrail_tls_init:
+    value: {get_resource: ContrailTlsInit}
+  contrail_node_init:
+    value: {get_resource: ContrailNodeInit}
+  contrail_issu_init:
+    value: {get_resource: ContrailIssuInit}

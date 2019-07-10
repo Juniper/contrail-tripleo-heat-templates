@@ -119,3 +119,11 @@ outputs:
   contrail_image_tag_only:
     description: image tag stripped form image name and registry
     value: {get_attr: [ContrailImageTagValue, value]}
+
+  contrail_image_dbg:
+    description: contrail_image_dbg
+    value: {get_param: GenericImageName}
+
+  contrail_image_tag_dbg:
+    description: contrail_image_dbg
+    value: {get_param: ContrailImageTag}
