@@ -57,11 +57,15 @@ resources:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailNodeInitImageName}
+      ContrailImageTag: {get_param: ContrailImageTag}
+      ContrailRegistry: {get_param: ContrailRegistry}
 
   DockerContrailStatusImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailStatusImageName}
+      ContrailImageTag: {get_param: ContrailImageTag}
+      ContrailRegistry: {get_param: ContrailRegistry}
 
   ContrailNodeInitConfig:
     type: OS::Heat::SoftwareConfig
