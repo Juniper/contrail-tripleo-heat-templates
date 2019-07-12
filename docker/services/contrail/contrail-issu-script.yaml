@@ -37,7 +37,8 @@ parameters:
     default: 'opencontrailnightly'
     description: Contrail Registry
     type: string
-  ContrailImageTag:
+  ContrailIssuImageTag:
+    default: 'latest'
     description: Contrail container image tag
     type: string
 
@@ -50,6 +51,6 @@ outputs:
         contrail_issu_ssh_user: {get_param: ContrailIssuSshUser}
         contrail_issu_host_ip: {get_param: [ServiceNetMap, ContrailIssuNetwork]}
         contrail_issu_container_registry: {get_param: ContrailRegistry}
-        contrail_issu_container_tag: {get_param: ContrailImageTag}
+        contrail_issu_container_tag: {get_param: ContrailIssuImageTag}
       step_config: |
         include ::tripleo::network::contrail::issu
