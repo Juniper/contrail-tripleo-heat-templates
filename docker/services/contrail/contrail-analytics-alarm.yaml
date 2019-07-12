@@ -169,6 +169,7 @@ outputs:
               lineinfile:
                 dest: *contrail_env_file
                 state: present
+                regexp: "^NODE_TYPE="
                 line: "{{ item }}"
               with_items: "{{ alarm_env_vars }}"
           - {get_attr: [ContrailAnalyticsKafka, role_data, host_prep_tasks]}

@@ -176,6 +176,7 @@ outputs:
               lineinfile:
                 dest: *contrail_env_file
                 state: present
+                regexp: "^NODE_TYPE="
                 line: "{{ item }}"
               with_items: "{{ analytics_snmp_env_vars }}"
 
