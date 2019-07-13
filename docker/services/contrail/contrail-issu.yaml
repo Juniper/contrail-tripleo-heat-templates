@@ -136,12 +136,12 @@ parameters:
   
   # Use own name for topology as it's default value is already
   # tied to old 5.0 image name in case of ISSU from 5.0
-  DockerContrailAnalyticsTopologyImageNameIssu:
+  DockerContrailAnalyticsTopologyImageNameUpgrade:
     description: image
     type: string
     default: "contrail-analytics-snmp-topology"
 
-  DockerContrailAnalyticsTopologyImageNameIssu_5_0:
+  DockerContrailAnalyticsTopologyImageName_5_0:
     description:  5.0 compatibility image name.
     type: string
     default: "contrail-analytics-topology"
@@ -318,8 +318,8 @@ resources:
       GenericImageName:
         if:
           - is_not_5_0_issu
-          - {get_param: DockerContrailAnalyticsTopologyImageNameIssu}
-          - {get_param: DockerContrailAnalyticsTopologyImageNameIssu_5_0}
+          - {get_param: DockerContrailAnalyticsTopologyImageNameUpgrade}
+          - {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
 
   DockerContrailAnalyticsSnmpCollectorImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
