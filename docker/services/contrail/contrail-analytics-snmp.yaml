@@ -12,8 +12,18 @@ parameters:
     description: image
     type: string
     default: "contrail-analytics-snmp-topology"
+  # This 5_1 option is for case 5.0 => 5.1 upgrade
+  # 5.0 & 5.1 have different layout and names of images.
+  # During upgrade tripleo doesnt update the parameter
+  # value for DockerContrailAnalyticsTopologyImageName
+  # despite that THT has new default one.
+  # So this name specifically is used for upgrade.
+  DockerContrailAnalyticsTopologyImageNameUpgrade:
+    description: image name for upgrade
+    type: string
+    default: ""
   DockerContrailAnalyticsTopologyImageName_5_0:
-    description:  5.0 compatibility image name.
+    description: image name for 5.0 and earlier
     type: string
     default: "contrail-analytics-topology"
   DockerContrailAnalyticsSnmpCollectorImageName:
@@ -54,15 +64,21 @@ conditions:
         expression: $.data.split(":")[-1].matches("5\.0")
         data: {get_param: ContrailImageTag}
 
+  use_upgrade_image_name: {not: {equals: [{get_param: DockerContrailAnalyticsTopologyImageNameUpgrade}, '']}}
+
 resources:
+
   DockerContrailAnalyticsTopologyImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName:
         if:
-          - is_not_5_0
-          - {get_param: DockerContrailAnalyticsTopologyImageName}
-          - {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
+          - use_upgrade_image_name
+          - {get_param: DockerContrailAnalyticsTopologyImageNameUpgrade}
+          - if:
+              - is_not_5_0
+              - {get_param: DockerContrailAnalyticsTopologyImageName}
+              - {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
 
   DockerContrailAnalyticsSnmpCollectorImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
