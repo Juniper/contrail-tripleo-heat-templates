@@ -19,6 +19,7 @@ resource_registry:
   OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
   OS::TripleO::Services::ContrailCertmongerUser: OS::Heat::None
   OS::TripleO::Services::ContrailIssu: OS::Heat::None
+  OS::TripleO::Services::ContrailIssuControl: OS::Heat::None
   OS::TripleO::Services::ContrailIssuCompute: OS::Heat::None
   OS::TripleO::Services::ContrailIssuScript: OS::Heat::None
   OS::TripleO::ContrailIssuInit: OS::Heat::None
