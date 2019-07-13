@@ -126,6 +126,7 @@ DockerContrailVrouterKernelInitImageName:contrail-vrouter-kernel-init
 DockerContrailWebuiJobImageName:contrail-controller-webui-job
 DockerContrailWebuiWebImageName:contrail-controller-webui-web
 DockerContrailZookeeperImageName:contrail-external-zookeeper
+DockerContrailDnsmasqImageName:contrail-external-dnsmasq
 )
 
 if [[ -n ${user} && -n ${password} ]]; then
