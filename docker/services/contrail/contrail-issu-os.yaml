@@ -17,7 +17,7 @@ outputs:
       # upgrade task should put contrail::api_port to point to ISSU node
       upgrade_tasks:
         - name: Contrail Openstack Plugins ISSU upgrade  
-          when: step|int == 0
+          when: step|int == 5
           tags: issu
           block:
             - name: contrail issu os set dmi fact
@@ -51,6 +51,25 @@ outputs:
               register: contrail_api_port_str
             - debug:
                 msg: "contrail::api_port: '{{ contrail_api_port_str.stdout }}'"
+            - set_fact:
+                contrail_puppet_setup_dir: "/usr/share/contrail-tripleo-puppet"
+            - name: Check contrail tripleo puppet module was installed.
+              stat:
+                path: "{{ contrail_puppet_setup_dir }}"
+              register: file_details
+            - when: file_details.stat.exists
+              block:
+                - set_fact:
+                    puppet_module_dir: "/usr/share/openstack-puppet/modules/tripleo/"
+                - set_fact:
+                    contrail_module_dir: "{{ puppet_module_dir }}/manifests/network/contrail"
+                - name: Check contrail tripleo puppet module exists.
+                  stat:
+                    path: "{{ contrail_module_dir }}"
+                  register: file_details_target
+                - name: Sync contrail-tripleo-puppet module into tripleo
+                  shell: "rsync -a {{ contrail_puppet_setup_dir }}/ {{ puppet_module_dir }}"
+                  when: file_details_target.stat.exists
 
       # post upgrade task should remove contrail::api_port that point to ISSU node
       post_upgrade_tasks:

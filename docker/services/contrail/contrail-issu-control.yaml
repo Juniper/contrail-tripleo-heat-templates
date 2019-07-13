@@ -1,0 +1,319 @@
+# control
+
+heat_template_version: queens
+
+description: >
+  Contrail Issu Control
+  Addon to COntrail Issu to have ability 
+  to use tenant network for Control Issu
+
+parameters:
+
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+
+  # internal params
+  contrail_nodes_param_suffux:
+    type: string
+    default: "node_ips"
+    description: suffix for reading hiera data, node_ips or node_names
+
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+
+  ContrailIssuImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
+
+  DockerContrailControlControlImageName:
+    description: image
+    type: string
+    default: "contrail-controller-control-control"
+
+  DockerContrailControlNamedImageName:
+    description: image
+    type: string
+    default: "contrail-controller-control-named"
+
+  DockerContrailControlDnsImageName:
+    description: image
+    type: string
+    default: "contrail-controller-control-dns"
+
+  DockerContrailNodemgrImageName:
+    description: image
+    type: string
+    default: "contrail-nodemgr"
+
+  ContrailCA:
+    default: ''
+    description: Contrail CA, could be local or IPA
+    type: string
+
+  ContrailServiceCertFile:
+    description: Path to the node's public certificate
+    type: string
+    default: ''
+
+  ContrailServiceKeyFile:
+    description: Path to server's/node's private key
+    type: string
+    default: ''
+
+  AdminTenantName:
+    description: Keystone admin tenant name
+    type: string
+    default: 'admin'
+
+resources:
+
+  DockerContrailControlControlImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailControlControlImageName}
+      ContrailImageTag: {get_param: ContrailIssuImageTag}
+
+  DockerContrailControlNamedImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailControlNamedImageName}
+      ContrailImageTag: {get_param: ContrailIssuImageTag}
+
+  DockerContrailControlDnsImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailControlDnsImageName}
+      ContrailImageTag: {get_param: ContrailIssuImageTag}
+
+  DockerContrailNodemgrImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailNodemgrImageName}
+      ContrailImageTag: {get_param: ContrailIssuImageTag}
+
+  ContrailBase:
+    type: contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+      ContrailImageTag: {get_param: ContrailIssuImageTag}
+
+outputs:
+  role_data:
+    description: Role Contrail Controller Issu
+    value:
+      service_name: contrail_issu_control
+      contrail_issu_api_port: &contrail_issu_api_port 28082
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - contrail::issu_api_port: *contrail_issu_api_port
+            tripleo.contrail_issu_control.firewall_rules:
+              '113 contrail_issu_control_udp':
+                dport: 53
+                  - 53
+                  - 8092
+                proto: 'udp'
+              '118 contrail_issu_control_control':
+                dport:
+                  - 179
+                  - 5269
+                  - 8083
+                  - 8092
+                  - 8093
+                  - 8094
+                  - 8101
+
+      contrail_issu_control_env_file: &contrail_issu_control_env_file
+        "/etc/contrail/issu_control_config.env"
+
+      contrail_nodemgr_image_name: &contrail_nodemgr_image_name
+        get_attr: [DockerContrailNodemgrImageNormalize, contrail_image]
+
+      contrail_common_base_env: &contrail_common_base_env
+        {get_attr: [ContrailBase, role_data, contrail_common_base_env]}
+
+      docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
+
+        step_5:
+          contrail_control_nodemgr:
+            image: *contrail_nodemgr_image_name
+            net: host
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /var/run/docker.sock:/var/run/docker.sock
+            environment:
+              list_concat:
+                - get_attr: [ContrailBase, role_data, contrail_base_env]
+                - - 'NODE_TYPE=control'
+            env_file: *contrail_issu_control_env_file
+          contrail_control_control:
+            image: &contrail_control_control_image {get_attr: [DockerContrailControlControlImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file: *contrail_issu_control_env_file
+          contrail_control_dns:
+            image: &contrail_control_dns_image {get_attr: [DockerContrailControlDnsImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            pid: host
+            volumes:
+              list_concat:
+                - get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                - - contrail_control_dns:/etc/contrail/dns
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file: *contrail_issu_control_env_file
+          contrail_control_named:
+            image: &contrail_control_named_image {get_attr: [DockerContrailControlNamedImageNormalize, contrail_image]}
+            net: host
+            privileged: true
+            detach: true
+            user: root
+            restart: always
+            pid: host
+            volumes_from:
+              - contrail_control_dns
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file: *contrail_issu_control_env_file
+
+      host_prep_tasks:
+        - name: create contrail containers common directories
+          file:
+            path: "{{ item }}"
+            state: directory
+            recurse: yes
+          with_items:
+            - /var/log/containers/contrail
+            - /etc/contrail
+        - name: register contrail control issu env file
+          stat:
+            path: *contrail_issu_control_env_file
+          register: p
+        - name: create contrail control issu env file
+          copy:
+            dest: *contrail_issu_control_env_file
+            content: ""
+          when: not p.stat.exists
+
+        - name: contrail control issu set contrail base calculated parameters
+          set_fact:
+            contrail_base_env_params: *contrail_common_base_env
+        - name: write contrail base parameters to environment file
+          lineinfile:
+            dest: *contrail_issu_control_env_file
+            state: present
+            line: "{{ item }}"
+          with_items: "{{ contrail_base_env_params }}"
+
+        - name: contrail control issu get dmi
+          shell: |
+            #!/bin/sh
+            dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
+          register: dmi
+        - name: contrail control issu set dmi fact
+          set_fact:
+            dmi_uuid: "{{ dmi.stdout }}"
+        - name: contrail control issu get contrail_settings
+          shell: "hiera -c /etc/puppet/hiera.yaml contrail_settings ::uuid={{ dmi_uuid }} | sed 's/=>/:/g'"
+          register: contrail_settings_string
+        - name: contrail control issu turn contrail_settings into json
+          set_fact:
+            contrail_settings: "{{ contrail_settings_string.stdout | from_json }}"
+          when:
+            - contrail_settings_string.stdout is defined
+            - contrail_settings_string.stdout != "nil"
+        - name: contrail control issu write contrail settings to file
+          lineinfile:
+            dest: *contrail_issu_control_env_file
+            regexp: "^{{ item.key }}.*"
+            line: "{{ item.key }}={{ item.value }}"
+            state: present
+          with_dict: "{{ contrail_settings }}"
+          when: contrail_settings is defined
+
+        - name: contrail control issu node ips (names) param name
+          set_fact:
+            contrail_control_nodes_param_name: {list_join: ["_", ["contrail_issu_control", {get_param: contrail_nodes_param_suffux}]]}
+        - name: contrail control issu get contrail issu node ips
+          shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_control_nodes_param_name }}"
+          register: contrail_issu_control_nodes_list
+        - name: contrail control issu turn contrail config ips into string
+          set_fact:
+            contrail_issu_control_nodes_string: "{{ contrail_issu_control_nodes_list.stdout | from_json | join(',') }}"
+        - name: node ips (names) param name
+          set_fact:
+            contrail_nodes_param_name: {list_join: ["_", ["contrail_issu", {get_param: contrail_nodes_param_suffux}]]}
+        - name: get contrail issu node ips
+          shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_nodes_param_name }}"
+          register: contrail_issu_nodes_list
+        - name: turn contrail config ips into string
+          set_fact:
+            contrail_issu_nodes_string: "{{ contrail_issu_nodes_list.stdout | from_json | join(',') }}"
+        - name: write contrail issu config node ips to environment file
+          lineinfile:
+            dest: *contrail_issu_control_env_file
+            state: present
+            regexp: "^{{ item.key }}.*"
+            line: "{{ item.key }}={{ item.value }}"
+          with_dict:
+            CONFIG_API_PORT: *contrail_issu_api_port
+            CONTROLLER_NODES: "{{ contrail_issu_nodes_string }}"
+            CONTROL_NODES: "{{ contrail_issu_control_nodes_string }}"
+            DNS_NODES: "{{ contrail_issu_control_nodes_string }}"
+
+      metadata_settings:
+        get_attr: [ContrailBase, role_data, metadata_settings]
+

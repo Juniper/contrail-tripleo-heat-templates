@@ -13,6 +13,7 @@ parameter_defaults:
     ContrailSriovNetwork: tenant
     ContrailCertmongerUserNetwork: internal_api
     ContrailIssuNetwork: internal_api
+    ContrailIssuControlNetwork: tenant
     ContrailIssuScriptNetwork: internal_api
     # In case of using custom network for Conraril controller this should be defined
     # as well as RabbitMQ use hostname for host resolving.

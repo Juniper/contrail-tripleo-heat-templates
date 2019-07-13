@@ -7,7 +7,6 @@
 # analytics kafka
 # analytics database
 # analytics alarm
-# control
 # web ui
 
 heat_template_version: queens
@@ -185,21 +184,6 @@ parameters:
     type: string
     default: "contrail-analytics-alarm-gen"
 
-  DockerContrailControlControlImageName:
-    description: image
-    type: string
-    default: "contrail-controller-control-control"
-
-  DockerContrailControlNamedImageName:
-    description: image
-    type: string
-    default: "contrail-controller-control-named"
-
-  DockerContrailControlDnsImageName:
-    description: image
-    type: string
-    default: "contrail-controller-control-dns"
-
   DockerContrailWebuiWebImageName:
     description: image
     type: string
@@ -345,24 +329,6 @@ resources:
       GenericImageName: {get_param: DockerContrailAnalyticsAlarmGenImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
-  DockerContrailControlControlImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailControlControlImageName}
-      ContrailImageTag: {get_param: ContrailIssuImageTag}
-
-  DockerContrailControlNamedImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailControlNamedImageName}
-      ContrailImageTag: {get_param: ContrailIssuImageTag}
-
-  DockerContrailControlDnsImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailControlDnsImageName}
-      ContrailImageTag: {get_param: ContrailIssuImageTag}
-
   DockerContrailWebuiWebImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
@@ -444,7 +410,7 @@ outputs:
           - contrail::issu_api_port: *contrail_issu_api_port
             tripleo.contrail_issu.firewall_rules:
               '113 contrail_issu_udp':
-                dport: 53
+                dport:
                   - 53
                   - 8092
                 proto: 'udp'
@@ -521,15 +487,6 @@ outputs:
                   - 5995
                   # alarm nodemgr
                   - 8113
-              '118 contrail_issu_control':
-                dport:
-                  - 179
-                  - 5269
-                  - 8083
-                  - 8092
-                  - 8093
-                  - 8094
-                  - 8101
               '118 contrail_issu_webui':
                 dport:
                   - 3000
@@ -916,61 +873,6 @@ outputs:
                       - - 'NODE_TYPE=analytics-alarm'
                       - - 'NODE_TYPE=database'
                 env_file: *contrail_issu_env_file
-              contrail_control_nodemgr:
-                image: *contrail_nodemgr_image_name
-                net: host
-                detach: true
-                user: root
-                restart: always
-                volumes:
-                  list_concat:
-                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
-                environment:
-                  list_concat:
-                    - get_attr: [ContrailBase, role_data, contrail_base_env]
-                    - - 'NODE_TYPE=control'
-                env_file: *contrail_issu_env_file
-              contrail_control_control:
-                image: &contrail_control_control_image {get_attr: [DockerContrailControlControlImageNormalize, contrail_image]}
-                net: host
-                privileged: false
-                detach: true
-                user: root
-                restart: always
-                volumes:
-                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
-                environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
-                env_file: *contrail_issu_env_file
-              contrail_control_dns:
-                image: &contrail_control_dns_image {get_attr: [DockerContrailControlDnsImageNormalize, contrail_image]}
-                net: host
-                privileged: false
-                detach: true
-                user: root
-                restart: always
-                pid: host
-                volumes:
-                  list_concat:
-                    - get_attr: [ContrailBase, role_data, contrail_base_volumes]
-                    - - contrail_control_dns:/etc/contrail/dns
-                environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
-                env_file: *contrail_issu_env_file
-              contrail_control_named:
-                image: &contrail_control_named_image {get_attr: [DockerContrailControlNamedImageNormalize, contrail_image]}
-                net: host
-                privileged: true
-                detach: true
-                user: root
-                restart: always
-                pid: host
-                volumes_from:
-                  - contrail_control_dns
-                environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
-                env_file: *contrail_issu_env_file
               contrail_webui_web:
                 image: &contrail_webui_web_image {get_attr: [DockerContrailWebuiWebImageNormalize, contrail_image]}
                 net: host
@@ -1120,8 +1022,6 @@ outputs:
             ANALYTICSDB_NODES: "{{ contrail_issu_nodes_string }}"
             CONFIG_NODES: "{{ contrail_issu_nodes_string }}"
             CONFIGDB_NODES: "{{ contrail_issu_nodes_string }}"
-            CONTROL_NODES: "{{ contrail_issu_nodes_string }}"
-            DNS_NODES: "{{ contrail_issu_nodes_string }}"
             WEBUI_NODES: "{{ contrail_issu_nodes_string }}"
             RABBITMQ_NODES: "{{ contrail_issu_nodes_string }}"
             RABBITMQ_NODE_PORT: 5673
