@@ -90,7 +90,7 @@ outputs:
               block:
                 - name: vrouter node issu ips (names) param name
                   set_fact:
-                    contrail_issu_param_name: {list_join: ["_", ["contrail_issu", {get_param: contrail_nodes_param_suffux}]]}
+                    contrail_issu_param_name: {list_join: ["_", ["contrail_issu_control", {get_param: contrail_nodes_param_suffux}]]}
                 - name: vrouter node get issu node ips from hiera
                   shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_issu_param_name }}
                   register: contrail_issu_nodes_list
