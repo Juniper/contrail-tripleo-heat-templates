@@ -88,16 +88,24 @@ outputs:
             - name: Contrail Vrouter ISSU patch containers config
               when: 'contrail_issu_in_progress.stat.exists == true'
               block:
+                - name: vrouter node issu control ips (names) param name
+                  set_fact:
+                    contrail_issu_control_param_name: {list_join: ["_", ["contrail_issu_control", {get_param: contrail_nodes_param_suffux}]]}
+                - name: vrouter node get issu control node ips from hiera
+                  shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_issu_control_param_name }}
+                  register: contrail_issu_control_nodes_list
+                - name: vrouter node turn contrail issu control ips into string
+                  set_fact:
+                    contrail_issu_control_nodes_string: "{{ contrail_issu_control_nodes_list.stdout | from_json | join(',') }}"
                 - name: vrouter node issu ips (names) param name
                   set_fact:
-                    contrail_issu_param_name: {list_join: ["_", ["contrail_issu_control", {get_param: contrail_nodes_param_suffux}]]}
+                    contrail_issu_param_name: {list_join: ["_", ["contrail_issu", {get_param: contrail_nodes_param_suffux}]]}
                 - name: vrouter node get issu node ips from hiera
                   shell: hiera -c /etc/puppet/hiera.yaml {{ contrail_issu_param_name }}
                   register: contrail_issu_nodes_list
                 - name: vrouter node turn contrail issu ips into string
                   set_fact:
                     contrail_issu_nodes_string: "{{ contrail_issu_nodes_list.stdout | from_json | join(',') }}"
-
                 - name: vrouter node write contrail issu node ips to environment file
                   lineinfile:
                     dest: *contrail_common_env_file
@@ -110,10 +118,12 @@ outputs:
                     ANALYTICS_ALARM_NODES: "{{ contrail_issu_nodes_string }}"
                     ANALYTICSDB_NODES: "{{ contrail_issu_nodes_string }}"
                     CONFIGDB_NODES: "{{ contrail_issu_nodes_string }}"
-                    CONTROL_NODES: "{{ contrail_issu_nodes_string }}"
-                    DNS_NODES: "{{ contrail_issu_nodes_string }}"
+                    CONTROL_NODES: "{{ contrail_issu_control_nodes_string }}"
+                    DNS_NODES: "{{ contrail_issu_control_nodes_string }}"
                     RABBITMQ_NODES: "{{ contrail_issu_nodes_string }}"
                     KAFKA_NODES: "{{ contrail_issu_nodes_string }}"
+                    # Use old control plane because at this step ISSU node is 
+                    # not primary one.
                     # CONFIG_NODES: "{{ contrail_issu_nodes_string }}"
                     # MAINTENANCE_MODE: True                  
                     # CONFIG_API_PORT: *contrail_issu_api_port
