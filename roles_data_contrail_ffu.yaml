@@ -549,3 +549,4 @@
     - OS::TripleO::Services::Timezone
     - OS::TripleO::Services::TripleoPackages
     - OS::TripleO::Services::ContrailIssu
+    - OS::TripleO::Services::ContrailIssuControl
