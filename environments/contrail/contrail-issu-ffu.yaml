@@ -1,5 +1,6 @@
 resource_registry:
   OS::TripleO::Services::ContrailIssu: ../../puppet/services/network/contrail-issu.yaml
+  OS::TripleO::Services::ContrailIssuControl: ../../puppet/services/network/contrail-issu-control.yaml
   OS::TripleO::Services::ContrailIssuCompute: ../../puppet/services/network/contrail-issu-compute.yaml
   OS::TripleO::ContrailControllerIssuExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml
   OS::TripleO::ControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-issu-reg.yaml

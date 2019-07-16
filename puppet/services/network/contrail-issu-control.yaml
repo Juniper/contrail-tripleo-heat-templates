@@ -1,0 +1,38 @@
+heat_template_version: 2016-10-14
+
+description: >
+  Contrail Control Issu
+
+parameters:
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+
+resources:
+  ContrailIssuBase:
+    type: ./contrail-issu-base.yaml
+    properties:
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      EndpointMap: {get_param: EndpointMap}
+
+outputs:
+  role_data:
+    description: Role Contrail Control Issu
+    value:
+      service_name: contrail_issu_control
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailIssuBase, role_data, config_settings]
+          - contrail_issu_control_host_ip: {get_param: [ServiceNetMap, ContrailIssuControlNetwork]}

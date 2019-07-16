@@ -257,3 +257,4 @@
     - OS::TripleO::Services::FluentdClient
     - OS::TripleO::Services::VipHosts
     - OS::TripleO::Services::ContrailIssu
+    - OS::TripleO::Services::ContrailIssuControl
