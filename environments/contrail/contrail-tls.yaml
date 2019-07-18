@@ -3,7 +3,20 @@ resource_registry:
   # IPA certs lifecycle management parameters:
   # ====
   OS::TripleO::Services::ContrailCertmongerUser: ../../docker/services/contrail/contrail-certmonger-user.yaml
-  OS::TripleO::ServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals.yaml
+
+  # In case if tripleo-heat-templates/environments/ssl/enable-internal-tls.yaml is not 
+  # included into deploy then uncomment the below definitions for IpaClient
+  # and ServiceServerMetadataHook
+  # OS::TripleO::Services::IpaClient: ../../extraconfig/services/ipaclient.yaml
+  # OS::TripleO::ContrailControllerServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals/contrailcontroller-role.yaml
+  # OS::TripleO::ContrailControlOnlyServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals/contrailcontrolonly-role.yaml
+  # OS::TripleO::ContrailAnalyticsServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals/contrailanalytics-role.yaml
+  # OS::TripleO::ContrailAnalyticsDatabaseServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals/contrailanalyticsdatabase-role.yaml
+  # OS::TripleO::ComputeServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals/compute-role.yaml
+  # OS::TripleO::ContrailDpdkServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals/contraildpdk-role.yaml
+  # OS::TripleO::ContrailTlsServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals/contrailtls-role.yaml
+  # OS::TripleO::ContrailSriovServiceServerMetadataHook: ../../extraconfig/nova_metadata/krb-service-principals/contrailsriov-role.yaml
+
 
   # ====
   # Manual certs lifecycle management parameters:
