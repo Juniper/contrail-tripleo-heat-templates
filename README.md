@@ -782,9 +782,17 @@ cat << EOF >> tripleo-heat-templates/environments/contrail/contrail-tls.yaml
   CloudNameCtlplane: overcloud.ctlplane.$undercloud_suffix
 EOF
 ```
-##### set option DnsServers to $prov_freeipa_ip in the overcloud network config file
+#### set option DnsServers to $prov_freeipa_ip in the overcloud network config file
 ```
 vi tripleo-heat-templates/environments/contrail/contrail-net.yaml
+```
+#### process templates to generate file for OS::TripleO::{{role}}ServiceServerMetadataHook definitions
+These files are used by the file  ~/tripleo-heat-templates/environments/ssl/enable-internal-tls.yaml 
+that is generated during that processing
+```
+  python ~/tripleo-heat-templates/tools/process-templates.py  --safe \
+    -r ~/tripleo-heat-templates/roles_data_contrail_aio.yaml \
+    -p ~/tripleo-heat-templates/
 ```
 
 ## deploy the stack
