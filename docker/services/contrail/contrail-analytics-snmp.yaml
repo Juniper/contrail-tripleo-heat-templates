@@ -64,7 +64,10 @@ conditions:
         expression: $.data.split(":")[-1].matches("5\.0")
         data: {get_param: ContrailImageTag}
 
-  use_upgrade_image_name: {not: {equals: [{get_param: DockerContrailAnalyticsTopologyImageNameUpgrade}, '']}}
+  use_upgrade_image_name:
+    and:
+      - not: {equals: [{get_param: DockerContrailAnalyticsTopologyImageNameUpgrade}, '']}
+      - is_not_5_0
 
 resources:
 
