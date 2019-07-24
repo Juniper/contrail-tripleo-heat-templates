@@ -46,9 +46,6 @@ parameters:
     default: 6379
     description: Contrail Redis port
     type: number
-  env_file_name:
-    type: string
-    default: ""
   ContrailSslEnabled:
     description:  Flag to identify is SSL should be used in internal Contrail
                   services communications (sandesh, introspect, xmpp, redis ..).
@@ -58,10 +55,17 @@ parameters:
     description: image
     type: string
     default: "contrail-external-stunnel"
+  env_file_name:
+    type: string
+    default: ""
+  contrail_stunnel_support:
+    type: boolean
+    default: false
 
 conditions:
   env_file_unset: {equals : [{get_param: env_file_name}, '']}
   contrail_tls_enabled: {equals: [{get_param: ContrailSslEnabled}, true]}
+  contrail_stunnel_support_enabled: {equals: [{get_param: contrail_stunnel_support}, true]}
   is_not_5_0:
     not:
       yaql:
@@ -71,6 +75,7 @@ conditions:
     and:
       - is_not_5_0
       - contrail_tls_enabled
+      - contrail_stunnel_support_enabled
 
 resources:
   DockerContrailRedisImageNormalize:

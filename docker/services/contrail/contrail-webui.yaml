@@ -86,6 +86,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_stunnel_support: false
 
 outputs:
   role_data:
