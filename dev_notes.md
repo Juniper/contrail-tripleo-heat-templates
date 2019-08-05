@@ -3,8 +3,8 @@ Currently the following combinations of Operating System/OpenStack/Deployer/Cont
 
 | Operating System  | OpenStack         | Deployer              | Contrail               |
 | ----------------- | ----------------- | --------------------- | ---------------------- |
-| RHEL 7.5          | OSP13             | OSPd13                | Contrail 5.0.1         |
-| CentOS 7.5        | RDO queens/stable | tripleo queens/stable | Tungsten Fabric latest |
+| RHEL 7.6          | OSP14             | OSPd14                | Contrail 5.1           |
+| CentOS 7.6        | RDO stable/rocky  | tripleo stable/rocky  | Tungsten Fabric latest |
 
 # Configuration elements
 1. Infrastructure
@@ -346,11 +346,11 @@ Get the undercloud ip and set the correct entries in /etc/hosts, ie (assuming th
 undercloud_ip=`ip addr sh dev eth0 |grep "inet " |awk '{print $2}' |awk -F"/" '{print $1}'`
 echo ${undercloud_ip} ${undercloud_name}.${undercloud_suffix} ${undercloud_name} >> /etc/hosts
 ```
-### tripleo queens/current
+### tripleo rocky/current
 ```
-tripeo_repos=`python -c 'import requests;r = requests.get("https://trunk.rdoproject.org/centos7-queens/current"); print r.text ' |grep python2-tripleo-repos|awk -F"href=\"" '{print $2}'|awk -F"\"" '{print $1}'`
-yum install -y https://trunk.rdoproject.org/centos7-queens/current/${tripeo_repos}
-tripleo-repos -b queens current
+tripeo_repos=`python -c 'import requests;r = requests.get("https://trunk.rdoproject.org/centos7-rocky/current"); print r.text ' |grep python2-tripleo-repos|awk -F"href=\"" '{print $2}'|awk -F"\"" '{print $1}'`
+yum install -y https://trunk.rdoproject.org/centos7-rocky/current/${tripeo_repos}
+tripleo-repos -b rocky current
 ```
 
 ### OSP13
@@ -399,8 +399,8 @@ cd images
 ### tripleo current
 
 ```
-curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/ironic-python-agent.tar
-curl -O https://images.rdoproject.org/queens/rdo_trunk/current-tripleo-rdo/overcloud-full.tar
+curl -O https://images.rdoproject.org/rocky/rdo_trunk/current-tripleo-rdo/ironic-python-agent.tar
+curl -O https://images.rdoproject.org/rocky/rdo_trunk/current-tripleo-rdo/overcloud-full.tar
 tar xvf ironic-python-agent.tar
 tar xvf overcloud-full.tar
 ```
@@ -468,7 +468,7 @@ for i in compute-dpdk contrail-controller contrail-analytics contrail-database c
 ## create tht template copy
 ```
 cp -r /usr/share/openstack-tripleo-heat-templates/ tripleo-heat-templates
-git clone https://github.com/juniper/contrail-tripleo-heat-templates -b stable/queens
+git clone https://github.com/juniper/contrail-tripleo-heat-templates -b stable/rocky
 cp -r contrail-tripleo-heat-templates/* tripleo-heat-templates/
 ```
 
@@ -485,15 +485,15 @@ source stackrc
 #### tripleo
 ```
 openstack overcloud container image prepare \
-  --namespace docker.io/tripleoqueens \
+  --namespace docker.io/tripleorocky \
   --tag current-tripleo \
   --tag-from-label rdo_version \
   --output-env-file=~/overcloud_images.yaml
 
-tag=`grep "docker.io/tripleoqueens" docker_registry.yaml |tail -1 |awk -F":" '{print $3}'`
+tag=`grep "docker.io/tripleorocky" docker_registry.yaml |tail -1 |awk -F":" '{print $3}'`
 
 openstack overcloud container image prepare \
-  --namespace docker.io/tripleoqueens \
+  --namespace docker.io/tripleorocky \
   --tag ${tag} \
   --push-destination 192.168.24.1:8787 \
   --output-env-file=~/overcloud_images.yaml \
@@ -598,7 +598,7 @@ tripleo-heat-templates/environments/contrail/contrail-services.yaml
 ```
 
 ## deploy the stack
-### tripleo upstream queens
+### tripleo upstream rocky
 ```
 openstack overcloud deploy --templates ~/tripleo-heat-templates \
   -e ~/overcloud_images.yaml \
