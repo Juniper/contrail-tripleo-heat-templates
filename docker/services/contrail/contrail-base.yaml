@@ -60,15 +60,26 @@ parameters:
     default: 'cloud-admin'
   ContrailAnalyticsVIP:
     default: ''
-    description: Contrail Analytics Api Virtual IP address
+    description: >
+      Contrail Analytics Api address (optional). 
+      In might be set to a virtual IP if a particular specific IP is needed.
+      In case of RedHat IDM and TLS everwhere it cannot be IP and should be an FQDN.
     type: string
   ContrailConfigVIP:
     default: ''
-    description: Contrail Config Virtual IP address
+    description: >
+      Contrail Config Api address (optional). 
+      By default it is the name of ContrailConfig network.
+      In might be set to a virtual IP if a particular specific IP is needed.
+      In case of RedHat IDM and TLS everwhere it cannot be IP and should be an FQDN.
+      It is used to configure Heat & Neutron Contrail Plugins on Openstack controller nodes.
     type: string
   ContrailWebuiVIP:
     default: ''
-    description: Contrail Webui Virtual IP address
+    description: >
+      Contrail Webui address (optional). 
+      In might be set to a virtual IP if a particular specific IP is needed.
+      In case of RedHat IDM and TLS everwhere it cannot be IP and should be an FQDN.
     type: string
   ContrailRegistry:
     default: 'opencontrailnightly'
