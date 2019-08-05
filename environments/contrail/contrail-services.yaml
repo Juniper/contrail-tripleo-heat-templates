@@ -46,13 +46,13 @@ parameter_defaults:
 #  DockerInsecureRegistryAddress: 10.87.64.32:5000,192.168.24.1:8787
 #  ContrailRegistry: 10.87.64.32:5000
 # Including images with specific registry and tag is supported
-# DockerContrailVrouterAgentImageName: 192.168.24.1:8787/contrail-vrouter-agent:queens-5.0-104-rhel-queens
+# DockerContrailVrouterAgentImageName: 192.168.24.1:8787/contrail-vrouter-agent:rocky-5.0-104-rhel-rocky
 # enable private secure registry
   ContrailRegistryCertUrl: http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.crt
   ContrailRegistry: satellite.englab.juniper.net:5443
 # set contrail image tag
-#  ContrailImageTag: queens-master-145-rhel-queens
-  ContrailImageTag: queens-5.0-104-rhel-queens
+#  ContrailImageTag: rocky-master-145-rhel-rocky
+  ContrailImageTag: rocky-5.0-104-rhel-rocky
 # Enable 1 GB hugepages
 #  ContrailDpdkHugepages1GB: 10
 #  ContrailVrouterHugepages1GB: 10

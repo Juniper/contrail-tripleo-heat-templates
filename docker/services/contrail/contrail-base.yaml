@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Base parameters for all Contrail Services.
@@ -390,7 +390,7 @@ outputs:
             - null
       contrail_general_base_env: &contrail_general_base_env
         - 'CLOUD_ORCHESTRATOR=openstack'
-        - 'OPENSTACK_VERSION=queens'
+        - 'OPENSTACK_VERSION=rocky'
         - list_join:
           - '='
           - - 'AAA_MODE'

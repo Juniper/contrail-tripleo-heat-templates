@@ -2,7 +2,7 @@
 NIC configuration:    
 ~/tripleo-heat-templates/config/network/contrail/compute-nic-bond-config.yaml   
 ```
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Software Config to drive os-net-config to configure multiple interfaces

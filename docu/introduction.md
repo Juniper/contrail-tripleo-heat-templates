@@ -12,5 +12,5 @@ Currently the following combinations of Operating System/OpenStack/Deployer/Cont
 
 | Operating System  | OpenStack         | Deployer              | Contrail               |
 | ----------------- | ----------------- | --------------------- | ---------------------- |
-| RHEL 7.5          | OSP13             | OSPd13                | Contrail 5.0.1         |
-| CentOS 7.5        | RDO queens/stable | tripleo queens/stable | Tungsten Fabric latest |
+| RHEL 7.6          | OSP14             | OSPd14                | Contrail 5.1           |
+| CentOS 7.6        | RDO stable/rocky  | tripleo stable/rocky  | Tungsten Fabric latest |

@@ -97,4 +97,4 @@ do
    docker tag ${remote_registry}/${image}:${tag} ${local_registry}/${image}:${tag}
    docker push ${local_registry}/${image}:${tag}
 done
-#./upload_containers.sh -l 192.168.24.1:8787 -r satellite.englab.juniper.net:5443 -t queens-master-139-rhel -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.cert
+#./upload_containers.sh -l 192.168.24.1:8787 -r satellite.englab.juniper.net:5443 -t rocky-master-139-rhel -c http://satellite.englab.juniper.net/pub/satellite.englab.juniper.net.cert
