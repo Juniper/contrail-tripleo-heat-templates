@@ -140,7 +140,7 @@ outputs:
                             NETWORK: {get_param: [ServiceNetMap, ContrailAnalyticsNetwork]}
                       service_port: 8081
                       service_network: {get_param: [ServiceNetMap, ContrailAnalyticsNetwork]}
-                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings]}
+                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings_api]}
       contrail_env_file: &contrail_env_file
         "/etc/contrail/common_analytics.env"
       docker_config:
