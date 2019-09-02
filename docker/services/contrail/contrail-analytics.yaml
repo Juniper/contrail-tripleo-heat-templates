@@ -8,6 +8,10 @@ parameters:
     default: 'latest'
     description: Contrail container image tag
     type: string
+  ContrailAnalyticsApiSslSupport:
+    default: false
+    description: Analytics Api uses Ssl
+    type: boolean
   DockerContrailAnalyticsApiImageName:
     description: image
     type: string
@@ -49,6 +53,22 @@ conditions:
       yaql:
         expression: $.data.split(":")[-1].matches("5\.0")
         data: {get_param: ContrailImageTag}
+
+  analytics_api_supports_ssl:
+    or:
+      - {equals: [{get_param: ContrailAnalyticsApiSslSupport}, true]}
+      - yaql:
+           expression: $.data.split("-").len() = 4 and int($.data.split("-")[2]) >= 1910
+           data: {get_param: ContrailImageTag}
+      - yaql:
+           expression: $.data.split("-").len() = 3 and int($.data.split("-")[1]) >= 1910
+           data: {get_param: ContrailImageTag}
+      - yaql:
+           expression: $.data.split("-").len() = 2 and int($.data.split("-")[0]) >= 1910
+           data: {get_param: ContrailImageTag}
+      - yaql:
+           expression: $.data.split("-").len() = 1 and int($.data.split("-")[0]) >= 1910
+           data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailAnalyticsApiImageNormalize:
@@ -140,7 +160,7 @@ outputs:
                             NETWORK: {get_param: [ServiceNetMap, ContrailAnalyticsNetwork]}
                       service_port: 8081
                       service_network: {get_param: [ServiceNetMap, ContrailAnalyticsNetwork]}
-                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings]}
+                    - {get_attr: [ContrailBase, role_data, {if: ["analytics_api_supports_ssl", haproxy_config_settings_api, haproxy_config_settings]}]}
       contrail_env_file: &contrail_env_file
         "/etc/contrail/common_analytics.env"
       docker_config:
