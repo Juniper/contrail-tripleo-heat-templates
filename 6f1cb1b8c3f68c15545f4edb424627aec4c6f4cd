@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57807f48_67c408a8",
+        "filename": "docker/services/contrail/contrail-analytics.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-09-02T15:54:35Z",
+      "side": 0,
+      "message": "1. Add one more input parameter above:\nContrailAnalyticsApiSslSupport (boolean type, default value false)\n   \n2. add one more condition: analytics_api_supports_ssl\nThis condition should return true if:\n - input param ContrailAnalyticsApiSslSupport is true\nOR\n - ContrailImageTag (it is like \u0027rhel-queens-1908-48\u0027 or \u0027rhel-1908-48\u0027 or \u00271908-48\u0027 or \u00271908) has value 1910 or higher\n\n3. Below in the impl we need to use haproxy_config_settings_api if the condition analytics_api_supports_ssl is true and haproxy_config_settings otherwise.",
+      "revId": "6f1cb1b8c3f68c15545f4edb424627aec4c6f4cd",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
