@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b7441fd0_f9a82c37",
+        "filename": "docker/services/contrail/contrail-analytics.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-09-05T12:42:28Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cdd18a45_db5aff80",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 46
+      },
+      "revId": "7f4307f80be1e4e6b241a2826655349e3ef6b736",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a9891a5e_16275fda",
         "filename": "docker/services/contrail/contrail-analytics.yaml",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "7f4307f80be1e4e6b241a2826655349e3ef6b736",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6a29e53_7009877d",
+        "filename": "docker/services/contrail/contrail-analytics.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2019-09-05T12:42:28Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a9891a5e_16275fda",
+      "range": {
+        "startLine": 163,
+        "startChar": 0,
+        "endLine": 163,
+        "endChar": 151
+      },
+      "revId": "7f4307f80be1e4e6b241a2826655349e3ef6b736",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
     }
   ]
 }
