@@ -59,16 +59,7 @@ conditions:
     or:
       - {equals: [{get_param: ContrailAnalyticsApiSslSupport}, true]}
       - yaql:
-          expression: $.data.split("-").len() = 4 and isInteger($.data.split("-")[2]) and int($.data.split("-")[2]) >= 1910
-          data: {get_param: ContrailImageTag}
-      - yaql:
-          expression: $.data.split("-").len() = 3 and isInteger($.data.split("-")[1]) and int($.data.split("-")[1]) >= 1910
-          data: {get_param: ContrailImageTag}
-      - yaql:
-          expression: $.data.split("-").len() = 2 and isInteger($.data.split("-")[0]) and int($.data.split("-")[0]) >= 1910
-          data: {get_param: ContrailImageTag}
-      - yaql:
-          expression: $.data.split("-").len() = 1 and isInteger($.data.split("-")[0]) and int($.data.split("-")[0]) >= 1910
+          expression: $.data.split("-").where($.matches("^[0-9]+$")).where($ >= "1910").any()
           data: {get_param: ContrailImageTag}
 
 resources:
