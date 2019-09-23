@@ -108,9 +108,14 @@ parameters:
     description: Docker volume for contrail config DB service
     type: string
 
-  DockerContrailConfigZookeeperVolume:
-    default: 'config_zookeeper'
-    description: Docker volume for contrail config zookeeper service
+  DockerContrailConfigZookeeperDataVolume:
+    default: 'config_zookeeper_data'
+    description: Docker volume for contrail config zookeeper data
+    type: string
+
+  DockerContrailConfigZookeeperDatalogVolume:
+    default: 'config_zookeeper_datalog'
+    description: Docker volume for contrail config zookeeper datalog
     type: string
 
   ContrailRegistry:
@@ -596,11 +601,11 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                 - - list_join:
                       - ':'
-                      - - {get_param: DockerContrailConfigZookeeperVolume}
+                      - - {get_param: DockerContrailConfigZookeeperDataVolume}
                         - '/data'
                   - list_join:
                       - ':'
-                      - - {get_param: DockerContrailConfigZookeeperVolume}
+                      - - {get_param: DockerContrailConfigZookeeperDatalogVolume}
                         - '/datalog'
             environment:
               list_concat:
