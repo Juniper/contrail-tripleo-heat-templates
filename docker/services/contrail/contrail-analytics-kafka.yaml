@@ -101,7 +101,6 @@ outputs:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                 - - analytics_zookeeper:/data
-                  - analytics_zookeeper:/datalog
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
