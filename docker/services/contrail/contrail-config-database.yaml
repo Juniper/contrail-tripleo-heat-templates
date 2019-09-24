@@ -175,10 +175,6 @@ outputs:
                       - ':'
                       - - {get_param: DockerContrailConfigZookeeperVolume}
                         - '/data'
-                  - list_join:
-                      - ':'
-                      - - {get_param: DockerContrailConfigZookeeperVolume}
-                        - '/datalog'
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
