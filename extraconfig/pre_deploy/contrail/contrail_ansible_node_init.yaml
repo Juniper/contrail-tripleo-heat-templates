@@ -25,6 +25,7 @@
       with_items:
         - /var/log/containers/contrail
         - /etc/contrail
+        - /etc/contrail/ssl
 
     - name: create contrail containers ssl directories
       file:
