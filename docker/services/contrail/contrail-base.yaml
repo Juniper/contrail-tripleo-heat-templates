@@ -576,31 +576,6 @@ outputs:
                 state: present
                 line: "{{ item }}"
               with_items: "{{ contrail_base_env_params }}"
-            - name: get dmi
-              shell: |
-                #!/bin/sh
-                dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
-              register: dmi
-            - name: set dmi fact
-              set_fact:
-                dmi_uuid: "{{ dmi.stdout }}"
-            - name: get contrail_settings
-              shell: "hiera -c /etc/puppet/hiera.yaml contrail_settings ::uuid={{ dmi_uuid }} | sed 's/=>/:/g'"
-              register: contrail_settings_string
-            - name: turn contrail_settings into json
-              set_fact:
-                contrail_settings: "{{ contrail_settings_string.stdout | from_json }}"
-              when:
-                - contrail_settings_string.stdout is defined
-                - contrail_settings_string.stdout != "nil"
-            - name: write contrail settings to file
-              lineinfile:
-                dest: *contrail_common_env_file
-                regexp: "^{{ item.key }}.*"
-                line: "{{ item.key }}={{ item.value }}"
-                state: present
-              with_dict: "{{ contrail_settings }}"
-              when: contrail_settings is defined
 
             - name: node ips (names) param name
               set_fact:
@@ -703,6 +678,36 @@ outputs:
                 KAFKA_NODES: "{{ contrail_kafka_service_nodes_string }}"
   # dont set zk, all services except kafka uses default zk from configdb
   #               ZOOKEEPER_NODES: "{{ contrail_database_nodes_string }}"
+
+            # Process contrail settings as they can be Role specific and should
+            # overwrite previous values if any.
+            - name: get dmi
+              shell: |
+                #!/bin/sh
+                dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
+              register: dmi
+            - name: set dmi fact
+              set_fact:
+                dmi_uuid: "{{ dmi.stdout }}"
+            - name: get contrail_settings
+              shell: "hiera -c /etc/puppet/hiera.yaml contrail_settings ::uuid={{ dmi_uuid }} | sed 's/=>/:/g'"
+              register: contrail_settings_string
+            - name: turn contrail_settings into json
+              set_fact:
+                contrail_settings: "{{ contrail_settings_string.stdout | from_json }}"
+              when:
+                - contrail_settings_string.stdout is defined
+                - contrail_settings_string.stdout != "nil"
+            - name: write contrail settings to file
+              lineinfile:
+                dest: *contrail_common_env_file
+                regexp: "^{{ item.key }}.*"
+                line: "{{ item.key }}={{ item.value }}"
+                state: present
+              with_dict: "{{ contrail_settings }}"
+              when: contrail_settings is defined
+
+
 
       metadata_settings: []
 
