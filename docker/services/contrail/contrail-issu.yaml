@@ -526,7 +526,8 @@ outputs:
               tripleo.contrail_issu.haproxy_endpoints:
                 contrail_issu:
                   map_merge:
-                    - internal_ip:
+                    - public_ssl_port: 38082
+                      internal_ip:
                         str_replace:
                           template: "%{hiera('NETWORK_virtual_ip')}"
                           params:
