@@ -531,16 +531,17 @@ outputs:
       contrail_common_base_env: &contrail_common_base_env
         list_concat:
           - *contrail_general_base_env
-          - *contrail_auth_base_env
           - *contrail_tls_env
           - *contrail_auth_tls_env
           - *metadata_tls_env
       contrail_base_env: &contrail_base_env
         list_concat:
+          - *contrail_auth_base_env
           - *contrail_auth_admin_env
           - null
       contrail_base_auth_internal_env: &contrail_base_auth_internal_env
         list_concat:
+          - *contrail_auth_base_env
           - *contrail_auth_internal_env
           - null
       docker_config:
@@ -575,6 +576,7 @@ outputs:
                 dest: *contrail_common_env_file
                 state: present
                 line: "{{ item }}"
+                regexp: "^{{ item.split('=')[0] }}.*"
               with_items: "{{ contrail_base_env_params }}"
 
             - name: node ips (names) param name
