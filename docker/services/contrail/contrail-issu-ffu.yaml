@@ -40,4 +40,9 @@ outputs:
       service_name: contrail_issu
       config_settings:
         contrail_issu_ssh_user: {get_param: ContrailIssuSshUser}
-        contrail_issu_host_ip: {get_param: [ServiceNetMap, ContrailIssuNetwork]}
+        contrail_issu_host_ip:
+          str_replace:
+            template:
+              "%{hiera('$NETWORK')}"
+            params:
+              $NETWORK: {get_param: [ServiceNetMap, ContrailIssuNetwork]}
