@@ -8,7 +8,7 @@
   description: |
     Controller role that has all the controler services loaded and handles
     Database, Messaging and Network functions.
-  CountDefault: 1
+  CountDefault: 0
   tags:
     - primary
     - controller
@@ -171,7 +171,7 @@
 - name: Compute
   description: |
     Basic Compute Node role
-  CountDefault: 1
+  CountDefault: 0
   networks:
     - InternalApi
     - Tenant
@@ -234,7 +234,7 @@
   description: |
     ContrailController role that has all the Contrail controler services loaded
     and handles config, control and webui functions
-  CountDefault: 1
+  CountDefault: 0
   tags:
     - primary
     - contrailcontroller
@@ -276,7 +276,7 @@
   description: |
     ContrailController role that has all the Contrail controler services loaded
     and handles config, control and webui functions
-  CountDefault: 1
+  CountDefault: 0
   tags:
     - primary
     - contrailcontroller
