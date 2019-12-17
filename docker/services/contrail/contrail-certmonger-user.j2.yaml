@@ -65,6 +65,13 @@ resources:
         - {{network.name_lower}}
   {%- endif %}
 {%- endfor %}
+  DnsNamesInCert:
+    type: OS::Heat::Value
+    properties:
+      value:
+        list_concat:
+         - - canonical
+         - {get_attr: [ContrailNetworks, value]}
 
 outputs:
   role_data:
@@ -96,9 +103,9 @@ outputs:
                 dnsnames:
                   repeat:
                     template:
-                      - "%{hiera('fqdn_NETWORK')}"
+                      - "%{hiera('fqdn_NAME')}"
                     for_each:
-                      NETWORK: {get_attr: [ContrailNetworks, value]}
+                      NAME: {get_attr: [DnsNamesInCert, value]}
             - {}
       metadata_settings:
         if:
