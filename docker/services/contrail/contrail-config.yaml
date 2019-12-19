@@ -198,7 +198,7 @@ outputs:
         str_replace:
           template: "hiera -c /etc/puppet/hiera.yaml cloud_name_$NETWORK"
           params:
-            $NETWORK: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
+            $NETWORK: {get_param: [ServiceNetMap, NovaApiNetwork]}
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
