@@ -844,3 +844,5 @@ openstack subnet create --subnet-range 1.0.0.0/24 --network net1 sn1
 nova boot --image cirros --flavor cirros --nic net-id=`openstack network show net1 -c id -f value` --availability-zone nova:overcloud-novacompute-0.localdomain c1
 nova list
 ```
+
+
