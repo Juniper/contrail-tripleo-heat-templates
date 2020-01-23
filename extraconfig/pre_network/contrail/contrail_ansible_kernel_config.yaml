@@ -37,44 +37,55 @@
         kernel_arg_list: "{{ kernel_arg_list | join(' ') }}"
     - debug:
         msg: "kernel_arg_list: '{{ kernel_arg_list }}'"
-    - block:
-        - name: set default grub file
-          set_fact:
-            default_grub_config: "/etc/default/grub"
-        # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/sec-customizing_the_grub_2_configuration_file
-        # #25.5.2
-        - name: set uefi target grub file
-          set_fact:
-            uefi_grub_config: "/boot/efi/EFI/redhat/grub.cfg"
-        - name: check if EFI config exists
-          stat:
-            path: "{{ uefi_grub_config }}"
-          register: efi_file_rc
-        - name: set target grub file for uefi
-          set_fact:
-            target_grub_config: "{{ uefi_grub_config }}"
-          when:
-            - efi_file_rc.stat.exists == true
-        - name: set target grub file for bios
-          set_fact:
-            target_grub_config: "/boot/grub2/grub.cfg"
-          when:
-            - efi_file_rc.stat.exists == false
-        - name: Ensure the kernel args ( {{ kernel_arg_list }} ) is present as TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS
-          lineinfile:
-            dest: "{{ default_grub_config }}"
-            regexp: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
-            insertafter: '^GRUB_CMDLINE_LINUX.*'
-            line: 'TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS=" {{ kernel_arg_list }} "'
-        - name: Add TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS to the GRUB_CMDLINE_LINUX parameter
-          lineinfile:
-            dest: "{{ default_grub_config }}"
-            line: 'GRUB_CMDLINE_LINUX="${GRUB_CMDLINE_LINUX:+$GRUB_CMDLINE_LINUX }${TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS}"'
-            insertafter: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
-        - name: Generate grub config file
-          command: "grub2-mkconfig -o {{ target_grub_config }}"
+    - name: apply kernel arg list if provided
       become: true
       when: kernel_arg_list != ""
+      block:
+        - name: Get current the command line args of the node
+          command: cat /proc/cmdline
+          register: cmdline
+        - name: apply kernel arg list if there is no in current kernel cmd line
+          when: kernel_arg_list not in cmdline.stdout_lines[0]
+          block:
+            - name: set default grub file
+              set_fact:
+                default_grub_config: "/etc/default/grub"
+            # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/sec-customizing_the_grub_2_configuration_file
+            # #25.5.2
+            - name: set uefi target grub file
+              set_fact:
+                uefi_grub_config: "/boot/efi/EFI/redhat/grub.cfg"
+            - name: check if EFI config exists
+              stat:
+                path: "{{ uefi_grub_config }}"
+              register: efi_file_rc
+            - name: set target grub file for uefi
+              set_fact:
+                target_grub_config: "{{ uefi_grub_config }}"
+              when:
+                - efi_file_rc.stat.exists == true
+            - name: set target grub file for bios
+              set_fact:
+                target_grub_config: "/boot/grub2/grub.cfg"
+              when:
+                - efi_file_rc.stat.exists == false
+            - name: Ensure the kernel args ( {{ kernel_arg_list }} ) is present as TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS
+              lineinfile:
+                dest: "{{ default_grub_config }}"
+                regexp: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
+                insertafter: '^GRUB_CMDLINE_LINUX.*'
+                line: 'TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS=" {{ kernel_arg_list }} "'
+            - name: Add TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS to the GRUB_CMDLINE_LINUX parameter
+              lineinfile:
+                dest: "{{ default_grub_config }}"
+                line: 'GRUB_CMDLINE_LINUX="${GRUB_CMDLINE_LINUX:+$GRUB_CMDLINE_LINUX }${TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS}"'
+                insertafter: '^TRIPLEO_HEAT_TEMPLATE_KERNEL_ARGS.*'
+            - name: Generate grub config file
+              command: "grub2-mkconfig -o {{ target_grub_config }}"
+            - name: Set reboot required fact
+              set_fact:
+                reboot_required: true
+
     - name: create hugepage devs
       file:
         path: "/dev/hugepages{{ item }}"
@@ -94,16 +105,32 @@
         - "1G"
         - "2M"
       when: _CONTRAIL_HUGEPAGES_1GB_ != ""
-    # Tune-d Configuration
-    - block:
-        - name: Tune-d Configuration
-          lineinfile:
-            dest: /etc/tuned/{{ _TUNED_PROFILE_NAME_ }}-variables.conf
-            regexp: '^isolated_cores=.*'
-            line: 'isolated_cores={{ _TUNED_CORES_ }}'
-          when: _TUNED_CORES_ | default("") != ""
 
-        - name: Tune-d profile activation
-          shell: tuned-adm profile {{ _TUNED_PROFILE_NAME_ }}
-      become: true
+    # Tune-d Configuration
+    - name: Get active tuned profile and set if requested one
       when: _TUNED_PROFILE_NAME_ | default("") != ""
+      become: true
+      block:
+        - name: Get the active tuned profile
+          command: tuned-adm active
+          register: tuned_active_profile
+        - name: Set tuned profile
+          when: _TUNED_PROFILE_NAME_ not in tuned_active_profile.stdout_lines[0]
+          block:
+            - name: Tune-d Configuration
+              lineinfile:
+                dest: /etc/tuned/{{ _TUNED_PROFILE_NAME_ }}-variables.conf
+                regexp: '^isolated_cores=.*'
+                line: 'isolated_cores={{ _TUNED_CORES_ }}'
+              when: _TUNED_CORES_ | default("") != ""
+            - name: Tune-d profile activation
+              shell: tuned-adm profile {{ _TUNED_PROFILE_NAME_ }}
+            - name: Set reboot required fact
+              set_fact:
+                reboot_required: true
+
+    - name: Create a temp file to identify if reboot is required or not
+      file:
+        path: "/tmp/kernel_args_reboot_required.ansible"
+        state: touch
+      when: reboot_required is defined and reboot_required

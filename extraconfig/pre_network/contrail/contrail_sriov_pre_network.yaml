@@ -319,8 +319,12 @@ resources:
         #!/bin/bash
         # Stop os-collect-config to avoid any race collecting another
         # deployment before reboot happens
-        systemctl stop os-collect-config.service
-        /sbin/reboot
+        # Do reboot only if it is really required.
+        if [ -f /tmp/kernel_args_reboot_required.ansible ]; then
+          rm -f /tmp/kernel_args_reboot_required.ansible
+          systemctl stop os-collect-config.service
+          /sbin/reboot
+        fi
 
   RebootDeployment:
     type: OS::Heat::SoftwareDeployment
