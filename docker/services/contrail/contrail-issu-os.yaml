@@ -4,7 +4,7 @@ description: >
   Contrail Issu resource for Openstack node.
   It is put hiera vairable for pointing neutron and
   heat plugins to ISSU node during uprgade of
-  Contrail Control plane. 
+  Contrail Control plane.
 
 outputs:
   role_data:
@@ -16,7 +16,7 @@ outputs:
 
       # upgrade task should put contrail::api_port to point to ISSU node
       upgrade_tasks:
-        - name: Contrail Openstack Plugins ISSU upgrade  
+        - name: Contrail Openstack Plugins ISSU upgrade
           when: step|int == 5
           tags: issu
           block:
@@ -36,7 +36,7 @@ outputs:
                   register: extradata_str
                 - set_fact:
                     extradata: "{{ extradata_str.stdout | from_json }}"
-            - name: contrail issu os set api port 
+            - name: contrail issu os set api port
               set_fact:
                 contrail_issu_api_port: *contrail_issu_api_port
             - name: contrail issu os set contrail api_port to point to issu node
@@ -73,7 +73,7 @@ outputs:
 
       # post upgrade task should remove contrail::api_port that point to ISSU node
       post_upgrade_tasks:
-        - name: Contrail Openstack Plugins ISSU post upgrade  
+        - name: Contrail Openstack Plugins ISSU post upgrade
           when: step|int == 0
           tags: issu
           block:
