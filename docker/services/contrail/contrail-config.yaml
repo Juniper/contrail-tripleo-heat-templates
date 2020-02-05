@@ -47,6 +47,14 @@ parameters:
     description: Parameters specific to the role
     type: json
 
+conditions:
+  is_more_than_2001_or_latest:
+    or:
+      - equals: [{get_param: ContrailImageTag}, 'latest']
+      - yaql:
+          expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
+          data: {get_param: ContrailImageTag}
+
 resources:
   DockerContrailConfigApiImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
@@ -118,82 +126,104 @@ outputs:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
         step_5:
-          contrail_config_nodemgr:
-            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
-            net: host
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - /var/run/docker.sock:/var/run/docker.sock
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_config_api:
-            image: &contrail_config_api_image {get_attr: [DockerContrailConfigApiImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_config_schema:
-            image: &contrail_config_schema_image {get_attr: [DockerContrailConfigSchemaImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_config_svc_monitor:
-            image: &contrail_config_svc_monitor_image {get_attr: [DockerContrailConfigSvcmonitorigImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_config_device_manager:
-            image: &contrail_config_device_manager_image {get_attr: [DockerContrailConfigDevicemgrImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
+          map_merge:
+            - if:
+                - is_more_than_2001_or_latest
+                - contrail_config_provisioner:
+                    image: {get_attr: [ContrailBase, role_data, contrail_provisioner_image_name]}
+                    net: host
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                        - - /var/run/docker.sock:/var/run/docker.sock
+                    environment:
+                      list_concat:
+                        - get_attr: [ContrailBase, role_data, contrail_base_env]
+                        - get_attr: [ContrailBase, role_data, contrail_defaults_env]
+                    env_file:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                        - - *contrail_env_file
+                - null
+            - contrail_config_nodemgr:
+                image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run/docker.sock:/var/run/docker.sock
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file                
+              contrail_config_api:
+                image: &contrail_config_api_image {get_attr: [DockerContrailConfigApiImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+              contrail_config_schema:
+                image: &contrail_config_schema_image {get_attr: [DockerContrailConfigSchemaImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+              contrail_config_svc_monitor:
+                image: &contrail_config_svc_monitor_image {get_attr: [DockerContrailConfigSvcmonitorigImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+              contrail_config_device_manager:
+                image: &contrail_config_device_manager_image {get_attr: [DockerContrailConfigDevicemgrImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
       get_nova_api_network_cmd: &get_nova_api_network_cmd
         str_replace:
           template: "hiera -c /etc/puppet/hiera.yaml cloud_name_$NETWORK"

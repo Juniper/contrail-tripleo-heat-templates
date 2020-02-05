@@ -53,6 +53,12 @@ conditions:
       yaql:
         expression: $.data.split(":")[-1].matches("5\.0")
         data: {get_param: ContrailImageTag}
+  is_more_than_2001_or_latest:
+    or:
+      - equals: [{get_param: ContrailImageTag}, 'latest']
+      - yaql:
+          expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
+          data: {get_param: ContrailImageTag}
 
   # check tag by template someprefix-queens-<version>-<build_number>
   analytics_api_supports_ssl:
@@ -211,6 +217,27 @@ outputs:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                     - - *contrail_env_file
+            - if:
+                - is_more_than_2001_or_latest
+                - contrail_analytics_provisioner:
+                    image: {get_attr: [ContrailBase, role_data, contrail_provisioner_image_name]}
+                    net: host
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                        - - /var/run/docker.sock:/var/run/docker.sock
+                    environment:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                        - {get_attr: [ContrailBase, role_data, contrail_defaults_env]}
+                    env_file:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                        - - *contrail_env_file
+                - null
             - if:
                 - is_not_5_0
                 - null
