@@ -198,7 +198,7 @@ outputs:
                 - name: contrail webui server key
                   set_fact:
                     contrail_webui_key: {get_param: ContrailServiceKeyFile}
-                - name: set contrail webui certs for IPA case 
+                - name: set contrail webui certs for IPA case
                   lineinfile:
                     dest: *contrail_env_file
                     state: present

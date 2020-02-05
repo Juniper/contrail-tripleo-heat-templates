@@ -232,6 +232,7 @@ DockerContrailRabbitmqImageName contrail-external-rabbitmq
 DockerContrailZookeeperImageName contrail-external-zookeeper
 DockerContrailNodeInitImageName contrail-node-init
 DockerContrailNodemgrImageName contrail-nodemgr
+DockerContrailProvisionerImageName contrail-provisioner
 DockerContrailNovaPluginImageName contrail-openstack-compute-init
 DockerContrailHeatPluginImageName contrail-openstack-heat-init
 DockerNeutronConfigImage contrail-openstack-neutron-init
