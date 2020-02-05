@@ -57,6 +57,10 @@ parameter_defaults:
 #  ContrailDpdkHugepages1GB: 10
 #  ContrailVrouterHugepages1GB: 10
 
+# ContrailDefaults - environment passed to provisione container
+# Pass all params as a list of strings as "VXLAN_VN_ID_MODE=automatic"
+  ContrailDefaults:
+    - "VXLAN_VN_ID_MODE=automatic"
 # Custome Contrail container configuration settings
   ContrailSettings:
     VROUTER_GATEWAY: 10.0.0.1
