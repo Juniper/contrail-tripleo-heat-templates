@@ -89,6 +89,10 @@ parameters:
     default: {}
     description: Contrail Service settings
     type: json
+  ContrailDefaults:
+    default: []
+    description: List of env variables for provisioner container
+    type: json
   ContrailImageTag:
     default: 'latest'
     description: Contrail container image tag
@@ -97,6 +101,10 @@ parameters:
     description: image
     type: string
     default: "contrail-nodemgr"
+  DockerContrailProvisionerImageName:
+    description: image
+    type: string
+    default: "contrail-provisioner"
   SSLCertificate:
     default: ''
     description: >
@@ -239,12 +247,16 @@ resources:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailNodemgrImageName}
-
+  ContrailProvisionerImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailProvisionerImageName}
 outputs:
   role_data:
     description: Shared role data for the Contrail services.
     value:
       contrail_nodemgr_image_name: {get_attr: [ContrailNodemgrImageNormalize, contrail_image]}
+      contrail_provisioner_image_name: {get_attr: [ContrailProvisionerImageNormalize, contrail_image]}      
       config_settings:
         map_merge:
         - contrail::admin_password: {get_param: AdminPassword}
@@ -539,6 +551,7 @@ outputs:
           - *contrail_auth_base_env
           - *contrail_auth_admin_env
           - null
+      contrail_defaults_env: &contrail_defaults_env {get_param: ContrailDefaults}
       contrail_base_auth_internal_env: &contrail_base_auth_internal_env
         list_concat:
           - *contrail_auth_base_env
