@@ -1,8 +1,8 @@
 heat_template_version: queens
 
 description: >
-  Contrail Vrouter Issu. 
-  The resource for patching vrouter container configs 
+  Contrail Vrouter Issu.
+  The resource for patching vrouter container configs
   to connect upgraded computes to ISSU node.
   The compute nodes are connevtced back to Contrail
   Control plane on converge step.
@@ -122,15 +122,15 @@ outputs:
                     DNS_NODES: "{{ contrail_issu_control_nodes_string }}"
                     RABBITMQ_NODES: "{{ contrail_issu_nodes_string }}"
                     KAFKA_NODES: "{{ contrail_issu_nodes_string }}"
-                    # Use old control plane because at this step ISSU node is 
+                    # Use old control plane because at this step ISSU node is
                     # not primary one.
                     # CONFIG_NODES: "{{ contrail_issu_nodes_string }}"
-                    # MAINTENANCE_MODE: True                  
+                    # MAINTENANCE_MODE: True
                     # CONFIG_API_PORT: *contrail_issu_api_port
 
 
       upgrade_tasks:
-        - name: Contrail Vrouter ISSU upgrade  
+        - name: Contrail Vrouter ISSU upgrade
           when: step|int == 0
           tags: issu
           block:
@@ -182,7 +182,7 @@ outputs:
                 state: touch
 
       post_upgrade_tasks:
-        - name: Contrail Vrouter ISSU post upgrade  
+        - name: Contrail Vrouter ISSU post upgrade
           when: step|int == 0
           tags: issu
           block:
