@@ -8,6 +8,10 @@ parameters:
     description: image
     type: string
     default: "contrail-vrouter-agent"
+  ContrailImageTag:
+      default: 'latest'
+      description: Contrail container image tag
+      type: string
   DockerContrailNovaPluginImageName:
     description: image
     type: string
@@ -52,6 +56,14 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
+
+conditions:
+  is_more_than_2001_or_latest:
+    or:
+      - equals: [{get_param: ContrailImageTag}, 'latest']
+      - yaql:
+          expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
+          data: {get_param: ContrailImageTag}
 
 resources:
   DockerContrailVrouterAgentImageNormalize:
@@ -114,48 +126,68 @@ outputs:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                 - - *contrail_env_file
         step_5:
-          contrail_vrouter_agent_nodemgr:
-            image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
-            net: host
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - /var/run/docker.sock:/var/run/docker.sock
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
-          contrail_vrouter_agent:
-            image: &contrail_vrouter_agent_image {get_attr: [DockerContrailVrouterAgentImageNormalize, contrail_image]}
-            net: host
-            privileged: true
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - /dev:/dev
-                  - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
-                  - /lib/modules:/lib/modules
-                  - /var/run:/var/run
-                  - /var/lib/contrail:/var/lib/contrail
-            environment:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                - - list_join:
-                      - '='
-                      - - VROUTER_MODULE_OPTIONS
-                        - {get_param: ContrailVrouterModuleOptions}
-            env_file:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                - - *contrail_env_file
+          map_merge:
+            - if:
+                - is_more_than_2001_or_latest
+                - contrail_vrouter_agent_provisioner:
+                    image: {get_attr: [ContrailBase, role_data, contrail_provisioner_image_name]}
+                    net: host
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                    environment:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                        - {get_attr: [ContrailBase, role_data, contrail_defaults_env]}
+                    env_file:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                        - - *contrail_env_file
+                - null
+            - contrail_vrouter_agent_nodemgr:
+                image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run/docker.sock:/var/run/docker.sock
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+              contrail_vrouter_agent:
+                image: &contrail_vrouter_agent_image {get_attr: [DockerContrailVrouterAgentImageNormalize, contrail_image]}
+                net: host
+                privileged: true
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /dev:/dev
+                      - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
+                      - /lib/modules:/lib/modules
+                      - /var/run:/var/run
+                      - /var/lib/contrail:/var/lib/contrail
+                environment:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                    - - list_join:
+                          - '='
+                          - - VROUTER_MODULE_OPTIONS
+                            - {get_param: ContrailVrouterModuleOptions}
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
@@ -180,6 +212,6 @@ outputs:
         list_concat:
           - {get_attr: [ContrailBase, role_data, upgrade_tasks_common]}
           - {get_attr: [ContrailVrouterBase, role_data, upgrade_tasks]}
-      
+
       post_upgrade_tasks:
         get_attr: [ContrailVrouterBase, role_data, post_upgrade_tasks]
