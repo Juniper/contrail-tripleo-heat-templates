@@ -67,6 +67,8 @@ parameter_defaults:
 # Vrouter dpdk options
 #    LACP_RATE: 0
 #    NIC_OFFLOAD_ENABLE: true
+# DPDK options:
+#    SERVICE_CORE_MASK: 0x0f
 # Other environment variables for containers may be set here if needed.
 #    KEY1: value1
 #    KEY2: value2
@@ -99,6 +101,8 @@ parameter_defaults:
 #  ContrailDpdkParameters:
 #    TunedProfileName: "cpu-partitioning"
 #    IsolCpusList: "3-20"
+#      ContrailSettings:
+#         SERVICE_CORE_MASK: 0x0f
 #  ContrailSriovParameters:
 #    TunedProfileName: "cpu-partitioning"
 #    IsolCpusList: "3-20"
