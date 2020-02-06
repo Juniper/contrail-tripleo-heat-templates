@@ -22,6 +22,7 @@
           with_items:
             - 'iommu=pt'
             - 'intel_iommu=on'
+            - 'amd_iommu=on'
     - name: set kernel 1GB hugepage arg
       set_fact:
         kernel_arg_list: "{{ kernel_arg_list }} + [ 'default_hugepagesz=1GB hugepagesz=1G hugepages={{ _CONTRAIL_HUGEPAGES_1GB_ }}' ]"
