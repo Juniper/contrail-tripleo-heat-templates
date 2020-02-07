@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43fce346_8c1e14a7",
+        "filename": "docker/services/contrail/contrail-issu-control.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-07T15:41:29Z",
+      "side": 1,
+      "message": "ContrailIssuImageTag",
+      "range": {
+        "startLine": 107,
+        "startChar": 29,
+        "endLine": 107,
+        "endChar": 45
+      },
+      "revId": "dd21b9e62fd344b882ae608ac3f5b1e079ed1ac8",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c3ac3a71_16c06267",
+        "filename": "docker/services/contrail/contrail-issu-control.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-07T15:41:29Z",
+      "side": 1,
+      "message": "ContrailIssuImageTag",
+      "range": {
+        "startLine": 110,
+        "startChar": 28,
+        "endLine": 110,
+        "endChar": 44
+      },
+      "revId": "dd21b9e62fd344b882ae608ac3f5b1e079ed1ac8",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6b98117_d968480c",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-07T15:41:29Z",
+      "side": 1,
+      "message": "ContrailIssuImageTag",
+      "range": {
+        "startLine": 257,
+        "startChar": 29,
+        "endLine": 257,
+        "endChar": 45
+      },
+      "revId": "dd21b9e62fd344b882ae608ac3f5b1e079ed1ac8",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4887dbf2_c2f99a26",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-07T15:41:29Z",
+      "side": 1,
+      "message": "ContrailIssuImageTag",
+      "range": {
+        "startLine": 260,
+        "startChar": 28,
+        "endLine": 260,
+        "endChar": 44
+      },
+      "revId": "dd21b9e62fd344b882ae608ac3f5b1e079ed1ac8",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
