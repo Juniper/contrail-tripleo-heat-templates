@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "06cd5fe6_d40e6694",
+        "filename": "docker/services/contrail/contrail-analytics-database.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-07T15:35:33Z",
+      "side": 1,
+      "message": "not needed as provisioner has no own config",
+      "range": {
+        "startLine": 219,
+        "startChar": 1,
+        "endLine": 225,
+        "endChar": 75
+      },
+      "revId": "e8f2f8bbadfc7d19f7eafad37615f9d0bc0b9896",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99fa4208_b5d619db",
+        "filename": "docker/services/contrail/contrail-analytics.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-07T15:35:33Z",
+      "side": 1,
+      "message": "remove trailing spaces",
+      "range": {
+        "startLine": 189,
+        "startChar": 42,
+        "endLine": 189,
+        "endChar": 50
+      },
+      "revId": "e8f2f8bbadfc7d19f7eafad37615f9d0bc0b9896",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7675255b_a36d911d",
+        "filename": "docker/services/contrail/contrail-analytics.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-07T15:35:33Z",
+      "side": 1,
+      "message": "trailing spaces",
+      "range": {
+        "startLine": 235,
+        "startChar": 86,
+        "endLine": 235,
+        "endChar": 88
+      },
+      "revId": "e8f2f8bbadfc7d19f7eafad37615f9d0bc0b9896",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c98b9334_5f1481fb",
+        "filename": "docker/services/contrail/contrail-analytics.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-07T15:35:33Z",
+      "side": 1,
+      "message": "remove spaces",
+      "range": {
+        "startLine": 239,
+        "startChar": 46,
+        "endLine": 239,
+        "endChar": 50
+      },
+      "revId": "e8f2f8bbadfc7d19f7eafad37615f9d0bc0b9896",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e738778f_110f4ba5",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 570,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-07T15:35:33Z",
+      "side": 1,
+      "message": "dublicate",
+      "range": {
+        "startLine": 569,
+        "startChar": 2,
+        "endLine": 570,
+        "endChar": 75
+      },
+      "revId": "e8f2f8bbadfc7d19f7eafad37615f9d0bc0b9896",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
