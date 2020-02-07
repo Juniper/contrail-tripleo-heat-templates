@@ -93,6 +93,26 @@ if echo "$tag" | grep -q '5\.0' ; then
   topology_name='contrail-analytics-topology'
 fi
 
+# Check if tag contain dsome numbers more or equal than 2002
+is_2002_or_more=$(awk '{
+  n = split($0, arr, "-");
+  for (i = 0; ++i <= n;){
+      k = split(arr[i], arr_inner, ".");
+      for (j=0; ++j <= k;){
+        if(match(arr_inner[j], /^[0-9]*$/) && arr_inner[j] >= 2002){
+          print 1
+          exit 0
+        }
+      }
+  }
+}' <<< $tag)
+
+provisioner=""
+# if tag is latest or contrail version >= 2002 add provisioner container
+if [[ "$is_2002_or_more" == 1 || "$tag" == "latest" ]]; then
+  provisioner="DockerContrailProvisionerImageName:contrail-provisioner"
+fi
+
 CONTAINER_MAP=(
 DockerContrailAnalyticsAlarmGenImageName:contrail-analytics-alarm-gen
 DockerContrailAnalyticsApiImageName:contrail-analytics-api
@@ -126,6 +146,7 @@ DockerContrailVrouterKernelInitImageName:contrail-vrouter-kernel-init
 DockerContrailWebuiJobImageName:contrail-controller-webui-job
 DockerContrailWebuiWebImageName:contrail-controller-webui-web
 DockerContrailZookeeperImageName:contrail-external-zookeeper
+${provisioner}
 )
 
 if [[ -n ${user} && -n ${password} ]]; then
