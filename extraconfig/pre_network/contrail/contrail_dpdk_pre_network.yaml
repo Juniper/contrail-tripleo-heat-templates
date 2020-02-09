@@ -61,6 +61,7 @@ parameters:
       This string is passed to dpdk container as env variable DPDK_COMMAND_ADDITIONAL_ARGS,
       so dpdk command line is populated with arguments from this string.
       E.g. --vr_mempool_sz --dpdk_txd_sz --dpdk_rxd_sz
+      dpdk --vr_dpdk_rx_ring_sz <int>  --vr_dpdk_tx_ring_sz <int> –yield_option ‘0 or 1’
     type: string
   ContrailRegistry:
     default: 'opencontrailnightly'
