@@ -4,7 +4,7 @@ heat_template_version: queens
 
 description: >
   Contrail Issu Control
-  Addon to COntrail Issu to have ability 
+  Addon to COntrail Issu to have ability
   to use tenant network for Control Issu
 
 parameters:
@@ -76,6 +76,11 @@ parameters:
     type: string
     default: "contrail-nodemgr"
 
+  DockerContrailProvisionerImageName:
+    description: image
+    type: string
+    default: "contrail-provisioner"
+
   ContrailCA:
     default: ''
     description: Contrail CA, could be local or IPA
@@ -95,6 +100,14 @@ parameters:
     description: Keystone admin tenant name
     type: string
     default: 'admin'
+
+conditions:
+  is_more_than_2001_or_latest:
+    or:
+      - equals: [{get_param: ContrailIssuImageTag}, 'latest']
+      - yaql:
+          expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
+          data: {get_param: ContrailIssuImageTag}
 
 resources:
 
@@ -120,6 +133,12 @@ resources:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailNodemgrImageName}
+      ContrailImageTag: {get_param: ContrailIssuImageTag}
+
+  DockerContrailProvisionerImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailProvisionerImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   ContrailBase:
@@ -165,6 +184,9 @@ outputs:
       contrail_nodemgr_image_name: &contrail_nodemgr_image_name
         get_attr: [DockerContrailNodemgrImageNormalize, contrail_image]
 
+      contrail_provisioner_image_name: &contrail_provisioner_image_name
+        get_attr: [DockerContrailProvisionerImageNormalize, contrail_image]
+
       contrail_common_base_env: &contrail_common_base_env
         {get_attr: [ContrailBase, role_data, contrail_common_base_env]}
 
@@ -173,61 +195,81 @@ outputs:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
 
         step_5:
-          contrail_control_nodemgr:
-            image: *contrail_nodemgr_image_name
-            net: host
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              list_concat:
-                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - /var/run/docker.sock:/var/run/docker.sock
-            environment:
-              list_concat:
-                - get_attr: [ContrailBase, role_data, contrail_base_env]
-                - - 'NODE_TYPE=control'
-            env_file: *contrail_issu_control_env_file
-          contrail_control_control:
-            image: &contrail_control_control_image {get_attr: [DockerContrailControlControlImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file: *contrail_issu_control_env_file
-          contrail_control_dns:
-            image: &contrail_control_dns_image {get_attr: [DockerContrailControlDnsImageNormalize, contrail_image]}
-            net: host
-            privileged: false
-            detach: true
-            user: root
-            restart: always
-            pid: host
-            volumes:
-              list_concat:
-                - get_attr: [ContrailBase, role_data, contrail_base_volumes]
-                - - contrail_control_dns:/etc/contrail/dns
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file: *contrail_issu_control_env_file
-          contrail_control_named:
-            image: &contrail_control_named_image {get_attr: [DockerContrailControlNamedImageNormalize, contrail_image]}
-            net: host
-            privileged: true
-            detach: true
-            user: root
-            restart: always
-            pid: host
-            volumes_from:
-              - contrail_control_dns
-            environment:
-              get_attr: [ContrailBase, role_data, contrail_base_env]
-            env_file: *contrail_issu_control_env_file
+          map_merge:
+            - if:
+              - is_more_than_2001_or_latest
+              - contrail_control_provisioner:
+                  image: *contrail_provisioner_image_name
+                  net: host
+                  detach: true
+                  user: root
+                  restart: always
+                  volumes:
+                    get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                  environment:
+                    list_concat:
+                      - get_attr:
+                        list_concat:
+                          - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                          - {get_attr: [ContrailBase, role_data, contrail_defaults_env]}
+                      - - 'NODE_TYPE=control'
+                  env_file: *contrail_issu_control_env_file
+              - null
+            - contrail_control_nodemgr:
+                image: *contrail_nodemgr_image_name
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run/docker.sock:/var/run/docker.sock
+                environment:
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_env]
+                    - - 'NODE_TYPE=control'
+                env_file: *contrail_issu_control_env_file
+              contrail_control_control:
+                image: &contrail_control_control_image {get_attr: [DockerContrailControlControlImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_control_env_file
+              contrail_control_dns:
+                image: &contrail_control_dns_image {get_attr: [DockerContrailControlDnsImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                pid: host
+                volumes:
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                    - - contrail_control_dns:/etc/contrail/dns
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_control_env_file
+              contrail_control_named:
+                image: &contrail_control_named_image {get_attr: [DockerContrailControlNamedImageNormalize, contrail_image]}
+                net: host
+                privileged: true
+                detach: true
+                user: root
+                restart: always
+                pid: host
+                volumes_from:
+                  - contrail_control_dns
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file: *contrail_issu_control_env_file
 
       host_prep_tasks:
         - name: create contrail containers common directories

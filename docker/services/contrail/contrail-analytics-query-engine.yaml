@@ -41,7 +41,7 @@ parameters:
 
 conditions:
   is_not_5_0:
-    not: 
+    not:
       yaql:
         expression: $.data.split(":")[-1].matches("5\.0")
         data: {get_param: ContrailImageTag}
