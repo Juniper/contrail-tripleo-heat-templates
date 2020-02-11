@@ -100,9 +100,12 @@ outputs:
             command: cp -R {{ agent_container_volume_location.stdout }}/. /var/lib/contrail/
           - name: Save information about old volume for furhter reference
             shell: echo "{{ agent_container_volume_name.stdout }}" > /tmp/contrail_var_lib_unnamed_volume
-          when: 
+          when:
             - agent_container_volume_name.stdout != ''
             - agent_container_volume_location.stdout != '/var/lib/contrail'
+        - name: Restart vhost0 interface
+          shell: bash -c 'ifdown vhost0; ifup vhost0'
+
 
       post_update_tasks:
         - name: Check if /tmp/contrail_var_lib_unnamed_volume exists
