@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d06a0762_eb504bea",
+        "filename": "tools/contrail/update_contrail_preparation.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-11T15:58:41Z",
+      "side": 1,
+      "message": "make like CONTRAIL_CURRENT_IMAGE_TAG\u003d${CONTRAIL_CURRENT_IMAGE_TAG:-}\n\nAnd i suppose it is worth to have a check for empty.. because people must provide it",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 26
+      },
+      "revId": "f5bfe757bbf3c2d9828d212bae4447e2ab7071da",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32992c08_6f82c013",
+        "filename": "tools/contrail/update_contrail_preparation.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-11T15:58:41Z",
+      "side": 1,
+      "message": "why not this line used?",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 55
+      },
+      "revId": "f5bfe757bbf3c2d9828d212bae4447e2ab7071da",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac688699_92720b8a",
+        "filename": "tools/contrail/update_contrail_preparation.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-11T15:58:41Z",
+      "side": 1,
+      "message": "SSH_USER\u003d${SSH_USER:-\u0027heat-admin\u0027}",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 19
+      },
+      "revId": "f5bfe757bbf3c2d9828d212bae4447e2ab7071da",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96b166f4_b5f2145f",
+        "filename": "tools/contrail/update_contrail_preparation.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-11T15:58:41Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 31
+      },
+      "revId": "f5bfe757bbf3c2d9828d212bae4447e2ab7071da",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d96fa46c_fdfde538",
+        "filename": "tools/contrail/update_contrail_preparation.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-11T15:58:41Z",
+      "side": 1,
+      "message": "hmm.. why not just grep all \u0027contrail\u0027 and then pull all containers with new tag.\nI mean it looks current tag is redundant one?",
+      "revId": "f5bfe757bbf3c2d9828d212bae4447e2ab7071da",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea420184_3ae76a25",
+        "filename": "tools/contrail/update_contrail_preparation.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-11T15:58:41Z",
+      "side": 1,
+      "message": "it is enough to stop contrail_config_api and  contrail_analytics_api.",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 4
+      },
+      "revId": "f5bfe757bbf3c2d9828d212bae4447e2ab7071da",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dd3c529_5a860ad0",
+        "filename": "tools/contrail/update_contrail_preparation.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-11T15:58:41Z",
+      "side": 1,
+      "message": "people has very different flavors that we dont know names in advance.\nmoreover, in case of novascheduler hints they use single flavor for all the overclouds (it is RH recommendation) and we cannot rely on it at all.\n\nSo, just go over all the openstack server list and on each node just do docker images | grep contrail and pull all the images found just with new tag.\nAnd as this script doesnt depend on falvor it can be just separate script here (i mean there is no needs to generate it).\n\nThe same about stop api containers - just try to found such container and stop it if found.",
+      "range": {
+        "startLine": 42,
+        "startChar": 16,
+        "endLine": 42,
+        "endChar": 23
+      },
+      "revId": "f5bfe757bbf3c2d9828d212bae4447e2ab7071da",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
