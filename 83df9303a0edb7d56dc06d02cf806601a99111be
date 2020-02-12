@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7fa49fa4_ce7d7b9c",
+        "filename": "tools/contrail/pull_new_contrail_images.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-02-12T13:00:34Z",
+      "side": 1,
+      "message": "| sort | uniq\n\nps: afaik, uniq works correctly with already sorted sequence",
+      "revId": "83df9303a0edb7d56dc06d02cf806601a99111be",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
