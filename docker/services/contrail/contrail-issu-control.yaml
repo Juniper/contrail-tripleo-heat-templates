@@ -208,10 +208,8 @@ outputs:
                     get_attr: [ContrailBase, role_data, contrail_base_volumes]
                   environment:
                     list_concat:
-                      - get_attr:
-                        list_concat:
-                          - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                          - {get_attr: [ContrailBase, role_data, contrail_defaults_env]}
+                      - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                      - {get_attr: [ContrailBase, role_data, contrail_defaults_env]}
                       - - 'NODE_TYPE=control'
                   env_file: *contrail_issu_control_env_file
               - null
