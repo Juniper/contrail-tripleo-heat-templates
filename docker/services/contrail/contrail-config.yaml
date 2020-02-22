@@ -54,7 +54,12 @@ parameters:
 conditions:
   is_more_than_2001_or_latest:
     or:
-      - equals: [{get_param: ContrailImageTag}, 'latest']
+      - yaql:
+          expression: $.data.matches(".*latest.*")
+          data: {get_param: ContrailImageTag}
+      - yaql:
+          expression: $.data.matches(".*master.*")
+          data: {get_param: ContrailImageTag}
       - yaql:
           expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
           data: {get_param: ContrailImageTag}
