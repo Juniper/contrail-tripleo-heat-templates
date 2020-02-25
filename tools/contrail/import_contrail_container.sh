@@ -133,7 +133,6 @@ DockerContrailKafkaImageName:contrail-external-kafka
 DockerContrailNeutronPluginImageName:contrail-openstack-neutron-init
 DockerContrailNodeInitImageName:contrail-node-init
 DockerContrailNodemgrImageName:contrail-nodemgr
-DockerContrailProvisionerImageName:contrail-provisioner
 DockerContrailNovaPluginImageName:contrail-openstack-compute-init
 DockerContrailRabbitmqImageName:contrail-external-rabbitmq
 DockerContrailRedisImageName:contrail-external-redis
