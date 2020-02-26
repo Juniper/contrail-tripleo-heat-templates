@@ -159,22 +159,6 @@ outputs:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                     - - *contrail_env_file
-              contrail_vrouter_agent_provisioner:
-                image: {get_attr: [ContrailBase, role_data, contrail_provisioner_image_name]}
-                net: host
-                detach: true
-                user: root
-                restart: always
-                volumes:
-                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
-                environment:
-                  list_concat:
-                    - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                    - {get_attr: [ContrailBase, role_data, contrail_defaults_env]}
-                env_file:
-                  list_concat:
-                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                    - - *contrail_env_file
               contrail_vrouter_agent:
                 image: &contrail_vrouter_agent_image {get_attr: [DockerContrailVrouterAgentImageNormalize, contrail_image]}
                 net: host
