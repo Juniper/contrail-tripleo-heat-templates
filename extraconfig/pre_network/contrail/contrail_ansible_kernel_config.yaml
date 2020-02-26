@@ -44,6 +44,8 @@
         - name: Get current the command line args of the node
           command: cat /proc/cmdline
           register: cmdline
+        - debug:
+            msg: "current kernel args /proc/cmdline: '{{ cmdline.stdout_lines[0] }}'"
         - name: apply kernel arg list if there is no in current kernel cmd line
           when: kernel_arg_list not in cmdline.stdout_lines[0]
           block:
