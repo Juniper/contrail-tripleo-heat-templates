@@ -94,7 +94,19 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
-          - tripleo.contrail_control.firewall_rules:
+          - contrail_control_host_ip:
+              str_replace:
+                template:
+                  "%{hiera('$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, ContrailControlNetwork]}
+            contrail_control_hostname:
+              str_replace:
+                template:
+                  "%{hiera('fqdn_$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, ContrailControlNetwork]}
+            tripleo.contrail_control.firewall_rules:
               '113 contrail_control_dns':
                 dport: 53
                   - 53
@@ -213,13 +225,25 @@ outputs:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
+            - name: contrail control fqdn
+              shell: hiera -c /etc/puppet/hiera.yaml contrail_control_hostname
+              register: contrail_control_hostname
+              ignore_errors: True
+            - name: set control specific env list
+              set_fact:
+                control_env_list: [ "NODE_TYPE=control" ]
+            - name: add hostname to control specific env list
+              set_fact:
+                control_env_list: "{{ control_env_list }} + [ 'CONTROL_HOSTNAME={{ contrail_control_hostname.stdout }}' ]"
+              when:
+                - contrail_control_hostname.rc == 0
+                - contrail_control_hostname.stdout != ""
             - name: write remaining contrail control config env cars
               lineinfile:
                 dest: *contrail_env_file
                 state: present
                 line: "{{ item }}"
-              with_items:
-                - NODE_TYPE=control
+              with_items: "{{ control_env_list }}"
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
