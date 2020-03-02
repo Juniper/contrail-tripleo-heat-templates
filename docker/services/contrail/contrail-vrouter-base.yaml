@@ -127,6 +127,8 @@ outputs:
               name: "/tmp/contrail_var_lib_unnamed_volume"
               state: absent
           when: 'contrail_var_lib_unnamed_volume.stat.exists == true'
+        - name: Start contrail-vrouter-kernel-init container
+          shell: bash -c "docker start $(docker ps -a  --format 'table {{.ID}} {{.Names}}' | grep contrail-vrouter-kernel-init | awk '{print $1}')"
 
       fast_forward_upgrade_tasks:
         - name: Stop contrail vrouter dpdk services
