@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c0fb9d14_4227601b",
+        "filename": "docker/services/contrail/contrail-vrouter-base.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-02T10:35:03Z",
+      "side": 1,
+      "message": "lets resolve name as it is done in /extraconfig/pre_network/contrail/compute_pre_network.yaml\n1. add parameter DockerContrailVrouterKernelInitImageName\n2. add resource DockerContrailVrouterKernelImageNormalize\n3. set some yaml variable like\nvrouter_init_container_name: \u0026vrouter_init_container_name\n  {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}\n4. use it here like \n  docker start *vrouter_init_container_name",
+      "range": {
+        "startLine": 131,
+        "startChar": 39,
+        "endLine": 131,
+        "endChar": 146
+      },
+      "revId": "4638b1fb2dadc2de6e6681b9a8881647f688466d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
