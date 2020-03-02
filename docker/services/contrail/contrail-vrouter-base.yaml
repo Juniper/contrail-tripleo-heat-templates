@@ -35,8 +35,16 @@ parameters:
     default: 'kernel'
     description: Agent mode kernel or dpdk
     type: string
+  DockerContrailVrouterKernelInitImageName:
+    description: image
+    type: string
+    default: "contrail-vrouter-kernel-init"
 
 resources:
+  DockerContrailVrouterKernelImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailVrouterKernelInitImageName}
   ContrailVrouterIssu:
     type: OS::TripleO::ContrailVrouterIssu
     properties:
@@ -53,6 +61,8 @@ outputs:
       contrail_env_file: &contrail_env_file
         "/etc/contrail/common_vrouter.env"
       agent_mode: &agent_mode {get_param: ContrailVrouterAgentMode}
+      vrouter_init_container_name: &vrouter_init_container_name
+        {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}
       host_prep_tasks:
         list_concat:
           - - name: Contrail vrouter base host prep tasks
@@ -127,6 +137,11 @@ outputs:
               name: "/tmp/contrail_var_lib_unnamed_volume"
               state: absent
           when: 'contrail_var_lib_unnamed_volume.stat.exists == true'
+        - name: Set contrail-vrouter-kernel-init container name
+          set_fact:
+            vrouter_init_container_name_ansible: *vrouter_init_container_name
+        - name: Start contrail-vrouter-kernel-init container
+          shell: bash -c "docker start {{ vrouter_init_container_name_ansible }}"
 
       fast_forward_upgrade_tasks:
         - name: Stop contrail vrouter dpdk services
