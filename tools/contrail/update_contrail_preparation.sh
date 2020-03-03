@@ -13,7 +13,10 @@ CONTRAIL_IMAGE_PREFIX=${CONTRAIL_IMAGE_PREFIX:-'contrail-'}
 STOP_CONTAINERS=${STOP_CONTAINERS:-'contrail_config_api contrail_analytics_api'}
 
 SSH_USER=heat-admin
-#SSH_OPTIONS='-i ~/.ssh/id_rsa'
+#Specific identity key can be specified in SSH_OPTIONS
+#SSH_OPTIONS='-i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+SSH_OPTIONS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+
 
 #Running scripts on the nodes
 #Pull new images on the nodes
