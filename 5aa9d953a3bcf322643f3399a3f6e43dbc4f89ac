@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be381bd6_fcfbc620",
+        "filename": "tools/contrail/stop_contrail_api_containers.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-06T14:46:17Z",
+      "side": 1,
+      "message": "sudo docker ps ...",
+      "revId": "5aa9d953a3bcf322643f3399a3f6e43dbc4f89ac",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
