@@ -56,7 +56,7 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
-
+  
 conditions:
   is_more_than_2001_or_latest:
     or:
@@ -69,7 +69,14 @@ conditions:
       - yaql:
           expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
           data: {get_param: ContrailImageTag}
-
+  is_huge_pages_1GB:
+    - yaql:
+        expression: $.data.matches(".+")
+        data: {get_param: ContrailVrouterHugepages1GB}
+  is_huge_pages_2MB:
+    - yaql:
+        expression: $.data.matches(".+")
+        data: {get_param: ContrailVrouterHugepages2MB}
 resources:
   DockerContrailVrouterAgentImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
@@ -189,6 +196,20 @@ outputs:
                           - '='
                           - - VROUTER_MODULE_OPTIONS
                             - {get_param: ContrailVrouterModuleOptions}
+                    if:
+                      - is_huge_pages_1GB
+                      - - list_join:
+                            - '='
+                            - - HUGE_PAGES_1GB
+                              - {get_attr: [ContrailBase, value, hugepages_1gb]}
+                      - null
+                    if:
+                      - is_huge_pages_2MB
+                      - - list_join:
+                            - '='
+                            - - HUGE_PAGES_2MB
+                              - {get_attr: [ContrailBase, value, hugepages_2mb]}
+                      - null
                 env_file:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
