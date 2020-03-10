@@ -56,7 +56,7 @@ parameters:
     default: {}
     description: Parameters specific to the role
     type: json
-
+  
 conditions:
   is_more_than_2001_or_latest:
     or:
