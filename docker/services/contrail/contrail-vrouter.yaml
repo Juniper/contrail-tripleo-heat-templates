@@ -30,6 +30,14 @@ parameters:
       when vrouter is loaded by ifup scripts called by os-collect-config from host.
       E.g. vr_mpls_labels=196000 vr_nexthops=521000 vr_vrfs=65536 vr_bridge_entries=1000000
     type: string
+  ContrailVrouterHugepages2MB:
+    default: ''
+    description: Number of 2MB hugepages
+    type: string
+  ContrailVrouterHugepages1GB:
+    default: ''
+    description: Number of 1GB hugepages
+    type: string
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -57,6 +65,7 @@ parameters:
     description: Parameters specific to the role
     type: json
 
+  
 conditions:
   is_more_than_2001_or_latest:
     or:
@@ -69,7 +78,14 @@ conditions:
       - yaql:
           expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
           data: {get_param: ContrailImageTag}
-
+  is_huge_pages:
+    or:
+      - yaql:
+          expression: $.data.matches(".+")
+          data: {get_param: ContrailVrouterHugepages1GB}
+      - yaql:
+          expression: $.data.matches(".+")
+          data: {get_param: ContrailVrouterHugepages2MB}
 resources:
   DockerContrailVrouterAgentImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
@@ -188,7 +204,15 @@ outputs:
                     - - list_join:
                           - '='
                           - - VROUTER_MODULE_OPTIONS
-                            - {get_param: ContrailVrouterModuleOptions}
+                            - {get_param: ContrailVrouterModuleOptions}                    
+                    - - list_join:
+                          - '='
+                          - - HUGE_PAGES_DIR_1GB
+                            - {get_param: ContrailVrouterHugepages1GB}
+                    - - list_join:
+                          - '='
+                          - - HUGE_PAGES_DIR_2MB
+                            - {get_param: ContrailVrouterHugepages2MB}
                 env_file:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
