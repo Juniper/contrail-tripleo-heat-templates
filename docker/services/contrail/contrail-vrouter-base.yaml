@@ -17,7 +17,7 @@ parameters:
   ServiceNetMap:
     default: {}
     description: Mapping of service_name -> network name. Typically set
-                 via parameter_defaults in the resource registry.  This
+                 via parameter_defaults in the resource registry. This
                  mapping overrides those in ServiceNetMapDefaults.
     type: json
   DefaultPasswords:
@@ -39,6 +39,14 @@ parameters:
     description: image
     type: string
     default: "contrail-vrouter-kernel-init"
+  ContrailVrouterHugepages2MB:
+    default: '2048'
+    description: Number of 2MB hugepages
+    type: string
+  ContrailVrouterHugepages1GB:
+    default: ''
+    description: Number of 1GB hugepages
+    type: string
 
 resources:
   DockerContrailVrouterKernelImageNormalize:
@@ -54,6 +62,19 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+  ContrailSettingsRoleParametersValue:
+    type: OS::Heat::Value
+    properties:
+      type: json
+      value:
+        map_replace:
+          - map_replace:
+            - hugepages_2mb: ContrailVrouterHugepages2MB
+              hugepages_1gb: ContrailVrouterHugepages1GB              
+            - values: {get_param: [RoleParameters]}
+          - values:              
+              ContrailVrouterHugepages2MB: {get_param: ContrailVrouterHugepages2MB}
+              ContrailVrouterHugepages1GB: {get_param: ContrailVrouterHugepages1GB}              
 
 outputs:
   role_data:
