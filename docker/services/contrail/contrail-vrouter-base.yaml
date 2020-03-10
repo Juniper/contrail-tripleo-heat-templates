@@ -17,7 +17,7 @@ parameters:
   ServiceNetMap:
     default: {}
     description: Mapping of service_name -> network name. Typically set
-                 via parameter_defaults in the resource registry.  This
+                 via parameter_defaults in the resource registry. This
                  mapping overrides those in ServiceNetMapDefaults.
     type: json
   DefaultPasswords:
