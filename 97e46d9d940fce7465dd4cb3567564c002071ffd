@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "183c3760_3172bd96",
+        "filename": "docker/services/contrail/contrail-vrouter.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-12T18:29:27Z",
+      "side": 1,
+      "message": "provide them if is_huge_pages is true (see others if: examples)",
+      "range": {
+        "startLine": 209,
+        "startChar": 20,
+        "endLine": 216,
+        "endChar": 70
+      },
+      "revId": "97e46d9d940fce7465dd4cb3567564c002071ffd",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
