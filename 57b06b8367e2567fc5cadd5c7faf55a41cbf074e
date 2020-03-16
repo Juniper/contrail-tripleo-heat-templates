@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77318cce_f2e2ddfd",
+        "filename": "docker/services/contrail/contrail-vrouter.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-16T10:03:13Z",
+      "side": 1,
+      "message": "Just noticed.. in dpdk we have these valuse passed through special \u0027role specific\u0027 approach - to have an ability to set different valuse for diffrent roles.  Could you please take a look and try to have it for these options as well (check extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml ContrailSettingsRoleParametersValue )",
+      "range": {
+        "startLine": 212,
+        "startChar": 44,
+        "endLine": 212,
+        "endChar": 71
+      },
+      "revId": "57b06b8367e2567fc5cadd5c7faf55a41cbf074e",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
