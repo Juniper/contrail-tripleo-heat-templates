@@ -70,7 +70,7 @@ conditions:
     or:
       - {equals: [{get_param: ContrailAnalyticsApiSslSupport}, true]}
       - yaql:
-          expression: $.data.split("-").where($.matches("^[0-9]+$")).where($ >= "1910").any()
+          expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 1910).any()
           data: {get_param: ContrailImageTag}
 
 resources:
