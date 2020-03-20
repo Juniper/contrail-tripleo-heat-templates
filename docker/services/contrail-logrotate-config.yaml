@@ -1,0 +1,50 @@
+heat_template_version: queens
+
+description: >
+  Contrail logrotate configuration
+parameters:
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  DockerCrondConfigImage:
+    description: The container image to use for the crond config_volume
+    type: string
+
+
+resources:
+
+  ContainersCommon:
+    type: ./containers-common.yaml
+
+
+outputs:
+  role_data:
+    description: Role data for the crond role.
+    value:
+      service_name: logrotate_crond
+      puppet_config:
+        config_volume: crond
+        step_config: 'include ::tripleo::profile::base::logging::contrail_logrotate_config'
+        config_image: {get_param: DockerCrondConfigImage}
