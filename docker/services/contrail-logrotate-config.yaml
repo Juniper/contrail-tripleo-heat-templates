@@ -1,0 +1,113 @@
+heat_template_version: queens
+
+description: >
+  Contrail logrotate configuration
+parameters:
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  DockerCrondConfigImage:
+    description: The container image to use for the crond config_volume
+    type: string
+  ContrailLogrotateLogPathRegex:
+    description: Configures file path regex for logs.
+    type: string
+    default: '/var/log/containers/contrail/*log /var/log/containers/contrail/*err'
+  ContrailLogrotateUserOpts:
+    description: Rotate log files set under this user and group instead of
+                 using default user/group.
+    type: string
+    default: 'su root root'
+  LogrotateMaxsize:
+    description: Configures the maxsize param for containerized logrotate.
+    type: string
+    default: '10M'
+  LogrotateRotationInterval:
+    description: Configures rotation interval for containerized logrotate.
+    type: string
+    default: 'daily'
+    constraints:
+      - allowed_values: [ 'daily', 'weekly', 'monthly' ]
+  LogrotateRotate:
+    description: Configures the rotate param for containerized logrotate.
+    type: string
+    default: '14'
+  LogrotatePurgeAfterDays:
+    description: Enforces life time (days) of rotated and compressed files.
+    type: string
+    default: '14'
+  LogrotateDateExt:
+    description: Enable/disable dateext parameter.
+    type: boolean
+    default: false
+  LogrotateDateFormat:
+    description: Configures dateformat strings for containerized logrotate.
+                 This is valid when LogrotateDateExt is true.
+                 The allowed specifiers are only %Y %m %d %H %M %S %V and %s.
+    type: string
+    default: '-%Y%m%d'
+    constraints:
+      - allowed_pattern: '-(%[YmdHMSVs])+$'
+  LogrotateDateYesterday:
+    description: Configures dateyesterday paramter for containerized logrotate.
+                 This is valid when LogrotateDateExt is true.
+    type: boolean
+    default: false
+
+conditions:
+
+  logrotatedateext_is_enabled: {equals: [{get_param: LogrotateDateExt}, true]}
+
+resources:
+
+  ContainersCommon:
+    type: ./containers-common.yaml
+
+
+outputs:
+  role_data:
+    description: Role data for the crond role.
+    value:
+      service_name: contrail_logrotate_crond
+      config_settings:
+        map_merge:
+          - tripleo::network::contrail::logrotate_config::maxsize: {get_param: LogrotateMaxsize}
+            tripleo::network::contrail::logrotate_config::rotation: {get_param: LogrotateRotationInterval}
+            tripleo::network::contrail::logrotate_config::rotate: {get_param: LogrotateRotate}
+            tripleo::network::contrail::logrotate_config::purge_after_days: {get_param: LogrotatePurgeAfterDays}
+            tripleo::network::contrail::logrotate_config::dateext: {get_param: LogrotateDateExt}
+            tripleo::network::contrail::logrotate_config::log_path_regex: {get_param: ContrailLogrotateLogPathRegex}
+            tripleo::network::contrail::logrotate_config::rotate_user_opts: {get_param: ContrailLogrotateUserOpts}
+          - if:
+            - logrotatedateext_is_enabled
+            - tripleo::network::contrail::logrotate_config::dateformat: {get_param: LogrotateDateFormat}
+              tripleo::network::contrail::logrotate_config::dateyesterday: {get_param: LogrotateDateYesterday}
+            - {}
+      puppet_config:
+        config_volume: crond
+        step_config: 'include ::tripleo::network::contrail::logrotate_config'
+        config_image: {get_param: DockerCrondConfigImage}
+      kolla_config: {}
+      docker_config: {}
