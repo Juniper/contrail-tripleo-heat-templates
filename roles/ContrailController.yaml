@@ -34,3 +34,4 @@
     - OS::TripleO::Services::ContrailConfig
     - OS::TripleO::Services::ContrailControl
     - OS::TripleO::Services::ContrailWebui
+    - OS::TripleO::Service::ContrailLogrotateConfig
