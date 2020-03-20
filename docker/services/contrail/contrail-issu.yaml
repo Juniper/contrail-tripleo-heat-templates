@@ -101,7 +101,7 @@ parameters:
                  is usually set to '-', resulting in logs going to
                  stdout
     type: string
-    default: "/var/log/contrail"
+    default: "/var/log/contrail/rabbitmq"
 
   DockerContrailConfigDatabaseVolume:
     default: 'config_cassandra'
