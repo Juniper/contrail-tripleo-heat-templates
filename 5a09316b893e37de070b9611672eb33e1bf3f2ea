@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f0c45b5_112b4eec",
+        "filename": "docker/services/contrail-logrotate-config.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-23T08:56:44Z",
+      "side": 1,
+      "message": "please change name to make it different from origin logrotate, e.g. contrail_logrotate_config",
+      "range": {
+        "startLine": 46,
+        "startChar": 20,
+        "endLine": 46,
+        "endChar": 35
+      },
+      "revId": "5a09316b893e37de070b9611672eb33e1bf3f2ea",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "526daf04_f9b47435",
+        "filename": "environments/contrail/contrail-plugins.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-23T08:56:44Z",
+      "side": 1,
+      "message": "Services",
+      "range": {
+        "startLine": 25,
+        "startChar": 15,
+        "endLine": 25,
+        "endChar": 22
+      },
+      "revId": "5a09316b893e37de070b9611672eb33e1bf3f2ea",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5cc9192d_158b82a4",
+        "filename": "roles/ContrailAIO.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-23T08:56:44Z",
+      "side": 1,
+      "message": "Services",
+      "range": {
+        "startLine": 41,
+        "startChar": 19,
+        "endLine": 41,
+        "endChar": 26
+      },
+      "revId": "5a09316b893e37de070b9611672eb33e1bf3f2ea",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95f3caa0_41538e1e",
+        "filename": "roles/ContrailController.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-23T08:56:44Z",
+      "side": 1,
+      "message": "Services",
+      "range": {
+        "startLine": 37,
+        "startChar": 19,
+        "endLine": 37,
+        "endChar": 26
+      },
+      "revId": "5a09316b893e37de070b9611672eb33e1bf3f2ea",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ac8e1a0_b595884e",
+        "filename": "roles/ContrailDpdk.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-23T08:56:44Z",
+      "side": 1,
+      "message": "Services",
+      "range": {
+        "startLine": 52,
+        "startChar": 19,
+        "endLine": 52,
+        "endChar": 26
+      },
+      "revId": "5a09316b893e37de070b9611672eb33e1bf3f2ea",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b441e9d7_ca2904b3",
+        "filename": "roles/ContrailSriov.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-23T08:56:44Z",
+      "side": 1,
+      "message": "Services",
+      "range": {
+        "startLine": 52,
+        "startChar": 19,
+        "endLine": 52,
+        "endChar": 26
+      },
+      "revId": "5a09316b893e37de070b9611672eb33e1bf3f2ea",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02f98fb0_230edd66",
+        "filename": "roles/ContrailTsn.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-03-23T08:56:44Z",
+      "side": 1,
+      "message": "Services",
+      "range": {
+        "startLine": 52,
+        "startChar": 19,
+        "endLine": 52,
+        "endChar": 26
+      },
+      "revId": "5a09316b893e37de070b9611672eb33e1bf3f2ea",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
