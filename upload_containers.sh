@@ -66,6 +66,28 @@ if [[ -n ${cert_url} ]]; then
   update-ca-trust 
   systemctl restart docker
 fi
+
+# Check if tag contain dsome numbers more or equal than 2002
+is_2002_or_more=$(awk '{
+  n = split($0, arr, "-");
+  for (i = 0; ++i <= n;){
+      k = split(arr[i], arr_inner, ".");
+      for (j=0; ++j <= k;){
+        if(match(arr_inner[j], /^[0-9]*$/) && arr_inner[j] >= 2002){
+          print 1
+          exit 0
+        }
+      }
+  }
+}' <<< $tag)
+
+provisioner=""
+# if tag is latest or contrail version >= 2002 add provisioner container
+if [[ "$is_2002_or_more" == 1 || "$tag" =~ "latest" || "$tag" =~ "master" ]]; then
+  provisioner="contrail-provisioner"
+fi
+	
+
 for image in contrail-analytics-alarm-gen \
 contrail-analytics-api \
 contrail-analytics-collector \
@@ -90,7 +112,7 @@ contrail-openstack-heat-init \
 contrail-openstack-neutron-init \
 contrail-status \
 contrail-vrouter-agent \
-contrail-vrouter-kernel-init
+contrail-vrouter-kernel-init $provisioner \
 do
    echo ${remote_registry}/${image}:${tag} ${local_registry}/${image}:${tag}
    docker pull ${remote_registry}/${image}:${tag}
