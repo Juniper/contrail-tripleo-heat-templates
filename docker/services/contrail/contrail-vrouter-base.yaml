@@ -133,6 +133,31 @@ outputs:
                     dest: *contrail_env_file
                     state: present
                     line: "HUGE_PAGES_1GB={{ hugepages_1gb }}"
+                - name: default hugepages dir
+                  set_fact:
+                    hp_dir: "/dev/hugepages"
+                - name: 1gb hugepages dir
+                  shell: "mount -t hugetlbfs | awk '/pagesize=1G/{print($3)}'"
+                  register: hp_1g_dir
+                - name: 2mb hugepages dir
+                  shell: "mount -t hugetlbfs | awk '/pagesize=2M/{print($3)}'"
+                  register: hp_2mb_dir
+                - name: set hugepages dir to 1gb
+                  when:
+                    - hp_1g_dir.stout != ""
+                  set_fact:
+                    hp_dir: "{{ hp_1g_dir.stout }}"
+                - name: set hugepages dir to 2mb
+                  when:
+                    - hp_1g_dir.stout == ""
+                    - hp_2mb_dir.stout != ""
+                  set_fact:
+                    hp_dir: "{{ hp_2mb_dir.stout }}"
+                - name: set hugepages dir
+                  lineinfile:
+                    dest: *contrail_env_file
+                    state: present
+                    line: "HUGE_PAGES_DIR={{ hp_dir }}"
           - {get_attr: [ContrailVrouterIssu, role_data, host_prep_tasks]}
 
       update_tasks:
