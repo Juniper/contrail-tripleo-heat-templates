@@ -58,10 +58,10 @@ parameter_defaults:
 # Enable 1 GB hugepages for dpdk mode if needed
 #  ContrailDpdkHugepages1GB: 10
 
-# Enable hugepages for vrouter kenel mode byt default - 2GB of total size
+# Enable hugepages for vrouter kernel mode by default - 2GB of total size
 # (to disable just put empty value '')
-  ContrailVrouterHugepages2MB: ''
   ContrailVrouterHugepages1GB: '2'
+  ContrailSriovHugepages1GB: '2'
 
 # ContrailDefaults - environment passed to provisione container
 # Pass all params as a list of strings

@@ -43,7 +43,7 @@ parameters:
     tags:
       - role_specific
   ContrailSriovHugepages2MB:
-    default: '2048'
+    default: '1024'
     description: Number of 2MB hugepages
     type: string
   ContrailSriovHugepages1GB:
