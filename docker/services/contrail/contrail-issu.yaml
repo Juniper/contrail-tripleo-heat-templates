@@ -552,11 +552,7 @@ outputs:
                 contrail_issu:
                   map_merge:
                     - public_ssl_port: 38082
-                      internal_ip:
-                        str_replace:
-                          template: "%{hiera('NETWORK_virtual_ip')}"
-                          params:
-                            NETWORK: {get_param: [ServiceNetMap, ContrailIssuNetwork]}
+                      internal_ip: {get_param: [ServiceData, net_vip_map, {get_param: [ServiceNetMap, ContrailIssuNetwork]}]}
                       service_port: *contrail_issu_api_port
                       service_network: {get_param: [ServiceNetMap, ContrailIssuNetwork]}
                     - {get_attr: [ContrailBase, role_data, haproxy_config_settings_api]}
