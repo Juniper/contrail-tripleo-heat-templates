@@ -1,0 +1,33 @@
+resource_registry:
+  OS::TripleO::Services::AgilioVrouter: ../../docker/services/contrail/contrail-analytics.yaml
+  OS::TripleO::Compute::NodeUserData: ../../firstboot/agilio/agilio_vrouter.yaml
+
+parameter_defaults:
+  ServiceNetMap:
+    AgilioVrouterNetwork: internal_api
+
+  # Provide correct registry and tag for agilio containers
+  AgilioRegistry: '192.168.24.1:8787'
+  AgilioImageTag: 'latest'
+
+  # Add agilio registry into insecure list if registry different from underloud
+  # DockerInsecureRegistryAddress: ''
+
+  # If agilio registry requires creadentiols provide them in format like below
+  # ContainerImageRegistryCredentials:
+  #   '192.0.2.1:8787':
+  #     username: password
+
+  # Provide correct parameters
+  # Note: if it is provided in another envifile then update that file
+  # instead of setting it here to avoid overwritting
+  ComputeParameters:
+    # IOMMU
+    KernelArgs: " intel_iommu=on iommu=pt isolcpus=1,2 " 
+
+    # Hugepages
+    ContrailVrouterHugepages2MB: "2048"
+
+    # Fabric interface
+    ContrailSettings:
+      PHYSICAL_INTERFACE: nfp_p0

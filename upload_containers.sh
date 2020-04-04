@@ -59,11 +59,11 @@ done
 
 echo "remote registry: $remote_registry, local registry: $local_registry"
 if [[ -n ${cert_url} ]]; then
-  registry_name=(${remote_registry//:/ }) 
+  registry_name=(${remote_registry//:/ })
   mkdir -p /etc/docker/certs.d/${registry_name}
-  (cd /etc/docker/certs.d/${registry_name}; curl -O ${cert_url})   
-  (cd /etc/pki/ca-trust/source/anchors/; curl -O ${cert_url}) 
-  update-ca-trust 
+  (cd /etc/docker/certs.d/${registry_name}; curl -O ${cert_url})
+  (cd /etc/pki/ca-trust/source/anchors/; curl -O ${cert_url})
+  update-ca-trust
   systemctl restart docker
 fi
 

@@ -1,7 +1,7 @@
 resource_registry:
   # ====
   # IPA certs lifecycle management parameters:
-  # NOTE: ~/tripleo-heat-templates/environments/ssl/enable-internal-tls.yaml must be 
+  # NOTE: ~/tripleo-heat-templates/environments/ssl/enable-internal-tls.yaml must be
   # included into deploy command
   # ====
   OS::TripleO::Services::ContrailCertmongerUser: ../../docker/services/contrail/contrail-certmonger-user.yaml
@@ -35,7 +35,7 @@ parameter_defaults:
   # ====
   # ContrailCA: 'local'
   # CA files paths, CA cert, CA key to sign contrail services certificates
-  # In case of IPA they must be empty / not_defined  
+  # In case of IPA they must be empty / not_defined
   # ContrailCaCertFile: '/etc/contrail/ssl/certs/ca-cert.pem'
   # ContrailCaKeyFile: '/etc/contrail/ssl/private/ca-key.pem'
   # ContrailCaCert: |

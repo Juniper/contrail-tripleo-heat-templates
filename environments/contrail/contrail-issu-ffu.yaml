@@ -1,7 +1,7 @@
 
 # ISSU for FF Upgrade.
 #
-# ISSU node is deployed at the early stage of upgrade before 
+# ISSU node is deployed at the early stage of upgrade before
 # the undercloud node is upgraded. So, this ISSU role is to just
 # keep ISSU role node alive during ff upgrade procedure.
 #

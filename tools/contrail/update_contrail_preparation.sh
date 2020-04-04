@@ -3,7 +3,7 @@
 my_file="$(readlink -e "$0")"
 my_dir="$(dirname $my_file)"
 
-#New contrail version 
+#New contrail version
 CONTRAIL_NEW_IMAGE_TAG=${CONTRAIL_IMAGE_TAG:-'latest'}
 
 #Prefix for all contrail containers
