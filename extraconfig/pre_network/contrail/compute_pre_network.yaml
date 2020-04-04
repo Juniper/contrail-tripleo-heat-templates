@@ -233,7 +233,7 @@ resources:
         get_file: contrail_ansible_kernel_config.yaml
 
   VrouterKernelParametersDeployment:
-    type: OS::Heat::SoftwareDeployment
+    type: OS::TripleO::Reboot::SoftwareDeployment
     depends_on: [VrouterContainerParametersDeployment]
     condition: is_kernel_config_required
     properties:
@@ -269,7 +269,7 @@ resources:
         fi
 
   RebootDeployment:
-    type: OS::Heat::SoftwareDeployment
+    type: OS::TripleO::Reboot::SoftwareDeployment
     depends_on: [VrouterKernelParametersDeployment]
     condition: is_kernel_config_required
     properties:
@@ -293,7 +293,7 @@ resources:
         echo "Reboot completed"
 
   RebootEnsureDeployment:
-    type: OS::Heat::SoftwareDeployment
+    type: OS::TripleO::Reboot::SoftwareDeployment
     depends_on: RebootDeployment
     condition: is_kernel_config_required
     properties:

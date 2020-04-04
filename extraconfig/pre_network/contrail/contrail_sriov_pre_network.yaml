@@ -292,7 +292,7 @@ resources:
         get_file: contrail_ansible_kernel_config.yaml
 
   SriovKernelParametersDeployment:
-    type: OS::Heat::SoftwareDeployment
+    type: OS::TripleO::Reboot::SoftwareDeployment
     depends_on: [SriovContainerParametersDeployment]
     properties:
       name: SriovKernelParametersDeployment
@@ -328,7 +328,7 @@ resources:
         fi
 
   RebootDeployment:
-    type: OS::Heat::SoftwareDeployment
+    type: OS::TripleO::Reboot::SoftwareDeployment
     depends_on: [SriovKernelParametersDeployment]
     properties:
       name: RebootDeployment
@@ -350,7 +350,7 @@ resources:
         echo "Reboot completed"
 
   RebootEnsureDeployment:
-    type: OS::Heat::SoftwareDeployment
+    type: OS::TripleO::Reboot::SoftwareDeployment
     depends_on: RebootDeployment
     properties:
       name: RebootEnsureDeployment
