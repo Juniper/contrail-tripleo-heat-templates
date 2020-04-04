@@ -83,7 +83,7 @@ is_2002_or_more=$(awk '{
 
 provisioner=""
 # if tag is latest or contrail version >= 2002 add provisioner container
-if [[ "$is_2002_or_more" == 1 || "$tag" =~ "latest" || "$tag" =~ "master" ]]; then
+if [[ "$is_2002_or_more" == 1 || "$tag" =~ "latest" || "$tag" =~ "master" || "$tag" =~ "dev" ]]; then
   provisioner="contrail-provisioner"
 fi
 	

@@ -80,6 +80,9 @@ conditions:
   is_more_than_2001_or_latest:
     or:
       - yaql:
+          expression: $.data.matches(".*dev.*")
+          data: {get_param: ContrailImageTag}
+      - yaql:
           expression: $.data.matches(".*latest.*")
           data: {get_param: ContrailImageTag}
       - yaql:
