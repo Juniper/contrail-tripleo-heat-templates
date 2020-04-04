@@ -14,7 +14,7 @@ parameters:
     type: string
   GenericImageName:
     type: string
-    description: > 
+    description: >
       name of the image that needs to be normalized
 
 conditions:
@@ -40,10 +40,10 @@ resources:
     properties:
       type: string
       value:
-        if: 
-          - "is_empty" 
+        if:
+          - "is_empty"
           - ''
-          - if: 
+          - if:
               - and:
                 - "contains_registry"
                 - "contains_tag"

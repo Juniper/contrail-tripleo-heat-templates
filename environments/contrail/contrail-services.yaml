@@ -19,7 +19,7 @@ parameter_defaults:
     # In case of using custom network for Conraril controller this should be defined
     # as well as RabbitMQ use hostname for host resolving.
     # Default value is defined for all roles as:
-    #   .//network/service_net_map.j2.yaml: {{role.name}}HostnameResolveNetwork: internal_api 
+    #   .//network/service_net_map.j2.yaml: {{role.name}}HostnameResolveNetwork: internal_api
     # ContrailControllerHostnameResolveNetwork: internal_api
   OvercloudControllerFlavor: control
   OvercloudContrailControllerFlavor: contrail-controller

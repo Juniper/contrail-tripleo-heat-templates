@@ -122,12 +122,12 @@ resources:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailVrouterPluginInitImageName}
- 
+
   DockerContrailVrouterAgentImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailVrouterAgentContainerName}
-  
+
   ContrailSettingsRoleParametersValue:
     type: OS::Heat::Value
     properties:
@@ -145,7 +145,7 @@ resources:
               ContrailVrouterHugepages2MB: {get_param: ContrailVrouterHugepages2MB}
               ContrailVrouterHugepages1GB: {get_param: ContrailVrouterHugepages1GB}
               ContrailVrouterModuleOptions: {get_param: ContrailVrouterModuleOptions}
-              
+
   VrouterHostParametersConfig:
     type: OS::Heat::SoftwareConfig
     properties:
