@@ -29,7 +29,9 @@ parameter_defaults:
   OvercloudComputeFlavor: compute
   OvercloudContrailDpdkFlavor: compute-dpdk
   OvercloudContrailSriovFlavor: compute-sriov
+  OvercloudContrailAioFlavor: contrail-controller
   ControllerCount: 1
+  ContrailAioCount: 1
   ContrailControllerCount: 1
   ContrailAnalyticsCount: 0
   ContrailAnalyticsDatabaseCount: 0
