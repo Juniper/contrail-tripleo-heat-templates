@@ -9,6 +9,7 @@ resource_registry:
   OS::TripleO::ContrailSriov::Net::SoftwareConfig: ../../network/config/contrail/examples/sriov/contrail-sriov-nic-config-single.yaml
   OS::TripleO::ContrailTsn::Net::SoftwareConfig: ../../network/config/contrail/examples/tsn/contrail-tsn-nic-config-single.yaml
   OS::TripleO::ContrailControllerIssu::Net::SoftwareConfig: ../../network/config/contrail/examples/contrail-controller/contrail-controller-nic-config-single.yaml
+  OS::TripleO::ContrailAio::Net::SoftwareConfig: ../../network/config/contrail/examples/vrouter/compute-nic-config-single.yaml
 
 parameter_defaults:
   # CIDR subnet mask length for provisioning network
