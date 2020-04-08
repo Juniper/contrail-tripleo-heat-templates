@@ -27,10 +27,13 @@
       set_fact:
         kernel_arg_list: "{{ kernel_arg_list }} + [ 'default_hugepagesz=1GB hugepagesz=1G hugepages={{ _CONTRAIL_HUGEPAGES_1GB_ }}' ]"
       when: _CONTRAIL_HUGEPAGES_1GB_ | default("") != ""
-    - name: set kernel 2MB hugepage arg
+    - name: add kernel 2MB hugepage arg if set
       set_fact:
         kernel_arg_list: "{{ kernel_arg_list }} + [ 'hugepagesz=2M hugepages={{ _CONTRAIL_HUGEPAGES_2MB_ }}' ]"
-      when: _CONTRAIL_HUGEPAGES_2MB_ | default("") != ""
+      when:
+        # if 1GB is disabled then 2mb are allocated via sysctl 
+        - _CONTRAIL_HUGEPAGES_1GB_ | default("") != ""
+        - _CONTRAIL_HUGEPAGES_2MB_ | default("") != ""
     - debug:
         msg: "kernel_arg_list: '{{ kernel_arg_list }}'"
     - name: convert kernel_arg_list to string
@@ -89,25 +92,39 @@
               set_fact:
                 reboot_required: true
 
-    - name: create hugepage devs
-      file:
-        path: "/dev/hugepages{{ item }}"
-        state: directory
-      with_items:
-        - "1G"
-        - "2M"
-      when: _CONTRAIL_HUGEPAGES_1GB_ != ""
-    - name: create fstab entries
-      mount:
-        path: "/dev/hugepages{{ item }}"
-        src: none
-        fstype: hugetlbfs
-        opts: "pagesize={{ item }}"
-        state: present
-      with_items:
-        - "1G"
-        - "2M"
-      when: _CONTRAIL_HUGEPAGES_1GB_ != ""
+    - name: update hugepages mountpoints if 1GB is enabled
+      when:
+        - _CONTRAIL_HUGEPAGES_1GB_ | default("") != ""
+      become: true
+      block:
+        - name: create hugepage devs 1G
+          file:
+            path: "/dev/hugepages1G"
+            state: directory
+        - name: create fstab entries for 1G
+          mount:
+            path: "/dev/hugepages1G"
+            src: none
+            fstype: hugetlbfs
+            opts: "pagesize=1G"
+            state: present
+        # if 1gb is disabled the n default /dev/hugepages is to be used for 2MB
+        - name: update hugepages mountpoints if 2MB is enabled
+          when:
+            - _CONTRAIL_HUGEPAGES_2MB_ | default("") != ""
+          become: true
+          block:
+            - name: create hugepage devs 2M
+              file:
+                path: "/dev/hugepages2M"
+                state: directory
+            - name: create fstab entries for 2M
+              mount:
+                path: "/dev/hugepages2M"
+                src: none
+                fstype: hugetlbfs
+                opts: "pagesize=2M"
+                state: present
 
     # Tune-d Configuration
     - name: Get active tuned profile and set if requested one

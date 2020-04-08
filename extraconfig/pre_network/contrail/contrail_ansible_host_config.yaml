@@ -100,7 +100,9 @@
       lineinfile:
         dest: /etc/sysctl.conf
         line: "vm.nr_hugepages = {{ _CONTRAIL_HUGEPAGES_2MB_ }}"
-      when: _CONTRAIL_HUGEPAGES_1GB_ is undefined and _CONTRAIL_HUGEPAGES_2MB_ is defined
+      when:
+        - _CONTRAIL_HUGEPAGES_1GB_ | default("") == ""
+        - _CONTRAIL_HUGEPAGES_2MB_ | default("") != ""
 
     - name: apply kernel settings
       shell: /sbin/sysctl --system
