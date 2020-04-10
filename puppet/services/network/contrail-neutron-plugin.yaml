@@ -33,7 +33,7 @@ parameters:
   ContrailExtensions:
     description: List of OpenContrail extensions to be enabled
     type: comma_delimited_list
-    default: 'ipam:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_ipam.NeutronPluginContrailIpam,policy:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_policy.NeutronPluginContrailPolicy,route-table:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_vpc.NeutronPluginContrailVpc,contrail:None'
+    # default: 'ipam:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_ipam.NeutronPluginContrailIpam,policy:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_policy.NeutronPluginContrailPolicy,route-table:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_vpc.NeutronPluginContrailVpc,contrail:None'
 
 resources:
   ContrailBase:
@@ -45,6 +45,10 @@ resources:
       EndpointMap: {get_param: EndpointMap}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      ContrailVersion: {get_param: ContrailVersion}
+
+conditions:
+  contrail_extensions_unset: {equals : [{get_param: ContrailExtensions}, '']}
 
 outputs:
   role_data:
@@ -55,6 +59,9 @@ outputs:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
           - neutron::api_extensions_path: '/usr/lib/python2.7/site-packages/neutron_plugin_contrail/extensions:/usr/lib/python2.7/site-packages/neutron_lbaas/extensions'
-            contrail::vrouter::contrail_extensions: {get_param: ContrailExtensions}
+          - if:
+            - contrail_version_unset
+            - contrail::vrouter::contrail_extensions: {}
+            - contrail::vrouter::contrail_extensions: {get_param: ContrailExtensions}
       step_config: |
         include tripleo::network::contrail::neutron_plugin
