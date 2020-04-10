@@ -100,6 +100,18 @@
             state: absent
           ignore_errors: yes
 
+        - name: contral dpdk env file
+          set_fact:
+            dpdk_env_file: "/etc/sysconfig/network-scripts/network-functions-vrouter-dpdk-env"
+        - name: register create contrail analytics kafka env file
+          stat:
+            path: "{{ dpdk_env_file }}"
+          register: dpdk_env_file_stat
+        - name: save old dpdk env values
+          when: dpdk_env_file_stat.stat.exists
+          shell: "cat {{ dpdk_env_file }}"
+          register: dpdk_env_file_content_old
+
         - name: create contrail dpdk init container
           docker_container:
             name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
@@ -112,6 +124,18 @@
               - /lib/modules:/lib/modules
               - /bin:/host/bin
             env: "{{ dpdk_init_env_vars }}"
+
+        - name: check if dpdk env changed
+          when: dpdk_env_file_stat.stat.exists
+          block:
+            - name: save new dpdk env values
+              shell: "cat {{ dpdk_env_file }}"
+              register: dpdk_env_file_content_new
+            - name: restart vhost0 because of dpdk env changed
+              when: dpdk_env_file_content_new.stdout != dpdk_env_file_content_old.stdout
+              shell: bash -c 'ifdown vhost0; ifup vhost0; docker start contrail_vrouter_agent'
+              ignore_errors: yes
+
       when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
 
     - name: start contrail vrouter init container
