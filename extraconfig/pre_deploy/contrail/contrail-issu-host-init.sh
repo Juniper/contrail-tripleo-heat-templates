@@ -84,10 +84,17 @@ getenforce
 
 mkdir -p /var/crashes
 chmod 755 /var/crashes
-yum install -y docker python-docker-py python27-python-pip libselinux-python
+yum install -y docker python-docker-py libselinux-python
 if ! yum install -y python-paunch ; then
     yum install -y --enablerepo=rhel-7-server-openstack-13-rpms python-paunch
 fi
+if ! yum install -y python27-python-pip ; then
+    yum install -y --enablerepo=rhel-server-rhscl-7-rpms python27-python-pip
+fi
+if ! yum install -y python27-python-devel ; then
+    yum install -y --enablerepo=rhel-server-rhscl-7-rpms python27-python-devel
+fi
+
 source scl_source enable python27
 pip install --upgrade pip
 pip install docker-compose
