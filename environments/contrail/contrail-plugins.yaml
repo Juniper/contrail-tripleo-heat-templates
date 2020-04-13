@@ -44,6 +44,8 @@ resource_registry:
   OS::TripleO::ContrailSriovExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailTsnExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailAioExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
+  # by default disabled
+  OS::TripleO::Services::AgilioVrouter: OS::Heat::None
 
 parameter_defaults:
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
