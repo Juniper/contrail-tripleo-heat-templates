@@ -36,7 +36,7 @@ parameters:
   ContrailExtensions:
     description: List of OpenContrail extensions to be enabled
     type: comma_delimited_list
-    default: 'ipam:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_ipam.NeutronPluginContrailIpam,policy:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_policy.NeutronPluginContrailPolicy,route-table:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_vpc.NeutronPluginContrailVpc,contrail:None'
+    #default: 'ipam:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_ipam.NeutronPluginContrailIpam,policy:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_policy.NeutronPluginContrailPolicy,route-table:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_vpc.NeutronPluginContrailVpc,contrail:None'
   DockerContrailNeutronPluginImageName:
     description: The container image to use for the contrail neutron plugin
     type: string
@@ -44,7 +44,7 @@ parameters:
   NeutronServicePlugins:
     description: The Neutron Service Plugins
     type: string
-    default: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+    #default: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
   NeutronApiExtensionPath:
     description: Path to Neutron API plugin
     type: string
@@ -52,7 +52,7 @@ parameters:
   NeutronCorePlugin:
     description: Neutron Core Plugin Name
     type: string
-    default: 'neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2'
+    #default: 'neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2'
 
 resources:
   DockerContrailNeutronPluginImageNormalize:
@@ -69,9 +69,29 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      ContrailImageTag: {get_param: ContrailImageTag}
 
   ContrailNeutronIssu:
     type: OS::TripleO::ContrailNeutronIssu
+
+conditions:
+  is_more_than_2005_or_latest:
+    or:
+      - yaql:
+          expression: $.data.matches(".*dev.*")
+          data: {get_param: ContrailImageTag}
+      - yaql:
+          expression: $.data.matches(".*latest.*")
+          data: {get_param: ContrailImageTag}
+      - yaql:
+          expression: $.data.matches(".*master.*")
+          data: {get_param: ContrailImageTag}
+      - yaql:
+          expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2005).any()
+          data: {get_param: ContrailImageTag}
+  core_plugin_unset: {equals : [{get_param: NeutronCorePlugin}, '']}
+  contrail_extensions_unset: {equals : [{get_param: ContrailExtensions}, '']}
+  service_plugins_unset: {equals : [{get_param: NeutronServicePlugins}, '']}
 
 outputs:
   role_data:
@@ -82,9 +102,31 @@ outputs:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
           - neutron::api_extensions_path: {get_param: NeutronApiExtensionPath}
-            #neutron::service_plugins: {get_param: NeutronServicePlugins}
-            neutron::core_plugin: {get_param: NeutronCorePlugin}
-            contrail::vrouter::contrail_extensions: {get_param: ContrailExtensions}
+          - if:
+            - core_plugin_unset
+            - - if:
+                - is_more_than_2005_or_latest
+                - neutron::core_plugin: 'contrail'
+                - neutron::core_plugin: 'neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2'
+            - neutron::core_plugin: {get_param: NeutronCorePlugin}
+          - if:
+            - contrail_extensions_unset
+            - - if:
+                - is_more_than_2005_or_latest
+                - contrail::vrouter::contrail_extensions: 'contrail:None'
+                - contrail::vrouter::contrail_extensions: 'ipam:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_ipam.NeutronPluginContrailIpam,policy:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_policy.NeutronPluginContrailPolicy,route-table:neutron_plugin_contrail.plugins.opencontrail.contrail_plugin_vpc.NeutronPluginContrailVpc,contrail:None'
+            - contrail::vrouter::contrail_extensions: {get_param: ContrailExtensions}
+          - if:
+            - service_plugins_unset
+            - - if:
+                - is_more_than_2005_or_latest
+                - neutron::service_plugins: 'contrail-timestamp,contrail-lbaasv2,contrail-trunk'
+                - neutron::service_plugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+            - neutron::service_plugins: {get_param: NeutronServicePlugins}
+          - if:
+            - is_more_than_2005_or_latest
+            - contrail::contrail_version_new: true
+            - contrail::contrail_version_new: false
       # BEGIN DOCKER SETTINGS
       puppet_config:
         config_volume: 'neutron'
