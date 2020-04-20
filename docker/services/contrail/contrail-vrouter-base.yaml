@@ -35,10 +35,6 @@ parameters:
     default: 'kernel'
     description: Agent mode kernel or dpdk
     type: string
-  DockerContrailVrouterKernelInitImageName:
-    description: image
-    type: string
-    default: "contrail-vrouter-kernel-init"
   ContrailVrouterHugepages2MB:
     default: '1024'
     description: Number of 2MB hugepages
@@ -49,10 +45,6 @@ parameters:
     type: string
 
 resources:
-  DockerContrailVrouterKernelImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailVrouterKernelInitImageName}
   ContrailVrouterIssu:
     type: OS::TripleO::ContrailVrouterIssu
     properties:
@@ -84,8 +76,6 @@ outputs:
       agent_mode: &agent_mode {get_param: ContrailVrouterAgentMode}
       hugepages_2mb: &hugepages_2mb {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_2mb]}
       hugepages_1gb: &hugepages_1gb {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_1gb]}
-      vrouter_init_container_name: &vrouter_init_container_name
-        {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}
       host_prep_tasks:
         list_concat:
           - - name: Contrail vrouter base host prep tasks
@@ -203,11 +193,6 @@ outputs:
               name: "/tmp/contrail_var_lib_unnamed_volume"
               state: absent
           when: 'contrail_var_lib_unnamed_volume.stat.exists == true'
-        - name: Set contrail-vrouter-kernel-init container name
-          set_fact:
-            vrouter_init_container_name_ansible: *vrouter_init_container_name
-        - name: Start contrail-vrouter-kernel-init container
-          shell: bash -c "docker start {{ vrouter_init_container_name_ansible }}"
 
       fast_forward_upgrade_tasks:
         - name: Stop contrail vrouter dpdk services
