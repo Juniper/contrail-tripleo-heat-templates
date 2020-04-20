@@ -28,6 +28,7 @@ require {
         type spc_t;
         type container_t;
         type container_log_t;
+        type container_runtime_t;
         type dhcpc_t;
         type NetworkManager_t;
         type unconfined_service_t;
@@ -37,6 +38,7 @@ require {
         class sock_file { create link rename unlink setattr write };
         class dir { add_name mounton remove_name write search };
         class file { create execute execute_no_trans getattr open read append unlink write };
+        class unix_stream_socket { create link rename unlink setattr write connectto };
 }
 
 #============= ifconfig_t ==============
@@ -57,6 +59,7 @@ allow svirt_t var_run_t:sock_file { create unlink };
 #============= container_t ==============
 allow container_t container_log_t:dir { add_name write };
 allow container_t container_log_t:file { append create open };
+allow container_t container_runtime_t:unix_stream_socket connectto;
 
 #============= dhcpc_t ==============
 allow dhcpc_t var_run_t:file { read write };
