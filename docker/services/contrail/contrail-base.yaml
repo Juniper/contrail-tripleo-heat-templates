@@ -174,6 +174,10 @@ parameters:
     type: string
     default: "node_ips"
     description: suffix for reading hiera data, node_ips or node_names
+  contrail_env_name:
+    type: string
+    default: ''
+    description: name of env file for service, concatenated with common_<name>.env 
 
 conditions:
   is_not_5_0:
@@ -386,12 +390,19 @@ outputs:
             mode: 'tcp'
             listen_options: *haproxy_config_settings_listen_options
             member_options: *haproxy_config_settings_member_options
+      contrail_service_conf_dir: &contrail_service_conf_dir
+        list_join:
+          - ''
+          - - '/var/lib/config-data/contrail/'
+            - {get_param: contrail_env_name}
+      # added contrail_service_conf_dir volume to make work docker/docker-puppet.py
       contrail_base_volumes: &contrail_base_volumes
         list_concat:
           - {get_attr: [ContainersCommon, volumes]}
           - - /etc/contrail/ssl:/etc/contrail/ssl
             - /var/crashes:/var/crashes
             - /var/log/containers/contrail:/var/log/contrail
+            - *contrail_service_conf_dir:*contrail_service_conf_dir
           - if:
             - bind_contrail_ca_file
             - - list_join:
@@ -722,7 +733,37 @@ outputs:
               with_dict: "{{ contrail_settings }}"
               when: contrail_settings is defined
 
-
+      # tasks for preparing md5 of env files to include into containers as TRIPLEO_CONFIG_HASH
+      contrail_config_volume_prep:
+        - name: Contrail config volume prep tasks
+          tags: common
+          block:
+            - name: common service env file name
+              set_fact:
+                contrail_service_common_env_file: *contrail_common_env_file
+            - name: service config name
+              set_fact:
+                contrail_conf_name: {get_param: contrail_env_name}
+            - name: service env file path
+              set_fact:
+                contrail_service_env_file: "/etc/contrail/common_{{ contrail_conf_name }}.env"
+            - name: service config dir
+              set_fact:
+                contrail_service_conf_dir: *contrail_service_conf_dir
+            - name: service config md5 sum file
+              set_fact:
+                contrail_service_conf_md5_file: "{{ contrail_service_conf_dir }}.md5sum"
+            # create fake empty dir and correct config md5sum to make work docker/docker-puppet.py
+            - name: save md5 service env files and common env
+              shell: |
+                #!/bin/bash -x
+                vars=$(cat {{ contrail_service_common_env_file }} {{ contrail_service_env_file }} | sort -u)
+                mkdir -p {{ contrail_service_conf_dir }}
+                echo "$vars" | md5sum | awk '{print($1)}' > {{ contrail_service_conf_md5_file }}
+                cat {{ contrail_service_conf_md5_file }}
+              register: config_md5sum
+            - debug:
+                msg: "service config md5sum: service={{ contrail_conf_name }} md5={{ config_md5sum.stdout }}"
 
       metadata_settings: []
 
@@ -738,3 +779,4 @@ outputs:
           with_items:
             - docker
             - python-docker-py
+
