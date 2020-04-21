@@ -76,6 +76,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_env_name: 'webui'
 
   ContrailRedis:
     type: contrail-redis.yaml
@@ -204,6 +205,7 @@ outputs:
                     WEBUI_SSL_CERT_FILE: "{{ contrail_webui_cert }}"
                     WEBUI_SSL_KEY_FILE: "{{ contrail_webui_key }}"
               when: contrail_webui_ca == 'IPA'
+          - {get_attr: [ContrailBase, role_data, contrail_config_volume_prep]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
