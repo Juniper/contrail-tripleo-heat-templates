@@ -121,6 +121,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_env_name: 'config_database'
 
 outputs:
   role_data:
@@ -314,6 +315,7 @@ outputs:
                 - "ZOOKEEPER_PORTS=2888:3888"
                 - "ZOOKEEPER_PORT=2181"
                 - "ZOOKEEPER_NODES={{ contrail_config_db_cassandra_service_nodes_string }}"
+          - {get_attr: [ContrailBase, role_data, contrail_config_volume_prep]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]

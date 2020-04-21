@@ -74,6 +74,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_env_name: 'analytics_alarm'
 
   ContrailAnalyticsKafka:
     type: contrail-analytics-kafka.yaml
@@ -204,6 +205,7 @@ outputs:
                 line: "{{ item }}"
               with_items: "{{ alarm_env_vars }}"
           - {get_attr: [ContrailAnalyticsKafka, role_data, host_prep_tasks]}
+          - {get_attr: [ContrailBase, role_data, contrail_config_volume_prep]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]

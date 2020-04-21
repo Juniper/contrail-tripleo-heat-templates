@@ -97,6 +97,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_env_name: 'config'
 
 outputs:
   role_data:
@@ -258,6 +259,7 @@ outputs:
               with_items:
                 - NODE_TYPE=config
                 - IPFABRIC_SERVICE_HOST={{ nova_api_host.stdout }}
+          - {get_attr: [ContrailBase, role_data, contrail_config_volume_prep]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]

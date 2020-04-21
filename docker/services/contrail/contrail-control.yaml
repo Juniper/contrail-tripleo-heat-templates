@@ -88,6 +88,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_env_name: 'control'
 
 outputs:
   role_data:
@@ -247,6 +248,7 @@ outputs:
                 state: present
                 line: "{{ item }}"
               with_items: "{{ control_env_list }}"
+          - {get_attr: [ContrailBase, role_data, contrail_config_volume_prep]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]

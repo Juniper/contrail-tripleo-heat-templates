@@ -96,6 +96,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_env_name: 'analytics'
 
   ContrailRedis:
     type: contrail-redis.yaml
@@ -268,6 +269,7 @@ outputs:
               - is_not_5_0
               - null
               - {get_attr: [ContrailQueryEngine, role_data, host_prep_tasks]}
+          - {get_attr: [ContrailBase, role_data, contrail_config_volume_prep]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
