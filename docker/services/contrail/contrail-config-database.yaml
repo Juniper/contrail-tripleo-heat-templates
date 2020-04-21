@@ -121,6 +121,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_env_name: 'config_database'
 
 outputs:
   role_data:
