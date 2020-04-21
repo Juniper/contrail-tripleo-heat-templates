@@ -76,9 +76,10 @@ conditions:
       - yaql:
           expression: $.data.matches(".*master.*")
           data: {get_param: ContrailImageTag}
-      - yaql:
-          expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
-          data: {get_param: ContrailImageTag}
+      - not:
+          yaql:
+            expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]{4,}$")).where(int($) < 2001).any()
+            data: {get_param: ContrailImageTag}
 
   is_dpdk:
     or:
@@ -110,6 +111,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_env_name: 'vrouter'
 
   ContrailVrouterBase:
     type: contrail-vrouter-base.yaml
@@ -223,6 +225,7 @@ outputs:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
           - {get_attr: [ContrailVrouterBase, role_data, host_prep_tasks]}
+          - {get_attr: [ContrailBase, role_data, contrail_config_volume_prep]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]

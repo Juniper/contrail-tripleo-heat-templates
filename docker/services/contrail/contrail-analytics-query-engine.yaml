@@ -61,6 +61,7 @@ resources:
       DefaultPasswords: {get_param: DefaultPasswords}
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
+      contrail_env_name: 'analytics_query_engine'
 
 outputs:
   role_data:
@@ -114,3 +115,4 @@ outputs:
                 regexp: "^NODE_TYPE="
                 line: "{{ item }}"
               with_items: "{{ analytics_qe_env_vars }}"
+          - {get_attr: [ContrailBase, role_data, contrail_config_volume_prep]}
