@@ -199,7 +199,8 @@ outputs:
                 environment:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                    - - list_join:
+                    - - 'KERNEL_INIT_VHOST0=false'
+                      - list_join:
                           - '='
                           - - VROUTER_MODULE_OPTIONS
                             - {get_param: ContrailVrouterModuleOptions}
