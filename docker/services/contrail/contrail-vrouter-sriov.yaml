@@ -4,6 +4,10 @@ description: >
   Contrail containerized Vrouter service
 
 parameters:
+  DockerContrailVrouterKernelInitImageName:
+    description: image
+    type: string
+    default: "contrail-vrouter-kernel-init"
   DockerContrailVrouterAgentImageName:
     description: image
     type: string
@@ -76,7 +80,16 @@ conditions:
           expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
           data: {get_param: ContrailImageTag}
 
+  is_dpdk:
+    or:
+      - {equals: [{get_param: ContrailSriovMode}, 'dpdk']}
+      - {equals: [{get_param: [RoleParameters, ContrailSriovMode]}, 'dpdk']}
+
 resources:
+  DockerContrailVrouterKernelImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailVrouterKernelInitImageName}
 
   DockerContrailVrouterAgentImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
@@ -122,6 +135,8 @@ outputs:
                   - 9091
       contrail_env_file: &contrail_env_file
         get_attr: [ContrailVrouterBase, role_data, contrail_env_file]
+      vrouter_init_container_name: &vrouter_init_container_name
+        {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -195,7 +210,8 @@ outputs:
                 environment:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                    - - list_join:
+                    - - 'KERNEL_INIT_VHOST0=false'
+                      - list_join:
                           - '='
                           - - VROUTER_MODULE_OPTIONS
                             - {get_param: ContrailVrouterModuleOptions}
@@ -229,4 +245,13 @@ outputs:
           - {get_attr: [ContrailVrouterBase, role_data, upgrade_tasks]}
 
       post_upgrade_tasks:
-        get_attr: [ContrailVrouterBase, role_data, post_upgrade_tasks]
+        list_concat:
+          - {get_attr: [ContrailVrouterBase, role_data, post_upgrade_tasks]}
+          - if:
+            - is_dpdk
+            - null
+            - - name: Set contrail-vrouter-kernel-init container name
+                set_fact:
+                  vrouter_init_container_name_ansible: *vrouter_init_container_name
+              - name: Start contrail-vrouter-kernel-init container
+                shell: bash -c "docker start {{ vrouter_init_container_name_ansible }}"
