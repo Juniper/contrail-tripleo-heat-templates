@@ -220,7 +220,13 @@ outputs:
         get_attr: [ContrailVrouterBase, role_data, update_tasks]
 
       post_update_tasks:
-        get_attr: [ContrailVrouterBase, role_data, post_update_tasks]
+        list_concat:
+          - {get_attr: [ContrailVrouterBase, role_data, post_update_tasks]}
+          - - name: Set contrail-vrouter-kernel-init container name
+              set_fact:
+                vrouter_init_container_name_ansible: *vrouter_init_container_name
+            - name: Start contrail-vrouter-kernel-init container as post update
+              shell: bash -c "docker start {{ vrouter_init_container_name_ansible }}"
 
       fast_forward_upgrade_tasks:
         get_attr: [ContrailVrouterBase, role_data, fast_forward_upgrade_tasks]
@@ -239,5 +245,5 @@ outputs:
           - - name: Set contrail-vrouter-kernel-init container name
               set_fact:
                 vrouter_init_container_name_ansible: *vrouter_init_container_name
-            - name: Start contrail-vrouter-kernel-init container
+            - name: Start contrail-vrouter-kernel-init container as post upgrade
               shell: bash -c "docker start {{ vrouter_init_container_name_ansible }}"
