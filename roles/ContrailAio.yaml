@@ -21,6 +21,7 @@
   HostnameFormatDefault: '%stackname%-contrailaio-%index%'
   # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
   # Set uses_deprecated_params to True if any deprecated params are used.
+  disable_upgrade_deployment: True
   ServicesDefault:
     - OS::TripleO::Services::Aide
     - OS::TripleO::Services::AodhApi
