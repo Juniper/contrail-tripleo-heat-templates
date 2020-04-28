@@ -37,6 +37,10 @@ parameters:
     default: 'config_cassandra'
     description: Docker volume for contrail config DB service
     type: string
+  DockerContrailConfigDatabaseLogPath:
+    description: Path where config cassadra logs will be stored.
+    type: string
+    default: "/var/log/contrail/config-database"
   DockerContrailConfigZookeeperVolume:
     default: 'config_zookeeper'
     description: Docker volume for contrail config zookeeper service
@@ -240,6 +244,10 @@ outputs:
                           - ':'
                           - - {get_param: DockerContrailConfigDatabaseVolume}
                             - '/var/lib/cassandra'
+                      - list_join:
+                          - ':'
+                          - - {get_param: DockerContrailConfigDatabaseLogPath}
+                            - '/var/log/cassandra'
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
