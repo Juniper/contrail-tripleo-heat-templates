@@ -1,0 +1,406 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6250c724_d978cd8d",
+        "filename": "deployment/contrail/contrail-analytics-database.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "/var/lib/contrail/analytics_cassandra_data",
+      "range": {
+        "startLine": 21,
+        "startChar": 14,
+        "endLine": 21,
+        "endChar": 19
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c2586d2_5755b9d9",
+        "filename": "deployment/contrail/contrail-base.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "crashes?",
+      "range": {
+        "startLine": 393,
+        "startChar": 14,
+        "endLine": 393,
+        "endChar": 24
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0af4f277_428fcf1b",
+        "filename": "deployment/contrail/contrail-heat-container-plugin.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "hm.. interesting.. do we need to rename all of ours to follow rhosp style?\n(just the question to think of later)",
+      "range": {
+        "startLine": 25,
+        "startChar": 2,
+        "endLine": 25,
+        "endChar": 8
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48bb3826_96b7e804",
+        "filename": "deployment/contrail/contrail-heat-container-plugin.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 82,
+        "startChar": 12,
+        "endLine": 82,
+        "endChar": 21
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c02fd39d_fdeb4736",
+        "filename": "deployment/contrail/contrail-neutron-container-plugin.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 100,
+        "startChar": 12,
+        "endLine": 100,
+        "endChar": 21
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96fdb2f7_5f134d1b",
+        "filename": "deployment/contrail/contrail-vrouter-base.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "this is now in kernel and sriov only. not in base..",
+      "range": {
+        "startLine": 206,
+        "startChar": 0,
+        "endLine": 210,
+        "endChar": 81
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "624316c1_32d8298c",
+        "filename": "environments/contrail/contrail-services.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "we should not forget to sort out with it.. ideally we\u0027d use same as before",
+      "range": {
+        "startLine": 24,
+        "startChar": 29,
+        "endLine": 24,
+        "endChar": 39
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e548319_db26066f",
+        "filename": "environments/contrail/contrail-services.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "please put TODO here..\nand in other places where we have to do something like at the above flavor",
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ef7b90b_3c451e61",
+        "filename": "extraconfig/pre_deploy/contrail/contrail_ansible_node_init.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "why not to replace with podman commandline here?",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 25
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e1b531c_d7b0997a",
+        "filename": "extraconfig/pre_deploy/contrail/contrail_ansible_node_init.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "crashes?",
+      "range": {
+        "startLine": 67,
+        "startChar": 17,
+        "endLine": 67,
+        "endChar": 22
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c82062b_d965ee12",
+        "filename": "extraconfig/pre_deploy/contrail/contrail_ansible_node_init.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "hm.. \n1. this is to be in firstboot/contrail/contrail_container_registry.yaml\n2. _CONTRAIL_NODE_INIT_IMAGE_ | dirname | dirname  will not work in all cases\nbecause image might be w/o namespace and/or with namespace like\nblabla/blabla/blabla/blabla\nWe have special paramers for registry - use them instead of parsing",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 119,
+        "endChar": 50
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86a1a8f5_43473781",
+        "filename": "extraconfig/pre_network/contrail/contrail_ansible_container_config.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "is there --force parameter like in docker?",
+      "range": {
+        "startLine": 55,
+        "startChar": 36,
+        "endLine": 55,
+        "endChar": 37
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbbd39ed_77dfc7df",
+        "filename": "network/config/contrail/compute-nic-config.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "my understanding we have to add it into all *-nic*.yaml files?",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 89,
+        "endChar": 31
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b46de67_9ef175f7",
+        "filename": "network/config/contrail/examples/contrail-controller/contrail-controller-nic-config-single.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "rocky?",
+      "range": {
+        "startLine": 1,
+        "startChar": 23,
+        "endLine": 1,
+        "endChar": 28
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0337e356_f7fe505e",
+        "filename": "network/config/contrail/examples/contrail-controller/contrail-controller-nic-config-single.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "do we need to add to all of the below options into all of the nic files?",
+      "range": {
+        "startLine": 87,
+        "startChar": 2,
+        "endLine": 87,
+        "endChar": 26
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "190df309_583a68ef",
+        "filename": "network/config/contrail/examples/controller/controller-nic-config-single.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "?",
+      "range": {
+        "startLine": 1,
+        "startChar": 23,
+        "endLine": 1,
+        "endChar": 28
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5df52fea_3f8b5993",
+        "filename": "roles/ContrailAio.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "there should be same changes as in other role file.. \n(for networks and for services - it just combines:\nController\nContrailController\nCompute)",
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f73df55a_214c19b3",
+        "filename": "roles_data_contrail_aio.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-07T15:14:22Z",
+      "side": 1,
+      "message": "is there still docker service?",
+      "range": {
+        "startLine": 230,
+        "startChar": 6,
+        "endLine": 230,
+        "endChar": 35
+      },
+      "revId": "8837c1ae4e4852df8c40788d3218637ae76d515d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
