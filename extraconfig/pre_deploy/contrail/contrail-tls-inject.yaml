@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   This template prepares the Contrail nodes to use TLS.

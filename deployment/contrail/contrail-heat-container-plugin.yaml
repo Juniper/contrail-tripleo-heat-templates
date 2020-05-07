@@ -1,0 +1,105 @@
+heat_template_version: rocky
+
+description: >
+  OpenStack containerized Contrail Heat Plugin configured with Puppet
+
+parameters:
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  ContainerHeatConfigImage:
+    description: The container image to use for the heat config_volume
+    type: string
+  DockerContrailHeatPluginImageName:
+    description: The container image to use for the contrail neutron plugin
+    type: string
+    default: "contrail-openstack-heat-init"
+  DefaultPasswords:
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  HeatEngineOptVolumes:
+    description: list of optional volumes to be mounted
+    type: comma_delimited_list
+
+resources:
+  DockerHeatConfigImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailHeatPluginImageName}
+
+  ContrailBase:
+    type: contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+  ContrailHeatIssu:
+    type: OS::TripleO::ContrailHeatIssu
+
+outputs:
+  role_data:
+    description: Role data for the Contrail Heat Plugin role.
+    value:
+      service_name: contrail_heat_plugin
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailBase, role_data, config_settings]
+      # BEGIN DOCKER SETTINGS
+      puppet_config:
+        config_volume: heat
+        puppet_tags: heat_plugin_opencontrail,ini_setting,create_ini_settings,inifile,heat_config,file,concat,file_line
+        step_config:
+          include ::tripleo::network::contrail::heat
+        config_image: {get_param: ContainerHeatConfigImage}
+      kolla_config: {}
+      docker_config:
+        step_3:
+          contrail_heat_plugin:
+            image: &contrail_heat_plugin_image {get_attr: [DockerHeatConfigImageNormalize, contrail_image]}
+            net: none
+            volumes:
+              {get_param: HeatEngineOptVolumes}
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              get_attr: [ContrailBase, role_data, contrail_base_env_file]
+
+      host_prep_tasks:
+        get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]
+
+      metadata_settings:
+        get_attr: [ContrailBase, role_data, metadata_settings]
+
+      fast_forward_post_upgrade_tasks:
+        get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
+
+      upgrade_tasks:
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, upgrade_tasks_common]}
+          - {get_attr: [ContrailHeatIssu, role_data, upgrade_tasks]}
+
+      post_upgrade_tasks:
+        get_attr: [ContrailHeatIssu, role_data, post_upgrade_tasks]

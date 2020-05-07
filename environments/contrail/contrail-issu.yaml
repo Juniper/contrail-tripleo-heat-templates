@@ -6,15 +6,15 @@
 # keep ISSU role node alive during upgrade procedure.
 #
 resource_registry:
-  OS::TripleO::Services::ContrailIssu: ../../docker/services/contrail/contrail-issu.yaml
-  OS::TripleO::Services::ContrailIssuScript: ../../docker/services/contrail/contrail-issu-script.yaml
-  OS::TripleO::Services::ContrailIssuControl: ../../docker/services/contrail/contrail-issu-control.yaml
+  OS::TripleO::Services::ContrailIssu: ../../deployment/contrail/contrail-issu.yaml
+  OS::TripleO::Services::ContrailIssuScript: ../../deployment/contrail/contrail-issu-script.yaml
+  OS::TripleO::Services::ContrailIssuControl: ../../deployment/contrail/contrail-issu-control.yaml
   OS::TripleO::ContrailControllerIssuExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-controller-issu-init.yaml
 
   OS::TripleO::ContrailIssuInit: ../../extraconfig/pre_deploy/contrail/contrail-issu.yaml
-  OS::TripleO::ContrailVrouterIssu: ../../docker/services/contrail/contrail-issu-vrouter.yaml
-  OS::TripleO::ContrailHeatIssu: ../../docker/services/contrail/contrail-issu-os.yaml
-  OS::TripleO::ContrailNeutronIssu: ../../docker/services/contrail/contrail-issu-os.yaml
+  OS::TripleO::ContrailVrouterIssu: ../../deployment/contrail/contrail-issu-vrouter.yaml
+  OS::TripleO::ContrailHeatIssu: ../../deployment/contrail/contrail-issu-os.yaml
+  OS::TripleO::ContrailNeutronIssu: ../../deployment/contrail/contrail-issu-os.yaml
 
 parameter_defaults:
   ContrailControllerIssuCount: 1

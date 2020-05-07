@@ -6,9 +6,9 @@
 # keep ISSU role node alive during ff upgrade procedure.
 #
 resource_registry:
-  OS::TripleO::Services::ContrailIssu: ../../docker/services/contrail/contrail-issu-ffu.yaml
-  OS::TripleO::Services::ContrailIssuControl: ../../docker/services/contrail/contrail-issu-ffu.yaml
-  OS::TripleO::Services::ContrailIssuCompute: ../../docker/services/contrail/contrail-issu-ffu.yaml
+  OS::TripleO::Services::ContrailIssu: ../../deployment/contrail/contrail-issu-ffu.yaml
+  OS::TripleO::Services::ContrailIssuControl: ../../deployment/contrail/contrail-issu-ffu.yaml
+  OS::TripleO::Services::ContrailIssuCompute: ../../deployment/contrail/contrail-issu-ffu.yaml
 
 parameter_defaults:
   ContrailControllerIssuCount: 1
