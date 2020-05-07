@@ -1,0 +1,413 @@
+heat_template_version: rocky
+
+description: >
+  Contrail containerized Config Databse service
+
+parameters:
+  ContrailImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
+  ContrailConfigDBMinDiskGB:
+    description:  The min size for Contrail Config DB.
+                  It is to check the size of the node.
+                  Contrail will fail installation if disk size is not enough.
+    type: string
+    default: ''
+  DockerContrailCassandraImageName:
+    description: image
+    type: string
+    default: "contrail-external-cassandra"
+  DockerContrailZookeeperImageName:
+    description: image
+    type: string
+    default: "contrail-external-zookeeper"
+  DockerContrailRabbitmqImageName:
+    description: image
+    type: string
+    default: "contrail-external-rabbitmq"
+  DockerContrailRabbitmqLogPath:
+    description: Path where rabbitmq logs will be stored. If set to
+                 empty value, container default will be used, which
+                 is usually set to '-', resulting in logs going to
+                 stdout
+    type: string
+    default: "/var/log/contrail/rabbitmq"
+  DockerContrailConfigDatabaseLogPath:  
+    description: Path where config cassadra logs will be stored.
+    type: string
+    default: "/var/log/contrail/config-database"
+  DockerContrailConfigDatabaseVolume:
+    default: '/var/lib/contrail/config_cassandra'
+    description: Docker volume for contrail config DB service
+    type: string
+  DockerContrailConfigZookeeperVolume:
+    default: '/var/lib/contrail/config_zookeeper'
+    description: Docker volume for contrail config zookeeper service
+    type: string
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  contrail_nodes_param_suffux:
+    type: string
+    default: "node_ips"
+    description: suffix for reading hiera data, node_ips or node_names
+
+conditions:
+  contrail_configdb_min_disk_gb_unset: {equals : [{get_param: ContrailConfigDBMinDiskGB}, '']}
+
+  rabbitmq_log_keep_default: {equals : [{get_param: DockerContrailRabbitmqLogPath}, '']}
+
+  is_more_than_2001_or_latest:
+    or:
+      - yaql:
+          expression: $.data.matches(".*dev.*")
+          data: {get_param: ContrailImageTag}
+      - yaql:
+          expression: $.data.matches(".*latest.*")
+          data: {get_param: ContrailImageTag}
+      - yaql:
+          expression: $.data.matches(".*master.*")
+          data: {get_param: ContrailImageTag}
+      - yaql:
+          expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]+$")).where(int($) >= 2001).any()
+          data: {get_param: ContrailImageTag}
+
+resources:
+  DockerContrailCassandraImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailCassandraImageName}
+
+  DockerContrailZookeeperImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailZookeeperImageName}
+
+  DockerContrailRabbitmqImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailRabbitmqImageName}
+
+  ContrailBase:
+    type: contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+outputs:
+  role_data:
+    description: Role data for the Contrail Config Database service.
+    value:
+      service_name: contrail_database
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - tripleo.contrail_database.firewall_rules:
+              '114 contrail_database':
+                dport:
+                  - 2181
+                  - '2888-3888'
+                  - 4369
+                  - 5673
+                  - 7012
+                  - 7013
+                  - 7201
+                  - 8112
+                  - 9041
+                  - 9161
+                  - 25673
+      service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
+      contrail_env_file: &contrail_env_file
+        "/etc/contrail/common_config_database.env"
+      docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
+        step_3:
+          contrail_config_rabbitmq:
+            image: &contrail_config_rabbitmq_image {get_attr: [DockerContrailRabbitmqImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              list_concat:
+                - get_attr: [ContrailBase, role_data, contrail_base_env]
+                - if:
+                  - rabbitmq_log_keep_default
+                  - []
+                  - - list_join:
+                      - '='
+                      - - 'RABBITMQ_LOGS'
+                        - list_join:
+                          - '/'
+                          - - {get_param: DockerContrailRabbitmqLogPath}
+                            - 'rabbitmq.log'
+                    - list_join:
+                      - '='
+                      - - 'RABBITMQ_SASL_LOGS'
+                        - list_join:
+                          - '/'
+                          - - {get_param: DockerContrailRabbitmqLogPath}
+                            - 'rabbitmq_sasl.log'
+            env_file:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
+          contrail_config_zookeeper:
+            image: &contrail_config_zookeeper_image {get_attr: [DockerContrailZookeeperImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailConfigZookeeperVolume}
+                        - '/data'
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
+        step_4:
+          map_merge:
+            - contrail_config_database_nodemgr:
+                image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
+                net: host
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /var/run:/var/run
+                environment:
+                   list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                    - if:
+                      - contrail_configdb_min_disk_gb_unset
+                      - []
+                      - - list_join:
+                          - ''
+                          - - 'CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB='
+                            - {get_param: ContrailConfigDBMinDiskGB}
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+              contrail_config_database:
+                image: &contrail_config_database_image {get_attr: [DockerContrailCassandraImageNormalize, contrail_image]}
+                net: host
+                privileged: false
+                detach: true
+                user: root
+                restart: always
+                volumes:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - list_join:
+                          - ':'
+                          - - {get_param: DockerContrailConfigDatabaseVolume}
+                            - '/var/lib/cassandra'
+                      - list_join:
+                          - ':'
+                          - - {get_param: DockerContrailConfigDatabaseLogPath}
+                            - '/var/log/cassandra'
+                environment:
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                env_file:
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                    - - *contrail_env_file
+            - if:
+                - is_more_than_2001_or_latest
+                - contrail_config_database_provisioner:
+                    image: {get_attr: [ContrailBase, role_data, contrail_provisioner_image_name]}
+                    net: host
+                    detach: true
+                    user: root
+                    restart: always
+                    volumes:
+                      get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                    environment:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                        - {get_attr: [ContrailBase, role_data, contrail_defaults_env]}
+                    env_file:
+                      list_concat:
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                        - - *contrail_env_file
+                - null
+      host_prep_tasks:
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
+          - - name: register contrail config database env file
+              stat:
+                path: *contrail_env_file
+              register: p
+            - name: create contrail config database env file
+              copy:
+                dest: *contrail_env_file
+                content: ""
+              when: not p.stat.exists
+            - name: contrail config database cassandra node ips param name
+              set_fact:
+                contrail_config_db_nodes_param_name: {list_join: ["_", ["contrail_database", {get_param: contrail_nodes_param_suffux}]]}
+            - name: get contrail config database node ips
+              shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_config_db_nodes_param_name }}"
+              register: contrail_config_db_service_nodes_list
+            - name: turn contrail config database node ips into string
+              set_fact:
+                contrail_config_db_cassandra_service_nodes_string: "{{ contrail_config_db_service_nodes_list.stdout | from_json | join(',')  }}"
+            - name: write remaining contrail config database env cars
+              lineinfile:
+                dest: *contrail_env_file
+                state: present
+                line: "{{ item }}"
+              with_items:
+                - "NODE_TYPE=config-database"
+                - "CASSANDRA_SEEDS={{ contrail_config_db_cassandra_service_nodes_string }}"
+                - "CASSANDRA_START_RPC=true"
+                - "CASSANDRA_CLUSTER_NAME=contrail_database"
+                - "CASSANDRA_PORT=9161"
+                - "CASSANDRA_CQL_PORT=9041"
+                - "CASSANDRA_SSL_STORAGE_PORT=7013"
+                - "CASSANDRA_STORAGE_PORT=7012"
+                - "CASSANDRA_JMX_LOCAL_PORT=7201"
+                - "RABBITMQ_ERLANG_COOKIE=abcdefg"
+                # for 5.0 compatibility, starting from 5.1 it has correct default
+                - "ZOOKEEPER_PORTS=2888:3888"
+                - "ZOOKEEPER_PORT=2181"
+                - "ZOOKEEPER_NODES={{ contrail_config_db_cassandra_service_nodes_string }}"
+
+      metadata_settings:
+        get_attr: [ContrailBase, role_data, metadata_settings]
+
+      update_tasks:
+        # 5.0.2 => 5.0.3 case:
+        #   5.0.2:  config_cassandra:/var/lib/cassandra/data
+        #   5.0.3:  config_cassandra:/var/lib/cassandra
+        #
+        #   So, it is needed to move data from the volume into data sub-folder
+        - name: Update contrail_config_database data
+          when:
+            - step|int == 0
+          block: &contrail_config_database_update_data
+            - name: Log contrail_config_database inspect
+              shell: >
+                docker inspect contrail_config_database > /tmp/contrail_config_database_inspect 2>&1
+              ignore_errors: yes
+            - name: Find out current volume name of contrail_config_database container for old mount path
+              shell: >
+                docker inspect contrail_config_database | jq -r '.[].Mounts | .[] | select(.Destination =="/var/lib/cassandra/data") | .Name'
+              register:
+                contrail_config_database_volume_name
+              ignore_errors: yes
+            - name: Log contrail_config_database_volume_name
+              shell: >
+                echo {{ contrail_config_database_volume_name.stdout }} > /tmp/contrail_config_database_volume_name 2>&1
+              ignore_errors: yes
+            - name: Move contrail_config_database_volume folders to the data subfolder
+              when: contrail_config_database_volume_name.stdout != ''
+              block:
+              - name: Stop previous contrail_config_database container
+                docker_container:
+                  name: contrail_config_database
+                  state: stopped
+                ignore_errors: yes
+              - name: Get contrail_config_database_volume_name location
+                shell: >
+                  docker inspect {{ contrail_config_database_volume_name.stdout }} | jq -r '.[].Mountpoint'
+                register:
+                  contrail_config_database_volume_location
+              - name: Make contrail_config_database_volume data subfolder
+                when: contrail_config_database_volume_location.stdout != ''
+                shell: >
+                  mkdir -p {{ contrail_config_database_volume_location.stdout }}/data
+              - name: Move contrail_config_database_volume data subfolder
+                when: contrail_config_database_volume_location.stdout != ''
+                shell: >
+                  find {{ contrail_config_database_volume_location.stdout }} -maxdepth 1 -mindepth 1 -path {{ contrail_config_database_volume_location.stdout }}/data -o -prune -execdir mv {} {{ contrail_config_database_volume_location.stdout }}/data/ \;
+              - name: Find out commitlog volume for contrail_config_database container for old mount path
+                shell: >
+                  docker inspect contrail_config_database | jq -r '.[].Mounts | .[] | select(.Destination =="/var/lib/cassandra") | .Name'
+                register:
+                  contrail_config_database_log_volume_name
+              - name: Log contrail_config_database_log_volume_name
+                shell: >
+                  echo {{ contrail_config_database_log_volume_name.stdout }} > /tmp/contrail_config_database_log_volume_name 2>&1
+              - name: Move data  from unnamed volume to new named one
+                when: contrail_config_database_log_volume_name.stdout != ''
+                block:
+                - name: Log contrail_config_database_log_volume inspect
+                  shell: >
+                    docker inspect {{ contrail_config_database_log_volume_name.stdout }} > /tmp/contrail_config_database_log_volume_inspect 2>&1
+                - name: Get contrail_config_database_log_volume_name location
+                  shell: >
+                    docker inspect {{ contrail_config_database_log_volume_name.stdout }} | jq -r '.[].Mountpoint'
+                  register:
+                    contrail_config_database_log_volume_location
+                - name: Move commitlog, hints, etc to the new volume
+                  when: contrail_config_database_log_volume_location.stdout != ''
+                  shell: >
+                    find {{ contrail_config_database_log_volume_location.stdout }} -maxdepth 1 -mindepth 1 -path {{ contrail_config_database_log_volume_location.stdout }}/data -o -prune -execdir mv {} {{ contrail_config_database_volume_location.stdout }}/ \;
+
+      post_update_tasks: []
+
+      fast_forward_upgrade_tasks:
+        - name: Stop contrail config database services
+          service: name={{ item }} state=stopped enabled=no
+          when:
+            - step|int == 1
+            - release == 'ocata'
+          with_items:
+            - contrail-database
+            - cassandra
+            - zookeeper
+
+      fast_forward_post_upgrade_tasks:
+        get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
+
+      upgrade_tasks:
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, upgrade_tasks_common]}
+          - - name: Upgrade contrail_config_database data
+              when: step|int == 0
+              block: *contrail_config_database_update_data
+
+      post_upgrade_tasks: []

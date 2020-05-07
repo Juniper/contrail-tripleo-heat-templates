@@ -1,22 +1,22 @@
 # A Heat environment file which can be used to enable OpenContrail
 # # extensions, configured via puppet
 resource_registry:
-  OS::TripleO::Services::ContrailAnalytics: ../../docker/services/contrail/contrail-analytics.yaml
-  OS::TripleO::Services::ContrailAnalyticsAlarm: ../../docker/services/contrail/contrail-analytics-alarm.yaml
-  OS::TripleO::Services::ContrailAnalyticsDatabase: ../../docker/services/contrail/contrail-analytics-database.yaml
-  OS::TripleO::Services::ContrailAnalyticsSnmp: ../../docker/services/contrail/contrail-analytics-snmp.yaml
-  OS::TripleO::Services::ContrailConfigDatabase: ../../docker/services/contrail/contrail-config-database.yaml
-  OS::TripleO::Services::ContrailConfig: ../../docker/services/contrail/contrail-config.yaml
-  OS::TripleO::Services::ContrailControl: ../../docker/services/contrail/contrail-control.yaml
-  OS::TripleO::Services::ContrailControlOnly: ../../docker/services/contrail/contrail-control-only.yaml
-  OS::TripleO::Services::ContrailWebui: ../../docker/services/contrail/contrail-webui.yaml
-  OS::TripleO::Services::ContrailVrouter: ../../docker/services/contrail/contrail-vrouter.yaml
-  OS::TripleO::Services::ContrailDpdk: ../../docker/services/contrail/contrail-vrouter-dpdk.yaml
-  OS::TripleO::Services::ContrailSriov: ../../docker/services/contrail/contrail-vrouter-sriov.yaml
-  OS::TripleO::Services::ContrailTsn: ../../docker/services/contrail/contrail-vrouter-tsn.yaml
-  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-container-plugin.yaml
-  OS::TripleO::Services::ContrailHeatPlugin: ../../docker/services/contrail/contrail-heat-container-plugin.yaml
-  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../docker/services/contrail/contrail-vrouter.yaml
+  OS::TripleO::Services::ContrailAnalytics: ../../deployment/contrail/contrail-analytics.yaml
+  OS::TripleO::Services::ContrailAnalyticsAlarm: ../../deployment/contrail/contrail-analytics-alarm.yaml
+  OS::TripleO::Services::ContrailAnalyticsDatabase: ../../deployment/contrail/contrail-analytics-database.yaml
+  OS::TripleO::Services::ContrailAnalyticsSnmp: ../../deployment/contrail/contrail-analytics-snmp.yaml
+  OS::TripleO::Services::ContrailConfigDatabase: ../../deployment/contrail/contrail-config-database.yaml
+  OS::TripleO::Services::ContrailConfig: ../../deployment/contrail/contrail-config.yaml
+  OS::TripleO::Services::ContrailControl: ../../deployment/contrail/contrail-control.yaml
+  OS::TripleO::Services::ContrailControlOnly: ../../deployment/contrail/contrail-control-only.yaml
+  OS::TripleO::Services::ContrailWebui: ../../deployment/contrail/contrail-webui.yaml
+  OS::TripleO::Services::ContrailVrouter: ../../deployment/contrail/contrail-vrouter.yaml
+  OS::TripleO::Services::ContrailDpdk: ../../deployment/contrail/contrail-vrouter-dpdk.yaml
+  OS::TripleO::Services::ContrailSriov: ../../deployment/contrail/contrail-vrouter-sriov.yaml
+  OS::TripleO::Services::ContrailTsn: ../../deployment/contrail/contrail-vrouter-tsn.yaml
+  OS::TripleO::Services::NeutronCorePlugin: ../../deployment/contrail/contrail-neutron-container-plugin.yaml
+  OS::TripleO::Services::ContrailHeatPlugin: ../../deployment/contrail/contrail-heat-container-plugin.yaml
+  OS::TripleO::Services::ComputeNeutronCorePlugin: ../../deployment/contrail/contrail-vrouter.yaml
   OS::TripleO::Services::ContrailCertmongerUser: OS::Heat::None
   OS::TripleO::Services::ContrailIssu: OS::Heat::None
   OS::TripleO::Services::ContrailIssuControl: OS::Heat::None
@@ -28,10 +28,10 @@ resource_registry:
   OS::TripleO::ContrailNeutronIssu: OS::Heat::None
   OS::TripleO::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
   OS::TripleO::Compute::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
-  OS::TripleO::ContrailTsn::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_tsn_pre_network.yaml
-  OS::TripleO::ContrailDpdk::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
-  OS::TripleO::ContrailSriov::PreNetworkConfig: ../../extraconfig/pre_network/contrail/contrail_sriov_pre_network.yaml
-  OS::TripleO::ContrailAio::PreNetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
+  OS::TripleO::ContrailTsn::NetworkConfig: ../../extraconfig/pre_network/contrail/contrail_tsn_pre_network.yaml
+  OS::TripleO::ContrailDpdk::NetworkConfig: ../../extraconfig/pre_network/contrail/contrail_dpdk_pre_network.yaml
+  OS::TripleO::ContrailSriov::NetworkConfig: ../../extraconfig/pre_network/contrail/contrail_sriov_pre_network.yaml
+  OS::TripleO::ContrailAio::NetworkConfig: ../../extraconfig/pre_network/contrail/compute_pre_network.yaml
   OS::TripleO::ControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   OS::TripleO::ContrailControlOnlyExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
@@ -52,23 +52,24 @@ parameter_defaults:
   NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
   NeutronTunnelTypes: ''
   NeutronApiOptVolumes:
-    - 'opt_plugin:/opt/plugin'
+    - '/var/lib/contrail/plugin_contrail_neutron:/opt/plugin'
     - '/etc/contrail/ssl:/etc/contrail/ssl'
-  NeutronApiOptEnvVars: ['PYTHONPATH=/opt/plugin/site-packages:/usr/lib/python2.7/site-packages']
+  NeutronApiOptEnvVars: 
+      PYTHONPATH: '/opt/plugin/site-packages:/usr/lib/python2.7/site-packages'
   NovaComputeOptEnvVars:
-    - 'PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin'
+      PATH: '/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin'
   NovaComputeOptVolumes:
-    - vrouter_port_control:/opt/plugin/bin
+    - /var/lib/contrail/vrouter_port_control:/opt/plugin/bin
     - /var/lib/contrail:/var/lib/contrail
-    - nova_contrail_vif:/usr/lib/python2.7/site-packages/nova_contrail_vif
-    - nova_contrail_vif_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
-    - vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
-    - vif_plug_contrail_vrouter:/usr/lib/python2.7/site-packages/vif_plug_contrail_vrouter
+    - /var/lib/contrail/vif_nova_contrail:/usr/lib/python2.7/site-packages/nova_contrail_vif
+    - /var/lib/contrail/vif_nova_contrail_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
+    - /var/lib/contrail/vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
+    - /var/lib/contrail/vif_plug_contrail_vrouter:/usr/lib/python2.7/site-packages/vif_plug_contrail_vrouter
   HeatEngineOptVolumes:
     - '/etc/contrail/ssl:/etc/contrail/ssl'
-    - 'contrail_heat_opt_plugin:/opt/plugin'
+    - '/var/lib/contrail/plugin_contrail_heat:/opt/plugin'
   HeatEngineOptEnvVars:
-    - 'PYTHONPATH=/opt/plugin/site-packages:/usr/lib/python2.7/site-packages'
+      PYTHONPATH: '/opt/plugin/site-packages:/usr/lib/python2.7/site-packages'
   HeatEnginePluginDirs:
     - '/opt/plugin/site-packages/vnc_api/gen/heat/resources'
     - '/opt/plugin/site-packages/contrail_heat/resources'

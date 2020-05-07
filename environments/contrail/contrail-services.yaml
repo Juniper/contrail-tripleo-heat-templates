@@ -21,7 +21,7 @@ parameter_defaults:
     # Default value is defined for all roles as:
     #   .//network/service_net_map.j2.yaml: {{role.name}}HostnameResolveNetwork: internal_api
     # ContrailControllerHostnameResolveNetwork: internal_api
-  OvercloudControllerFlavor: control
+  OvercloudControllerFlavor: controller
   OvercloudContrailControllerFlavor: contrail-controller
   OvercloudContrailAnalyticsFlavor: contrail-analytics
   OvercloudContrailAnalyticsDatabaseFlavor: contrail-analytics-database
@@ -62,8 +62,9 @@ parameter_defaults:
 
 # Enable hugepages for vrouter kernel mode by default - 2GB of total size
 # (to disable just put empty value '')
-  ContrailVrouterHugepages1GB: '2'
-  ContrailSriovHugepages1GB: '2'
+#TODO: temporary disabled 
+#  ContrailVrouterHugepages1GB: '2'
+#  ContrailSriovHugepages1GB: '2'
 
 # ContrailDefaults - environment passed to provisione container
 # Pass all params as a list of strings

@@ -4,7 +4,7 @@ resource_registry:
   # NOTE: ~/tripleo-heat-templates/environments/ssl/enable-internal-tls.yaml must be
   # included into deploy command
   # ====
-  OS::TripleO::Services::ContrailCertmongerUser: ../../docker/services/contrail/contrail-certmonger-user.yaml
+  OS::TripleO::Services::ContrailCertmongerUser: ../../deployment/contrail/contrail-certmonger-user.yaml
 
   # ====
   # Manual certs lifecycle management parameters:
