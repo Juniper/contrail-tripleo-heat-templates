@@ -1,17 +1,31 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
-  Contrail containerized Config Control service
+  Contrail containerized Vrouter service
 
 parameters:
   ContrailImageTag:
     default: 'latest'
     description: Contrail container image tag
     type: string
-  DockerContrailControlControlImageName:
+  DockerContrailVrouterAgentImageName:
     description: image
     type: string
-    default: "contrail-controller-control-control"
+    default: "contrail-vrouter-agent"
+  NeutronMetadataProxySharedSecret:
+    description: Metadata Secret
+    type: string
+    hidden: true
+  ContrailVrouterModuleOptions:
+    default: ''
+    description: >
+      Vrouter kernel module options.
+      This string is passed to agent container as env variable VROUTER_MODULE_OPTIONS
+      (by a chance if vrouter module is loaded by container) and
+      it is saved as options in /etc/modprobe.d/vrouter.conf for a case
+      when vrouter is loaded by ifup scripts called by os-collect-config from host.
+      E.g. vr_mpls_labels=196000 vr_nexthops=521000 vr_vrfs=65536 vr_bridge_entries=1000000
+    type: string
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -56,10 +70,10 @@ conditions:
           data: {get_param: ContrailImageTag}
 
 resources:
-  DockerContrailControlControlImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+  DockerContrailVrouterAgentImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
-      GenericImageName: {get_param: DockerContrailControlControlImageName}
+      GenericImageName: {get_param: DockerContrailVrouterAgentImageName}
 
   ContrailBase:
     type: contrail-base.yaml
@@ -71,39 +85,25 @@ resources:
       RoleName: {get_param: RoleName}
       RoleParameters: {get_param: RoleParameters}
 
+  ContrailVrouterBase:
+    type: contrail-vrouter-base.yaml
+
 outputs:
   role_data:
-    description: Role data for the Contrail Control service.
+    description: Role data for the Contrail Vrouter service.
     value:
-      service_name: contrail_control_only
+      service_name: contrail_vrouter
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
-          - contrail_control_host_ip:
-              str_replace:
-                template:
-                  "%{hiera('$NETWORK')}"
-                params:
-                  $NETWORK: {get_param: [ServiceNetMap, ContrailControlOnlyNetwork]}
-            contrail_control_hostname:
-              str_replace:
-                template:
-                  "%{hiera('fqdn_$NETWORK')}"
-                params:
-                  $NETWORK: {get_param: [ServiceNetMap, ContrailControlOnlyNetwork]}
-            tripleo.contrail_control_only.firewall_rules:
-              '113 contrail_control_only':
+          - contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
+            tripleo.contrail_vrouter.firewall_rules:
+              '111 contrail_vrouter_8085_8097':
                 dport:
-                  - 179
-                  - 5269
-                  - 8083
-                  - 8092
-                  - 8093
-                  - 8094
-                  - 8101
-      service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
+                  - 8085
+                  - 8097
       contrail_env_file: &contrail_env_file
-        "/etc/contrail/common_control.env"
+        get_attr: [ContrailVrouterBase, role_data, contrail_env_file]
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -111,7 +111,7 @@ outputs:
           map_merge:
             - if:
                 - is_more_than_2001_or_latest
-                - contrail_control_provisioner:
+                - contrail_vrouter_agent_provisioner:
                     image: {get_attr: [ContrailBase, role_data, contrail_provisioner_image_name]}
                     net: host
                     detach: true
@@ -128,7 +128,7 @@ outputs:
                         - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                         - - *contrail_env_file
                 - null
-            - contrail_control_nodemgr:
+            - contrail_vrouter_agent_nodemgr:
                 image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
                 net: host
                 detach: true
@@ -137,74 +137,64 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                     - - *contrail_env_file
-              contrail_control_control:
-                image: &contrail_control_control_image {get_attr: [DockerContrailControlControlImageNormalize, contrail_image]}
+              contrail_vrouter_agent:
+                image: &contrail_vrouter_agent_image {get_attr: [DockerContrailVrouterAgentImageNormalize, contrail_image]}
                 net: host
-                privileged: false
+                privileged: true
                 detach: true
                 user: root
                 restart: always
                 volumes:
-                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                    - - /dev:/dev
+                      - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
+                      - /lib/modules:/lib/modules
+                      - /var/run:/var/run
+                      - /var/lib/contrail:/var/lib/contrail
                 environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
+                  list_concat:
+                    - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                    - - list_join:
+                          - '='
+                          - - VROUTER_MODULE_OPTIONS
+                            - {get_param: ContrailVrouterModuleOptions}
                 env_file:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                     - - *contrail_env_file
+
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register contrail control only env file
-              stat:
-                path: *contrail_env_file
-              register: p
-            - name: create contrail control only env file
-              copy:
-                dest: *contrail_env_file
-                content: ""
-              when: not p.stat.exists
-            - name: contrail control fqdn
-              shell: hiera -c /etc/puppet/hiera.yaml contrail_control_hostname
-              register: contrail_control_hostname
-              ignore_errors: True
-            - name: set control specific env list
-              set_fact:
-                control_env_list: [ "NODE_TYPE=control" ]
-            - name: add hostname to control specific env list
-              set_fact:
-                control_env_list: "{{ control_env_list }} + [ 'CONTROL_HOSTNAME={{ contrail_control_hostname.stdout }}' ]"
-              when:
-                - contrail_control_hostname.rc == 0
-                - contrail_control_hostname.stdout != ""
-            - name: write remaining contrail control config env cars
-              lineinfile:
-                dest: *contrail_env_file
-                state: present
-                line: "{{ item }}"
-              with_items: "{{ control_env_list }}"
+          - {get_attr: [ContrailVrouterBase, role_data, host_prep_tasks]}
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
 
+      update_tasks:
+        get_attr: [ContrailVrouterBase, role_data, update_tasks]
+
+      post_update_tasks:
+        get_attr: [ContrailVrouterBase, role_data, post_update_tasks]
+
       fast_forward_upgrade_tasks:
-        - name: Stop contrail control services
-          service: name={{ item }} state=stopped enabled=no
-          when:
-            - step|int == 1
-            - release == 'ocata'
-          with_items:
-            - supervisor-control
+        get_attr: [ContrailVrouterBase, role_data, fast_forward_upgrade_tasks]
 
       fast_forward_post_upgrade_tasks:
-        get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
+        get_attr: [ContrailVrouterBase, role_data, fast_forward_post_upgrade_tasks]
 
       upgrade_tasks:
-        get_attr: [ContrailBase, role_data, upgrade_tasks_common]
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, upgrade_tasks_common]}
+          - {get_attr: [ContrailVrouterBase, role_data, upgrade_tasks]}
+
+      post_upgrade_tasks:
+        get_attr: [ContrailVrouterBase, role_data, post_upgrade_tasks]

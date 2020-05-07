@@ -1,7 +1,8 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
-  Contrail Issu
+  Contrail Issu Scripts.
+
 parameters:
   EndpointMap:
     default: {}
@@ -32,12 +33,20 @@ parameters:
   ContrailIssuSshUser:
     type: string
     default: ''
+  ContrailRegistry:
+    default: 'opencontrailnightly'
+    description: Contrail Registry
+    type: string
+  ContrailIssuImageTag:
+    default: 'latest'
+    description: Contrail container image tag
+    type: string
 
 outputs:
   role_data:
-    description: Role Contrail Controller Issu
+    description: Role Contrail Controller Issu script
     value:
-      service_name: contrail_issu
+      service_name: contrail_issu_script
       config_settings:
         contrail_issu_ssh_user: {get_param: ContrailIssuSshUser}
         contrail_issu_host_ip:
@@ -46,3 +55,8 @@ outputs:
               "%{hiera('$NETWORK')}"
             params:
               $NETWORK: {get_param: [ServiceNetMap, ContrailIssuNetwork]}
+
+        contrail_issu_container_registry: {get_param: ContrailRegistry}
+        contrail_issu_container_tag: {get_param: ContrailIssuImageTag}
+      step_config: |
+        include ::tripleo::network::contrail::issu

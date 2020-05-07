@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Contrail containerized Vrouter service
@@ -12,20 +12,14 @@ parameters:
     description: image
     type: string
     default: "contrail-vrouter-agent"
+  DockerContrailNovaPluginImageName:
+    description: image
+    type: string
+    default: "contrail-openstack-compute-init"
   NeutronMetadataProxySharedSecret:
     description: Metadata Secret
     type: string
     hidden: true
-  ContrailVrouterModuleOptions:
-    default: ''
-    description: >
-      Vrouter kernel module options.
-      This string is passed to agent container as env variable VROUTER_MODULE_OPTIONS
-      (by a chance if vrouter module is loaded by container) and
-      it is saved as options in /etc/modprobe.d/vrouter.conf for a case
-      when vrouter is loaded by ifup scripts called by os-collect-config from host.
-      E.g. vr_mpls_labels=196000 vr_nexthops=521000 vr_vrfs=65536 vr_bridge_entries=1000000
-    type: string
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -71,9 +65,14 @@ conditions:
 
 resources:
   DockerContrailVrouterAgentImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailVrouterAgentImageName}
+
+  DockerContrailNovaPluginImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailNovaPluginImageName}
 
   ContrailBase:
     type: contrail-base.yaml
@@ -87,26 +86,46 @@ resources:
 
   ContrailVrouterBase:
     type: contrail-vrouter-base.yaml
+    properties:
+      ContrailVrouterAgentMode: 'dpdk'
 
 outputs:
   role_data:
-    description: Role data for the Contrail Vrouter service.
+    description: Role data for the Contrail Vrouter Dpdk service.
     value:
-      service_name: contrail_vrouter
+      service_name: contrail_vrouter_dpdk
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
           - contrail::vrouter::metadata_proxy_shared_secret: {get_param: NeutronMetadataProxySharedSecret}
-            tripleo.contrail_vrouter.firewall_rules:
-              '111 contrail_vrouter_8085_8097':
+            tripleo.contrail_vrouter_dpdk.firewall_rules:
+              '111 contrail_vrouter_dpdk_8085_8097':
                 dport:
                   - 8085
                   - 8097
+                  - 8102
+                  - 9091
       contrail_env_file: &contrail_env_file
         get_attr: [ContrailVrouterBase, role_data, contrail_env_file]
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
+        step_3:
+          contrail_nova_plugin:
+            image: &contrail_nova_plugin_image {get_attr: [DockerContrailNovaPluginImageNormalize, contrail_image]}
+            net: none
+            volumes:
+              - /opt/vrouter_port_control:/opt/plugin/bin
+              - /opt/vif/nova_contrail:/opt/plugin/site-packages/nova_contrail_vif
+              - /opt/vif/nova_contrail_egg:/opt/plugin/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
+              - /opt/vif/plug_vrouter:/opt/plugin/site-packages/vif_plug_vrouter
+              - /opt/vif/plug_contrail_vrouter:/opt/plugin/site-packages/vif_plug_contrail_vrouter
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_env]
+            env_file:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
         step_5:
           map_merge:
             - if:
@@ -137,7 +156,7 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
@@ -160,17 +179,11 @@ outputs:
                       - /var/run:/var/run
                       - /var/lib/contrail:/var/lib/contrail
                 environment:
-                  list_concat:
-                    - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                    - - list_join:
-                          - '='
-                          - - VROUTER_MODULE_OPTIONS
-                            - {get_param: ContrailVrouterModuleOptions}
+                  get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                     - - *contrail_env_file
-
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
@@ -180,7 +193,8 @@ outputs:
         get_attr: [ContrailBase, role_data, metadata_settings]
 
       update_tasks:
-        get_attr: [ContrailVrouterBase, role_data, update_tasks]
+        list_concat:
+          - {get_attr: [ContrailVrouterBase, role_data, update_tasks]}
 
       post_update_tasks:
         get_attr: [ContrailVrouterBase, role_data, post_update_tasks]

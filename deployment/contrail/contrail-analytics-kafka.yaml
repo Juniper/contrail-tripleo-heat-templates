@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Contrail containerized Analytics Kafka service
@@ -57,12 +57,12 @@ conditions:
 
 resources:
   DockerContrailKafkaImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailKafkaImageName}
 
   DockerContrailZookeeperImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailZookeeperImageName}
 
@@ -100,7 +100,7 @@ outputs:
             volumes:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                - - analytics_zookeeper:/data
+                - - /opt/analytics_zookeeper:/data
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:

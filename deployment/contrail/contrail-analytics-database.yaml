@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Contrail containerized Config Database service
@@ -18,16 +18,12 @@ parameters:
     description:  The path to cassandra database directory. Default
                   will be /var/lib/docker/volumes/analytics_cassandra_data/_data.
     type: string
-    default: 'analytics_cassandra_data'
+    default: '/opt/analytics_cassandra_data'
   ContrailAnalyticsCommitlogPath:
     description:  The path to cassandra commitlog directory. Default
                   will be /var/lib/docker/volumes/analytics_cassandra_commitlog/_data.
     type: string
-    default: 'analytics_cassandra_commitlog'
-  ContrailAnalyticsDBLogPath:
-    description: Path where analytics cassadra logs will be stored.
-    type: string
-    default: "/var/log/contrail/database"
+    default: '/opt/analytics_cassandra_commitlog'
   DockerContrailCassandraImageName:
     description: image
     type: string
@@ -86,7 +82,7 @@ conditions:
           data: {get_param: ContrailImageTag}
 resources:
   DockerContrailCassandraImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailCassandraImageName}
 
@@ -176,10 +172,6 @@ outputs:
                           - ':'
                           - - {get_param: ContrailAnalyticsCommitlogPath}
                             - '/var/lib/cassandra/commitlog'
-                      - list_join:
-                          - ':'
-                          - - {get_param: ContrailAnalyticsDBLogPath}
-                            - '/var/log/cassandra'
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
@@ -201,7 +193,7 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env]}

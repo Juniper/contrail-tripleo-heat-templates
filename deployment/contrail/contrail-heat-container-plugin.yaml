@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   OpenStack containerized Contrail Heat Plugin configured with Puppet
@@ -19,7 +19,7 @@ parameters:
                  via parameter_defaults in the resource registry.  This
                  mapping overrides those in ServiceNetMapDefaults.
     type: json
-  DockerHeatConfigImage:
+  ContainerHeatConfigImage:
     description: The container image to use for the heat config_volume
     type: string
   DockerContrailHeatPluginImageName:
@@ -42,7 +42,7 @@ parameters:
 
 resources:
   DockerHeatConfigImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailHeatPluginImageName}
 
@@ -73,12 +73,13 @@ outputs:
         puppet_tags: heat_plugin_opencontrail,ini_setting,create_ini_settings,inifile,heat_config,file,concat,file_line
         step_config:
           include ::tripleo::network::contrail::heat
-        config_image: {get_param: DockerHeatConfigImage}
+        config_image: {get_param: ContainerHeatConfigImage}
       kolla_config: {}
       docker_config:
         step_3:
           contrail_heat_plugin:
             image: &contrail_heat_plugin_image {get_attr: [DockerHeatConfigImageNormalize, contrail_image]}
+            net: none
             volumes:
               {get_param: HeatEngineOptVolumes}
             environment:

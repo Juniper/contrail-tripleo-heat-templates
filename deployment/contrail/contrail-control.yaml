@@ -1,29 +1,25 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
-  Contrail containerized Config Config service
+  Contrail containerized Config Control service
 
 parameters:
   ContrailImageTag:
     default: 'latest'
     description: Contrail container image tag
     type: string
-  DockerContrailConfigApiImageName:
+  DockerContrailControlControlImageName:
     description: image
     type: string
-    default: "contrail-controller-config-api"
-  DockerContrailConfigSchemaImageName:
+    default: "contrail-controller-control-control"
+  DockerContrailControlNamedImageName:
     description: image
     type: string
-    default: "contrail-controller-config-schema"
-  DockerContrailConfigSvcmonitorImageName:
+    default: "contrail-controller-control-named"
+  DockerContrailControlDnsImageName:
     description: image
     type: string
-    default: "contrail-controller-config-svcmonitor"
-  DockerContrailConfigDevicemgrImageName:
-    description: image
-    type: string
-    default: "contrail-controller-config-devicemgr"
+    default: "contrail-controller-control-dns"
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -68,25 +64,20 @@ conditions:
           data: {get_param: ContrailImageTag}
 
 resources:
-  DockerContrailConfigApiImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+  DockerContrailControlControlImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
-      GenericImageName: {get_param: DockerContrailConfigApiImageName}
+      GenericImageName: {get_param: DockerContrailControlControlImageName}
 
-  DockerContrailConfigSchemaImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+  DockerContrailControlNamedImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
-      GenericImageName: {get_param: DockerContrailConfigSchemaImageName}
+      GenericImageName: {get_param: DockerContrailControlNamedImageName}
 
-  DockerContrailConfigSvcmonitorigImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+  DockerContrailControlDnsImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
-      GenericImageName: {get_param: DockerContrailConfigSvcmonitorImageName}
-
-  DockerContrailConfigDevicemgrImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailConfigDevicemgrImageName}
+      GenericImageName: {get_param: DockerContrailControlDnsImageName}
 
   ContrailBase:
     type: contrail-base.yaml
@@ -100,36 +91,42 @@ resources:
 
 outputs:
   role_data:
-    description: Role data for the Contrail Config service.
+    description: Role data for the Contrail Control service.
     value:
-      service_name: contrail_config
+      service_name: contrail_control
       config_settings:
         map_merge:
           - get_attr: [ContrailBase, role_data, config_settings]
-          - tripleo.contrail_config.firewall_rules:
-              '118 contrail_config':
+          - contrail_control_host_ip:
+              str_replace:
+                template:
+                  "%{hiera('$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, ContrailControlNetwork]}
+            contrail_control_hostname:
+              str_replace:
+                template:
+                  "%{hiera('fqdn_$NETWORK')}"
+                params:
+                  $NETWORK: {get_param: [ServiceNetMap, ContrailControlNetwork]}
+            tripleo.contrail_control.firewall_rules:
+              '113 contrail_control_dns':
+                dport: 53
+                  - 53
+                  - 8092
+                proto: 'udp'
+              '113 contrail_control_tcp':
                 dport:
-                  - 8082
-                  - 8084
-                  - 8087
-                  - 8088
-                  - 8096
-                  - 8100
+                  - 179
+                  - 5269
+                  - 8083
+                  - 8092
+                  - 8093
+                  - 8094
                   - 8101
-      service_config_settings:
-        map_merge:
-          - {get_attr: [ContrailBase, role_data, service_config_settings]}
-          - haproxy:
-              tripleo.contrail_config.haproxy_endpoints:
-                contrail_config:
-                  map_merge:
-                    - public_ssl_port: 18082
-                      internal_ip: {get_param: [ServiceData, net_vip_map, {get_param: [ServiceNetMap, ContrailConfigNetwork]}]}
-                      service_port: 8082
-                      service_network: {get_param: [ServiceNetMap, ContrailConfigNetwork]}
-                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings_api]}
+      service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       contrail_env_file: &contrail_env_file
-        "/etc/contrail/common_config.env"
+        "/etc/contrail/common_control.env"
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -137,7 +134,7 @@ outputs:
           map_merge:
             - if:
                 - is_more_than_2001_or_latest
-                - contrail_config_provisioner:
+                - contrail_control_provisioner:
                     image: {get_attr: [ContrailBase, role_data, contrail_provisioner_image_name]}
                     net: host
                     detach: true
@@ -147,14 +144,14 @@ outputs:
                       get_attr: [ContrailBase, role_data, contrail_base_volumes]
                     environment:
                       list_concat:
-                        - get_attr: [ContrailBase, role_data, contrail_base_env]
-                        - get_attr: [ContrailBase, role_data, contrail_defaults_env]
+                        - {get_attr: [ContrailBase, role_data, contrail_base_env]}
+                        - {get_attr: [ContrailBase, role_data, contrail_defaults_env]}
                     env_file:
                       list_concat:
                         - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                         - - *contrail_env_file
                 - null
-            - contrail_config_nodemgr:
+            - contrail_control_nodemgr:
                 image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
                 net: host
                 detach: true
@@ -163,15 +160,15 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                     - - *contrail_env_file
-              contrail_config_api:
-                image: &contrail_config_api_image {get_attr: [DockerContrailConfigApiImageNormalize, contrail_image]}
+              contrail_control_control:
+                image: &contrail_control_control_image {get_attr: [DockerContrailControlControlImageNormalize, contrail_image]}
                 net: host
                 privileged: false
                 detach: true
@@ -185,91 +182,83 @@ outputs:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                     - - *contrail_env_file
-              contrail_config_schema:
-                image: &contrail_config_schema_image {get_attr: [DockerContrailConfigSchemaImageNormalize, contrail_image]}
+              contrail_control_dns:
+                image: &contrail_control_dns_image {get_attr: [DockerContrailControlDnsImageNormalize, contrail_image]}
                 net: host
                 privileged: false
                 detach: true
                 user: root
                 restart: always
+                pid: host
                 volumes:
-                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                    - - /opt/contrail_control_dns:/etc/contrail/dns
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                     - - *contrail_env_file
-              contrail_config_svc_monitor:
-                image: &contrail_config_svc_monitor_image {get_attr: [DockerContrailConfigSvcmonitorigImageNormalize, contrail_image]}
+              contrail_control_named:
+                image: &contrail_control_named_image {get_attr: [DockerContrailControlNamedImageNormalize, contrail_image]}
                 net: host
-                privileged: false
+                privileged: true
                 detach: true
                 user: root
                 restart: always
-                volumes:
-                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                pid: host
+                volumes_from:
+                  - contrail_control_dns
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
                     - - *contrail_env_file
-              contrail_config_device_manager:
-                image: &contrail_config_device_manager_image {get_attr: [DockerContrailConfigDevicemgrImageNormalize, contrail_image]}
-                net: host
-                privileged: false
-                detach: true
-                user: root
-                restart: always
-                volumes:
-                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
-                environment:
-                  get_attr: [ContrailBase, role_data, contrail_base_env]
-                env_file:
-                  list_concat:
-                    - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
-                    - - *contrail_env_file
-      get_nova_api_network_cmd: &get_nova_api_network_cmd
-        str_replace:
-          template: "hiera -c /etc/puppet/hiera.yaml cloud_name_$NETWORK"
-          params:
-            $NETWORK: {get_param: [ServiceNetMap, NovaApiNetwork]}
       host_prep_tasks:
         list_concat:
           - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
-          - - name: register create contrail env file
+          - - name: register contrail control env file
               stat:
                 path: *contrail_env_file
               register: p
-            - name: create contrail env file
+            - name: create contrail control env file
               copy:
                 dest: *contrail_env_file
                 content: ""
               when: not p.stat.exists
-            - name: get nova api
-              shell: *get_nova_api_network_cmd
-              register: nova_api_host
-            - name: write remaining contrail config env cars
+            - name: contrail control fqdn
+              shell: hiera -c /etc/puppet/hiera.yaml contrail_control_hostname
+              register: contrail_control_hostname
+              ignore_errors: True
+            - name: set control specific env list
+              set_fact:
+                control_env_list: [ "NODE_TYPE=control" ]
+            - name: add hostname to control specific env list
+              set_fact:
+                control_env_list: "{{ control_env_list }} + [ 'CONTROL_HOSTNAME={{ contrail_control_hostname.stdout }}' ]"
+              when:
+                - contrail_control_hostname.rc == 0
+                - contrail_control_hostname.stdout != ""
+            - name: write remaining contrail control config env cars
               lineinfile:
                 dest: *contrail_env_file
                 state: present
                 line: "{{ item }}"
-              with_items:
-                - NODE_TYPE=config
-                - IPFABRIC_SERVICE_HOST={{ nova_api_host.stdout }}
+              with_items: "{{ control_env_list }}"
 
       metadata_settings:
         get_attr: [ContrailBase, role_data, metadata_settings]
 
       fast_forward_upgrade_tasks:
-        - name: Stop contrail config services
+        - name: Stop contrail control services
           service: name={{ item }} state=stopped enabled=no
           when:
             - step|int == 1
             - release == 'ocata'
           with_items:
-            - supervisor-config
+            - supervisor-control
 
       fast_forward_post_upgrade_tasks:
         get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]

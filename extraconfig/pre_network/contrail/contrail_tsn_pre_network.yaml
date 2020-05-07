@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 # NOTE: You don't need to pass the parameter explicitly from the
 # parent template, it can be specified via the parameter_defaults
@@ -231,7 +231,7 @@ resources:
         get_file: contrail_ansible_kernel_config.yaml
 
   VrouterKernelParametersDeployment:
-    type: OS::TripleO::Reboot::SoftwareDeployment
+    type: OS::TripleO::SoftwareDeployment
     depends_on: [VrouterContainerParametersDeployment]
     condition: is_kernel_config_required
     properties:
@@ -267,7 +267,7 @@ resources:
         fi
 
   RebootDeployment:
-    type: OS::TripleO::Reboot::SoftwareDeployment
+    type: OS::TripleO::SoftwareDeployment
     depends_on: [VrouterKernelParametersDeployment]
     condition: is_kernel_config_required
     properties:
@@ -291,7 +291,7 @@ resources:
         echo "Reboot completed"
 
   RebootEnsureDeployment:
-    type: OS::TripleO::Reboot::SoftwareDeployment
+    type: OS::TripleO::SoftwareDeployment
     depends_on: RebootDeployment
     condition: is_kernel_config_required
     properties:
