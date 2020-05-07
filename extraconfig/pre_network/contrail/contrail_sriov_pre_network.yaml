@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 # NOTE: You don't need to pass the parameter explicitly from the
 # parent template, it can be specified via the parameter_defaults
@@ -292,7 +292,7 @@ resources:
         get_file: contrail_ansible_kernel_config.yaml
 
   SriovKernelParametersDeployment:
-    type: OS::TripleO::Reboot::SoftwareDeployment
+    type: OS::TripleO::SoftwareDeployment
     depends_on: [SriovContainerParametersDeployment]
     properties:
       name: SriovKernelParametersDeployment
@@ -328,7 +328,7 @@ resources:
         fi
 
   RebootDeployment:
-    type: OS::TripleO::Reboot::SoftwareDeployment
+    type: OS::TripleO::SoftwareDeployment
     depends_on: [SriovKernelParametersDeployment]
     properties:
       name: RebootDeployment
@@ -350,7 +350,7 @@ resources:
         echo "Reboot completed"
 
   RebootEnsureDeployment:
-    type: OS::TripleO::Reboot::SoftwareDeployment
+    type: OS::TripleO::SoftwareDeployment
     depends_on: RebootDeployment
     properties:
       name: RebootEnsureDeployment

@@ -13,6 +13,7 @@
     - InternalApi
     - Tenant
   HostnameFormatDefault: '%stackname%-contrailcontroller-%index%'
+  disable_upgrade_deployment: True
   ServicesDefault:
     - OS::TripleO::Services::AuditD
     - OS::TripleO::Services::CACerts
