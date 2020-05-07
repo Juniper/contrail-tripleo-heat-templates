@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "41be22e5_e0c2c722",
+        "filename": "roles_data_contrail_aio.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-07T16:02:58Z",
+      "side": 0,
+      "message": "chrony",
+      "parentUuid": "2856e519_7d81294c",
+      "range": {
+        "startLine": 257,
+        "startChar": 29,
+        "endLine": 257,
+        "endChar": 32
+      },
+      "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "901891fb_3b21ca2b",
         "filename": "roles_data_contrail_aio.yaml",
         "patchSetId": 1
