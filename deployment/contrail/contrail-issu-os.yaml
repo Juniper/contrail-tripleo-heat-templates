@@ -1,0 +1,110 @@
+heat_template_version: rocky
+
+description: >
+  Contrail Issu resource for Openstack node.
+  It is put hiera vairable for pointing neutron and
+  heat plugins to ISSU node during uprgade of
+  Contrail Control plane.
+
+outputs:
+  role_data:
+    description: Contrail Vrouter Issu upgrade tasks
+    value:
+      # remote copy paste
+      contrail_issu_api_port: &contrail_issu_api_port 28082
+      hiera_data_file: &hiera_data_file "/etc/puppet/hieradata/extraconfig.json"
+
+      # upgrade task should put contrail::api_port to point to ISSU node
+      upgrade_tasks:
+        - name: Contrail Openstack Plugins ISSU upgrade
+          when: step|int == 5
+          tags: issu
+          block:
+            - name: contrail issu os set dmi fact
+              set_fact:
+                hiera_data_file: *hiera_data_file
+            - stat:
+                path: "{{ hiera_data_file }}"
+              register: hiera_data_file_stat
+            - set_fact:
+              extradata: {}
+            - name: contrail issu os load current extradata file
+              when: hiera_data_file_stat.stat.exists
+              block:
+                - name: contrail issu os read extra config
+                  shell: "cat {{ hiera_data_file }}"
+                  register: extradata_str
+                - set_fact:
+                    extradata: "{{ extradata_str.stdout | from_json }}"
+            - name: contrail issu os set api port
+              set_fact:
+                contrail_issu_api_port: *contrail_issu_api_port
+            - name: contrail issu os set contrail api_port to point to issu node
+              set_fact:
+                extradata: "{{ extradata | combine({'contrail::api_port': '{{ contrail_issu_api_port }}'}) }}"
+            - name: contrail issu os write extradata
+              copy:
+                dest: "{{ hiera_data_file }}"
+                content: "{{ extradata }}"
+            - name: ensure contrail issu config api set
+              shell: hiera -c /etc/puppet/hiera.yaml contrail::api_port
+              register: contrail_api_port_str
+            - debug:
+                msg: "contrail::api_port: '{{ contrail_api_port_str.stdout }}'"
+            - set_fact:
+                contrail_puppet_setup_dir: "/usr/share/contrail-tripleo-puppet"
+            - name: Check contrail tripleo puppet module was installed.
+              stat:
+                path: "{{ contrail_puppet_setup_dir }}"
+              register: file_details
+            - when: file_details.stat.exists
+              block:
+                - set_fact:
+                    puppet_module_dir: "/usr/share/openstack-puppet/modules/tripleo/"
+                - set_fact:
+                    contrail_module_dir: "{{ puppet_module_dir }}/manifests/network/contrail"
+                - name: Check contrail tripleo puppet module exists.
+                  stat:
+                    path: "{{ contrail_module_dir }}"
+                  register: file_details_target
+                - name: Sync contrail-tripleo-puppet module into tripleo
+                  shell: "rsync -a {{ contrail_puppet_setup_dir }}/ {{ puppet_module_dir }}"
+                  when: file_details_target.stat.exists
+
+      # post upgrade task should remove contrail::api_port that point to ISSU node
+      post_upgrade_tasks:
+        - name: Contrail Openstack Plugins ISSU post upgrade
+          when: step|int == 0
+          tags: issu
+          block:
+            - name: contrail issu os set dmi fact
+              set_fact:
+                hiera_data_file: *hiera_data_file
+            - stat:
+                path: "{{ hiera_data_file }}"
+              register: hiera_data_file_stat
+            - name: contrail issu os remove api_port from extradata
+              when: hiera_data_file_stat.stat.exists
+              block:
+                - name: contrail issu os read extra config
+                  shell: "cat {{ hiera_data_file }}"
+                  register: extradata_str
+                - set_fact:
+                    old_extradata: "{{ extradata_str.stdout | from_json }}"
+                - name: contrail issu os read empty extra config
+                  set_fact:
+                    extradata: {}
+                - name: contrail issu os read populate extra config
+                  set_fact:
+                    extradata: "{{ extradata | combine({item.key: item.value}) }}"
+                  when: item.key != 'contrail::api_port'
+                  with_dict: "{{ old_extradata }}"
+                - name: contrail issu os write extradata
+                  copy:
+                    dest: "{{ hiera_data_file }}"
+                    content: "{{ extradata }}"
+                - name: ensure contrail issu config api unset
+                  shell: hiera -c /etc/puppet/hiera.yaml contrail::api_port
+                  register: contrail_api_port_str
+                - debug:
+                    msg: "contrail::api_port: '{{ contrail_api_port_str.stdout }}'"

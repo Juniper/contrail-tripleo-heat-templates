@@ -1,0 +1,225 @@
+heat_template_version: rocky
+
+description: >
+  Contrail containerized Config Webui service
+
+parameters:
+  DockerContrailWebuiWebImageName:
+    description: image
+    type: string
+    default: "contrail-controller-webui-web"
+  DockerContrailWebuiJobImageName:
+    description: image
+    type: string
+    default: "contrail-controller-webui-job"
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DefaultPasswords:
+    default: {}
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  ContrailCA:
+    default: ''
+    description: Contrail CA, could be local or IPA
+    type: string
+  ContrailServiceCertFile:
+    description: Path to the node's public certificate
+    type: string
+    default: ''
+  ContrailServiceKeyFile:
+    description: Path to server's/node's private key
+    type: string
+    default: ''
+  # internal params
+  contrail_nodes_param_suffux:
+    type: string
+    default: "node_ips"
+    description: suffix for reading hiera data, node_ips or node_names
+
+resources:
+  DockerContrailWebuiWebImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailWebuiWebImageName}
+
+  DockerContrailWebuiJobImageNormalize:
+    type: ../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailWebuiJobImageName}
+
+  ContrailBase:
+    type: contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
+  ContrailRedis:
+    type: contrail-redis.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+      contrail_stunnel_support: false
+
+outputs:
+  role_data:
+    description: Role data for the Contrail Webui service.
+    value:
+      service_name: contrail_webui
+      config_settings:
+        map_merge:
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - get_attr: [ContrailRedis, role_data, config_settings]
+          - tripleo.contrail_webui.firewall_rules:
+              '116 contrail_webui':
+                dport:
+                  list_concat:
+                    - - 3000
+                      - 3002
+                      - 8143
+                      - 8180
+                    - {get_attr: [ContrailRedis, role_data, contrail_redis_ports]}
+      service_config_settings:
+        map_merge:
+          - {get_attr: [ContrailBase, role_data, service_config_settings]}
+          - haproxy:
+              tripleo.contrail_webui.haproxy_endpoints:
+                contrail_webui:
+                  map_merge:
+                    - public_ssl_port: 8143
+                      internal_ip: {get_param: [ServiceData, net_vip_map, {get_param: [ServiceNetMap, ContrailWebuiNetwork]}]}
+                      service_port: 8143
+                      service_network: {get_param: [ServiceNetMap, ContrailWebuiNetwork]}
+                    - {get_attr: [ContrailBase, role_data, haproxy_config_settings_webui]}
+      contrail_env_file: &contrail_env_file
+        "/etc/contrail/common_webui.env"
+      docker_config:
+        step_2:
+          get_attr: [ContrailBase, role_data, docker_config, step_2]
+        step_4:
+          get_attr: [ContrailRedis, role_data, docker_config, step_4]
+        step_5:
+          contrail_webui_web:
+            image: &contrail_webui_web_image {get_attr: [DockerContrailWebuiWebImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_auth_internal_env]
+            env_file:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
+          contrail_webui_job:
+            image: &contrail_webui_job_image {get_attr: [DockerContrailWebuiJobImageNormalize, contrail_image]}
+            net: host
+            privileged: false
+            detach: true
+            user: root
+            restart: always
+            volumes:
+              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+            environment:
+              get_attr: [ContrailBase, role_data, contrail_base_auth_internal_env]
+            env_file:
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
+                - - *contrail_env_file
+      host_prep_tasks:
+        list_concat:
+          - {get_attr: [ContrailBase, role_data, contrail_host_prep_tasks_base]}
+          - - name: register contrail webui env file
+              stat:
+                path: *contrail_env_file
+              register: p
+            - name: create contrail webui env file
+              copy:
+                dest: *contrail_env_file
+                content: ""
+              when: not p.stat.exists
+            - name: contrail webui node ips (names) param name
+              set_fact:
+                contrail_webui_nodes_param_name: {list_join: ["_", ["contrail_webui", {get_param: contrail_nodes_param_suffux}]]}
+            - name: get contrail webui node ips
+              shell: "hiera -c /etc/puppet/hiera.yaml {{ contrail_webui_nodes_param_name }}"
+              register: contrail_webui_nodes_list
+            - name: turn contrail webui ips into string
+              set_fact:
+                contrail_webui_nodes_string: "{{ contrail_webui_nodes_list.stdout | from_json | join(',') }}"
+            - name: write contrail webui node ips to environment file
+              lineinfile:
+                dest: *contrail_env_file
+                state: present
+                regexp: '^WEBUI_NODES.*'
+                line: "WEBUI_NODES={{ contrail_webui_nodes_string }}"
+            - name: contrail webui CA
+              set_fact:
+                contrail_webui_ca: {get_param: ContrailCA}
+            - name: overwrite contrail webui cert files for IPA
+              block:
+                - name: contrail webui server cert
+                  set_fact:
+                    contrail_webui_cert: {get_param: ContrailServiceCertFile}
+                - name: contrail webui server key
+                  set_fact:
+                    contrail_webui_key: {get_param: ContrailServiceKeyFile}
+                - name: set contrail webui certs for IPA case
+                  lineinfile:
+                    dest: *contrail_env_file
+                    state: present
+                    regexp: "^{{ item.key }}.*"
+                    line: "{{ item.key }}={{ item.value }}"
+                  with_dict:
+                    WEBUI_SSL_CERT_FILE: "{{ contrail_webui_cert }}"
+                    WEBUI_SSL_KEY_FILE: "{{ contrail_webui_key }}"
+              when: contrail_webui_ca == 'IPA'
+
+      metadata_settings:
+        get_attr: [ContrailBase, role_data, metadata_settings]
+
+      fast_forward_upgrade_tasks:
+        - name: Stop contrail webui services
+          service: name={{ item }} state=stopped enabled=no
+          when:
+            - step|int == 1
+            - release == 'ocata'
+          with_items:
+            - supervisor-webui
+            - redis
+
+      fast_forward_post_upgrade_tasks:
+        get_attr: [ContrailBase, role_data, fast_forward_post_upgrade_tasks_common]
+
+      upgrade_tasks:
+        get_attr: [ContrailBase, role_data, upgrade_tasks_common]

@@ -1,7 +1,7 @@
 # sriov_dpdk_bond_vlan
 ~/tripleo-heat-templates/config/network/contrail/compute-nic-sriov-dpdk-bond-vlan-config.yaml   
 ```
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Software Config to drive os-net-config to configure multiple interfaces
