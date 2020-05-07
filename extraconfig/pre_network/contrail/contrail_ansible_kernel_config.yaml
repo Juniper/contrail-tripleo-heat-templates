@@ -15,24 +15,14 @@
     - name: set kernel args if sriov of vfio-pci dpdk driver
       when: (_CONTRAIL_DPDK_DRIVER_ | default("") == "vfio-pci") or (_CONTRAIL_SRIOV_NUM_VFS_ | default("") != "")
       block:
-        - name: check if AMD processor
-          shell: grep -qi AMD /proc/cpuinfo && echo true || echo false
-          register: is_amd
-        - name: set AMD cpu type
-          when: is_amd.stdout | bool
-          set_fact:
-            cpu_type: 'amd'
-        - name: set Intel cpu type
-          when: not is_amd.stdout | bool
-          set_fact:
-            cpu_type: 'intel'
         - name: set kernel iommu args
           set_fact:
             kernel_arg_list: "{{ kernel_arg_list }} + [ '{{ item }}' ]"
           when: item not in kernel_arg_list
           with_items:
-            - "iommu=pt"
-            - "{{ cpu_type }}_iommu=on"
+            - 'iommu=pt'
+            - 'intel_iommu=on'
+            - 'amd_iommu=on'
     - name: set kernel 1GB hugepage arg
       set_fact:
         kernel_arg_list: "{{ kernel_arg_list }} + [ 'default_hugepagesz=1GB hugepagesz=1G hugepages={{ _CONTRAIL_HUGEPAGES_1GB_ }}' ]"

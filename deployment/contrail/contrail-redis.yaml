@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Contrail redis common service
@@ -79,12 +79,12 @@ conditions:
 
 resources:
   DockerContrailRedisImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailRedisImageName}
 
   DockerContrailStunnelImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailStunnelImageName}
 

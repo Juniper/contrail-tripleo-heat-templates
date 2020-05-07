@@ -1,6 +1,6 @@
 # control
 
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Contrail Issu Control
@@ -120,31 +120,31 @@ conditions:
 resources:
 
   DockerContrailControlControlImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailControlControlImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailControlNamedImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailControlNamedImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailControlDnsImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailControlDnsImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailNodemgrImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailNodemgrImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailProvisionerImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailProvisionerImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
@@ -230,7 +230,7 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   list_concat:
                     - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -259,7 +259,7 @@ outputs:
                 volumes:
                   list_concat:
                     - get_attr: [ContrailBase, role_data, contrail_base_volumes]
-                    - - contrail_control_dns:/etc/contrail/dns
+                    - - /opt/contrail_control_dns:/etc/contrail/dns
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file: *contrail_issu_control_env_file

@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Base parameters for all Contrail Services.
@@ -244,11 +244,11 @@ resources:
               AAAMode: {get_param: AAAMode}
 
   ContrailNodemgrImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailNodemgrImageName}
   ContrailProvisionerImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailProvisionerImageName}
 outputs:
@@ -390,7 +390,7 @@ outputs:
         list_concat:
           - {get_attr: [ContainersCommon, volumes]}
           - - /etc/contrail/ssl:/etc/contrail/ssl
-            - /var/crashes:/var/crashes
+            - /var/crash:/var/crashes
             - /var/log/containers/contrail:/var/log/contrail
           - if:
             - bind_contrail_ca_file
@@ -736,5 +736,5 @@ outputs:
             name: "{{ item }}"
             state: present
           with_items:
-            - docker
-            - python-docker-py
+            - podman
+            - python-podman-api

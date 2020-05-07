@@ -1,4 +1,4 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Contrail containerized Analytics Snmp service
@@ -85,7 +85,7 @@ conditions:
 resources:
 
   DockerContrailAnalyticsTopologyImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName:
         if:
@@ -97,7 +97,7 @@ resources:
               - {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
 
   DockerContrailAnalyticsSnmpCollectorImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
 
@@ -176,7 +176,7 @@ outputs:
                     volumes:
                       list_concat:
                         - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                        - - /var/run/docker.sock:/var/run/docker.sock
+                        - - /var/run:/var/run
                     environment:
                       get_attr: [ContrailBase, role_data, contrail_base_env]
                     env_file:

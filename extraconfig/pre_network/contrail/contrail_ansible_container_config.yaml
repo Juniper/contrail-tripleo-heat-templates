@@ -4,11 +4,6 @@
   hosts: localhost
 
   tasks:
-    - name: Ensure docker service is run
-      systemd:
-        state: started
-        name: docker
-        enabled: yes
 
     - name: contrail settings
       set_fact:
@@ -57,85 +52,42 @@
     - name: contrail vrouter plugin init container if exists
       block:
         - name: remove contrail vrouter plugin init container if exists
-          docker_container:
-            name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ }}"
-            state: absent
+          shell: podman container rm "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ }}"
           ignore_errors: yes
 
         - name: create contrail vrouter plugin init container
-          docker_container:
-            name: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ }}"
-            image: "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}"
-            detach: no
-            privileged: yes
-            volumes:
-              - /lib/modules:/lib/modules
-              - /usr/src:/usr/src
+          shell: podman run -t --name "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ }}" --privileged -v /lib/modules:/lib/modules -v /usr/src:/usr/src "{{ _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ }}"
       when:
         - _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ is defined and _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_NAME_ != ''
         - _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ is defined and _CONTRAIL_VROUTER_PLUGIN_INIT_IMAGE_ != ''
 
     - name: start contrail dpdk init container
       block:
-        - set_fact:
-            dpdk_init_env_vars:
-              AGENT_MODE: dpdk
-              CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
-              CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }}"
-              CONTRAIL_VROUTER_AGENT_CONTAINER_NAME: contrail_vrouter_agent
-              DPDK_COMMAND_ADDITIONAL_ARGS: "{{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }}"
 
         - set_fact:
-            dpdk_init_env_vars: "{{ dpdk_init_env_vars | combine({item.key: item.value}) }}"
-          with_dict: "{{ contrail_settings_env_vars }}"
-          when: contrail_settings_env_vars is defined
+              dpdk_init_env_args: ''
+
+        - name: prepare podman env args
+          set_fact:
+            dpdk_init_env_args: "{{ dpdk_init_env_args }}  -e  {{ item.key}}={{ item.value }}"
+          loop: "{{ contrail_settings_env_vars | dict2items}}"
 
         - name: pull contrail vrouter dpdk agent container
-          docker_image:
-            name: "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
+          shell: podman pull "{{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }}"
 
         - name: remove contrail dpdk init container if exists
-          docker_container:
-            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
-            state: absent
+          shell: podman container rm "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
           ignore_errors: yes
 
-        - name: contral dpdk env file
-          set_fact:
-            dpdk_env_file: "/etc/sysconfig/network-scripts/network-functions-vrouter-dpdk-env"
-        - name: register create contrail analytics kafka env file
-          stat:
-            path: "{{ dpdk_env_file }}"
-          register: dpdk_env_file_stat
-        - name: save old dpdk env values
-          when: dpdk_env_file_stat.stat.exists
-          shell: "cat {{ dpdk_env_file }}"
-          register: dpdk_env_file_content_old
-
         - name: create contrail dpdk init container
-          docker_container:
-            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
-            image: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
-            detach: no
-            privileged: yes
-            volumes:
-              - /dev:/dev
-              - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
-              - /lib/modules:/lib/modules
-              - /bin:/host/bin
-            env: "{{ dpdk_init_env_vars }}"
-
-        - name: check if dpdk env changed
-          when: dpdk_env_file_stat.stat.exists
-          block:
-            - name: save new dpdk env values
-              shell: "cat {{ dpdk_env_file }}"
-              register: dpdk_env_file_content_new
-            - name: restart vhost0 because of dpdk env changed
-              when: dpdk_env_file_content_new.stdout != dpdk_env_file_content_old.stdout
-              shell: bash -c 'ifdown vhost0; ifup vhost0; docker start contrail_vrouter_agent'
-              ignore_errors: yes
-
+          shell: |
+            podman run  -t --name {{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }} --privileged \
+              -v /dev:/dev -v /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts -v /lib/modules:/lib/modules -v /bin:/host/bin \
+              -e AGENT_MODE: dpdk -e CONTRAIL_VROUTER_AGENT_DPDK_DOCKER_IMAGE={{ _CONTRAIL_VROUTER_AGENT_DPDK_IMAGE_ }} \
+              -e CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME={{ _CONTRAIL_VROUTER_AGENT_DPDK_CONTAINER_NAME_ }} \
+              -e CONTRAIL_VROUTER_AGENT_CONTAINER_NAME=contrail_vrouter_agent \
+              -e DPDK_COMMAND_ADDITIONAL_ARGS={{ _CONTRAIL_DPDK_COMMAND_ADDITIONAL_ARGS_ }} \
+              {{ dpdk_init_env_args }} {{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}
       when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
 
     - name: start contrail vrouter init container
@@ -149,23 +101,26 @@
           with_dict: "{{ contrail_settings_env_vars }}"
           when: contrail_settings_env_vars is defined
 
+        - set_fact:
+            init_env_args: ''
+
+        - name: prepare podman env args
+          set_fact:
+            init_env_args: "{{ init_env_args }}  -e  {{ item.key}}='{{ item.value }}'"
+          loop: "{{ vrouter_init_env_vars | dict2items}}"
+
         - name: remove contrail init container if exists
-          docker_container:
-            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
-            state: absent
+          shell: podman container rm "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
           ignore_errors: yes
 
+
         - name: create vrouter init container
-          docker_container:
-            name: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }}"
-            image: "{{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}"
-            detach: no
-            privileged: yes
-            volumes:
-              - /dev:/dev
-              - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
-              - /lib/modules:/lib/modules
-              - /bin:/host/bin
-            env: "{{ vrouter_init_env_vars }}"
+          shell: |
+            podman run -t --name {{ _CONTRAIL_VROUTER_INIT_IMAGE_NAME_ }} --privileged \
+              -v /dev:/dev -v /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts \
+              -v /lib/modules:/lib/modules -v /bin:/host/bin \
+              {{ init_env_args }} {{ _CONTRAIL_VROUTER_INIT_IMAGE_ }}
+
 
       when: _IS_DPDK_ is undefined or _IS_DPDK_ == ''
+

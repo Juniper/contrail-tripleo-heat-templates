@@ -9,7 +9,7 @@
 # analytics alarm
 # web ui
 
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Contrail Issu
@@ -101,15 +101,15 @@ parameters:
                  is usually set to '-', resulting in logs going to
                  stdout
     type: string
-    default: "/var/log/contrail/rabbitmq"
+    default: "/var/log/contrail"
 
   DockerContrailConfigDatabaseVolume:
-    default: 'config_cassandra'
+    default: '/opt/config_cassandra'
     description: Docker volume for contrail config DB service
     type: string
 
   DockerContrailConfigZookeeperVolume:
-    default: 'config_zookeeper'
+    default: '/opt/config_zookeeper'
     description: Docker volume for contrail config zookeeper service
     type: string
 
@@ -171,13 +171,13 @@ parameters:
     description:  The path to cassandra database directory. Default
                   will be /var/lib/docker/volumes/analytics_cassandra_data/_data.
     type: string
-    default: 'analytics_cassandra_data'
+    default: '/opt/analytics_cassandra_data'
 
   ContrailAnalyticsCommitlogPath:
     description:  The path to cassandra commitlog directory. Default
                   will be /var/lib/docker/volumes/analytics_cassandra_commitlog/_data.
     type: string
-    default: 'analytics_cassandra_commitlog'
+    default: '/opt/analytics_cassandra_commitlog'
 
   DockerContrailAnalyticsAlarmGenImageName:
     description: image
@@ -277,62 +277,62 @@ conditions:
 resources:
 
   DockerContrailConfigApiImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailConfigApiImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailConfigSchemaImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailConfigSchemaImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailConfigSvcmonitorigImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailConfigSvcmonitorImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailConfigDevicemgrImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailConfigDevicemgrImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailCassandraImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailCassandraImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailZookeeperImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailZookeeperImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailRabbitmqImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailRabbitmqImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
 
   DockerContrailAnalyticsApiImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsApiImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailAnalyticsCollectorImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsCollectorImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailAnalyticsTopologyImageNormalizeIssu:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       ContrailImageTag: {get_param: ContrailIssuImageTag}
       ContrailRegistry: {get_param: ContrailRegistry}
@@ -343,61 +343,61 @@ resources:
           - {get_param: DockerContrailAnalyticsTopologyImageName_5_0}
 
   DockerContrailAnalyticsSnmpCollectorImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsSnmpCollectorImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailAnalyticsQueryEngineImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsQueryEngineImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailKafkaImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailKafkaImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailAnalyticsAlarmGenImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailAnalyticsAlarmGenImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailWebuiWebImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailWebuiWebImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailWebuiJobImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailWebuiJobImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailRedisImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailRedisImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailStunnelImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailStunnelImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailNodemgrImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailNodemgrImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
 
   DockerContrailProvisionerImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailProvisionerImageName}
       ContrailImageTag: {get_param: ContrailIssuImageTag}
@@ -657,7 +657,7 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env]}
@@ -799,7 +799,7 @@ outputs:
                     volumes:
                       list_concat:
                         - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                        - - /var/run/docker.sock:/var/run/docker.sock
+                        - - /var/run:/var/run
                     environment:
                       list_concat:
                         - {get_attr: [ContrailBase, role_data, contrail_base_env]}
@@ -852,7 +852,7 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   list_concat:
                     - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -915,7 +915,7 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   list_concat:
                     - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -1005,7 +1005,7 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env]}
@@ -1071,7 +1071,7 @@ outputs:
                     volumes:
                       list_concat:
                         - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                        - - /var/run/docker.sock:/var/run/docker.sock
+                        - - /var/run:/var/run
                     environment:
                       list_concat:
                         - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -1086,7 +1086,7 @@ outputs:
                     volumes:
                       list_concat:
                         - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                        - - /var/run/docker.sock:/var/run/docker.sock
+                        - - /var/run:/var/run
                     environment:
                       list_concat:
                         - get_attr: [ContrailBase, role_data, contrail_base_env]

@@ -1,13 +1,9 @@
-heat_template_version: queens
+heat_template_version: rocky
 
 description: >
   Contrail containerized Vrouter service
 
 parameters:
-  DockerContrailVrouterKernelInitImageName:
-    description: image
-    type: string
-    default: "contrail-vrouter-kernel-init"
   DockerContrailVrouterAgentImageName:
     description: image
     type: string
@@ -78,18 +74,13 @@ conditions:
           data: {get_param: ContrailImageTag}
 
 resources:
-  DockerContrailVrouterKernelImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
-    properties:
-      GenericImageName: {get_param: DockerContrailVrouterKernelInitImageName}
-
   DockerContrailVrouterAgentImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailVrouterAgentImageName}
 
   DockerContrailNovaPluginImageNormalize:
-    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    type: ../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailNovaPluginImageName}
 
@@ -124,20 +115,19 @@ outputs:
                   - 9091
       contrail_env_file: &contrail_env_file
         get_attr: [ContrailVrouterBase, role_data, contrail_env_file]
-      vrouter_init_container_name: &vrouter_init_container_name
-        {get_attr: [DockerContrailVrouterKernelImageNormalize, contrail_image_only]}
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
         step_3:
           contrail_nova_plugin:
             image: &contrail_nova_plugin_image {get_attr: [DockerContrailNovaPluginImageNormalize, contrail_image]}
+            net: none
             volumes:
-              - vrouter_port_control:/opt/plugin/bin
-              - nova_contrail_vif:/opt/plugin/site-packages/nova_contrail_vif
-              - nova_contrail_vif_egg:/opt/plugin/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
-              - vif_plug_vrouter:/opt/plugin/site-packages/vif_plug_vrouter
-              - vif_plug_contrail_vrouter:/opt/plugin/site-packages/vif_plug_contrail_vrouter
+              - /opt/vrouter_port_control:/opt/plugin/bin
+              - /opt/vif/nova_contrail:/opt/plugin/site-packages/nova_contrail_vif
+              - /opt/vif/nova_contrail_egg:/opt/plugin/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
+              - /opt/vif/plug_vrouter:/opt/plugin/site-packages/vif_plug_vrouter
+              - /opt/vif/plug_contrail_vrouter:/opt/plugin/site-packages/vif_plug_contrail_vrouter
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
@@ -174,7 +164,7 @@ outputs:
                 volumes:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
-                    - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/run:/var/run
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
@@ -199,8 +189,7 @@ outputs:
                 environment:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env]}
-                    - - 'KERNEL_INIT_VHOST0=false'
-                      - list_join:
+                    - - list_join:
                           - '='
                           - - VROUTER_MODULE_OPTIONS
                             - {get_param: ContrailVrouterModuleOptions}
@@ -220,13 +209,7 @@ outputs:
         get_attr: [ContrailVrouterBase, role_data, update_tasks]
 
       post_update_tasks:
-        list_concat:
-          - {get_attr: [ContrailVrouterBase, role_data, post_update_tasks]}
-          - - name: Set contrail-vrouter-kernel-init container name
-              set_fact:
-                vrouter_init_container_name_ansible: *vrouter_init_container_name
-            - name: Start contrail-vrouter-kernel-init container as post update
-              shell: bash -c "docker start {{ vrouter_init_container_name_ansible }}"
+        get_attr: [ContrailVrouterBase, role_data, post_update_tasks]
 
       fast_forward_upgrade_tasks:
         get_attr: [ContrailVrouterBase, role_data, fast_forward_upgrade_tasks]
@@ -240,10 +223,4 @@ outputs:
           - {get_attr: [ContrailVrouterBase, role_data, upgrade_tasks]}
 
       post_upgrade_tasks:
-        list_concat:
-          - {get_attr: [ContrailVrouterBase, role_data, post_upgrade_tasks]}
-          - - name: Set contrail-vrouter-kernel-init container name
-              set_fact:
-                vrouter_init_container_name_ansible: *vrouter_init_container_name
-            - name: Start contrail-vrouter-kernel-init container as post upgrade
-              shell: bash -c "docker start {{ vrouter_init_container_name_ansible }}"
+        get_attr: [ContrailVrouterBase, role_data, post_upgrade_tasks]
