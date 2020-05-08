@@ -49,6 +49,52 @@
     },
     {
       "key": {
+        "uuid": "4f57d239_002a83b4",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-08T12:29:49Z",
+      "side": 0,
+      "message": "looks needed?",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 48
+      },
+      "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4823541_7d1cbb7f",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-08T12:29:49Z",
+      "side": 0,
+      "message": "looks needed?",
+      "range": {
+        "startLine": 247,
+        "startChar": 0,
+        "endLine": 250,
+        "endChar": 50
+      },
+      "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a68ea451_a9d2b9dc",
         "filename": "roles/ContrailAio.yaml",
         "patchSetId": 1
@@ -199,6 +245,29 @@
       "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ec9bbb1_e08c5e97",
+        "filename": "roles_data_contrail_aio.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-08T12:29:49Z",
+      "side": 0,
+      "message": "is there something to be added instead ntp ?",
+      "range": {
+        "startLine": 257,
+        "startChar": 29,
+        "endLine": 257,
+        "endChar": 32
+      },
+      "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
     }
   ]
 }

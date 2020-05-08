@@ -1,0 +1,130 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "80771f90_cf435d8d",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-08T12:29:49Z",
+      "side": 1,
+      "message": "/var/log/contrail/rabbitmq",
+      "range": {
+        "startLine": 35,
+        "startChar": 14,
+        "endLine": 35,
+        "endChar": 31
+      },
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82137cfe_5bd18e4f",
+        "filename": "deployment/contrail/contrail-issu.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-08T12:29:49Z",
+      "side": 1,
+      "message": "/var/log/contrail/rabbitmq",
+      "range": {
+        "startLine": 104,
+        "startChar": 14,
+        "endLine": 104,
+        "endChar": 31
+      },
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68336670_9dc21832",
+        "filename": "environments/contrail/contrail-plugins.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-08T12:29:49Z",
+      "side": 1,
+      "message": "why do we need mapmerge?\nlooks just like\n\n NeutronApiOptEnvVars: \n   PYTHONPATH: \u0027/opt/plugin/site-packages:/usr/lib/python2.7/site-packages\u0027",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 80
+      },
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf912534_6e0b12d0",
+        "filename": "environments/contrail/contrail-services.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-08T12:29:49Z",
+      "side": 1,
+      "message": "todo:...",
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a968a36_e0291ac1",
+        "filename": "extraconfig/pre_deploy/contrail/contrail_ansible_node_init.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-08T12:29:49Z",
+      "side": 1,
+      "message": "looks wrong indentation",
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75986da9_4976295a",
+        "filename": "roles/ContrailController.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-08T12:29:49Z",
+      "side": 1,
+      "message": "subnets?",
+      "range": {
+        "startLine": 13,
+        "startChar": 6,
+        "endLine": 13,
+        "endChar": 17
+      },
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
