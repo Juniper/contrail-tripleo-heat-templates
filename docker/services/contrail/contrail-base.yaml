@@ -347,15 +347,13 @@ outputs:
         public_virtual_ip: "%{hiera('public_virtual_ip')}"
         mode: 'http'
         listen_options:
-          map_merge:
-            - *haproxy_config_settings_listen_options
-            - option:
-                - 'httpchk GET /'
-                - 'httplog'
-                - 'forwardfor'
-              http-request:
-                - 'set-header X-Forwarded-Proto https if { ssl_fc }'
-                - 'set-header X-Forwarded-Proto http if !{ ssl_fc }'
+          option:
+            - 'httpchk GET /'
+            - 'httplog'
+            - 'forwardfor'
+          http-request:
+            - 'set-header X-Forwarded-Proto https if { ssl_fc }'
+            - 'set-header X-Forwarded-Proto http if !{ ssl_fc }'
         # TODO: use this section as RedHat port the commit from upstream quuens:
         #   commit 47ec9ce49b0a9e26701f63c9841ab2f982f7af32
         #   Author: Andrew Austin <aaustin@redhat.com>
@@ -383,13 +381,14 @@ outputs:
           - *haproxy_config_settings_tls
           - *haproxy_config_settings
       haproxy_config_settings_webui: &haproxy_config_settings_webui
-        if:
-          - public_tls_enabled
-          - *haproxy_config_settings_tls
-          - public_virtual_ip: "%{hiera('public_virtual_ip')}"
-            mode: 'tcp'
-            listen_options: *haproxy_config_settings_listen_options
-            member_options: *haproxy_config_settings_member_options
+        map_merge:
+          - listen_options: *haproxy_config_settings_listen_options
+          - if:
+            - public_tls_enabled
+            - *haproxy_config_settings_tls
+            - public_virtual_ip: "%{hiera('public_virtual_ip')}"
+              mode: 'tcp'
+              member_options: *haproxy_config_settings_member_options
       contrail_service_conf_dir: &contrail_service_conf_dir
         list_join:
           - ''
