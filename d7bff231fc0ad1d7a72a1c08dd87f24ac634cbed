@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b8df1cee_d0fda6e1",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-08T15:21:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80771f90_cf435d8d",
+      "range": {
+        "startLine": 35,
+        "startChar": 14,
+        "endLine": 35,
+        "endChar": 31
+      },
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "82137cfe_5bd18e4f",
         "filename": "deployment/contrail/contrail-issu.yaml",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ee32786_157d98b7",
+        "filename": "deployment/contrail/contrail-issu.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-08T15:21:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82137cfe_5bd18e4f",
+      "range": {
+        "startLine": 104,
+        "startChar": 14,
+        "endLine": 104,
+        "endChar": 31
+      },
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "46bb8822_d202e53f",
+        "filename": "environments/contrail/contrail-plugins.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-08T15:21:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "68336670_9dc21832",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 80
+      },
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf912534_6e0b12d0",
         "filename": "environments/contrail/contrail-services.yaml",
         "patchSetId": 3
@@ -88,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "adc4d5ef_9944030d",
+        "filename": "environments/contrail/contrail-services.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-08T15:21:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bf912534_6e0b12d0",
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6a968a36_e0291ac1",
         "filename": "extraconfig/pre_deploy/contrail/contrail_ansible_node_init.yaml",
         "patchSetId": 3
@@ -102,6 +192,24 @@
       "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "628f4363_8fcedc04",
+        "filename": "extraconfig/pre_deploy/contrail/contrail_ansible_node_init.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-08T15:21:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6a968a36_e0291ac1",
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
     },
     {
       "key": {
@@ -125,6 +233,30 @@
       "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "739616a0_ba0d4d97",
+        "filename": "roles/ContrailController.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-08T15:21:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75986da9_4976295a",
+      "range": {
+        "startLine": 13,
+        "startChar": 6,
+        "endLine": 13,
+        "endChar": 17
+      },
+      "revId": "d7bff231fc0ad1d7a72a1c08dd87f24ac634cbed",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
     }
   ]
 }

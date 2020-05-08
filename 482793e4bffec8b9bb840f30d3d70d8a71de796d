@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "b80f7848_dd5465fe",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-08T15:21:15Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "4f57d239_002a83b4",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 48
+      },
+      "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b4823541_7d1cbb7f",
         "filename": "deployment/contrail/contrail-config-database.yaml",
         "patchSetId": 3
@@ -92,6 +116,30 @@
       "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e89f3465_506caa86",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-08T15:21:15Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "b4823541_7d1cbb7f",
+      "range": {
+        "startLine": 247,
+        "startChar": 0,
+        "endLine": 250,
+        "endChar": 50
+      },
+      "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
     },
     {
       "key": {
@@ -268,6 +316,30 @@
       "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1bd7dbb_59955102",
+        "filename": "roles_data_contrail_aio.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-08T15:21:15Z",
+      "side": 0,
+      "message": "Probably it\u0027s included in some other service. I can see that chronyd is running on contrail-controller",
+      "parentUuid": "0ec9bbb1_e08c5e97",
+      "range": {
+        "startLine": 257,
+        "startChar": 29,
+        "endLine": 257,
+        "endChar": 32
+      },
+      "revId": "482793e4bffec8b9bb840f30d3d70d8a71de796d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
     }
   ]
 }
