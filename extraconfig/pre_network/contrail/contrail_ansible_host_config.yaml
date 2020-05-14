@@ -96,7 +96,23 @@
         - "net.ipv4.tcp_keepalive_probes = 5"
         - "net.ipv4.tcp_keepalive_intvl = 1"
 
-    - name: set 2GB hugepages if 1GB are not defined
+    - name: remove nr_hugepages from sysctl config for case if hugepages are disabled at all
+      lineinfile:
+        dest: /etc/sysctl.conf
+        regexp: "vm.nr_hugepages[ ]*="
+        state: absent
+
+    # that is for upgrade case: https://contrail-jws.atlassian.net/browse/CEM-15662
+    # during upgrade default hugepage size size become 1g if they are enabled
+    # rhel allocate 1024 pages even if no  vm.nr_hugepages provieded somehow
+    - name: set 1GB is defined set to 1GB number as default size is 1gb
+      lineinfile:
+        dest: /etc/sysctl.conf
+        line: "vm.nr_hugepages = {{ _CONTRAIL_HUGEPAGES_1GB_ }}"
+      when:
+        - _CONTRAIL_HUGEPAGES_1GB_ | default("") != ""
+
+    - name: set 2MB hugepages if 1GB are not defined
       lineinfile:
         dest: /etc/sysctl.conf
         line: "vm.nr_hugepages = {{ _CONTRAIL_HUGEPAGES_2MB_ }}"
@@ -109,6 +125,10 @@
 
     - name: sriov vf handling
       block:
+        - name: remove /etc/sysconfig/allocate_vfs
+          file:
+            path: /etc/sysconfig/allocate_vfs
+            state: absent
         - name: create /etc/sysconfig/allocate_vfs
           lineinfile:
             path: /etc/sysconfig/allocate_vfs
@@ -122,6 +142,10 @@
             path: /etc/sysconfig/allocate_vfs
             line: "[ \"{{ item.split(':')[0] }}\" == \"$1\" ] && echo {{ item.split(':')[1] }} > /sys/class/net/{{ item.split(':')[0] }}/device/sriov_numvfs"
           with_items: "{{ _CONTRAIL_SRIOV_NUM_VFS_ }}"
+        - name: remove /sbin/ifup-local
+          file:
+            path: /sbin/ifup-local
+            state: absent
         - name: create /sbin/ifup-local
           lineinfile:
             path: /sbin/ifup-local
@@ -137,9 +161,10 @@
           with_items: "{{ _CONTRAIL_SRIOV_NUM_VFS_ }}"
         - name: create /etc/udev/rules.d/70-tripleo-reset-sriov.rules
           lineinfile:
-            path: /etc/udev/rules.d/70-tripleo-reset-sriov.rules
+            path: /etc/udev/rules.d/70-contrail-tripleo-reset-sriov.rules
             line: "KERNEL==\"{{ item.split(':')[0] }}\", RUN+=\"/etc/sysconfig/allocate_vfs %k\""
             mode: 0755
+            regexp: "KERNEL"
             owner: root
             group: root
             create: yes
