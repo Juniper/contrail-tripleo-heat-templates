@@ -113,7 +113,14 @@ outputs:
                   lineinfile:
                     dest: *contrail_env_file
                     state: present
+                    regexp: "HUGE_PAGES_2MB="
                     line: "HUGE_PAGES_2MB={{ hugepages_2mb }}"
+                - name: remove hugepages_2mb if unset
+                  when: hugepages_2mb == ""
+                  lineinfile:
+                    dest: *contrail_env_file
+                    state: absent
+                    regexp: "HUGE_PAGES_2MB="
                 - name: contrail vrouter hugepages_1gb
                   set_fact:
                     hugepages_1gb: *hugepages_1gb
@@ -122,7 +129,14 @@ outputs:
                   lineinfile:
                     dest: *contrail_env_file
                     state: present
+                    regexp: "HUGE_PAGES_1GB="
                     line: "HUGE_PAGES_1GB={{ hugepages_1gb }}"
+                - name: remove hugepages_1gb if unset
+                  when: hugepages_1gb == ""
+                  lineinfile:
+                    dest: *contrail_env_file
+                    state: absent
+                    regexp: "HUGE_PAGES_1GB="
                 - name: default hugepages dir
                   set_fact:
                     hp_dir: "/dev/hugepages"
@@ -147,6 +161,7 @@ outputs:
                   lineinfile:
                     dest: *contrail_env_file
                     state: present
+                    regexp: "HUGE_PAGES_DIR="
                     line: "HUGE_PAGES_DIR={{ hp_dir }}"
           - {get_attr: [ContrailVrouterIssu, role_data, host_prep_tasks]}
 
@@ -169,9 +184,6 @@ outputs:
           when:
             - agent_container_volume_name.stdout != ''
             - agent_container_volume_location.stdout != '/var/lib/contrail'
-        - name: Restart vhost0 interface
-          shell: bash -c 'ifdown vhost0; ifup vhost0'
-
 
       post_update_tasks:
         - name: Check if /tmp/contrail_var_lib_unnamed_volume exists

@@ -1,5 +1,5 @@
 resource_registry:
-  OS::TripleO::Services::AgilioVrouter: ../../docker/services/contrail/contrail-analytics.yaml
+  OS::TripleO::Services::AgilioVrouter: ../../docker/services/agilio/vrouter-forwarder.yaml
   OS::TripleO::ContrailSriov::NodeUserData: ../../firstboot/agilio/agilio_vrouter.yaml
 
 parameter_defaults:

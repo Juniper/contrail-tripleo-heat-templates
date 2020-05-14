@@ -199,7 +199,10 @@ outputs:
           - {get_attr: [ContrailVrouterBase, role_data, update_tasks]}
 
       post_update_tasks:
-        get_attr: [ContrailVrouterBase, role_data, post_update_tasks]
+        list_concat:
+          - {get_attr: [ContrailVrouterBase, role_data, post_update_tasks]}
+          - - name: Restart vhost0 interface
+              shell: bash -c 'ifdown vhost0; ifup vhost0; docker start contrail_vrouter_agent || true'
 
       fast_forward_upgrade_tasks:
         get_attr: [ContrailVrouterBase, role_data, fast_forward_upgrade_tasks]
