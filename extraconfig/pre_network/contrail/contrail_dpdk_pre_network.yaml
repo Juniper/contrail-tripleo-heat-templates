@@ -185,7 +185,7 @@ resources:
         if:
           - deployment_actions_empty
           - []
-          - ['CREATE'] # Only do this on CREATE
+          - ['CREATE', 'UDATE']
       input_values:
         _CONTRAIL_HUGEPAGES_1GB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_1gb]}
         _CONTRAIL_HUGEPAGES_2MB_: {get_attr: [ContrailSettingsRoleParametersValue, value, hugepages_2mb]}

@@ -102,6 +102,20 @@
               set_fact:
                 reboot_required: true
 
+    - name: remove fstab entries for 1G
+      when:
+        - _CONTRAIL_HUGEPAGES_1GB_ | default("") == ""
+      mount:
+        path: "/dev/hugepages1G"
+        state: absent
+
+    - name: remove fstab entries for 2M
+      when:
+        - _CONTRAIL_HUGEPAGES_2MB_ | default("") == ""
+      mount:
+        path: "/dev/hugepages2M"
+        state: absent
+
     - name: update hugepages mountpoints if 1GB is enabled
       when:
         - _CONTRAIL_HUGEPAGES_1GB_ | default("") != ""
