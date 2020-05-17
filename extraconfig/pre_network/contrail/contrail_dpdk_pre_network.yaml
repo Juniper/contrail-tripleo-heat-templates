@@ -249,8 +249,9 @@ resources:
       group: ansible
       inputs:
         - name: _CONTRAIL_DPDK_DRIVER_
-        - name: _CONTRAIL_HUGEPAGES_2MB_
         - name: _CONTRAIL_HUGEPAGES_1GB_
+        - name: _CONTRAIL_HUGEPAGES_2MB_
+        - name: _KERNEL_ARGS_
         - name: _TUNED_PROFILE_NAME_
         - name: _TUNED_CORES_
       outputs:
