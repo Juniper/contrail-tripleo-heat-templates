@@ -203,6 +203,6 @@ outputs:
                     docker rm --force contrail_vrouter_agent contrail_vrouter_agent_nodemgr
                 - name: Apply tripleo step5 to relaunch contrail_vrouter_agent and contrail_vrouter_agent_nodemgr
                   shell: >
-                    paunch --debug apply --managed-by tripleo
+                    paunch --debug apply --managed-by paunch
                     --config-id tripleo_step5 \
                     --file /var/lib/tripleo-config/hashed-docker-container-startup-config-step_5.json

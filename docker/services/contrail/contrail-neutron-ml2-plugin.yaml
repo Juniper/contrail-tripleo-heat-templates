@@ -1,0 +1,119 @@
+heat_template_version: queens
+
+description: >
+  OpenStack containerized Contrail Neutron ML2 Plugin configured with Puppet
+
+parameters:
+  EndpointMap:
+    default: {}
+    description: Mapping of service endpoint -> protocol. Typically set
+                 via parameter_defaults in the resource registry.
+    type: json
+  ServiceData:
+    default: {}
+    description: Dictionary packing service data
+    type: json
+  ServiceNetMap:
+    default: {}
+    description: Mapping of service_name -> network name. Typically set
+                 via parameter_defaults in the resource registry.  This
+                 mapping overrides those in ServiceNetMapDefaults.
+    type: json
+  DockerNeutronConfigImage:
+    description: The container image to use for the neutron config_volume
+    type: string
+    default: "contrail-openstack-neutron-init"
+  DefaultPasswords:
+    type: json
+  RoleName:
+    default: ''
+    description: Role name on which the service is applied
+    type: string
+  RoleParameters:
+    default: {}
+    description: Parameters specific to the role
+    type: json
+  DockerContrailNeutronMl2PluginImageName:
+    description: The container image to use for the contrail neutron plugin
+    type: string
+    default: "contrail-openstack-neutron-ml2-init"
+  NeutronPluginMl2PuppetTags:
+    default: 'neutron_plugin_ml2'
+    description: Puppet resource tag names that are used to generate config files with puppet
+    type: string
+  ContrailSslEnabled:
+    description:  Flag to identify is SSL should be used in internal Contrail
+                  services communications (sandesh, introspect, xmpp, ..).
+    type: boolean
+    default: false
+  ContrailServiceCertFile:
+    description: Path to the node's public certificate
+    type: string
+    default: ''
+  ContrailServiceKeyFile:
+    description: Path to server's/node's private key
+    type: string
+    default: ''
+  ContrailCaCertFile:
+    default: ''
+    description: Path to CA certificate
+    type: string
+  ContrailConfigIPs:
+    description:  Comma separated list of Contrail API servers.
+                  The servers that are not part of the RHOSP voercloud cluster and
+                  deployed separatly.
+    type: string
+  ContrailConfigPort:
+    default: '8082'
+    description: Config API port
+  ContrailDmIntegration:
+    description: Device Manager integration
+    type: boolean
+    default: false
+
+conditions:
+  contrail_insecure: {equals: [{get_param: ContrailCaCertFile}, '']}
+  contrail_config_ips_unset: {equals: [{get_param: ContrailConfigIPs}, '']}
+
+resources:
+  DockerContrailNeutronMl2PluginImageNormalize:
+    type: ../../../tools/contrail/contrail-image-normalize.yaml
+    properties:
+      GenericImageName: {get_param: DockerContrailNeutronMl2PluginImageName}
+
+outputs:
+  role_data:
+    description: Role data for the Contrail Neutron Plugin role.
+    value:
+      service_name: contrail_neutron_ml2_plugin
+      config_settings:
+        map_merge:
+          - contrail_ssl_enabled: {get_param: ContrailSslEnabled}
+            contrail_ssl_insecure: {if: [contrail_insecure, true, false]}
+            contrail::service_key_file: {get_param: ContrailServiceKeyFile}
+            contrail::service_cert_file: {get_param: ContrailServiceCertFile}
+            contrail::auth_ca_file: {get_param: ContrailCaCertFile}
+            contrail_dm_integration: {get_param: ContrailDmIntegration}
+            contrail::api_port: {get_param: ContrailConfigPort}
+          - if:
+              - contrail_config_ips_unset
+              - null
+              - contrail_config_ips: ContrailConfigIPs
+
+      # BEGIN DOCKER SETTINGS
+      puppet_config:
+        config_volume: 'neutron'
+        puppet_tags: {get_param: NeutronPluginMl2PuppetTags}
+        step_config:
+          include ::tripleo::network::contrail::neutron_ml2_plugin
+        config_image: {get_param: DockerNeutronConfigImage}
+      kolla_config: {}
+      docker_config:
+        step_3:
+          contrail_neutron_plugin:
+            image: &contrail_neutron_plugin_image {get_attr: [DockerContrailNeutronMl2PluginImageNormalize, contrail_image]}
+            volumes:
+              - opt_plugin:/opt/plugin
+
+      host_prep_tasks: []
+      metadata_settings: []

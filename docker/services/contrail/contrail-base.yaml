@@ -65,6 +65,9 @@ parameters:
       In might be set to a virtual IP if a particular specific IP is needed.
       In case of RedHat IDM and TLS everwhere it cannot be IP and should be an FQDN.
     type: string
+  ContrailConfigPort:
+    default: '8082'
+    description: Config API port
   ContrailConfigVIP:
     default: ''
     description: >
@@ -273,7 +276,7 @@ outputs:
           contrail::auth_host: {get_param: [EndpointMap, KeystoneAdmin, host] }
           contrail::auth_port: {get_param: [EndpointMap, KeystoneAdmin, port] }
           contrail::auth_protocol: {get_param: [EndpointMap, KeystoneAdmin, protocol] }
-          contrail::api_port: '8082'
+          contrail::api_port: {get_param: ContrailConfigPort}
           contrail::keystone_region: {get_param: KeystoneRegion}
           contrail::keystone_project_domain_name: {get_param: KeystoneProjectDomainName}
           contrail::keystone_user_domain_name: {get_param: KeystoneUserDomainName}
