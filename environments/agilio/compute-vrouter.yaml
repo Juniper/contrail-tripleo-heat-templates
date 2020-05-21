@@ -8,7 +8,8 @@ parameter_defaults:
 
   # Provide correct registry and tag for agilio containers
   AgilioRegistry: '192.168.24.1:8787'
-  AgilioImageTag: 'latest'
+  AgilioVrouterImageTag: 'latest'
+  AgilioForwarderImageTag: 'latest'
 
   # Add agilio registry into insecure list if registry different from underloud
   # DockerInsecureRegistryAddress: ''

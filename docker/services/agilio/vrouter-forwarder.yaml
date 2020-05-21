@@ -8,9 +8,13 @@ parameters:
     default: ''
     description: Agilio Registry
     type: string
-  AgilioImageTag:
+  AgilioVrouterImageTag:
       default: 'latest'
-      description: Agilio images tag
+      description: Agilio Vrouter images tag
+      type: string
+  AgilioForwarderImageTag:
+      default: 'latest'
+      description: Agilio Frowarder images tag
       type: string
   DockerAgilioVrouterImageName:
     description: Agilio Vrouter image name
@@ -59,14 +63,14 @@ resources:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       ContrailRegistry: {get_param: AgilioRegistry}
-      ContrailImageTag: {get_param: AgilioImageTag}
+      ContrailImageTag: {get_param: AgilioVrouterImageTag}
       GenericImageName: {get_param: DockerAgilioVrouterImageName}
 
   AgilioVirtIoForwarderImageNameNormalized:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       ContrailRegistry: {get_param: AgilioRegistry}
-      ContrailImageTag: {get_param: AgilioImageTag}
+      ContrailImageTag: {get_param: AgilioForwarderImageTag}
       GenericImageName: {get_param: DockerAgilioVirtIoForwarderImageName}
 
   AgilioCommonDockerVolumes:
