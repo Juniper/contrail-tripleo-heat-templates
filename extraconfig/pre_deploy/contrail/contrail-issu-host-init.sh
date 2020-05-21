@@ -87,7 +87,7 @@ getenforce
 
 mkdir -p /var/crashes
 chmod 755 /var/crashes
-yum install -y docker python-docker-py libselinux-python
+yum install -y docker python-docker-py libselinux-python gcc
 if ! yum install -y python-paunch ; then
     yum install -y --enablerepo=rhel-7-server-openstack-13-rpms python-paunch
 fi
