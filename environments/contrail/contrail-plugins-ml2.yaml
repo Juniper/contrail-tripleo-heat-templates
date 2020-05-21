@@ -1,0 +1,25 @@
+
+resource_registry:
+  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-ML2-plugin.yaml
+
+parameter_defaults:
+  NeutronCorePlugin: 'ml2'
+  NeutronServicePlugins: 'opencontrail-router'  
+  NeutronMechanismDrivers: 'opencontrail,openvswitch'
+  NeutronApiOptVolumes:
+    - 'opt_plugin:/opt/plugin'
+  NeutronApiOptEnvVars:
+    - 'PYTHONPATH=/opt/plugin/site-packages:/usr/lib/python2.7/site-packages'
+
+  OvercloudControllerFlavor: control
+  OvercloudComputeFlavor: compute
+
+  ControllerCount: 1
+  ComputeCount: 1
+
+  ContrailRegistry: satellite.englab.juniper.net:5443
+  ContrailImageTag: queens-5.0-104-rhel-queens
+
+  # Address of Contrail Config API
+  ContrailConfigVIP: <must be set to correct api>
+  ContrailConfigPort: '8082'
