@@ -66,6 +66,7 @@ parameters:
       In case of RedHat IDM and TLS everwhere it cannot be IP and should be an FQDN.
     type: string
   ContrailConfigPort:
+    type: string
     default: '8082'
     description: Config API port
   ContrailConfigVIP:

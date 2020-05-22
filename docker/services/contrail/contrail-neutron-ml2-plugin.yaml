@@ -64,6 +64,7 @@ parameters:
                   deployed separatly.
     type: string
   ContrailConfigPort:
+    type: string
     default: '8082'
     description: Config API port
   ContrailDmIntegration:
