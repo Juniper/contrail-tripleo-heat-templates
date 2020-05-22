@@ -1,6 +1,6 @@
 
 resource_registry:
-  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-ML2-plugin.yaml
+  OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-ml2-plugin.yaml
 
 parameter_defaults:
   NeutronCorePlugin: 'ml2'
