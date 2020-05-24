@@ -19,7 +19,7 @@
     - StorageMgmt
   # For systems with both IPv4 and IPv6, you may specify a gateway network for
   # each, such as ['ControlPlane', 'External']
-  default_route_networks: ['External']
+  default_route_networks: ['ControlPlane']
   HostnameFormatDefault: '%stackname%-controller-%index%'
   # Deprecated & backward-compatible values (FIXME: Make parameters consistent)
   # Set uses_deprecated_params to True if any deprecated params are used.
