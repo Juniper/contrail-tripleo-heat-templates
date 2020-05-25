@@ -16,12 +16,17 @@ parameter_defaults:
   # NeutronServiceProviders: ['L3_ROUTER_NAT:TF:networking_opencontrail.l3.service_provider.TFL3ServiceProvider']
 
   # Neutron ML2 config options
-  # mechanism_drivers
+  # ml2/ml2_conf.ini: mechanism_drivers
   NeutronMechanismDrivers: 'opencontrail,openvswitch'
-  # type_drivers
-  NeutronTypeDrivers: 'local,vlan,gre'
-  # tenant_network_types
+  # ml2/ml2_conf.ini: type_drivers
+  NeutronTypeDrivers: 'local,vlan,gre,vxlan'
+  # ml2/ml2_conf.ini: tenant_network_types
   NeutronNetworkType: 'local,vlan'
+
+  # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
+  # ml2/openvswitch_agent.ini: tunnel_types
+  NeutronTunnelTypes: 'vxlan'
+
 
   NeutronApiOptVolumes:
     - 'opt_plugin:/opt/plugin'
@@ -45,3 +50,8 @@ parameter_defaults:
 
   # Enable/Disable Device Manager integration
   ContrailDmIntegration: false
+
+  # Contrail controller use keyston for auth
+  # it needs admin endpoint on same network as intenral endpoint
+  ServiceNetMap:
+    KeystoneAdminApiNetwork: internal_api
