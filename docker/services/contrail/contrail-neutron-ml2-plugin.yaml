@@ -82,6 +82,16 @@ resources:
     properties:
       GenericImageName: {get_param: DockerContrailNeutronMl2PluginImageName}
 
+  NeutronBase:
+    type: OS::TripleO::Docker::NeutronMl2PluginBase
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
+
 outputs:
   role_data:
     description: Role data for the Contrail Neutron Plugin role.
@@ -89,6 +99,7 @@ outputs:
       service_name: contrail_neutron_ml2_plugin
       config_settings:
         map_merge:
+          - get_attr: [NeutronBase, role_data, config_settings]
           - contrail_ssl_enabled: {get_param: ContrailSslEnabled}
             contrail_ssl_insecure: {if: [contrail_insecure, true, false]}
             contrail::service_key_file: {get_param: ContrailServiceKeyFile}
@@ -99,13 +110,14 @@ outputs:
           - if:
               - contrail_config_ips_unset
               - null
-              - contrail_config_ips: ContrailConfigIPs
-
+              - contrail_config_ips: {get_param: ContrailConfigIPs}
+      service_config_settings: {get_attr: [NeutronBase, role_data, service_config_settings]}
       # BEGIN DOCKER SETTINGS
       puppet_config:
         config_volume: 'neutron'
-        puppet_tags: {get_param: NeutronPluginMl2PuppetTags}
-        step_config:
+        puppet_tags: {list_join: [',', {get_param: NeutronPluginMl2PuppetTags}, 'ini_setting,create_ini_settings,inifile']}
+        step_config: |
+          include ::tripleo::profile::base::neutron::plugins::ml2
           include ::tripleo::network::contrail::neutron_ml2_plugin
         config_image: {get_param: DockerNeutronConfigImage}
       kolla_config: {}
@@ -115,6 +127,6 @@ outputs:
             image: &contrail_neutron_plugin_image {get_attr: [DockerContrailNeutronMl2PluginImageNormalize, contrail_image]}
             volumes:
               - opt_plugin:/opt/plugin
-
       host_prep_tasks: []
-      metadata_settings: []
+      metadata_settings:
+        get_attr: [NeutronBase, role_data, metadata_settings]
