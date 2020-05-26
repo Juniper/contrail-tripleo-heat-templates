@@ -24,6 +24,10 @@ parameters:
                   will be /var/lib/docker/volumes/analytics_cassandra_commitlog/_data.
     type: string
     default: '/var/lib/contrail/analytics_cassandra_commitlog'
+  ContrailAnalyticsDBLogPath:
+    description: Path where analytics cassadra logs will be stored.
+    type: string  
+    default: "/var/log/contrail/database"
   DockerContrailCassandraImageName:
     description: image
     type: string

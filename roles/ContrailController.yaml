@@ -10,8 +10,10 @@
     - primary
     - contrailcontroller
   networks:
-    - InternalApi
-    - Tenant
+    InternalApi:
+      subnet: internal_api_subnet
+    Tenant:
+      subnet: tenant_subnet
   HostnameFormatDefault: '%stackname%-contrailcontroller-%index%'
   disable_upgrade_deployment: True
   ServicesDefault:
