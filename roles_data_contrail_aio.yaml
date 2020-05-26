@@ -270,10 +270,10 @@
     - primary
     - contrailcontroller
   networks:
-    - InternalApi:
-        subnet: internal_api_subnet
-    - Tenant:
-        subnet: tenant_subnet
+    InternalApi:
+      subnet: internal_api_subnet
+    Tenant:
+      subnet: tenant_subnet
   HostnameFormatDefault: '%stackname%-contrailcontroller-%index%'
   ServicesDefault:
     - OS::TripleO::Services::AuditD
@@ -314,10 +314,10 @@
     - primary
     - contrailcontroller
   networks:
-    - InternalApi:
-        subnet: internal_api_subnet
-    - Tenant:
-        subnet: tenant_subnet
+    InternalApi:
+      subnet: internal_api_subnet
+    Tenant:
+      subnet: tenant_subnet
   HostnameFormatDefault: '%stackname%-contrailcontrolonly-%index%'
   ServicesDefault:
     - OS::TripleO::Services::AuditD
@@ -348,12 +348,12 @@
   tags:
     - contraildpdk
   networks:
-    - InternalApi:
-        subnet: internal_api_subnet
-    - Tenant:
-        subnet: tenant_subnet
-    - Storage:
-        subnet: storage_subnet
+    InternalApi:
+      subnet: internal_api_subnet
+    Tenant:
+      subnet: tenant_subnet
+    Storage:
+      subnet: storage_subnet
   HostnameFormatDefault: '%stackname%-contraildpdk-%index%'
   disable_upgrade_deployment: True
   ServicesDefault:
@@ -402,12 +402,12 @@
   tags:
     - contrailsriov
   networks:
-    - InternalApi:
-        subnet: internal_api_subnet
-    - Tenant:
-        subnet: tenant_subnet
-    - Storage:
-        subnet: storage_subnet
+    InternalApi:
+      subnet: internal_api_subnet
+    Tenant:
+      subnet: tenant_subnet
+    Storage:
+      subnet: storage_subnet
   HostnameFormatDefault: '%stackname%-contrailsriov-%index%'
   disable_upgrade_deployment: True
   ServicesDefault:
@@ -457,12 +457,12 @@
   tags:
     - contrailtsn
   networks:
-    - InternalApi:
-        subnet: internal_api_subnet
-    - Tenant:
-        subnet: tenant_subnet
-    - Storage:
-        subnet: storage_subnet
+    InternalApi:
+      subnet: internal_api_subnet
+    Tenant:
+      subnet: tenant_subnet
+    Storage:
+      subnet: storage_subnet
   HostnameFormatDefault: '%stackname%-contrailtsn-%index%'
   disable_upgrade_deployment: True
   ServicesDefault:
@@ -509,10 +509,10 @@
   tags:
     - contrailissu
   networks:
-    - InternalApi:
-        subnet: internal_api_subnet
-    - Tenant:
-        subnet: tenant_subnet
+    InternalApi:
+      subnet: internal_api_subnet
+    Tenant:
+      subnet: tenant_subnet
   ServicesDefault:
     - OS::TripleO::Services::AuditD
     - OS::TripleO::Services::CACerts

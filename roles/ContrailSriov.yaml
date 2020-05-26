@@ -8,9 +8,12 @@
   tags:
     - contrailsriov
   networks:
-    - InternalApi
-    - Tenant
-    - Storage
+    InternalApi:
+      subnet: internal_api_subnet
+    Tenant:
+      subnet: tenant_subnet
+    Storage:
+      subnet: storage_subnet
   HostnameFormatDefault: '%stackname%-contrailsriov-%index%'
   disable_upgrade_deployment: True
   ServicesDefault:
