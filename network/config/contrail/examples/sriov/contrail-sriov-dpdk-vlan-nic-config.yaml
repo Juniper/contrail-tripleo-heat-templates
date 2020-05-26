@@ -128,12 +128,6 @@ parameters:
       guaranteed to pass through the data path of the segments in the
       Tenant network.
     type: number
-  StorageInterfaceRoutes:
-    default: []
-    description: >
-      Routes for the storage network traffic.
-      JSON route e.g. [{'destination':'10.0.0.0/16', 'nexthop':'10.0.0.1'}]
-      Unless the default is changed, the parameter is automatically resolved
 
 resources:
   OsNetConfigImpl:

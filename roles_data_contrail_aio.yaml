@@ -330,7 +330,6 @@
     - OS::TripleO::Services::Ipsec
     - OS::TripleO::Services::Kernel
     - OS::TripleO::Services::LoginDefs
-    - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::ContainersLogrotateCrond
     - OS::TripleO::Services::ContrailCertmongerUser
     - OS::TripleO::Services::ContrailControlOnly
@@ -373,7 +372,6 @@
     - OS::TripleO::Services::ContrailIssuCompute
     - OS::TripleO::Services::ContainersLogrotateCrond
     - OS::TripleO::Services::Docker
-    - OS::TripleO::Services::Fluentd
     - OS::TripleO::Services::IpaClient
     - OS::TripleO::Services::Ipsec
     - OS::TripleO::Services::Iscsid
@@ -383,11 +381,9 @@
     - OS::TripleO::Services::NovaCompute
     - OS::TripleO::Services::NovaLibvirt
     - OS::TripleO::Services::NovaMigrationTarget
-    - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::Rhsm
     - OS::TripleO::Services::RsyslogSidecar
     - OS::TripleO::Services::Securetty
-    - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::SkydiveAgent
     - OS::TripleO::Services::Snmp
     - OS::TripleO::Services::Sshd
@@ -430,7 +426,6 @@
     - OS::TripleO::Services::ComputeNeutronMetadataAgent
     - OS::TripleO::Services::ContrailIssuCompute
     - OS::TripleO::Services::Docker
-    - OS::TripleO::Services::Fluentd
     - OS::TripleO::Services::IpaClient
     - OS::TripleO::Services::Ipsec
     - OS::TripleO::Services::Iscsid
@@ -440,12 +435,10 @@
     - OS::TripleO::Services::NovaCompute
     - OS::TripleO::Services::NovaLibvirt
     - OS::TripleO::Services::NovaMigrationTarget
-    - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::ContainersLogrotateCrond
     - OS::TripleO::Services::Rhsm
     - OS::TripleO::Services::RsyslogSidecar
     - OS::TripleO::Services::Securetty
-    - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::SkydiveAgent
     - OS::TripleO::Services::Snmp
     - OS::TripleO::Services::Sshd
@@ -487,7 +480,6 @@
     - OS::TripleO::Services::ComputeNeutronMetadataAgent
     - OS::TripleO::Services::ContrailIssuCompute
     - OS::TripleO::Services::Docker
-    - OS::TripleO::Services::Fluentd
     - OS::TripleO::Services::IpaClient
     - OS::TripleO::Services::Ipsec
     - OS::TripleO::Services::Iscsid
@@ -497,12 +489,10 @@
     - OS::TripleO::Services::NovaCompute
     - OS::TripleO::Services::NovaLibvirt
     - OS::TripleO::Services::NovaMigrationTarget
-    - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::ContainersLogrotateCrond
     - OS::TripleO::Services::Rhsm
     - OS::TripleO::Services::RsyslogSidecar
     - OS::TripleO::Services::Securetty
-    - OS::TripleO::Services::SensuClient
     - OS::TripleO::Services::SkydiveAgent
     - OS::TripleO::Services::Snmp
     - OS::TripleO::Services::Sshd
@@ -534,7 +524,6 @@
     - OS::TripleO::Services::Ipsec
     - OS::TripleO::Services::Kernel
     - OS::TripleO::Services::LoginDefs
-    - OS::TripleO::Services::Ntp
     - OS::TripleO::Services::ContainersLogrotateCrond
     - OS::TripleO::Services::Snmp
     - OS::TripleO::Services::Sshd
