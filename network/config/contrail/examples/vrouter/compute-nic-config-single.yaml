@@ -10,6 +10,10 @@ parameters:
     default: ''
     description: IP address/subnet on the ctlplane network
     type: string
+  ExternalIpSubnet:
+    default: ''
+    description: IP address/subnet on the external network
+    type: string
   InternalApiIpSubnet:
     default: ''
     description: IP address/subnet on the internal_api network
