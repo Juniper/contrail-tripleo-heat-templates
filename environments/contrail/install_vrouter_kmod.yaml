@@ -367,7 +367,22 @@ resources:
                 yumdownloader contrail-vrouter --destdir /tmp
                 cd /tmp
                 rpm2cpio /tmp/contrail-vrouter*.rpm | cpio -idmv
-                cp `find /tmp/lib/modules -name vrouter.ko |tail -1` /tmp
+                
+                full_kernel_name=$(uname -r)
+                base_kernel_name=$(expr "$full_kernel_name" : '\(3.10.0-[0-9]*\)')
+                base_kernel_name_with_version="${full_kernel_name%.el7.x86_64}"
+                
+                if [ -d "/tmp/lib/modules/$full_kernel_name" ] ; then                
+                  vrouter_module_path="/tmp/lib/modules/$full_kernel_name"
+                elif [ -d "/tmp/lib/modules/${base_kernel_name_with_version}"] ; then
+                  vrouter_module_path="/tmp/lib/modules/${base_kernel_name_with_version}"
+                elif [ -d "/tmp/lib/modules/${base_kernel_name}"] ; then
+                  vrouter_module_path="/tmp/lib/modules/${base_kernel_name}"
+                else
+                  vrouter_module_path="/tmp/lib/modules"
+                fi
+
+                cp `find $vrouter_module_path -name vrouter.ko |tail -1` /tmp
                 insmod /tmp/vrouter.ko
               else
                 depmod -a
