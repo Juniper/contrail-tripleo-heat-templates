@@ -2,7 +2,7 @@ heat_template_version: newton
 
 # NOTE: You don't need to pass the parameter explicitly from the
 # parent template, it can be specified via the parameter_defaults
-# in the resource_registry instead, if you want to override the default
+# in the resource_registry instead, if you want to ovFide the default
 # and/or share values with other templates in the tree.
 parameters:
   ContrailRepo:
@@ -367,8 +367,15 @@ resources:
                 yumdownloader contrail-vrouter --destdir /tmp
                 cd /tmp
                 rpm2cpio /tmp/contrail-vrouter*.rpm | cpio -idmv
-                cp `find /tmp/lib/modules -name vrouter.ko |tail -1` /tmp
-                insmod /tmp/vrouter.ko
+                current_kernel=$(uname -r)
+                vrouter_module_path="/tmp/lib/modules/$current_kernel"
+                if [ -d $vrouter_module_path ] ; then
+                  cp `find $vrouter_module_path -name vrouter.ko |tail -1` /tmp
+                  insmod /tmp/vrouter.ko
+                else
+                  echo "ERROR: No vrouter module for kernel $current_kernel"
+                  exit 1
+                fi
               else
                 depmod -a
                 modprobe vrouter
