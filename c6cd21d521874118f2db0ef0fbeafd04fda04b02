@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7ddfbd4_baf6de83",
+        "filename": "deployment/contrail/contrail-issu.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T17:19:14Z",
+      "side": 1,
+      "message": "- if:\n                  - rabbitmq_log_keep_default\n                  - []\n                  - - \u0027RABBITMQ_LOGS\u003d/var/log/rabbitmq/rabbitmq.log\u0027\n                      \u0027RABBITMQ_SASL_LOGS\u003d/var/log/rabbitmq/rabbitmq_sasl.log\u0027",
+      "range": {
+        "startLine": 597,
+        "startChar": 1,
+        "endLine": 598,
+        "endChar": 76
+      },
+      "revId": "c6cd21d521874118f2db0ef0fbeafd04fda04b02",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
