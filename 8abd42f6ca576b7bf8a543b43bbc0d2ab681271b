@@ -1,0 +1,274 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cfee0714_ae85c9eb",
+        "filename": "docker/services/contrail/contrail-analytics-kafka.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "kafka-zookeeper",
+      "range": {
+        "startLine": 105,
+        "startChar": 38,
+        "endLine": 105,
+        "endChar": 47
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "730e27c3_31715500",
+        "filename": "docker/services/contrail/contrail-config-database.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "remove trailing spaces",
+      "range": {
+        "startLine": 169,
+        "startChar": 26,
+        "endLine": 169,
+        "endChar": 41
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e5c4698_fd42ba84",
+        "filename": "docker/services/contrail/contrail-config-database.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "remove trailing spaces",
+      "range": {
+        "startLine": 173,
+        "startChar": 66,
+        "endLine": 173,
+        "endChar": 105
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d3ec0ad_ea406418",
+        "filename": "docker/services/contrail/contrail-config-database.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "lets use here just /var/log/rabbitmq/\u0027",
+      "range": {
+        "startLine": 173,
+        "startChar": 24,
+        "endLine": 173,
+        "endChar": 66
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5df46596_b7a46b10",
+        "filename": "docker/services/contrail/contrail-config-database.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "/var/log/rabbitmq/\n\nto have all rabbit logs inside a container in one place, otherwise now it is like:\n[heat-admin@overcloud-contrailcontroller-0 ~]$ sudo docker exec -it contrail_config_rabbitmq bash\n[root@overcloud-contrailcontroller-0 /]# ls /var/log/rabbitmq/\ncontrail@overcloud-contrailcontroller-0_upgrade.log  log\n[root@overcloud-contrailcontroller-0 /]# ls /var/log/contrail/\nrabbitmq\n[root@overcloud-contrailcontroller-0 /]# ls /var/log/contrail/rabbitmq/\nrabbitmq.log  rabbitmq_sasl.log",
+      "range": {
+        "startLine": 185,
+        "startChar": 30,
+        "endLine": 185,
+        "endChar": 72
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b196931_480bfe31",
+        "filename": "docker/services/contrail/contrail-config-database.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "lets use /var/log/rabbitmq/",
+      "range": {
+        "startLine": 192,
+        "startChar": 30,
+        "endLine": 192,
+        "endChar": 72
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87a401b9_2a807926",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "list concat etc.. for /var/log/rabbitmq/",
+      "range": {
+        "startLine": 602,
+        "startChar": 19,
+        "endLine": 602,
+        "endChar": 20
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a5eeb6f5_054a047d",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 616,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "/var/log/rabbitmq/",
+      "range": {
+        "startLine": 616,
+        "startChar": 30,
+        "endLine": 616,
+        "endChar": 72
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20622f3d_7b2c550f",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "/var/log/rabbitmq/",
+      "range": {
+        "startLine": 623,
+        "startChar": 30,
+        "endLine": 623,
+        "endChar": 72
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48a1a1a2_c9519c0b",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 708,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "param name?",
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7aeaeaff_386a71a3",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 739,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "param for kafka?",
+      "range": {
+        "startLine": 739,
+        "startChar": 40,
+        "endLine": 739,
+        "endChar": 71
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a6febe2_b02139ad",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 740,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T13:51:17Z",
+      "side": 1,
+      "message": "kafka?",
+      "range": {
+        "startLine": 740,
+        "startChar": 38,
+        "endLine": 740,
+        "endChar": 47
+      },
+      "revId": "8abd42f6ca576b7bf8a543b43bbc0d2ab681271b",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
