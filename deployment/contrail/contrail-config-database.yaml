@@ -32,11 +32,11 @@ parameters:
                  is usually set to '-', resulting in logs going to
                  stdout
     type: string
-    default: "/var/log/contrail/rabbitmq"
-  DockerContrailConfigDatabaseLogPath:  
+    default: "/var/log/containers/contrail/rabbitmq"
+  DockerContrailConfigDatabaseLogPath:
     description: Path where config cassadra logs will be stored.
     type: string
-    default: "/var/log/contrail/config-database"
+    default: "/var/log/containers/contrail/config-database"
   DockerContrailConfigDatabaseVolume:
     default: '/var/lib/contrail/config_cassandra'
     description: Docker volume for contrail config DB service
@@ -247,7 +247,7 @@ outputs:
                       - list_join:
                           - ':'
                           - - {get_param: DockerContrailConfigDatabaseLogPath}
-                            - '/var/log/cassandra'
+                            - '/var/log/containers/cassandra'
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:

@@ -31,7 +31,7 @@
       set_fact:
         kernel_arg_list: "{{ kernel_arg_list }} + [ 'hugepagesz=2M hugepages={{ _CONTRAIL_HUGEPAGES_2MB_ }}' ]"
       when:
-        # if 1GB is disabled then 2mb are allocated via sysctl 
+        # if 1GB is disabled then 2mb are allocated via sysctl
         - _CONTRAIL_HUGEPAGES_1GB_ | default("") != ""
         - _CONTRAIL_HUGEPAGES_2MB_ | default("") != ""
     - debug:
