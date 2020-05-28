@@ -54,7 +54,7 @@ parameter_defaults:
   NeutronApiOptVolumes:
     - '/var/lib/contrail/plugin_contrail_neutron:/opt/plugin'
     - '/etc/contrail/ssl:/etc/contrail/ssl'
-  NeutronApiOptEnvVars: 
+  NeutronApiOptEnvVars:
       PYTHONPATH: '/opt/plugin/site-packages:/usr/lib/python2.7/site-packages'
   NovaComputeOptEnvVars:
       PATH: '/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin'
