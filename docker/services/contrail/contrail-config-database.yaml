@@ -45,6 +45,10 @@ parameters:
     default: 'config_zookeeper'
     description: Docker volume for contrail config zookeeper service
     type: string
+  DockerContrailLogsZookeeperPath:
+    default: '/var/log/contrail/zookeeper'
+    description: Path to Zookeeper logs on host
+    type: string
   EndpointMap:
     default: {}
     description: Mapping of service endpoint -> protocol. Typically set
@@ -162,6 +166,11 @@ outputs:
             restart: always
             volumes:
               get_attr: [ContrailBase, role_data, contrail_base_volumes]
+              list_concat:
+                - - list_join:
+                    - ':'
+                    - - {get_param: DockerContrailRabbitmqLogPath}
+                      - '/var/log/rabbitmq'
             environment:
               list_concat:
                 - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -173,14 +182,14 @@ outputs:
                       - - 'RABBITMQ_LOGS'
                         - list_join:
                           - '/'
-                          - - {get_param: DockerContrailRabbitmqLogPath}
+                          - - '/var/log/rabbitmq'
                             - 'rabbitmq.log'
                     - list_join:
                       - '='
                       - - 'RABBITMQ_SASL_LOGS'
                         - list_join:
                           - '/'
-                          - - {get_param: DockerContrailRabbitmqLogPath}
+                          - - '/var/log/rabbitmq'
                             - 'rabbitmq_sasl.log'
             env_file:
               list_concat:
@@ -200,6 +209,10 @@ outputs:
                       - ':'
                       - - {get_param: DockerContrailConfigZookeeperVolume}
                         - '/data'
+                - - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailLogsZookeeperPath}
+                        - '/var/log/zookeeper'
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:

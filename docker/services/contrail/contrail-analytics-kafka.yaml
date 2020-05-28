@@ -102,6 +102,7 @@ outputs:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                 - - analytics_zookeeper:/data
+                - - /var/log/contrail/kafka-zookeeper:/var/log/zookeeper
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
@@ -117,7 +118,9 @@ outputs:
             user: root
             restart: always
             volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+              list_concat:
+                - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
+                - - /var/log/contrail/kafka:/var/log/kafka
             environment:
               get_attr: [ContrailBase, role_data, contrail_base_env]
             env_file:
