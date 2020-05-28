@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "60bde64f_ebcc44b9",
+        "filename": "environments/contrail/install_vrouter_kmod.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T17:22:55Z",
+      "side": 1,
+      "message": "\"${full_kernel_name}.el7.x86_64\"",
+      "range": {
+        "startLine": 373,
+        "startChar": 46,
+        "endLine": 373,
+        "endChar": 76
+      },
+      "revId": "9efe09e850bb81e4f6788d19b81872bb26907b93",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a283d845_f16293dc",
+        "filename": "environments/contrail/install_vrouter_kmod.yaml",
+        "patchSetId": 3
+      },
+      "lineNbr": 382,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T17:22:55Z",
+      "side": 1,
+      "message": "first check base_kernel_name_with_suffix\nand final else is about using base_kernel_name",
+      "range": {
+        "startLine": 379,
+        "startChar": 0,
+        "endLine": 382,
+        "endChar": 73
+      },
+      "revId": "9efe09e850bb81e4f6788d19b81872bb26907b93",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
