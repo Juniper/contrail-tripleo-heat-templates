@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0047a46c_7a7e3bf0",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-28T16:43:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb0b1bb5_b85bb244",
+      "range": {
+        "startLine": 174,
+        "startChar": 31,
+        "endLine": 175,
+        "endChar": 43
+      },
+      "revId": "f74ddcaddbfe39f70aac3e1cbf536fed267daddf",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1305461b_10a3ae56",
         "filename": "deployment/contrail/contrail-config-database.yaml",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "033117f5_e1c1e95d",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-28T16:43:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1305461b_10a3ae56",
+      "range": {
+        "startLine": 181,
+        "startChar": 30,
+        "endLine": 182,
+        "endChar": 49
+      },
+      "revId": "f74ddcaddbfe39f70aac3e1cbf536fed267daddf",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "499e3344_6d913036",
         "filename": "deployment/contrail/contrail-issu.yaml",
         "patchSetId": 2
@@ -68,6 +116,30 @@
       "revId": "f74ddcaddbfe39f70aac3e1cbf536fed267daddf",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b4250b3_0a0c48d8",
+        "filename": "deployment/contrail/contrail-issu.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 844
+      },
+      "writtenOn": "2020-05-28T16:43:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "499e3344_6d913036",
+      "range": {
+        "startLine": 599,
+        "startChar": 19,
+        "endLine": 610,
+        "endChar": 49
+      },
+      "revId": "f74ddcaddbfe39f70aac3e1cbf536fed267daddf",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": false
     }
   ]
 }
