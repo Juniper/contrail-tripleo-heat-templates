@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bb0b1bb5_b85bb244",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T15:45:12Z",
+      "side": 1,
+      "message": "inside container it must be /var/log/rabbitmq/rabbitmq.log\nso here we can use just hardcode w/o list_join",
+      "range": {
+        "startLine": 174,
+        "startChar": 31,
+        "endLine": 175,
+        "endChar": 43
+      },
+      "revId": "f74ddcaddbfe39f70aac3e1cbf536fed267daddf",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1305461b_10a3ae56",
+        "filename": "deployment/contrail/contrail-config-database.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 182,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T15:45:12Z",
+      "side": 1,
+      "message": "inside container it must be /var/log/rabbitmq/rabbitmq_sasl.log",
+      "range": {
+        "startLine": 181,
+        "startChar": 30,
+        "endLine": 182,
+        "endChar": 49
+      },
+      "revId": "f74ddcaddbfe39f70aac3e1cbf536fed267daddf",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "499e3344_6d913036",
+        "filename": "deployment/contrail/contrail-issu.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 610,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-05-28T15:45:12Z",
+      "side": 1,
+      "message": "same as in previous",
+      "range": {
+        "startLine": 599,
+        "startChar": 19,
+        "endLine": 610,
+        "endChar": 49
+      },
+      "revId": "f74ddcaddbfe39f70aac3e1cbf536fed267daddf",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
