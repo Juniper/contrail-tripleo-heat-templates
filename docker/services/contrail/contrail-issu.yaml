@@ -113,6 +113,11 @@ parameters:
     description: Docker volume for contrail config zookeeper service
     type: string
 
+  DockerContrailLogsZookeeperPath:
+    default: '/var/log/contrail/zookeeper'
+    description: Path to Zookeeper logs on host
+    type: string
+
   ContrailRegistry:
     default: 'opencontrailnightly'
     description: Contrail Registry
@@ -159,6 +164,11 @@ parameters:
     description: image
     type: string
     default: "contrail-external-kafka"
+
+  DockerContrailLogsKafkaPath:
+    default: '/var/log/contrail/kafka'
+    description: Path to Kafka logs on host
+    type: string
 
   ContrailAnalyticsDBMinDiskGB:
     description:  The min size for Contrail Analytics DB.
@@ -587,7 +597,10 @@ outputs:
             user: root
             restart: always
             volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+              list_concat:
+                - get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                - - 
+
             environment:
               list_concat:
                 - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -624,6 +637,10 @@ outputs:
                       - ':'
                       - - {get_param: DockerContrailConfigZookeeperVolume}
                         - '/data'
+               - - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailLogsZookeeperPath}
+                        - '/var/log/zookeeper'
             environment:
               list_concat:
                 - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -686,6 +703,10 @@ outputs:
                           - ':'
                           - - {get_param: DockerContrailConfigDatabaseVolume}
                             - '/var/lib/cassandra'
+                    - - list_join:
+                          - ':'
+                          - - {get_param: }
+                            - '/var/log/cassandra'
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
@@ -711,7 +732,12 @@ outputs:
                 user: root
                 restart: always
                 volumes:
-                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                    - - list_join:
+                        - ':'
+                        - - {get_param: DockerContrailLogsZookeeperPath}
+                          - '/var/log/zookeeper'
                 environment:
                   list_concat:
                     - get_attr: [ContrailBase, role_data, contrail_base_env]
