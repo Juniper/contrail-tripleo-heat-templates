@@ -62,7 +62,7 @@ parameter_defaults:
 
 # Enable hugepages for vrouter kernel mode by default - 2GB of total size
 # (to disable just put empty value '')
-#TODO: temporary disabled 
+#TODO: temporary disabled
 #  ContrailVrouterHugepages1GB: '2'
 #  ContrailSriovHugepages1GB: '2'
 
