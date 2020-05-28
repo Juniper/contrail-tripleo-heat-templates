@@ -27,7 +27,7 @@ parameters:
   ContrailAnalyticsDBLogPath:
     description: Path where analytics cassadra logs will be stored.
     type: string
-    default: "/var/log/contrail/database"
+    default: "/var/log/containers/contrail/database"
   DockerContrailCassandraImageName:
     description: image
     type: string
