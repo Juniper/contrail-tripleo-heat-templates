@@ -101,7 +101,7 @@ parameters:
                  is usually set to '-', resulting in logs going to
                  stdout
     type: string
-    default: "/var/log/contrail/rabbitmq"
+    default: "/var/log/containers/contrail/rabbitmq"
 
   DockerContrailConfigDatabaseVolume:
     default: 'config_cassandra'
@@ -111,6 +111,11 @@ parameters:
   DockerContrailConfigZookeeperVolume:
     default: 'config_zookeeper'
     description: Docker volume for contrail config zookeeper service
+    type: string
+
+  DockerContrailLogsZookeeperPath:
+    default: '/var/log/containers/contrail/zookeeper'
+    description: Path to Zookeeper logs on host
     type: string
 
   ContrailRegistry:
@@ -159,6 +164,11 @@ parameters:
     description: image
     type: string
     default: "contrail-external-kafka"
+
+  DockerContrailLogsKafkaPath:
+    default: '/var/log/containers/contrail/kafka'
+    description: Path to Kafka logs on host
+    type: string
 
   ContrailAnalyticsDBMinDiskGB:
     description:  The min size for Contrail Analytics DB.
@@ -587,7 +597,10 @@ outputs:
             user: root
             restart: always
             volumes:
-              get_attr: [ContrailBase, role_data, contrail_base_volumes]
+              list_concat:
+                - get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                - - "/var/log/containers/contrail/rabbitmq:/var/log/rabbitmq"
+
             environment:
               list_concat:
                 - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -600,14 +613,14 @@ outputs:
                       - - 'RABBITMQ_LOGS'
                         - list_join:
                           - '/'
-                          - - {get_param: DockerContrailRabbitmqLogPath}
+                          - - '/var/log/containers/contrail/rabbitmq'
                             - 'rabbitmq.log'
                     - list_join:
                       - '='
                       - - 'RABBITMQ_SASL_LOGS'
                         - list_join:
                           - '/'
-                          - - {get_param: DockerContrailRabbitmqLogPath}
+                          - - '/var/log/containers/contrail/rabbitmq'
                             - 'rabbitmq_sasl.log'
             env_file:  *contrail_issu_env_file
           contrail_config_zookeeper:
@@ -624,6 +637,10 @@ outputs:
                       - ':'
                       - - {get_param: DockerContrailConfigZookeeperVolume}
                         - '/data'
+               - - list_join:
+                      - ':'
+                      - - {get_param: DockerContrailLogsZookeeperPath}
+                        - '/var/log/zookeeper'
             environment:
               list_concat:
                 - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -686,6 +703,10 @@ outputs:
                           - ':'
                           - - {get_param: DockerContrailConfigDatabaseVolume}
                             - '/var/lib/cassandra'
+                    - - list_join:
+                          - ':'
+                          - - '/var/log/containers/contrail/cassandra'
+                            - '/var/log/cassandra'
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
@@ -711,7 +732,12 @@ outputs:
                 user: root
                 restart: always
                 volumes:
-                  get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                  list_concat:
+                    - get_attr: [ContrailBase, role_data, contrail_base_volumes]
+                    - - list_join:
+                        - ':'
+                        - - {get_param: DockerContrailLogsKafkaPath}
+                          - '/var/log/kafka'
                 environment:
                   list_concat:
                     - get_attr: [ContrailBase, role_data, contrail_base_env]
