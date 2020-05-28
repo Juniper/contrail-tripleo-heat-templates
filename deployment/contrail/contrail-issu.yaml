@@ -101,7 +101,7 @@ parameters:
                  is usually set to '-', resulting in logs going to
                  stdout
     type: string
-    default: "/var/log/contrail/rabbitmq"
+    default: "/var/log/containers/contrail/rabbitmq"
 
   DockerContrailConfigDatabaseVolume:
     default: '/var/lib/contrail/config_cassandra'
@@ -594,20 +594,8 @@ outputs:
                 - if:
                   - rabbitmq_log_keep_default
                   - []
-                  - - list_join:
-                      - '='
-                      - - 'RABBITMQ_LOGS'
-                        - list_join:
-                          - '/'
-                          - - {get_param: DockerContrailRabbitmqLogPath}
-                            - 'rabbitmq.log'
-                    - list_join:
-                      - '='
-                      - - 'RABBITMQ_SASL_LOGS'
-                        - list_join:
-                          - '/'
-                          - - {get_param: DockerContrailRabbitmqLogPath}
-                            - 'rabbitmq_sasl.log'
+                  - - 'RABBITMQ_LOGS=/var/log/rabbitmq/rabbitmq.log'
+                      'RABBITMQ_SASL_LOGS=/var/log/rabbitmq/rabbitmq_sasl.log'
             env_file:  *contrail_issu_env_file
           contrail_config_zookeeper:
             image: &contrail_config_zookeeper_image {get_attr: [DockerContrailZookeeperImageNormalize, contrail_image]}
