@@ -115,7 +115,7 @@ outputs:
       # BEGIN DOCKER SETTINGS
       puppet_config:
         config_volume: 'neutron'
-        puppet_tags: {list_join: [',', {get_param: NeutronPluginMl2PuppetTags}, 'ini_setting,create_ini_settings,inifile']}
+        puppet_tags: {list_join: [',', [{get_param: NeutronPluginMl2PuppetTags}, 'ini_setting,create_ini_settings,inifile']]}
         step_config: |
           include ::tripleo::profile::base::neutron::plugins::ml2
           include ::tripleo::network::contrail::neutron_ml2_plugin

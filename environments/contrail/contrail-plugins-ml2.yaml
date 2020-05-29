@@ -9,11 +9,9 @@ parameter_defaults:
   # core_plugin
   NeutronCorePlugin: 'ml2'
   # service_plugins
-  NeutronServicePlugins: 'opencontrail-router'  
-  
-  # Neutron flavors support
-  # NeutronServicePlugins: 'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin'
-  # NeutronServiceProviders: ['L3_ROUTER_NAT:TF:networking_opencontrail.l3.service_provider.TFL3ServiceProvider']
+  # NeutronServicePlugins: 'opencontrail-router'  
+  NeutronServicePlugins: 'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin'
+  NeutronServiceProviders: ['L3_ROUTER_NAT:TF:networking_opencontrail.l3.service_provider.TFL3ServiceProvider']
 
   # Neutron ML2 config options
   # ml2/ml2_conf.ini: mechanism_drivers
