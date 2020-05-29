@@ -111,6 +111,7 @@ outputs:
                   - /etc/sysconfig/network-scripts:/etc/sysconfig/network-scripts
                   - /etc/sysconfig/network:/etc/sysconfig/network
                   - /usr/bin/vif:/usr/bin/vif
+                  - /var/run:/var/run
                   - /:/host
           agilio_virtio_forwarder:
             image: {get_attr: [AgilioVirtIoForwarderImageNameNormalized, contrail_image]}
