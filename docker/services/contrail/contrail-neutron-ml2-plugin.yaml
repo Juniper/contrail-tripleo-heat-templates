@@ -37,50 +37,46 @@ parameters:
     description: The container image to use for the contrail neutron plugin
     type: string
     default: "contrail-openstack-neutron-ml2-init"
+  NeutronServiceProviders:
+    default: ''
+    description: Global list of service providers used by neutron.
+    type: comma_delimited_list
   NeutronPluginMl2PuppetTags:
     default: 'neutron_plugin_ml2'
     description: Puppet resource tag names that are used to generate config files with puppet
-    type: string
-  ContrailSslEnabled:
-    description:  Flag to identify is SSL should be used in internal Contrail
-                  services communications (sandesh, introspect, xmpp, ..).
-    type: boolean
-    default: false
-  ContrailServiceCertFile:
-    description: Path to the node's public certificate
-    type: string
-    default: ''
-  ContrailServiceKeyFile:
-    description: Path to server's/node's private key
-    type: string
-    default: ''
-  ContrailCaCertFile:
-    default: ''
-    description: Path to CA certificate
     type: string
   ContrailConfigIPs:
     description:  Comma separated list of Contrail API servers.
                   The servers that are not part of the RHOSP voercloud cluster and
                   deployed separatly.
     type: string
-  ContrailConfigPort:
-    type: string
-    default: '8082'
-    description: Config API port
   ContrailDmIntegration:
     description: Device Manager integration
     type: boolean
     default: false
 
 conditions:
-  contrail_insecure: {equals: [{get_param: ContrailCaCertFile}, '']}
   contrail_config_ips_unset: {equals: [{get_param: ContrailConfigIPs}, '']}
+  neutron_service_providers_unset:
+    or: 
+      - {equals: [{get_param: NeutronServiceProviders}, '']}
+      - {equals: [{get_param: NeutronServiceProviders}, []]}
 
 resources:
   DockerContrailNeutronMl2PluginImageNormalize:
     type: ../../../tools/contrail/contrail-image-normalize.yaml
     properties:
       GenericImageName: {get_param: DockerContrailNeutronMl2PluginImageName}
+
+  ContrailBase:
+    type: contrail-base.yaml
+    properties:
+      EndpointMap: {get_param: EndpointMap}
+      ServiceData: {get_param: ServiceData}
+      ServiceNetMap: {get_param: ServiceNetMap}
+      DefaultPasswords: {get_param: DefaultPasswords}
+      RoleName: {get_param: RoleName}
+      RoleParameters: {get_param: RoleParameters}
 
   NeutronBase:
     type: OS::TripleO::Docker::NeutronMl2PluginBase
@@ -100,18 +96,20 @@ outputs:
       config_settings:
         map_merge:
           - get_attr: [NeutronBase, role_data, config_settings]
-          - contrail_ssl_enabled: {get_param: ContrailSslEnabled}
-            contrail_ssl_insecure: {if: [contrail_insecure, true, false]}
-            contrail::service_key_file: {get_param: ContrailServiceKeyFile}
-            contrail::service_cert_file: {get_param: ContrailServiceCertFile}
-            contrail::auth_ca_file: {get_param: ContrailCaCertFile}
-            contrail_dm_integration: {get_param: ContrailDmIntegration}
-            contrail::api_port: {get_param: ContrailConfigPort}
+          - get_attr: [ContrailBase, role_data, config_settings]
+          - contrail_dm_integration: {get_param: ContrailDmIntegration}
           - if:
               - contrail_config_ips_unset
               - null
               - contrail_config_ips: {get_param: ContrailConfigIPs}
-      service_config_settings: {get_attr: [NeutronBase, role_data, service_config_settings]}
+      service_config_settings:
+        map_merge:
+          - get_attr: [NeutronBase, role_data, service_config_settings]
+          - if:
+              - neutron_service_providers_unset
+              - null
+              - neutron_api:
+                  neutron::server::service_providers: {get_param: NeutronServiceProviders}
       # BEGIN DOCKER SETTINGS
       puppet_config:
         config_volume: 'neutron'
