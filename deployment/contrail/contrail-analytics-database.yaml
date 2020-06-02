@@ -161,7 +161,7 @@ outputs:
             - contrail_analytics_database:
                 image: &contrail_analytics_database_image {get_attr: [DockerContrailCassandraImageNormalize, contrail_image]}
                 net: host
-                privileged: false
+                privileged: true
                 detach: true
                 user: root
                 restart: always
@@ -197,6 +197,7 @@ outputs:
                 net: host
                 detach: true
                 user: root
+                privileged: true
                 restart: always
                 volumes:
                   list_concat:

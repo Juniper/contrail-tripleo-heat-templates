@@ -77,6 +77,38 @@
 
       when: _IS_DPDK_ is defined and _IS_DPDK_ != ''
 
+    - name: create policy file for nodemgr
+      block:
+        - name: create policy file for nodemgr
+          blockinfile:
+            path: /tmp/contrail_nodemgr.te
+            create: yes
+            block: |
+              module contrail_nodemgr 1.0;
+
+              require {
+                      type unconfined_t;
+                      type container_share_t;
+                      class file entrypoint;
+              }
+
+              #============= unconfined_t ==============
+              #
+              ##!!!! The file '/usr/bin/conmon' is mislabeled on your system.
+              ##!!!! Fix with $ restorecon -R -v /usr/bin/conmon
+              allow unconfined_t container_share_t:file entrypoint;
+
+
+        - name: create contrail nodemgr selinux policy module
+          shell: /bin/checkmodule -M -m -o /tmp/contrail_nodemgr.mod /tmp/contrail_nodemgr.te
+
+        - name: create contrail nodemgr selinux policy package
+          shell: /bin/semodule_package -o /tmp/contrail_nodemgr.pp -m /tmp/contrail_nodemgr.mod
+
+        - name: install contrail nodemgr selinux policy package
+          shell: /sbin/semodule -i /tmp/contrail_nodemgr.pp
+
+
     - name: create crash directory
       file:
         path: "/var/crashes"

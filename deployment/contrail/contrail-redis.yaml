@@ -113,7 +113,7 @@ outputs:
                 map_merge:
                   - image: *contrail_redis_image_name
                     net: host
-                    privileged: false
+                    privileged: true
                     detach: true
                     user: root
                     restart: always

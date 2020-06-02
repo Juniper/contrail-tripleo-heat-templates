@@ -93,7 +93,7 @@ outputs:
           contrail_analytics_zookeeper:
             image: &contrail_analytics_zookeeper_image {get_attr: [DockerContrailZookeeperImageNormalize, contrail_image]}
             net: host
-            privileged: false
+            privileged: true
             detach: true
             user: root
             restart: always
@@ -111,7 +111,7 @@ outputs:
           contrail_analytics_kafka:
             image: &contrail_analytics_kafka_image {get_attr: [DockerContrailKafkaImageNormalize, contrail_image]}
             net: host
-            privileged: false
+            privileged: true
             detach: true
             user: root
             restart: always

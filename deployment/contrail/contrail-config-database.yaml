@@ -154,7 +154,7 @@ outputs:
           contrail_config_rabbitmq:
             image: &contrail_config_rabbitmq_image {get_attr: [DockerContrailRabbitmqImageNormalize, contrail_image]}
             net: host
-            privileged: false
+            privileged: true
             detach: true
             user: root
             restart: always
@@ -175,7 +175,7 @@ outputs:
           contrail_config_zookeeper:
             image: &contrail_config_zookeeper_image {get_attr: [DockerContrailZookeeperImageNormalize, contrail_image]}
             net: host
-            privileged: false
+            privileged: true
             detach: true
             user: root
             restart: always
@@ -199,6 +199,7 @@ outputs:
                 net: host
                 detach: true
                 user: root
+                privileged: true
                 restart: always
                 volumes:
                   list_concat:
@@ -221,7 +222,7 @@ outputs:
               contrail_config_database:
                 image: &contrail_config_database_image {get_attr: [DockerContrailCassandraImageNormalize, contrail_image]}
                 net: host
-                privileged: false
+                privileged: true
                 detach: true
                 user: root
                 restart: always
