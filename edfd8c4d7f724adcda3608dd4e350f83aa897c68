@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "528c8cc6_92ae270a",
+        "filename": "deployment/contrail/contrail-analytics-database.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-02T11:20:32Z",
+      "side": 1,
+      "message": "for database it is not needed?",
+      "range": {
+        "startLine": 164,
+        "startChar": 16,
+        "endLine": 164,
+        "endChar": 32
+      },
+      "revId": "edfd8c4d7f724adcda3608dd4e350f83aa897c68",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "206b6f8b_16545a68",
+        "filename": "deployment/contrail/contrail-analytics-kafka.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-02T11:20:32Z",
+      "side": 1,
+      "message": "for zk it is not needed?",
+      "range": {
+        "startLine": 96,
+        "startChar": 24,
+        "endLine": 96,
+        "endChar": 28
+      },
+      "revId": "edfd8c4d7f724adcda3608dd4e350f83aa897c68",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
