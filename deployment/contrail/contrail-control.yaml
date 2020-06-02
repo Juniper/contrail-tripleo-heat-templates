@@ -156,6 +156,7 @@ outputs:
                 net: host
                 detach: true
                 user: root
+                privileged: true
                 restart: always
                 volumes:
                   list_concat:
