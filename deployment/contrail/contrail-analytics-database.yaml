@@ -195,6 +195,7 @@ outputs:
             - contrail_analytics_database_nodemgr:
                 image: {get_attr: [ContrailBase, role_data, contrail_nodemgr_image_name]}
                 net: host
+                pid: host
                 detach: true
                 user: root
                 privileged: true
@@ -203,6 +204,10 @@ outputs:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                     - - /var/run:/var/run
+                      - /run/runc:/run/runc
+                      - /sys/fs/cgroup:/sys/fs/cgroup
+                      - /sys/fs/selinux:/sys/fs/selinux
+                      - /var/lib/containers:/var/lib/containers
                 environment:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_env]}
