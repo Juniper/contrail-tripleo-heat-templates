@@ -1,0 +1,280 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57de054d_711f60ef",
+        "filename": "docker/services/contrail/contrail-analytics-kafka.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "/var/log/containers/contrail/.....",
+      "range": {
+        "startLine": 105,
+        "startChar": 20,
+        "endLine": 105,
+        "endChar": 28
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73b47cd3_fab3ca1a",
+        "filename": "docker/services/contrail/contrail-analytics-kafka.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "/var/log/containers/contrail/.....",
+      "range": {
+        "startLine": 123,
+        "startChar": 20,
+        "endLine": 123,
+        "endChar": 29
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48d45c70_02a8c0f7",
+        "filename": "docker/services/contrail/contrail-config-database.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "/var/log/containers/contrail/.....",
+      "range": {
+        "startLine": 35,
+        "startChar": 14,
+        "endLine": 35,
+        "endChar": 31
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "750700d2_baa542f2",
+        "filename": "docker/services/contrail/contrail-config-database.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "/var/log/containers/contrail/.....",
+      "range": {
+        "startLine": 43,
+        "startChar": 14,
+        "endLine": 43,
+        "endChar": 31
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "472d85b9_187eb04d",
+        "filename": "docker/services/contrail/contrail-config-database.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "lets name like DockerContrailConfigDatabaseLogPath -  i mean DockerContrailZookeeperLogPath",
+      "range": {
+        "startLine": 48,
+        "startChar": 2,
+        "endLine": 48,
+        "endChar": 33
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7fe96433_a2ac7bfb",
+        "filename": "docker/services/contrail/contrail-config-database.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "/var/log/containers/contrail/.....",
+      "range": {
+        "startLine": 49,
+        "startChar": 14,
+        "endLine": 49,
+        "endChar": 31
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab76ac1f_edc4f717",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "/var/log/containers/contrail/.....",
+      "range": {
+        "startLine": 104,
+        "startChar": 14,
+        "endLine": 104,
+        "endChar": 31
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "80e66196_352f4cb4",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "same about naming\nand paths like /var/log/containers/contrail/.....",
+      "range": {
+        "startLine": 116,
+        "startChar": 2,
+        "endLine": 116,
+        "endChar": 33
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee28f1ec_5826a1e2",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "/var/log/containers/contrail/.....",
+      "range": {
+        "startLine": 117,
+        "startChar": 14,
+        "endLine": 117,
+        "endChar": 31
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6fd4345_bcaa90ee",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "same about naming",
+      "range": {
+        "startLine": 168,
+        "startChar": 2,
+        "endLine": 168,
+        "endChar": 29
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d081d85_e20f85d1",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "/var/log/containers/contrail/.....",
+      "range": {
+        "startLine": 169,
+        "startChar": 14,
+        "endLine": 169,
+        "endChar": 31
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cbbaf257_0bc0f85c",
+        "filename": "docker/services/contrail/contrail-issu.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-03T11:53:11Z",
+      "side": 1,
+      "message": "list_join with DockerContrailRabbitmqLogPath",
+      "range": {
+        "startLine": 602,
+        "startChar": 21,
+        "endLine": 602,
+        "endChar": 47
+      },
+      "revId": "5f57ffc9dcec16d6f22d4f215aa57faf21fe315d",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
