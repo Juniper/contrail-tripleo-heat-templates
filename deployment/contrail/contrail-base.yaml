@@ -752,14 +752,15 @@ outputs:
                 - name: create selinux module file /tmp/contrail_container.cil
                   blockinfile:
                     path: /tmp/contrail_container.cil
+                    marker: "; {mark} ANSIBLE MANAGED BLOCK"
                     create: yes
                     block: |
                       (block contrail_container
-                      (allow container_t var_t ( dir ( openat open read getattr lock search ioctl add_name remove_name write setattr )))
-                      (allow container_t var_t ( file ( getattr read write append ioctl lock map open create setattr )))
+                      (allow container_t var_t ( dir ( openat open read getattr lock search ioctl add_name remove_name write setattr create )))
+                      (allow container_t var_t ( file ( getattr read write append ioctl lock map open create setattr unlink )))
                       (allow container_t var_t ( sock_file ( getattr read write append open )))
-                      (allow container_t var_lib_t ( dir ( openat open read getattr lock search ioctl add_name remove_name write setattr )))
-                      (allow container_t var_lib_t ( file ( getattr read write append ioctl lock map open create setattr )))
+                      (allow container_t var_lib_t ( dir ( openat open read getattr lock search ioctl add_name remove_name write setattr create )))
+                      (allow container_t var_lib_t ( file ( getattr read write append ioctl lock map open create setattr unlink )))
                       (allow container_t var_lib_t ( sock_file ( getattr read write append open )))
                       (allow container_t cloud_init_t ( unix_dgram_socket ( sendto )))
                       (allow container_t container_share_t ( file ( entrypoint )))
