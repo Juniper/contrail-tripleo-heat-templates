@@ -179,25 +179,41 @@
 
     - name: Setup nodedata
       block:
-      - name: get system dmi code
-        shell: |
-               #!/bin/sh
-               dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
-        register: dmi
+        - name: set raw nodedata
+            set_fact:
+              nodedata: "{{ _NODEDATA_ }}"
 
-      - name: set dmi fact
-        set_fact:
-          dmi_uuid: "{{ dmi.stdout }}"
-
-      - name: set nodedata
-        set_fact:
-          nodedata: "{{ _NODEDATA_[dmi_uuid] }}"
-        when: _NODEDATA_[dmi_uuid] is defined
-
-      - name: write nodedata
-        copy:
-          dest: "/etc/puppet/hieradata/{{ dmi_uuid }}.json"
-          content: "{{ nodedata }}"
-        when: nodedata is defined
-
+        - name: write dmi nodedata to file
+          shell: |
+            #!/bin/sh
+            node_id=$(dmidecode --s system-uuid | awk 'match($0, \
+                    /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) \
+                    { print substr($0, RSTART, RLENGTH) }' | tr '[:upper:]' '[:lower:]')
+            # thanks to dmidecode 3.1, we have to handle both the upper case
+            # and lower case versions of the UUID from dmidecode. LP#1816652
+            # upper for dmidecode < 3.1 and lower for dmidecode >= 3.1
+            node_id_upper=$(echo $node_id | tr '[:lower:]' '[:upper:]')
+            # needed to handle where python lives
+            function get_python() {
+              command -v python3 || command -v python2 || command -v python || exit 1
+            }
+            # Create a /etc/puppet/hieradata/UUID.json file to provide
+            # the data of the NodeDataLookup parameter that matches the
+            # system UUID
+            echo $nodedata | $(get_python) -c "
+            import json
+            import sys
+            input = sys.stdin.readline() or '{}'
+            cnt = json.loads(input)
+            print(json.dumps(cnt.get('${node_id}', {})))
+            " > /etc/puppet/hieradata/${node_id}.json
+            # handle upper case node id LP#1816652
+            echo $nodedata | $(get_python) -c "
+            import json
+            import sys
+            input = sys.stdin.readline() or '{}'
+            cnt = json.loads(input)
+            print(json.dumps(cnt.get('${node_id_upper}', {})))
+            " > /etc/puppet/hieradata/${node_id_upper}.json
+      
       when: _NODEDATA_ is defined
