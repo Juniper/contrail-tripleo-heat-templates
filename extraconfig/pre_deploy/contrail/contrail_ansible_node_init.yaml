@@ -176,28 +176,3 @@
           when: file_details.stat.exists
 
       when: install_puppet
-
-    - name: Setup nodedata
-      block:
-      - name: get system dmi code
-        shell: |
-               #!/bin/sh
-               dmidecode --s system-uuid | awk 'match($0, /[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}/) { print substr($0, RSTART, RLENGTH) }'
-        register: dmi
-
-      - name: set dmi fact
-        set_fact:
-          dmi_uuid: "{{ dmi.stdout }}"
-
-      - name: set nodedata
-        set_fact:
-          nodedata: "{{ _NODEDATA_[dmi_uuid] }}"
-        when: _NODEDATA_[dmi_uuid] is defined
-
-      - name: write nodedata
-        copy:
-          dest: "/etc/puppet/hieradata/{{ dmi_uuid }}.json"
-          content: "{{ nodedata }}"
-        when: nodedata is defined
-
-      when: _NODEDATA_ is defined

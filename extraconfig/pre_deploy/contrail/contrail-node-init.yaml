@@ -67,6 +67,12 @@ resources:
       ContrailImageTag: {get_param: ContrailImageTag}
       ContrailRegistry: {get_param: ContrailRegistry}
 
+  PerNodeDataLookup:
+    type: ../../../puppet/extraconfig/pre_deploy/per_node.yaml
+    properties:
+      server: {get_param: server}
+      NodeDataLookup: {get_param: NodeDataLookup}
+
   ContrailNodeInitConfig:
     type: OS::Heat::SoftwareConfig
     properties:
@@ -81,7 +87,6 @@ resources:
         - name: _SERVER_CERTFILE_
         - name: _SERVER_KEYFILE_
         - name: _INSTALL_PUPPET_
-        - name: _NODEDATA_
           type: Json
       outputs:
         - name: result
@@ -105,7 +110,6 @@ resources:
         _SERVER_KEYFILE_: {get_param: ContrailServiceKeyFile}
         _SSL_ENABLE_: {get_param: ContrailSslEnabled}
         _INSTALL_PUPPET_: {get_param: install_contrail_puppet}
-        _NODEDATA_: {get_param: NodeDataLookup}
     depends_on:
       - DockerContrailNodeImageNormalize
       - DockerContrailStatusImageNormalize
