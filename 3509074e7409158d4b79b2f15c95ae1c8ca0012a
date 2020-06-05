@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "92737329_d7603cc6",
+        "filename": "extraconfig/pre_deploy/contrail/contrail_ansible_node_init.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-05T16:01:58Z",
+      "side": 1,
+      "message": "let use sinlge line.. I am not sure it will work as you expect because it is inside string \u0027\u0027",
+      "range": {
+        "startLine": 189,
+        "startChar": 65,
+        "endLine": 189,
+        "endChar": 66
+      },
+      "revId": "3509074e7409158d4b79b2f15c95ae1c8ca0012a",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6fb651aa_ab246195",
+        "filename": "extraconfig/pre_deploy/contrail/contrail_ansible_node_init.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-05T16:01:58Z",
+      "side": 1,
+      "message": "suppose it is to be\necho \"$nodedata\"",
+      "range": {
+        "startLine": 203,
+        "startChar": 17,
+        "endLine": 203,
+        "endChar": 26
+      },
+      "revId": "3509074e7409158d4b79b2f15c95ae1c8ca0012a",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a8313c0_3561b482",
+        "filename": "extraconfig/pre_deploy/contrail/contrail_ansible_node_init.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 437
+      },
+      "writtenOn": "2020-06-05T16:01:58Z",
+      "side": 1,
+      "message": "i suppose it is to be \necho \"$nodedata\"",
+      "range": {
+        "startLine": 211,
+        "startChar": 11,
+        "endLine": 211,
+        "endChar": 26
+      },
+      "revId": "3509074e7409158d4b79b2f15c95ae1c8ca0012a",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
