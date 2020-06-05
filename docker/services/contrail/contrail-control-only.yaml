@@ -118,7 +118,7 @@ outputs:
                     net: host
                     detach: true
                     user: root
-                    restart: always
+                    restart: on-failure
                     volumes:
                       get_attr: [ContrailBase, role_data, contrail_base_volumes]
                     environment:
