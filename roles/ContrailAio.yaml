@@ -4,7 +4,7 @@
 - name: ContrailAio
   description: |
     All-in-one role serving both as a controller, contrail controller and a compute.
-  disable_constraints: True
+  disable_constraints: False
   CountDefault: 0
   tags:
     - primary
@@ -170,4 +170,3 @@
     - OS::TripleO::Services::TripleoPackages
     - OS::TripleO::Services::Tuned
     - OS::TripleO::Services::Zaqar
-
