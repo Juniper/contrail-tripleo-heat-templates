@@ -9,6 +9,7 @@ resource_registry:
   OS::TripleO::ContrailSriov::Net::SoftwareConfig: ../../network/config/contrail/contrail-sriov-nic-config.yaml
   OS::TripleO::ContrailTsn::Net::SoftwareConfig: ../../network/config/contrail/contrail-tsn-nic-config.yaml
   OS::TripleO::ContrailControllerIssu::Net::SoftwareConfig: ../../network/config/contrail/contrail-controller-nic-config.yaml
+  OS::TripleO::ContrailAio::Net::SoftwareConfig: ../../network/config/contrail/controller-nic-config-aio.yaml
 
 parameter_defaults:
   # Customize all these values to match the local environment
