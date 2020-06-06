@@ -487,7 +487,9 @@ outputs:
                   - 8112
                   - 9041
                   - 9161
+                  - 15673
                   - 25673
+                  - '25684-25694'
               '118 contrail_issu_database':
                 dport:
                   # collector structured syslog
@@ -592,6 +594,8 @@ outputs:
               list_concat:
                 - get_attr: [ContrailBase, role_data, contrail_base_env]
                 - - 'NODE_TYPE=config-database'
+                  - 'RABBITMQ_CTL_DIST_PORT_MIN=25684'
+                  - 'RABBITMQ_CTL_DIST_PORT_MAX=25694'
                 - if:
                   - rabbitmq_log_keep_default
                   - []
