@@ -3,6 +3,10 @@ resource_registry:
   OS::TripleO::Services::NeutronCorePlugin: ../../docker/services/contrail/contrail-neutron-ml2-plugin.yaml
   OS::TripleO::ControllerExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-node-init.yaml
   OS::TripleO::Controller::NodeUserData: ../../firstboot/contrail/contrail_container_registry.yaml
+  # disable aio types
+  OS::TripleO::Tasks::ContrailAioPreConfig: OS::Heat::None
+  OS::TripleO::Tasks::ContrailAioPostConfig: OS::Heat::None
+  OS::TripleO::Tasks::ContrailAioPostPuppetRestart: OS::Heat::None
 
 parameter_defaults:
   # Neutron config options
@@ -24,7 +28,6 @@ parameter_defaults:
   # The tunnel type for the tenant network (vxlan or gre). Set to '' to disable tunneling.
   # ml2/openvswitch_agent.ini: tunnel_types
   NeutronTunnelTypes: 'vxlan'
-
 
   NeutronApiOptVolumes:
     - 'opt_plugin:/opt/plugin'

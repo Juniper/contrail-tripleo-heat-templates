@@ -46,6 +46,14 @@ resource_registry:
   OS::TripleO::ContrailAioExtraConfigPre: ../../extraconfig/pre_deploy/contrail/contrail-init.yaml
   # by default disabled
   OS::TripleO::Services::AgilioVrouter: OS::Heat::None
+  # by AIO in non-ha, for ha use commented lines
+  # OS::TripleO::Tasks::ContrailAioPreConfig: ../extraconfig/tasks/pre_puppet_pacemaker.yaml
+  # OS::TripleO::Tasks::ContrailAioPostConfig: ../extraconfig/tasks/post_puppet_pacemaker.yaml
+  # OS::TripleO::Tasks::ContrailAioPostPuppetRestart: ../extraconfig/tasks/post_puppet_pacemaker_restart.yaml
+  OS::TripleO::Tasks::ContrailAioPreConfig: OS::Heat::None
+  OS::TripleO::Tasks::ContrailAioPostConfig: OS::Heat::None
+  OS::TripleO::Tasks::ContrailAioPostPuppetRestart: OS::Heat::None
+
 
 parameter_defaults:
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
