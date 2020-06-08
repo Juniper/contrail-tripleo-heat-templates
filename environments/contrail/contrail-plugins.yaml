@@ -49,27 +49,27 @@ resource_registry:
 
 parameter_defaults:
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
-  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+  NeutronServicePlugins: ''
   NeutronTunnelTypes: ''
   NeutronApiOptVolumes:
     - '/var/lib/contrail/plugin_contrail_neutron:/opt/plugin'
     - '/etc/contrail/ssl:/etc/contrail/ssl'
   NeutronApiOptEnvVars:
-      PYTHONPATH: '/opt/plugin/site-packages:/usr/lib/python2.7/site-packages'
+      PYTHONPATH: '/opt/plugin/python3/site-packages'
   NovaComputeOptEnvVars:
       PATH: '/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin'
   NovaComputeOptVolumes:
     - /var/lib/contrail/vrouter_port_control:/opt/plugin/bin
     - /var/lib/contrail:/var/lib/contrail
-    - /var/lib/contrail/vif_nova_contrail:/usr/lib/python2.7/site-packages/nova_contrail_vif
-    - /var/lib/contrail/vif_nova_contrail_egg:/usr/lib/python2.7/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
-    - /var/lib/contrail/vif_plug_vrouter:/usr/lib/python2.7/site-packages/vif_plug_vrouter
-    - /var/lib/contrail/vif_plug_contrail_vrouter:/usr/lib/python2.7/site-packages/vif_plug_contrail_vrouter
+    - /var/lib/contrail/vif_nova_contrail:/usr/lib/python3.6/site-packages/nova_contrail_vif
+    - /var/lib/contrail/vif_nova_contrail_egg:/usr/lib/python3.6/site-packages/nova_contrail_vif-0.1-py2.7.egg-info
+    - /var/lib/contrail/vif_plug_vrouter:/usr/lib/python3.6/site-packages/vif_plug_vrouter
+    - /var/lib/contrail/vif_plug_contrail_vrouter:/usr/lib/python3.6/site-packages/vif_plug_contrail_vrouter
   HeatEngineOptVolumes:
     - '/etc/contrail/ssl:/etc/contrail/ssl'
     - '/var/lib/contrail/plugin_contrail_heat:/opt/plugin'
   HeatEngineOptEnvVars:
-      PYTHONPATH: '/opt/plugin/site-packages:/usr/lib/python2.7/site-packages'
+      PYTHONPATH: '/opt/plugin/python3/site-packages'
   HeatEnginePluginDirs:
     - '/opt/plugin/site-packages/vnc_api/gen/heat/resources'
     - '/opt/plugin/site-packages/contrail_heat/resources'
