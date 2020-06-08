@@ -49,13 +49,13 @@ resource_registry:
 
 parameter_defaults:
   NeutronCorePlugin: neutron_plugin_contrail.plugins.opencontrail.contrail_plugin.NeutronPluginContrailCoreV2
-  NeutronServicePlugins: 'neutron_plugin_contrail.plugins.opencontrail.loadbalancer.v2.plugin.LoadBalancerPluginV2'
+  NeutronServicePlugins: ''
   NeutronTunnelTypes: ''
   NeutronApiOptVolumes:
     - '/var/lib/contrail/plugin_contrail_neutron:/opt/plugin'
     - '/etc/contrail/ssl:/etc/contrail/ssl'
   NeutronApiOptEnvVars:
-      PYTHONPATH: '/opt/plugin/site-packages:/usr/lib/python2.7/site-packages'
+      PYTHONPATH: '/opt/plugin/site-packages'
   NovaComputeOptEnvVars:
       PATH: '/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin/:/opt/plugin/bin'
   NovaComputeOptVolumes:
