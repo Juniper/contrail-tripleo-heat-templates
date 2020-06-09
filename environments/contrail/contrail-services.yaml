@@ -21,6 +21,10 @@ parameter_defaults:
     # Default value is defined for all roles as:
     #   .//network/service_net_map.j2.yaml: {{role.name}}HostnameResolveNetwork: internal_api
     # ContrailControllerHostnameResolveNetwork: internal_api
+    # By default keystone admin is on ctlplane network,
+    # change it if needed to use another network
+    # KeystoneAdminApiNetwork: internal_api
+
   OvercloudControllerFlavor: control
   OvercloudContrailControllerFlavor: contrail-controller
   OvercloudContrailAnalyticsFlavor: contrail-analytics
