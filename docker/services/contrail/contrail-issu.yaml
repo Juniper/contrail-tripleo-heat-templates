@@ -634,7 +634,7 @@ outputs:
                       - ':'
                       - - {get_param: DockerContrailConfigZookeeperVolume}
                         - '/data'
-               - - list_join:
+                - - list_join:
                       - ':'
                       - - {get_param: DockerContrailZookeeperLogPath}
                         - '/var/log/zookeeper'
