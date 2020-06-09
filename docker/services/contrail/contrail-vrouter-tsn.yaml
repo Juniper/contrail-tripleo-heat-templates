@@ -151,6 +151,7 @@ outputs:
                   list_concat:
                     - {get_attr: [ContrailBase, role_data, contrail_base_volumes]}
                     - - /var/run/docker.sock:/var/run/docker.sock
+                    - - /var/lib/contrail/loadbalancer:/var/lib/contrail/loadbalancer
                 environment:
                   get_attr: [ContrailBase, role_data, contrail_base_env]
                 env_file:
