@@ -85,7 +85,7 @@ conditions:
 
   rabbitmq_log_keep_default: {equals : [{get_param: DockerContrailRabbitmqLogPath}, '']}
 
-  is_more_than_2001_or_latest:
+  is_latest:
     or:
       - yaql:
           expression: $.data.matches(".*dev.*")
@@ -96,9 +96,21 @@ conditions:
       - yaql:
           expression: $.data.matches(".*master.*")
           data: {get_param: ContrailImageTag}
+
+  is_more_than_2001_or_latest:
+    or:
+      - is_latest
       - not:
           yaql:
             expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]{3,}$")).where(int($) < 2001).any()
+            data: {get_param: ContrailImageTag}
+
+  is_2008_or_latest:
+    or:
+      - is_latest
+      - not:
+          yaql:
+            expression: $.data.split(".").select($.split("-")).flatten().where($.matches("^[0-9]{3,}$")).where(int($) < 2008).any()
             data: {get_param: ContrailImageTag}
 
 resources:
@@ -155,6 +167,11 @@ outputs:
       service_config_settings: {get_attr: [ContrailBase, role_data, service_config_settings]}
       contrail_env_file: &contrail_env_file
         "/etc/contrail/common_config_database.env"
+      contrail_rabbit_internal_log_path:
+        if:
+          - is_2008_or_latest
+          - '/var/log/rabbitmq'
+          - '/var/log/contrail/rabbitmq'
       docker_config:
         step_2:
           get_attr: [ContrailBase, role_data, docker_config, step_2]
@@ -175,7 +192,7 @@ outputs:
                   - - list_join:
                         - ':'
                         - - {get_param: DockerContrailRabbitmqLogPath}
-                          - '/var/log/rabbitmq'
+                          - *contrail_rabbit_internal_log_path
             environment:
               list_concat:
                 - get_attr: [ContrailBase, role_data, contrail_base_env]
@@ -184,8 +201,17 @@ outputs:
                 - if:
                   - rabbitmq_log_keep_default
                   - []
-                  - - 'RABBITMQ_LOGS=/var/log/rabbitmq/rabbitmq.log'
-                    - 'RABBITMQ_SASL_LOGS=/var/log/rabbitmq/rabbitmq_sasl.log'
+                  - - list_join:
+                        - ''
+                        - - 'RABBITMQ_LOGS='
+                          - *contrail_rabbit_internal_log_path
+                          - '/rabbitmq.log'
+                    - list_join:
+                        - ''
+                        - - 'RABBITMQ_SASL_LOGS='
+                          - *contrail_rabbit_internal_log_path
+                          - '/rabbitmq_sasl.log'
+
             env_file:
               list_concat:
                 - {get_attr: [ContrailBase, role_data, contrail_base_env_file]}
