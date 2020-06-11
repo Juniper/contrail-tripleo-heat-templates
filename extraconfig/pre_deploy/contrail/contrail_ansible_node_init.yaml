@@ -187,17 +187,32 @@
 
       - name: set dmi fact
         set_fact:
-          dmi_uuid: "{{ dmi.stdout }}"
+          dmi_uuid: "{{ dmi.stdout | lower }}"
+
+      - name: set dmi fact upper
+        set_fact:
+          dmi_uuid_upper: "{{ dmi.stdout | upper }}"
 
       - name: set nodedata
         set_fact:
           nodedata: "{{ _NODEDATA_[dmi_uuid] }}"
         when: _NODEDATA_[dmi_uuid] is defined
 
+      - name: set nodedata upper
+        set_fact:
+          nodedata_upper: "{{ _NODEDATA_[dmi_uuid_upper] }}"
+        when: _NODEDATA_[dmi_uuid_upper] is defined
+
       - name: write nodedata
         copy:
           dest: "/etc/puppet/hieradata/{{ dmi_uuid }}.json"
           content: "{{ nodedata }}"
         when: nodedata is defined
+
+      - name: write nodedata upper
+        copy:
+          dest: "/etc/puppet/hieradata/{{ nodedata_upper }}.json"
+          content: "{{ nodedata_upper }}"
+        when: nodedata_upper is defined
 
       when: _NODEDATA_ is defined
