@@ -162,6 +162,8 @@ outputs:
                 image: &contrail_analytics_database_image {get_attr: [DockerContrailCassandraImageNormalize, contrail_image]}
                 net: host
                 privileged: false
+                cap_add:
+                  - SYS_NICE
                 detach: true
                 user: root
                 restart: always
